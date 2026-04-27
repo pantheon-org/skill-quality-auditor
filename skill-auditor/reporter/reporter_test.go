@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pantheon-org/tekhne/tools/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
 )
 
 func makeResult() *scorer.Result {

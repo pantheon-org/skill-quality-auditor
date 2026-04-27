@@ -1,10 +1,12 @@
 # skill-quality-auditor
 
-A 9-dimension scoring framework for auditing and improving AI skill quality. Combines structural validation with custom scoring across Knowledge Delta, Mindset, Anti-Patterns, Specification Compliance, Progressive Disclosure, Freedom Calibration, Pattern Recognition, Practical Usability, and Eval Validation.
+A 9-dimension scoring framework for auditing and improving AI skill quality. Combines structural validation with custom
+scoring across Knowledge Delta, Mindset, Anti-Patterns, Specification Compliance, Progressive Disclosure, Freedom
+Calibration, Pattern Recognition, Practical Usability, and Eval Validation.
 
 ## Repository layout
 
-```
+```text
 skill/                  # Tessl tile (pantheon-ai/skill-quality-auditor)
 skill-auditor/          # Go CLI binary
   cmd/                  # cobra commands: evaluate, batch, version
@@ -33,7 +35,7 @@ go build -o skill-auditor .
 
 ### `evaluate`
 
-```
+```text
 skill-auditor evaluate <skill> [flags]
 
 Flags:
@@ -42,11 +44,12 @@ Flags:
   --repo-root   repo root directory (auto-detected from .git / go.mod if omitted)
 ```
 
-`<skill>` accepts a `domain/skill-name` key (resolved under `<repo-root>/skills/`), an absolute path to a directory containing `SKILL.md`, or a direct path to `SKILL.md`.
+`<skill>` accepts a `domain/skill-name` key (resolved under `<repo-root>/skills/`), an absolute path to a directory
+containing `SKILL.md`, or a direct path to `SKILL.md`.
 
 ### `batch`
 
-```
+```text
 skill-auditor batch <skill1> [skill2 ...] [flags]
 
 Flags:
@@ -59,7 +62,7 @@ Flags:
 ## Scoring dimensions
 
 | ID | Dimension | Max pts |
-|----|-----------|---------|
+| -- | --------- | ------- |
 | D1 | Knowledge Delta | 20 |
 | D2 | Mindset & Procedures | 20 |
 | D3 | Anti-Pattern Coverage | 20 |
@@ -74,7 +77,9 @@ Grades: **A** (≥90) → **F** (<50). See `skill/skill-quality-auditor/referenc
 
 ## Tessl skill
 
-The `skill/` directory contains the published Tessl tile `pantheon-ai/skill-quality-auditor` (v0.1.5). Agents that install this tile get structured guidance for running audits, generating remediation plans, detecting duplication, and enforcing CI quality gates.
+The `skill/` directory contains the published Tessl tile `pantheon-ai/skill-quality-auditor` (v0.1.5). Agents that install
+this tile get structured guidance for running audits, generating remediation plans, detecting duplication, and enforcing
+CI quality gates.
 
 ## Development
 

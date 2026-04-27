@@ -1,4 +1,4 @@
-module github.com/pantheon-org/tekhne/tools/skill-auditor
+module github.com/pantheon-org/skill-quality-auditor/skill-auditor
 
 go 1.25.5
 

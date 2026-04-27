@@ -49,7 +49,7 @@ Evals must pass before bumping the tile version in `tile.json`.
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 feat(scorer): add D10 coherence dimension
 fix(reporter): handle missing evals directory gracefully
 docs: update scoring rubric reference

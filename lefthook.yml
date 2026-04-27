@@ -1,0 +1,25 @@
+pre-commit:
+  parallel: true
+  commands:
+    go-fmt:
+      glob: "skill-auditor/**/*.go"
+      run: gofmt -l {staged_files} | grep . && exit 1 || exit 0
+    go-vet:
+      glob: "skill-auditor/**/*.go"
+      run: cd skill-auditor && go vet ./...
+    golangci-lint:
+      glob: "skill-auditor/**/*.go"
+      run: cd skill-auditor && golangci-lint run ./...
+    markdownlint:
+      glob: "**/*.md"
+      run: markdownlint-cli2 {staged_files}
+
+pre-push:
+  parallel: false
+  commands:
+    go-test:
+      glob: "skill-auditor/**/*.go"
+      run: cd skill-auditor && go test ./...
+    go-build:
+      glob: "skill-auditor/**/*.go"
+      run: cd skill-auditor && go build ./...

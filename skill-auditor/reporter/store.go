@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pantheon-org/tekhne/tools/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
 )
 
 // Store writes audit.json, Analysis.md, and Remediation.md to

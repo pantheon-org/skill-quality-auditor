@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pantheon-org/tekhne/tools/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
 )
 
 // dimensionOrder defines the canonical display order with camelCase keys and labels.
 var dimensionOrder = []struct {
-	key  string
+	key   string
 	label string
-	max  int
+	max   int
 }{
 	{"knowledgeDelta", "Knowledge Delta", 20},
 	{"mindsetProcedures", "Mindset + Procedures", 15},

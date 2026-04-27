@@ -44,20 +44,6 @@ func (b *validatorBridge) skillMDTokens() int {
 	return 0
 }
 
-// hasStructureWarning reports whether structure.Validate emitted a Warning
-// result whose message contains the given substring.
-func (b *validatorBridge) hasStructureWarning(substr string) bool {
-	if b.Structure == nil {
-		return false
-	}
-	for _, r := range b.Structure.Results {
-		if r.Level == types.Warning && containsString(r.Message, substr) {
-			return true
-		}
-	}
-	return false
-}
-
 // descriptionLen returns the byte length of the description field as reported
 // by CheckFrontmatter ("description: (N chars)"), or -1 if not found.
 func (b *validatorBridge) descriptionLen() int {
