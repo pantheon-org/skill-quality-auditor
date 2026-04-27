@@ -55,6 +55,8 @@ Total: 110 pts. Grade bands and CI thresholds: `skill/skill-quality-auditor/refe
 - **Tessl eval changes require `tessl eval run skill/skill-quality-auditor/` to pass.**
 - For deep rubric questions, load `skill/skill-quality-auditor/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `skill/skill-quality-auditor/references/detailed-anti-patterns.md`.
+- **When editing `skill/skill-quality-auditor/SKILL.md`, also copy it to `skill-auditor/cmd/assets/SKILL.md`** — that copy is embedded in the binary by the `init` command.
+- **When editing files under `skill/skill-quality-auditor/references/`, also copy the whole directory to `skill-auditor/cmd/assets/references/`** — those are embedded alongside SKILL.md.
 - Audit outputs land in `.context/audits/` — never commit that directory.
 
 ## Suggested task workflows

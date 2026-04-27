@@ -12,6 +12,7 @@ pre-commit:
       run: cd skill-auditor && golangci-lint run ./...
     markdownlint:
       glob: "**/*.md"
+      exclude: "skill-auditor/cmd/assets/**"
       run: markdownlint-cli2 {staged_files}
 
 pre-push:
