@@ -662,6 +662,19 @@ func TestWalkSkillsDir_noSkillsDir(t *testing.T) {
 	}
 }
 
+func TestWalkSkillsDir_missingSkillMD(t *testing.T) {
+	tmp := t.TempDir()
+	skillDir := filepath.Join(tmp, "skills", "domain", "no-skill-md")
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	v := &artifactValidator{repoRoot: tmp}
+	v.walkSkillsDir()
+	if v.errors == 0 {
+		t.Error("expected MISSING_SKILL error for skill dir without SKILL.md")
+	}
+}
+
 func TestWalkSkillsDir_validSkill(t *testing.T) {
 	tmp := t.TempDir()
 	skillDir := filepath.Join(tmp, "skills", "domain", "my-skill")

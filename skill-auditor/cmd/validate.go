@@ -110,6 +110,8 @@ func (v *artifactValidator) walkSkillDirs(skillsDir string) {
 		}
 		if _, serr := os.Stat(filepath.Join(path, "SKILL.md")); serr == nil {
 			v.checkSkillDir(path)
+		} else {
+			v.errorf("MISSING_SKILL: %s/SKILL.md", rel)
 		}
 		return nil
 	})
