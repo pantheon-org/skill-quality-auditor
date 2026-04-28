@@ -1,0 +1,23 @@
+default_enabled = true
+gitignore = true
+fix = false
+
+exclude = [".context", ".claude", "cmd/assets", "testdata"]
+
+[rules.MD013]
+line_length = 120
+heading_line_length = 120
+code_blocks = false
+tables = false
+
+# README uses <details>/<summary> blocks for install method collapsibles
+[rules.MD033]
+allowed_elements = ["details", "summary"]
+
+[rules.MD060]
+enabled = false
+
+# Fragment links to backtick-wrapped headings (### `cmd`) are valid on GitHub;
+# mdlint's anchor derivation doesn't strip backticks, causing false positives.
+[rules.MD051]
+enabled = false
