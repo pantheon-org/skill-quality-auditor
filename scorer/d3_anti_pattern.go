@@ -68,9 +68,9 @@ func scoreD3FromInstructions(instrFile string) (int, []Diagnostic) {
 	}
 	var instrData struct {
 		Instructions []struct {
-			Type             string      `json:"type"`
-			OriginalSnippets interface{} `json:"original_snippets"`
-			Content          string      `json:"content"`
+			Type             string `json:"type"`
+			OriginalSnippets any    `json:"original_snippets"`
+			Content          string `json:"content"`
 		} `json:"instructions"`
 	}
 	if json.Unmarshal(data, &instrData) != nil {
@@ -95,11 +95,11 @@ func scoreD3FromInstructions(instrFile string) (int, []Diagnostic) {
 	return 0, nil
 }
 
-func extractSnippetStr(v interface{}) string {
+func extractSnippetStr(v any) string {
 	switch val := v.(type) {
 	case string:
 		return val
-	case []interface{}:
+	case []any:
 		parts := make([]string, 0, len(val))
 		for _, item := range val {
 			if s, ok := item.(string); ok {

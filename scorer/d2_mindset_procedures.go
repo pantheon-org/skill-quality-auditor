@@ -8,14 +8,17 @@ var (
 )
 
 // scoreD2 — Mindset + Procedures (max: 15)
-func scoreD2(content string, b *validatorBridge) int {
+func scoreD2(content string, b *validatorBridge) (int, []Diagnostic) {
 	score := 0
+	var diags []Diagnostic
 
 	if reD2MindsetHeader.MatchString(content) {
 		score += 2
 	}
 
-	score += scoreD2Structure(content, b)
+	delta, structDiags := scoreD2Structure(content, b)
+	score += delta
+	diags = append(diags, structDiags...)
 
 	if countPattern(content, "when to use") > 0 || countPattern(content, "when to apply") > 0 {
 		score += 4
@@ -27,11 +30,14 @@ func scoreD2(content string, b *validatorBridge) int {
 	if score > 15 {
 		score = 15
 	}
-	return score
+	return score, diags
 }
 
-func scoreD2Structure(content string, b *validatorBridge) int {
+func scoreD2Structure(content string, b *validatorBridge) (int, []Diagnostic) {
 	if b.Content != nil {
+		if b.Content.StrongMarkers == 0 && b.Content.WeakMarkers == 0 && b.Content.ImperativeRatio == 0 {
+			return 0, []Diagnostic{warnDiag("D2", "no imperative or directive markers detected — procedural guidance may be missing")}
+		}
 		delta := 0
 		switch {
 		case b.Content.ImperativeRatio >= 0.4:
@@ -46,10 +52,10 @@ func scoreD2Structure(content string, b *validatorBridge) int {
 		} else if b.Content.ListItemCount > 0 {
 			delta++
 		}
-		return delta
+		return delta, nil
 	}
 	if reD2NumberedList.MatchString(content) {
-		return 2
+		return 2, nil
 	}
-	return 0
+	return 0, nil
 }

@@ -2,7 +2,7 @@ package scorer
 
 // scoreD8 — Practical Usability (max: 15)
 // Code block count and language tags via library; run-command check kept custom.
-func scoreD8(content string, b *validatorBridge) int {
+func scoreD8(content string, b *validatorBridge) (int, []Diagnostic) {
 	score := 5
 	score += scoreD8CodeBlocks(content, b)
 	if hasRunCommand(content) {
@@ -14,7 +14,7 @@ func scoreD8(content string, b *validatorBridge) int {
 	if score < 0 {
 		score = 0
 	}
-	return score
+	return score, nil
 }
 
 func scoreD8CodeBlocks(content string, b *validatorBridge) int {

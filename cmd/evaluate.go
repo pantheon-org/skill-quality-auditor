@@ -31,7 +31,10 @@ var evaluateCmd = &cobra.Command{
 		}
 
 		skillPath := resolveSkillPath(skillArg, repoRoot)
-		skillKey := canonicalSkillKey(skillPath, repoRoot)
+		skillKey, err := canonicalSkillKey(skillPath, repoRoot)
+		if err != nil {
+			return err
+		}
 
 		result, err := scorer.Score(skillPath)
 		if err != nil {
@@ -68,11 +71,15 @@ func init() {
 
 // canonicalSkillKey derives the domain/skill-name storage key from an absolute
 // SKILL.md path by stripping <repoRoot>/skills/ and the trailing /SKILL.md.
-func canonicalSkillKey(skillPath, repoRoot string) string {
+// Returns an error when skillPath is not under <repoRoot>/skills/.
+func canonicalSkillKey(skillPath, repoRoot string) (string, error) {
 	prefix := filepath.Join(repoRoot, "skills") + string(filepath.Separator)
+	if !strings.HasPrefix(skillPath, prefix) {
+		return "", fmt.Errorf("skill path %q is not under %q — use --repo-root to set the correct root", skillPath, prefix)
+	}
 	key := strings.TrimPrefix(skillPath, prefix)
 	key = strings.TrimSuffix(key, string(filepath.Separator)+"SKILL.md")
-	return key
+	return key, nil
 }
 
 // resolveSkillPath converts a skill arg to an absolute filesystem path to SKILL.md.

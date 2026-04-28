@@ -177,7 +177,7 @@ func TestD9_CountValidScenariosWrapper(t *testing.T) {
 
 func TestParseCoveragePercentage(t *testing.T) {
 	cases := []struct {
-		input interface{}
+		input any
 		want  int
 	}{
 		{float64(85), 85},

@@ -13,26 +13,29 @@ import (
 func TestCanonicalSkillKey_standard(t *testing.T) {
 	repoRoot := "/repo"
 	skillPath := "/repo/skills/domain/my-skill/SKILL.md"
-	got := canonicalSkillKey(skillPath, repoRoot)
+	got, err := canonicalSkillKey(skillPath, repoRoot)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if got != "domain/my-skill" {
 		t.Errorf("got %q, want %q", got, "domain/my-skill")
 	}
 }
 
 func TestCanonicalSkillKey_notUnderSkillsDir(t *testing.T) {
-	// If path is outside skills/, TrimPrefix is a no-op — returns the raw path
-	// (minus any SKILL.md suffix). We just verify it doesn't panic.
-	got := canonicalSkillKey("/other/path/SKILL.md", "/repo")
-	if got == "" {
-		t.Error("canonicalSkillKey should return a non-empty string")
+	// Path outside skills/ must return an error.
+	_, err := canonicalSkillKey("/other/path/SKILL.md", "/repo")
+	if err == nil {
+		t.Error("expected error for path outside skills/")
 	}
 }
 
 func TestCanonicalSkillKey_noSKILLMDSuffix(t *testing.T) {
 	repoRoot := "/repo"
-	// Path already points to directory, not the file.
-	got := canonicalSkillKey("/repo/skills/domain/my-skill", repoRoot)
-	// Still returns the directory segment without crashing.
+	got, err := canonicalSkillKey("/repo/skills/domain/my-skill", repoRoot)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if got == "" {
 		t.Error("expected non-empty result")
 	}
