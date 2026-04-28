@@ -29,7 +29,7 @@ pre-push:
       run: ./dist/skill-auditor validate artifacts
     skill-duplication:
       glob: "skill-auditor/cmd/assets/**"
-      run: ./dist/skill-auditor duplication
+      run: ./dist/skill-auditor duplication skill-auditor/cmd/assets
     skill-batch:
       glob: "skill-auditor/cmd/assets/**"
-      run: ./dist/skill-auditor batch skill-quality-auditor --fail-below B
+      run: ./dist/skill-auditor batch skill-auditor/cmd/assets --fail-below B
