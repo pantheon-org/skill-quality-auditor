@@ -13,46 +13,45 @@ Always work on a feature branch:
 git checkout -b feat/my-change
 ```
 
-### CLI (`skill-auditor/`)
+### CLI
 
 ```bash
-cd skill-auditor
 go test ./...
 go vet ./...
-go build -o bin/skill-auditor .
+go build -o dist/skill-auditor .
 ```
 
 Run a quick smoke test against the fixture skills:
 
 ```bash
-./bin/skill-auditor evaluate testdata/fixtures/skill-full
-./bin/skill-auditor batch testdata/fixtures/skill-minimal testdata/fixtures/skill-full
+./dist/skill-auditor evaluate testdata/fixtures/skill-full
+./dist/skill-auditor batch testdata/fixtures/skill-minimal testdata/fixtures/skill-full
 ```
 
-### Tessl skill (`skill-auditor/cmd/assets/`)
+### Tessl skill (`cmd/assets/`)
 
 ```bash
-tessl eval run skill-auditor/cmd/assets/
+tessl eval run cmd/assets/
 ```
 
-Evals must pass before bumping the tile version in `skill-auditor/cmd/assets/tile.json`.
+Evals must pass before bumping the tile version in `cmd/assets/tile.json`.
 
 ## Adding a new `init` target agent
 
-1. Add the agent definition to `skill-auditor/agents/registry.go`.
-2. Add a test case to `skill-auditor/agents/registry_test.go`.
+1. Add the agent definition to `agents/registry.go`.
+2. Add a test case to `agents/registry_test.go`.
 3. Run `go test ./agents/...` to verify.
 
 ## Adding a new dimension scorer
 
-1. Create `skill-auditor/scorer/dN_<name>.go` with a `scoreDN(content, skillDir string) (int, []Diagnostic)` function.
+1. Create `scorer/dN_<name>.go` with a `scoreDN(content, skillDir string) (int, []Diagnostic)` function.
 2. Add a corresponding `dN_<name>_test.go`.
 3. Register the scorer in `scorer/dimensions.go`.
 4. Update the max-points table in `README.md`.
 
 ## Adding a new analysis detector
 
-Pattern and semantic analysis lives in `skill-auditor/analysis/`.
+Pattern and semantic analysis lives in `analysis/`.
 
 1. Add a new function to `analysis/patterns.go` (structural/rule-based) or `analysis/tfidf.go` (keyword-based).
 2. Write tests in the corresponding `_test.go` file. Aim for ≥90% coverage.
@@ -73,4 +72,4 @@ docs: update scoring rubric reference
 
 - Keep PRs focused on a single concern.
 - All tests must pass (`go test ./...`).
-- Update `README.md` and any affected `skill/skill-quality-auditor/references/` docs.
+- Update `README.md` and any affected `cmd/assets/references/` docs.

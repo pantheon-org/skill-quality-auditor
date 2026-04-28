@@ -13,22 +13,21 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version-file: skill-auditor/go.mod
-          cache-dependency-path: skill-auditor/go.sum
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
 
       - name: gofmt
         run: |
-          files=$(gofmt -l ./skill-auditor)
+          files=$(gofmt -l .)
           if [ -n "$files" ]; then
             echo "Files not formatted:"; echo "$files"; exit 1
           fi
 
       - name: go vet
-        run: cd skill-auditor && go vet ./...
+        run: go vet ./...
 
       - uses: golangci/golangci-lint-action@v7
         with:
-          working-directory: skill-auditor
           version: v2.11.4
 
       - uses: actions/setup-node@v4
@@ -46,11 +45,11 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version-file: skill-auditor/go.mod
-          cache-dependency-path: skill-auditor/go.sum
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
 
       - name: go test
-        run: cd skill-auditor && go test ./...
+        run: go test ./...
 
   build:
     runs-on: ubuntu-latest
@@ -60,8 +59,8 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version-file: skill-auditor/go.mod
-          cache-dependency-path: skill-auditor/go.sum
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
 
       - name: go build
-        run: cd skill-auditor && go build ./...
+        run: go build ./...

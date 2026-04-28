@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/scorer"
 )
 
 // Analysis returns a markdown summary of a Result suitable for writing to Analysis.md.

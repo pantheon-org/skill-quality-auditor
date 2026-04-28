@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/scorer"
 )
 
 const testDate = "2026-01-01"

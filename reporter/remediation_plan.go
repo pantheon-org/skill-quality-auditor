@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/scorer"
 	"gopkg.in/yaml.v3"
 )
 
