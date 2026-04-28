@@ -1,0 +1,8 @@
+{
+  "checklist": [
+    {"id": "c1", "criterion": "skill-auditor batch used with --store flag", "max_score": 30},
+    {"id": "c2", "criterion": "All skills evaluated in a single batch run", "max_score": 30},
+    {"id": "c3", "criterion": "Per-skill grade table produced showing score out of 140", "max_score": 20},
+    {"id": "c4", "criterion": "Audit results stored in .context/audits/", "max_score": 20}
+  ]
+}

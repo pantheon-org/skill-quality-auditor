@@ -1,0 +1,10 @@
+{
+  "checklist": [
+    {"id": "c1", "criterion": "All 9 dimensions scored with numerical value and per-dimension justification", "max_score": 25},
+    {"id": "c2", "criterion": "D1 Knowledge Delta assigned <=10/20 for high redundant content", "max_score": 20},
+    {"id": "c3", "criterion": "SQL basics, installation steps, and generic best-practices flagged as low-delta", "max_score": 15},
+    {"id": "c4", "criterion": "A-grade threshold stated as >=126/140", "max_score": 15},
+    {"id": "c5", "criterion": "Remediation plan contains file-level changes with S/M/L effort sizing", "max_score": 15},
+    {"id": "c6", "criterion": "D4 and D5 weaknesses identified", "max_score": 10}
+  ]
+}
