@@ -18,7 +18,7 @@ Visualization approaches for skill quality metrics. Provides templates for track
 
 ### Core Metrics Panel
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                   SKILL COLLECTION HEALTH                   │
 ├──────────────────┬──────────────────┬───────────────────────┤
@@ -34,7 +34,7 @@ Visualization approaches for skill quality metrics. Provides templates for track
 
 ### Grade Distribution Chart
 
-```
+```text
 Grade Distribution
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 A (108+) ████████████████████████████████████ 36 (72%)
@@ -46,7 +46,7 @@ D/F (<84) 0 (0%)
 
 ### Top/Bottom Skills
 
-```
+```text
 Top Performers          │  Needs Improvement
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 bdd-testing      98/120 │  old-patterns     72/120
@@ -58,7 +58,7 @@ bun-development  94/120 │  temp-skills      82/120
 
 ### Quality Trend (12 weeks)
 
-```
+```text
 Average Score
 120 ┤
 110 ┤       ╭───╮    ╭────╮
@@ -73,7 +73,7 @@ Trend: Improving (+8 points over 12 weeks)
 
 ### Duplication Trend
 
-```
+```text
 Duplication %
 35 ┤
 30 ┤╮
@@ -91,7 +91,7 @@ Trend: Decreasing (35% → 8%)
 
 ## Duplication Heatmap
 
-```
+```text
              bdd-  type-  bun-  mise- biome-
              test  script dev   plete plete
 bdd-test     ───   ███    ░░    ░░    ░░

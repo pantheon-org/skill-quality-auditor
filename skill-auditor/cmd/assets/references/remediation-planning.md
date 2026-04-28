@@ -52,7 +52,7 @@ Prioritize by:
 
 For each priority dimension:
 
-```
+```text
 ### Phase N: [Dimension Name] - Priority: [Priority]
 
 **Target**: Increase from [current]/[max] to [target]/[max] (+[delta] points)

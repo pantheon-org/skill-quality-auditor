@@ -78,6 +78,7 @@ try {
 ## Anti-Patterns
 
 BAD: Skipping validation in a "trusted" internal path
+
 ```typescript
 // BAD
 function processInternal(data: any) {
@@ -88,6 +89,7 @@ function processInternal(data: any) {
 WHY: Internal paths are often reachable from untrusted callers via indirection. NEVER assume trust without verifying the call chain.
 
 GOOD:
+
 ```typescript
 // GOOD
 function processInternal(data: unknown) {
@@ -97,6 +99,7 @@ function processInternal(data: unknown) {
 ```
 
 BAD: Validating after side effects
+
 ```typescript
 // BAD
 await db.insert(data);

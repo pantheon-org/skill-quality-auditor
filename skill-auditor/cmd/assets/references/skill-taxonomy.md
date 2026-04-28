@@ -10,20 +10,24 @@
 ## Domain Definitions
 
 ### ci-cd/
+
 **Scope:** CI/CD pipelines, deployment automation, release management
 
 **Includes:**
+
 - GitHub Actions, GitLab CI, Azure Pipelines (pipeline platforms)
 - Jenkins (CI/CD orchestration)
 - Helm (Kubernetes package manager & deployment)
 - FluentBit (log forwarding for observability pipelines)
 
 **Excludes:**
+
 - Infrastructure provisioning (use infrastructure/ instead)
 - Monitoring/alerting tools (use observability/ instead)
 
 **Structure:** Paired generator/validator skills nested under tool name
-```
+
+```text
 ci-cd/
 ├── github-actions/{generator,validator}
 ├── gitlab-ci/{generator,validator}
@@ -33,9 +37,11 @@ ci-cd/
 ---
 
 ### infrastructure/
+
 **Scope:** Infrastructure as Code, cloud provisioning, container management
 
 **Includes:**
+
 - Terraform, Terragrunt (IaC provisioning)
 - Ansible (configuration management)
 - Docker (containerization)
@@ -44,15 +50,18 @@ ci-cd/
 - AWS CDK (aws-cdk/ subdomain)
 
 **Excludes:**
+
 - Deployment pipelines (use ci-cd/ instead)
 - Monitoring tools (use observability/ instead)
 
 **Subdomains:**
+
 - `cfn/` - CloudFormation-specific tools (behavior-validator, template-compare)
 - `aws-cdk/` - AWS CDK ecosystem (cdk-nag, future: cdk-patterns, cdk-constructs)
 
 **Structure:** Paired tools nested, standalone tools at subdomain level
-```
+
+```text
 infrastructure/
 ├── terraform/{generator,validator}
 ├── cfn/
@@ -65,25 +74,30 @@ infrastructure/
 ---
 
 ### repository-mgmt/
+
 **Scope:** Repository management, monorepo orchestration, git workflows, workspace organization
 
 **Includes:**
+
 - Nx workspace tools (nx/ subdomain)
 - Future: Turborepo, Lerna, Rush, Moon
 - Git workflows, branching strategies
 - Workspace management patterns
 
 **Excludes:**
+
 - General development tools not specific to repo management (use development/ instead)
 - CI/CD pipelines (use ci-cd/ instead)
 
 **Subdomains:**
+
 - `nx/` - Nx monorepo ecosystem
 
 **Why repository-mgmt (not monorepo):** Broader scope includes general repository management, not exclusive to monorepos
 
 **Structure:** Tools organized under ecosystem subdomain
-```
+
+```text
 repository-mgmt/
 └── nx/
     ├── workspace-patterns/
@@ -94,9 +108,11 @@ repository-mgmt/
 ---
 
 ### development/
+
 **Scope:** General-purpose development tools, languages, runtimes, formatters, linters
 
 **Includes:**
+
 - Bun, TypeScript (languages/runtimes)
 - Biome (formatter/linter)
 - Commander.js (CLI framework)
@@ -104,16 +120,19 @@ repository-mgmt/
 - Front-end web development tools (front-end/ subdomain)
 
 **Excludes:**
+
 - Repository management (use repository-mgmt/ instead)
 - Agent framework configs (use agentic-harness/ instead)
 - Testing tools (use testing/ instead)
 
 **Subdomains:**
+
 - `scripting/` - Shell scripting and Makefile generation
 - `front-end/` - Front-end web development (design tokens, theming, CSS)
 
 **Structure:** Mix of standalone skills and subdomains
-```
+
+```text
 development/
 ├── bun-development/
 ├── typescript-advanced/
@@ -128,21 +147,25 @@ development/
 ---
 
 ### agentic-harness/
+
 **Scope:** Agent framework configurations, agent-specific documentation, agent collaboration patterns
 
 **Includes:**
+
 - OpenCode configuration
 - AGENTS.md documentation (agent collaboration)
 - Future: Cursor, Claude Desktop, Windsurf, Aider configs
 
 **Excludes:**
+
 - General documentation (use documentation/ instead)
 - Development tools not specific to agents (use development/ instead)
 
 **Why Top-Level:** Agent frameworks and agent-specific tooling are a distinct category warranting their own domain for discoverability
 
 **Structure:** Flat list of framework-specific skills
-```
+
+```text
 agentic-harness/
 ├── opencode/
 ├── agents-md/
@@ -152,20 +175,24 @@ agentic-harness/
 ---
 
 ### testing/
+
 **Scope:** Testing methodologies, test frameworks, quality assurance, debugging workflows
 
 **Includes:**
+
 - BDD testing (Behavior-Driven Development)
 - TDD (Test-Driven Development)
 - Skill quality auditor
 - UI debugging workflows
 
 **Excludes:**
+
 - Software engineering principles (use software-engineering/ instead)
 - Observability/monitoring (use observability/ instead)
 
 **Structure:** Flat list of testing methodology skills
-```
+
+```text
 testing/
 ├── bdd-testing/
 ├── test-driven-development/
@@ -176,20 +203,24 @@ testing/
 ---
 
 ### software-engineering/
+
 **Scope:** Software engineering principles, SOLID, design patterns, architecture patterns
 
 **Includes:**
+
 - SOLID principles (SRP, OCP, LSP, ISP, DIP)
 - Clean Architecture (boundaries, dependencies, layers)
 - Design patterns (Strategy, Factory, Adapter, Observer, etc.)
 - Testable design (dependency injection, layer isolation)
 
 **Excludes:**
+
 - Testing methodologies (use testing/ instead)
 - Documentation writing (use documentation/ instead)
 
 **Structure:** Focused skills under unified tile
-```
+
+```text
 software-engineering/
 ├── solid-principles/
 ├── clean-architecture/
@@ -197,9 +228,11 @@ software-engineering/
 ├── testable-design/
 └── design-principles/tile.json  (unified tile)
 ```
+
 software-engineering/
 └── software-design-principles/
-```
+
+```text
 
 ---
 
@@ -217,11 +250,13 @@ software-engineering/
 
 **Structure:** Mix of paired tools and standalone skills
 ```
+
 observability/
 ├── promql/{generator,validator}
 ├── logql-generator/
 └── k8s-debug/
-```
+
+```text
 
 ---
 
@@ -243,13 +278,15 @@ observability/
 
 **Structure:** Flat list of documentation skills
 ```
+
 documentation/
 ├── markdown-authoring/
 ├── acceptance-criteria/
 ├── conventional-commits/
 ├── plain-english/
 └── journal-entry-creator/
-```
+
+```text
 
 ---
 
@@ -268,9 +305,11 @@ documentation/
 
 **Structure:** Flat list of package management tools
 ```
+
 package-mgmt/
 └── mise-complete/
-```
+
+```text
 
 ---
 
@@ -288,11 +327,13 @@ package-mgmt/
 
 **Structure:** Flat list of planning/organization skills
 ```
+
 project-mgmt/
 ├── moscow-prioritization/
 ├── planning-toolkit/
 └── create-context-file/
-```
+
+```text
 
 ---
 
@@ -308,11 +349,13 @@ project-mgmt/
 
 **Structure:** Flat list of specialized skills
 ```
+
 specialized/
 ├── colyseus-multiplayer/
 ├── github-copilot-models/
 └── gitlab-api/
-```
+
+```text
 
 ---
 
@@ -451,6 +494,7 @@ Before creating a new domain:
 
 **Structure:**
 ```
+
 domain/
 └── tool/
     ├── generator/
@@ -459,16 +503,19 @@ domain/
     └── validator/
         ├── SKILL.md
         └── tile.json
-```
+
+```text
 
 ```
 
 **Examples:**
+
 - `ci-cd/github-actions/{generator,validator}`
 - `infrastructure/terraform/{generator,validator}`
 - `development/scripting/bash-script/{generator,validator}`
 
 **When NOT to nest:**
+
 - Only generator OR validator exists (place directly in domain)
 - Generator and validator are conceptually different tools (place separately)
 
@@ -477,6 +524,7 @@ domain/
 ## Taxonomy Maintenance
 
 ### Quarterly Review Process
+
 1. **Check domain balance** - Avoid over-concentration in single domain
 2. **Evaluate subdomain candidates** - Are there 3+ related skills that should be grouped?
 3. **Review borderline cases** - Are any skills misclassified based on new context?
@@ -484,18 +532,23 @@ domain/
 5. **Document new patterns** - Add borderline cases as they arise
 
 ### Indicators for Domain Refinement
+
 - **Domain has 20+ skills** - Consider splitting into subdomains or multiple domains
 - **Subdomain has 1 skill for 6+ months** - Consider flattening into parent domain
 - **Frequent classification debates** - Scope definition needs clarification
 - **Cross-domain dependencies** - May indicate skills belong together
 
 ### When to Split a Domain
+
 Example: If `infrastructure/` grows to 25+ skills, consider:
+
 - Split by cloud provider: `infrastructure/aws/`, `infrastructure/gcp/`, `infrastructure/azure/`
 - Split by tool type: `infrastructure/iac/` (Terraform, etc.), `infrastructure/containers/` (Docker, K8s)
 
 ### When to Merge Domains
+
 Example: If `package-mgmt/` remains at 1-2 skills for 12+ months:
+
 - Consider merging into `development/` domain
 - Document why package management didn't need separate domain
 
@@ -504,31 +557,41 @@ Example: If `package-mgmt/` remains at 1-2 skills for 12+ months:
 ## Common Classification Questions
 
 ### Q: Where do API client skills belong?
+
 **A:** Depends on specificity:
+
 - Platform-specific (GitLab API) → specialized/
 - General HTTP/REST skills → development/
 - Integration with existing domains (AWS API) → infrastructure/
 
 ### Q: Where do language-specific tools belong?
+
 **A:**
+
 - General-purpose language tools (TypeScript) → development/
 - Language-specific testing frameworks → testing/
 - Language package managers → package-mgmt/
 
 ### Q: Where do deployment tools belong?
+
 **A:**
+
 - CI/CD pipelines and automation → ci-cd/
 - Infrastructure provisioning → infrastructure/
 - Container orchestration → infrastructure/
 
 ### Q: Where do documentation generation tools belong?
+
 **A:**
+
 - General documentation → documentation/
 - Agent-specific documentation → agentic-harness/
 - API documentation (might belong in development/, case-by-case)
 
 ### Q: What if a skill spans multiple domains?
+
 **A:**
+
 - Choose primary domain based on main use case
 - Document cross-domain nature in skill frontmatter
 - Consider splitting into multiple focused skills
@@ -538,6 +601,7 @@ Example: If `package-mgmt/` remains at 1-2 skills for 12+ months:
 ## Taxonomy Evolution History
 
 ### 2026-03-03 - Initial 12-Domain Structure
+
 - Reorganized from flat 63-skill structure
 - Created domains: ci-cd, infrastructure, repository-mgmt, development, agentic-harness, testing, software-engineering, observability, documentation, package-mgmt, project-mgmt, specialized
 - Renamed monorepo → repository-mgmt (broader scope)

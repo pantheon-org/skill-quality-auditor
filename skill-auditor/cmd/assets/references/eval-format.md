@@ -35,6 +35,7 @@ All four sections are required. Success criteria must be measurable (files creat
 Minimum 5 scenarios per skill. Target 7–9 for skills with broad trigger surfaces.
 
 Cover:
+
 - Primary happy path
 - Edge cases and partial inputs
 - Failure / anti-pattern detection

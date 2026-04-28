@@ -159,7 +159,7 @@ Requirements for achieving A-grade (≥126/140) on quality evaluation. Use this 
 
 ### Navigation Hub Pattern (Best for Aggregations)
 
-```
+```text
 skill-name/
 ├── SKILL.md (60-90 lines)
 ├── AGENTS.md
@@ -170,7 +170,7 @@ skill-name/
 
 ### Single-File Pattern (Best for Focused Skills)
 
-```
+```text
 skill-name/
 ├── SKILL.md (100-250 lines)
 └── AGENTS.md (optional)
