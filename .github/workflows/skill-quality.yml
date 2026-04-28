@@ -3,13 +3,13 @@ name: Skill Quality Gate
 on:
   pull_request:
     paths:
-      - 'skill-auditor/cmd/assets/**'
-      - 'skill-auditor/**/*.go'
+      - 'cmd/assets/**'
+      - '**/*.go'
   push:
     branches: [main]
     paths:
-      - 'skill-auditor/cmd/assets/**'
-      - 'skill-auditor/**/*.go'
+      - 'cmd/assets/**'
+      - '**/*.go'
   workflow_dispatch:
 
 jobs:
@@ -22,22 +22,22 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: stable
-          cache-dependency-path: skill-auditor/go.sum
+          cache-dependency-path: go.sum
 
       - name: Build
-        run: cd skill-auditor && go build -o ../dist/skill-auditor .
+        run: go build -o dist/skill-auditor .
 
       - name: Unit tests
-        run: cd skill-auditor && go test ./...
+        run: go test ./...
 
       - name: Validate artifacts
         run: ./dist/skill-auditor validate artifacts
 
       - name: Duplication check
-        run: ./dist/skill-auditor duplication skill-auditor/cmd/assets
+        run: ./dist/skill-auditor duplication cmd/assets
 
       - name: Batch quality gate
-        run: ./dist/skill-auditor batch ./skill-auditor/cmd/assets --fail-below B
+        run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
 
       - name: Install Tessl CLI
         run: curl -fsSL https://get.tessl.io | sh
@@ -45,4 +45,4 @@ jobs:
       - name: Tessl eval run
         env:
           TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
-        run: tessl eval run skill-auditor/cmd/assets/
+        run: tessl eval run cmd/assets/
