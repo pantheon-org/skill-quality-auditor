@@ -60,7 +60,7 @@ The 9-dimension quality framework evaluates skills across 9 dimensions totaling 
 ❌ Generic advice (write tests, use version control)  
 ❌ Installation tutorials (npm install, pip install)
 
-### Examples
+### D1 Examples
 
 **❌ Low Knowledge Delta (12/20):**
 
@@ -119,7 +119,7 @@ Expert pattern AI assistants don't know by default.
 - **7-9 points:** Missing key element
 - **0-6 points:** Generic or absent
 
-### Components
+### D2 Components
 
 1. **Clear Mindset/Philosophy (5 points)**
    - Core principle or philosophy
@@ -137,7 +137,7 @@ Expert pattern AI assistants don't know by default.
    - Explicit non-applicable scenarios
    - Example: "Use for backend APIs, NOT for UI styling"
 
-### Example
+### D2 Example
 
 **✅ Strong Mindset + Procedures (15/15):**
 
@@ -173,7 +173,7 @@ Write tests BEFORE implementation. The test defines the contract; implementation
 - **7-9 points:** Generic warnings
 - **0-6 points:** Missing or weak
 
-### Components
+### D3 Components
 
 1. **NEVER Lists with WHY (5 points)**
    - Explicit "NEVER do X because Y" statements
@@ -190,7 +190,7 @@ Write tests BEFORE implementation. The test defines the contract; implementation
    - Impact: security, performance, maintainability
    - Example: "Leads to SQL injection attacks"
 
-### Example
+### D3 Example
 
 **✅ Strong Anti-Patterns (14/15):**
 
@@ -225,7 +225,7 @@ WHY: False positives waste hours debugging phantom issues
 - **7-9 points:** Missing key elements
 - **0-6 points:** Non-compliant
 
-### Components
+### D4 Components
 
 1. **Task Focus Declaration (4 points) ⭐ CRITICAL**
     - Skill indicates ONE type of task it helps complete
@@ -287,7 +287,7 @@ WHY: False positives waste hours debugging phantom issues
     - **Omission without penalty:** skills with no `references/` directory and no external resources may omit the section entirely
     - **WHY:** A 3-column table forces authors to articulate what a reference covers and when an agent should load it — making references actionable rather than decorative
 
-### Examples
+### D4 Examples
 
 **✅ Excellent Specification Compliance (15/15):**
 
@@ -305,7 +305,8 @@ bun run scripts/run-tests.sh
 ```
 
 Reference files use relative paths: `references/file.md`
-```
+
+```text
 
 *Perfect: comprehensive description, portable paths (scripts/, references/), no agent mentions*
 
@@ -325,7 +326,8 @@ For Claude Code users, run:
 ```
 
 For Cursor users, see `.claude/docs/file.md`
-```
+
+```text
 
 *Problems: weak description, harness-specific paths (.opencode/, .claude/), agent-specific references*
 
@@ -415,7 +417,7 @@ Problems: bullet list format — table with Topic/Reference/When to Use is requi
 - **7-9 points:** Everything frontloaded, >300 lines
 - **0-6 points:** No structure, >500 lines
 
-### Components
+### D5 Components
 
 1. **Navigation Hub Approach (5 points)**
    - SKILL.md is <100 lines
@@ -484,11 +486,11 @@ This forces agents to load everything or guess what to load.
 4. Do NOT pre-load all references
 ```
 
-### Example
+### D5 Example
 
 **✅ Excellent Progressive Disclosure (15/15):**
 
-```
+```text
 bdd-testing/
 ├── SKILL.md (64 lines - navigation hub with actionable "When to Use" per reference)
 ├── AGENTS.md (explicit: "load only references needed for current task")
@@ -500,14 +502,14 @@ bdd-testing/
 
 **❌ Poor Progressive Disclosure (6/15):**
 
-```
+```text
 bdd-testing/
 └── SKILL.md (1,800 lines - everything frontloaded)
 ```
 
 **❌ Missing Lazy Loading (10/15 — loses 3 points):**
 
-```
+```text
 bdd-testing/
 ├── SKILL.md (80 lines - good hub, but references table has no "When to Use" column)
 ├── AGENTS.md (says "load all references before starting")
@@ -542,7 +544,7 @@ bdd-testing/
    - Example: typescript-type-system "Choose based on use case"
    - Use: Technical tools, patterns
 
-### Example
+### D6 Example
 
 **✅ Well-Calibrated (14/15):**
 
@@ -599,7 +601,7 @@ Too rigid - let has valid use cases.
 - **7-9 points:** Some weak examples
 - **0-6 points:** Abstract or missing
 
-### Components
+### D8 Components
 
 1. **Concrete Examples (5 points)**
    - Real code, not pseudocode
@@ -630,7 +632,7 @@ Too rigid - let has valid use cases.
 
 **Core Principle:** Static quality (D1-D8) is necessary but not sufficient. Runtime validation proves the skill actually changes agent behavior.
 
-### Components
+### D9 Components
 
 1. **Eval Directory Structure (4 points)**
    - `evals/` directory exists with proper layout
@@ -671,11 +673,11 @@ tessl eval run <tile-path>
 tessl eval view-status <status_id> --json
 ```
 
-### Examples
+### D9 Examples
 
 **High Eval Validation (19/20):**
 
-```
+```text
 skill-name/evals/
   instructions.json      # 28 instructions extracted
   summary.json           # 100% coverage, 5 scenarios
@@ -689,7 +691,7 @@ skill-name/evals/
 
 **Low Eval Validation (4/20):**
 
-```
+```text
 skill-name/evals/
   instructions.json      # Present but only 5 instructions
   # No summary.json, no scenarios
@@ -697,7 +699,7 @@ skill-name/evals/
 
 **Zero Eval Validation (0/20):**
 
-```
+```text
 skill-name/
   SKILL.md               # No evals/ directory at all
 ```
