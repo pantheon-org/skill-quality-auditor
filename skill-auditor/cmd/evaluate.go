@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	evaluateJSON      bool
-	evaluateStore     bool
-	evaluateRepoRoot  string
+	evaluateJSON     bool
+	evaluateStore    bool
+	evaluateRepoRoot string
 )
 
 var evaluateCmd = &cobra.Command{
