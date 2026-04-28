@@ -204,20 +204,20 @@ For each reference file:
    priority: CRITICAL|HIGH|MEDIUM|LOW
    source: [original-skill-name]
    ---
-   
+
    # [Topic Title]
-   
+
    [2-3 sentence overview]
-   
+
    ## [Section]
    [Content with code examples]
-   
+
    ## Best Practices
    [Actionable guidelines]
-   
+
    ## Common Pitfalls
    [Anti-patterns with WHY]
-   
+
    ## Related
    - @see references/[related-file].md
    ```
