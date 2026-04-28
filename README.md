@@ -18,9 +18,73 @@ reporter/                   # text/JSON formatters, audit store, duplication/agg
 testdata/                   # fixture skills for unit tests
 ```
 
+## Install
+
+<details open>
+<summary><strong>install.sh (Linux / macOS)</strong></summary>
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/scripts/install.sh | sh
+```
+
+Installs the latest binary to `/usr/local/bin`. Override with `INSTALL_DIR`:
+
+```bash
+INSTALL_DIR=~/.local/bin curl -fsSL ... | sh
+```
+
+Pin a specific version with `VERSION=v1.2.3 curl ...`.
+
+</details>
+
+<details>
+<summary><strong>Homebrew (macOS / Linux)</strong></summary>
+
+```bash
+brew tap pantheon-org/tap
+brew install skill-auditor
+```
+
+</details>
+
+<details>
+<summary><strong>mise</strong></summary>
+
+```bash
+mise use ubi:pantheon-org/skill-quality-auditor
+```
+
+Or add to `mise.toml`:
+
+```toml
+[tools]
+"ubi:pantheon-org/skill-quality-auditor" = "latest"
+```
+
+</details>
+
+<details>
+<summary><strong>Go install (development)</strong></summary>
+
+```bash
+go install github.com/pantheon-org/skill-quality-auditor@latest
+```
+
+</details>
+
+## Updating
+
+| Method | Command |
+| --- | --- |
+| install.sh | `skill-auditor update` |
+| Homebrew | `brew upgrade skill-auditor` |
+| mise | `mise upgrade skill-auditor` |
+| Go install | `go install github.com/pantheon-org/skill-quality-auditor@latest` |
+
 ## Quick start
 
 ```bash
+# If building from source
 go build -o dist/skill-auditor .
 
 # Evaluate a single skill
@@ -61,6 +125,11 @@ go build -o dist/skill-auditor .
 
 # Install the skill into local agent environments
 ./dist/skill-auditor init
+
+# Update to the latest release (install.sh installs only)
+skill-auditor update
+skill-auditor update --check           # report without installing
+skill-auditor update --version-target v1.2.3
 ```
 
 ## CLI reference
@@ -231,6 +300,20 @@ Performs semantic and structural analysis of a skill without requiring external 
 rule-based detectors for required sections, trigger-word frequency, structural conformance, and
 anti-pattern signals. The default `--pipeline` mode runs both and writes a combined report to
 `.context/analysis/pattern-report-<skill>-YYYY-MM-DD.md`.
+
+### `update`
+
+```text
+skill-auditor update [flags]
+
+Flags:
+  --check           report the latest version without installing
+  --version-target  install a specific version (e.g. v1.2.3)
+```
+
+Fetches the latest release from GitHub and replaces the running binary in-place.
+Only applicable when installed via `install.sh` — Homebrew and mise users should use
+their own update commands (`brew upgrade` / `mise upgrade`).
 
 ## Scoring dimensions
 

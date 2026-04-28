@@ -37,6 +37,11 @@ jobs:
       - name: markdownlint
         run: npx markdownlint-cli2 "**/*.md" "#node_modules" "#.context" "#.claude"
 
+      - uses: jdx/mise-action@v2
+
+      - name: shellcheck
+        run: shellcheck scripts/*.sh
+
   test:
     runs-on: ubuntu-latest
     needs: lint

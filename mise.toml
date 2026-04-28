@@ -1,6 +1,10 @@
+[settings]
+minimum_release_age = "7d"
+
 [tools]
 go = "1.25.5"
 golangci-lint = "2.11.4"
 "npm:markdownlint-cli2" = "0.22.0"
 lefthook = "2.1.5"
+shellcheck = "latest"
 "brew:tesslio/tap/tessl" = "latest"

@@ -2,34 +2,37 @@ pre-commit:
   parallel: true
   commands:
     go-fmt:
-      glob: "skill-auditor/**/*.go"
+      glob: "**/*.go"
       run: gofmt -l {staged_files} | grep . && exit 1 || exit 0
     go-vet:
-      glob: "skill-auditor/**/*.go"
-      run: cd skill-auditor && go vet ./...
+      glob: "**/*.go"
+      run: go vet ./...
     golangci-lint:
-      glob: "skill-auditor/**/*.go"
-      run: cd skill-auditor && golangci-lint run ./...
+      glob: "**/*.go"
+      run: golangci-lint run ./...
     markdownlint:
       glob: "**/*.md"
-      exclude: "skill-auditor/cmd/assets/**"
+      exclude: "cmd/assets/**"
       run: markdownlint-cli2 {staged_files}
+    shellcheck:
+      glob: "scripts/**/*.sh"
+      run: shellcheck {staged_files}
 
 pre-push:
   parallel: false
   commands:
     go-test:
-      glob: "skill-auditor/**/*.go"
-      run: cd skill-auditor && go test ./...
+      glob: "**/*.go"
+      run: go test ./...
     go-build:
-      glob: "skill-auditor/**/*.go"
-      run: cd skill-auditor && go build -o ../dist/skill-auditor .
+      glob: "**/*.go"
+      run: go build -o dist/skill-auditor .
     skill-validate:
-      glob: "skill-auditor/cmd/assets/**"
+      glob: "cmd/assets/**"
       run: ./dist/skill-auditor validate artifacts
     skill-duplication:
-      glob: "skill-auditor/cmd/assets/**"
-      run: ./dist/skill-auditor duplication skill-auditor/cmd/assets
+      glob: "cmd/assets/**"
+      run: ./dist/skill-auditor duplication cmd/assets
     skill-batch:
-      glob: "skill-auditor/cmd/assets/**"
-      run: ./dist/skill-auditor batch ./skill-auditor/cmd/assets --fail-below B
+      glob: "cmd/assets/**"
+      run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
