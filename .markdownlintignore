@@ -1,2 +1,6 @@
 # Embedded binary assets — copies of source files, not authored markdown
-skill-auditor/cmd/assets/
+skill-auditor/cmd/assets/**
+skill-auditor/testdata/**
+# Generated outputs and worktree snapshots
+.context/**
+.claude/**

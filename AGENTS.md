@@ -86,12 +86,12 @@ Total: **140 pts.** Grade bands and CI thresholds: `skill-auditor/cmd/assets/ref
 - For deep rubric questions, load `skill-auditor/cmd/assets/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `skill-auditor/cmd/assets/references/detailed-anti-patterns.md`.
 - **Edit assets directly under `skill-auditor/cmd/assets/`** — there is no separate `skill/` directory to mirror.
-- Audit outputs land in `.context/audits/`, analysis reports in `.context/analysis/`, remediation plans in `.context/plans/` — never commit those directories.
+- Audit outputs: `.context/audits/`, `.context/analysis/`, `.context/plans/` — never commit those directories.
 
 ## Output locations
 
 | Command | Output path |
-|---------|-------------|
+| --- | --- |
 | `evaluate --store` / `batch --store` | `.context/audits/<skill>/<date>/` |
 | `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |

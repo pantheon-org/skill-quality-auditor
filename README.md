@@ -234,7 +234,7 @@ anti-pattern signals. The default `--pipeline` mode runs both and writes a combi
 ## Output locations
 
 | Command | Output path |
-|---------|-------------|
+| --- | --- |
 | `evaluate --store` / `batch --store` | `.context/audits/<skill>/<date>/` |
 | `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
