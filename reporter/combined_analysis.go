@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/analysis"
+	"github.com/pantheon-org/skill-quality-auditor/analysis"
 )
 
 // CombinedAnalysis is the output of the full analysis pipeline for one skill.

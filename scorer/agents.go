@@ -3,7 +3,7 @@ package scorer
 import (
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/agents"
+	"github.com/pantheon-org/skill-quality-auditor/agents"
 )
 
 // harnessDirs and agentNames are derived from the shared agents registry.

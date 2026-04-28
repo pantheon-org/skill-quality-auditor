@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/duplication"
+	"github.com/pantheon-org/skill-quality-auditor/duplication"
 )
 
 // AggregationPlan returns a markdown aggregation plan for a skill family.

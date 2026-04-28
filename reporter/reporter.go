@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/scorer"
 )
 
 // dimensionOrder defines the canonical display order with camelCase keys and labels.

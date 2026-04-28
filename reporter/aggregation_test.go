@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/duplication"
+	"github.com/pantheon-org/skill-quality-auditor/duplication"
 )
 
 var aggEntries = []duplication.SkillEntry{

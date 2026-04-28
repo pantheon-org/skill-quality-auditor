@@ -7,61 +7,60 @@ Calibration, Pattern Recognition, Practical Usability, and Eval Validation.
 ## Repository layout
 
 ```text
-skill-auditor/              # Go CLI binary
-  cmd/                      # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend, validate, lint, prune, analyze, init
-  cmd/assets/               # Tessl tile — SKILL.md, tile.json, evals, references, schemas, templates (single source of truth)
-  agents/                   # agent registry (supported agent environments for `init`)
-  scorer/                   # D1–D9 dimension scorers
-  analysis/                 # TF-IDF keyword extractor + rule-based pattern detectors (used by analyze)
-  duplication/              # word-level Jaccard similarity engine (used by duplication + aggregate)
-  reporter/                 # text/JSON formatters, audit store, duplication/aggregation/remediation/analysis reports
-  testdata/                 # fixture skills for unit tests
+go.mod / main.go            # Go CLI root — build from here
+cmd/                        # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend, validate, lint, prune, analyze, init
+cmd/assets/                 # Tessl tile — SKILL.md, tile.json, evals, references, schemas, templates (single source of truth)
+agents/                     # agent registry (supported agent environments for `init`)
+scorer/                     # D1–D9 dimension scorers
+analysis/                   # TF-IDF keyword extractor + rule-based pattern detectors (used by analyze)
+duplication/                # word-level Jaccard similarity engine (used by duplication + aggregate)
+reporter/                   # text/JSON formatters, audit store, duplication/aggregation/remediation/analysis reports
+testdata/                   # fixture skills for unit tests
 ```
 
 ## Quick start
 
 ```bash
-cd skill-auditor
-go build -o bin/skill-auditor .
+go build -o dist/skill-auditor .
 
 # Evaluate a single skill
-./bin/skill-auditor evaluate skills/my-skill
+./dist/skill-auditor evaluate skills/my-skill
 
 # Evaluate with JSON output and persist result
-./bin/skill-auditor evaluate skills/my-skill --json --store
+./dist/skill-auditor evaluate skills/my-skill --json --store
 
 # Evaluate multiple skills; fail CI if any score below B
-./bin/skill-auditor batch skills/skill-a skills/skill-b --fail-below B
+./dist/skill-auditor batch skills/skill-a skills/skill-b --fail-below B
 
 # Detect duplicate or overlapping skills
-./bin/skill-auditor duplication
+./dist/skill-auditor duplication
 
 # Generate an aggregation plan for a skill family
-./bin/skill-auditor aggregate --family bdd
+./dist/skill-auditor aggregate --family bdd
 
 # Generate a remediation plan from a stored audit
-./bin/skill-auditor remediate domain/my-skill
+./dist/skill-auditor remediate domain/my-skill
 
 # Validate an existing remediation plan
-./bin/skill-auditor remediate domain/my-skill --validate
+./dist/skill-auditor remediate domain/my-skill --validate
 
 # Show score trends across stored audits
-./bin/skill-auditor trend
+./dist/skill-auditor trend
 
 # Validate skill artifact conventions
-./bin/skill-auditor validate artifacts
+./dist/skill-auditor validate artifacts
 
 # Check skill consistency (frontmatter, shebangs)
-./bin/skill-auditor lint
+./dist/skill-auditor lint
 
 # Prune old stored audits, keep last 5 per skill
-./bin/skill-auditor prune
+./dist/skill-auditor prune
 
 # Full semantic + pattern analysis pipeline
-./bin/skill-auditor analyze domain/my-skill
+./dist/skill-auditor analyze domain/my-skill
 
 # Install the skill into local agent environments
-./bin/skill-auditor init
+./dist/skill-auditor init
 ```
 
 ## CLI reference
@@ -248,7 +247,7 @@ anti-pattern signals. The default `--pipeline` mode runs both and writes a combi
 | D9 | Eval Validation | 20 |
 
 **Total: 140 pts.** Grades: **A+** (≥133) → **F** (<91). See
-`skill/skill-quality-auditor/references/quality-thresholds-scoring.md` for the full rubric.
+`cmd/assets/references/quality-thresholds-scoring.md` for the full rubric.
 
 ## Output locations
 
@@ -263,14 +262,13 @@ anti-pattern signals. The default `--pipeline` mode runs both and writes a combi
 ## Tessl skill
 
 The Tessl tile `pantheon-ai/skill-quality-auditor` (v0.1.5) is published from this repo. All tile assets — `SKILL.md`,
-`tile.json`, `evals/`, `references/`, `schemas/`, and `templates/` — live under `skill-auditor/cmd/assets/`. Agents that
+`tile.json`, `evals/`, `references/`, `schemas/`, and `templates/` — live under `cmd/assets/`. Agents that
 install this tile get structured guidance for running audits, generating remediation plans, detecting duplication, and
 enforcing CI quality gates.
 
 ## Development
 
 ```bash
-cd skill-auditor
 go test ./...
 go vet ./...
 ```

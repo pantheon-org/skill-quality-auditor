@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/analysis"
+	"github.com/pantheon-org/skill-quality-auditor/analysis"
 )
 
 func sampleCombinedAnalysis() CombinedAnalysis {

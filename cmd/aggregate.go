@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/duplication"
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/reporter"
+	"github.com/pantheon-org/skill-quality-auditor/duplication"
+	"github.com/pantheon-org/skill-quality-auditor/reporter"
 	"github.com/spf13/cobra"
 )
 

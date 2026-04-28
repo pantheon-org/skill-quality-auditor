@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/reporter"
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
+	"github.com/pantheon-org/skill-quality-auditor/reporter"
+	"github.com/pantheon-org/skill-quality-auditor/scorer"
 	"github.com/spf13/cobra"
 )
 

@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/duplication"
+	"github.com/pantheon-org/skill-quality-auditor/duplication"
 )
 
 // DuplicationReport returns a markdown duplication report in the standard format.
