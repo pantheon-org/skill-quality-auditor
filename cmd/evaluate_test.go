@@ -309,7 +309,7 @@ func TestResolveSkillPath_dirWithNoSKILLMD(t *testing.T) {
 	tmp := t.TempDir() // a real directory, but contains no SKILL.md
 	path := resolveSkillPath(tmp, tmp)
 	// path will be <tmp>/SKILL.md which does not exist — scorer.Score must error
-	_, err := scorer.Score(path)
+	_, err := scorer.Score(t.Context(), path)
 	if err == nil {
 		t.Error("expected error when SKILL.md is absent from the directory")
 	}
@@ -319,7 +319,7 @@ func TestResolveSkillPath_dirWithNoSKILLMD(t *testing.T) {
 // error when the resolved path does not exist at all.
 func TestResolveSkillPath_nonExistentPath(t *testing.T) {
 	path := resolveSkillPath("/nonexistent/domain/skill", "/nonexistent")
-	_, err := scorer.Score(path)
+	_, err := scorer.Score(t.Context(), path)
 	if err == nil {
 		t.Error("expected error for a path that does not exist")
 	}

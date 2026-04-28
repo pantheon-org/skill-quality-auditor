@@ -1,23 +1,24 @@
 package scorer
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"time"
 )
 
 // Score evaluates a skill at skillPath and returns a Result.
-func Score(skillPath string) (*Result, error) {
+func Score(ctx context.Context, skillPath string) (*Result, error) {
 	contentBytes, err := os.ReadFile(skillPath)
 	if err != nil {
 		return nil, err
 	}
 	evalsDir := filepath.Join(filepath.Dir(skillPath), "evals")
-	return ScoreFromContent(skillPath, string(contentBytes), evalsDir)
+	return ScoreFromContent(ctx, skillPath, string(contentBytes), evalsDir)
 }
 
 // ScoreFromContent scores a skill from pre-loaded content and an evals directory path.
-func ScoreFromContent(skillPath, content, evalsDir string) (*Result, error) {
+func ScoreFromContent(_ context.Context, skillPath, content, evalsDir string) (*Result, error) {
 	skillDir := filepath.Dir(skillPath)
 	bridge := newValidatorBridge(skillDir)
 

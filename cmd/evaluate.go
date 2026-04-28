@@ -12,61 +12,61 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	evaluateJSON     bool
-	evaluateStore    bool
-	evaluateRepoRoot string
-)
-
-var evaluateCmd = &cobra.Command{
-	Use:   "evaluate <skill>",
-	Short: "Evaluate a single skill",
-	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		skillArg := args[0]
-
-		repoRoot, err := resolveRepoRoot(evaluateRepoRoot)
-		if err != nil {
-			return fmt.Errorf("cannot determine repo root: %w", err)
-		}
-
-		skillPath := resolveSkillPath(skillArg, repoRoot)
-		skillKey, err := canonicalSkillKey(skillPath, repoRoot)
-		if err != nil {
-			return err
-		}
-
-		result, err := scorer.Score(skillPath)
-		if err != nil {
-			return fmt.Errorf("scoring failed: %w", err)
-		}
-		result.Skill = skillKey
-
-		if evaluateJSON {
-			data, err := json.MarshalIndent(result, "", "  ")
-			if err != nil {
-				return fmt.Errorf("marshal result: %w", err)
-			}
-			fmt.Println(string(data))
-		} else {
-			fmt.Print(reporter.Format(result))
-		}
-
-		if evaluateStore {
-			if err := reporter.Store(repoRoot, skillKey, result); err != nil {
-				return fmt.Errorf("store result: %w", err)
-			}
-		}
-
-		return nil
-	},
-}
-
 func init() {
-	evaluateCmd.Flags().BoolVar(&evaluateJSON, "json", false, "emit JSON output")
-	evaluateCmd.Flags().BoolVar(&evaluateStore, "store", false, "persist result to .context/audits/")
-	evaluateCmd.Flags().StringVar(&evaluateRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
-	rootCmd.AddCommand(evaluateCmd)
+	var flags struct {
+		json     bool
+		store    bool
+		repoRoot string
+	}
+
+	cmd := &cobra.Command{
+		Use:   "evaluate <skill>",
+		Short: "Evaluate a single skill",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			skillArg := args[0]
+
+			repoRoot, err := resolveRepoRoot(flags.repoRoot)
+			if err != nil {
+				return fmt.Errorf("cannot determine repo root: %w", err)
+			}
+
+			skillPath := resolveSkillPath(skillArg, repoRoot)
+			skillKey, err := canonicalSkillKey(skillPath, repoRoot)
+			if err != nil {
+				return err
+			}
+
+			result, err := scorer.Score(cmd.Context(), skillPath)
+			if err != nil {
+				return fmt.Errorf("scoring failed: %w", err)
+			}
+			result.Skill = skillKey
+
+			if flags.json {
+				data, err := json.MarshalIndent(result, "", "  ")
+				if err != nil {
+					return fmt.Errorf("marshal result: %w", err)
+				}
+				fmt.Println(string(data))
+			} else {
+				fmt.Print(reporter.Format(result))
+			}
+
+			if flags.store {
+				if err := reporter.Store(repoRoot, skillKey, result); err != nil {
+					return fmt.Errorf("store result: %w", err)
+				}
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().BoolVar(&flags.json, "json", false, "emit JSON output")
+	cmd.Flags().BoolVar(&flags.store, "store", false, "persist result to .context/audits/")
+	cmd.Flags().StringVar(&flags.repoRoot, "repo-root", "", "repo root (auto-detected if empty)")
+	rootCmd.AddCommand(cmd)
 }
 
 // canonicalSkillKey derives the domain/skill-name storage key from an absolute

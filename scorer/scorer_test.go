@@ -9,7 +9,7 @@ const fixturesDir = "../testdata/fixtures"
 
 func TestScoreMinimal(t *testing.T) {
 	skillPath := filepath.Join(fixturesDir, "skill-minimal", "SKILL.md")
-	result, err := Score(skillPath)
+	result, err := Score(t.Context(), skillPath)
 	if err != nil {
 		t.Fatalf("Score() error: %v", err)
 	}
@@ -22,7 +22,7 @@ func TestScoreMinimal(t *testing.T) {
 }
 
 func TestScore_nonexistentFile(t *testing.T) {
-	_, err := Score("/nonexistent/SKILL.md")
+	_, err := Score(t.Context(), "/nonexistent/SKILL.md")
 	if err == nil {
 		t.Error("expected error for nonexistent file")
 	}
@@ -41,7 +41,7 @@ func TestDiagnosticSeverity(t *testing.T) {
 
 func TestScoreFullAGrade(t *testing.T) {
 	skillPath := filepath.Join(fixturesDir, "skill-full", "SKILL.md")
-	result, err := Score(skillPath)
+	result, err := Score(t.Context(), skillPath)
 	if err != nil {
 		t.Fatalf("Score() error: %v", err)
 	}

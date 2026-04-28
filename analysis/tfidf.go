@@ -58,7 +58,7 @@ func ExtractKeywords(content string, corpus []map[string]bool, limit int) []Keyw
 					df++
 				}
 			}
-			idf = math.Log(float64(N) / float64(1+df))
+			idf = math.Max(0, math.Log(float64(N)/float64(1+df)))
 		}
 		scores = append(scores, KeywordScore{
 			Term:  term,
