@@ -25,19 +25,19 @@ jobs:
           cache-dependency-path: skill-auditor/go.sum
 
       - name: Build
-        run: cd skill-auditor && go build -o bin/skill-auditor .
+        run: cd skill-auditor && go build -o ../dist/skill-auditor .
 
       - name: Unit tests
         run: cd skill-auditor && go test ./...
 
       - name: Validate artifacts
-        run: cd skill-auditor && ./bin/skill-auditor validate artifacts
+        run: ./dist/skill-auditor validate artifacts
 
       - name: Duplication check
-        run: cd skill-auditor && ./bin/skill-auditor duplication
+        run: ./dist/skill-auditor duplication
 
       - name: Batch quality gate
-        run: cd skill-auditor && ./bin/skill-auditor batch skill-quality-auditor --fail-below B
+        run: ./dist/skill-auditor batch skill-quality-auditor --fail-below B
 
       - name: Tessl eval run
         env:

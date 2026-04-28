@@ -28,10 +28,9 @@ live exclusively under `skill-auditor/cmd/assets/` — there is no separate `ski
 ## How to evaluate a skill
 
 ```bash
-cd skill-auditor
-go build -o bin/skill-auditor .
-./bin/skill-auditor evaluate <path-or-key> [--json] [--store]
-./bin/skill-auditor batch <skill1> <skill2> [--fail-below B]
+cd skill-auditor && go build -o ../dist/skill-auditor .
+./dist/skill-auditor evaluate <path-or-key> [--json] [--store]
+./dist/skill-auditor batch <skill1> <skill2> [--fail-below B]
 ```
 
 `<path-or-key>` is either a `domain/skill-name` key (resolved under `<repo-root>/skills/`), a directory containing
@@ -41,26 +40,26 @@ go build -o bin/skill-auditor .
 
 ```bash
 # Detect duplicate/overlapping skills (exits 2 on Critical pairs)
-./skill-auditor duplication
+./dist/skill-auditor duplication
 
 # Generate aggregation plan for a skill family
-./skill-auditor aggregate --family <prefix>        # writes .context/analysis/
-./skill-auditor aggregate --family <prefix> --dry-run  # stdout only
+./dist/skill-auditor aggregate --family <prefix>        # writes .context/analysis/
+./dist/skill-auditor aggregate --family <prefix> --dry-run  # stdout only
 ```
 
 ## How to generate and validate remediation plans
 
 ```bash
 # Requires a prior --store run for the skill
-./skill-auditor remediate <skill> [--target-score N]  # writes .context/plans/
-./skill-auditor remediate <skill> --validate          # validate existing plan
+./dist/skill-auditor remediate <skill> [--target-score N]  # writes .context/plans/
+./dist/skill-auditor remediate <skill> --validate          # validate existing plan
 ```
 
 ## How to track score trends
 
 ```bash
-./skill-auditor trend        # table with ↑/↓/— per skill
-./skill-auditor trend --json # machine-readable
+./dist/skill-auditor trend        # table with ↑/↓/— per skill
+./dist/skill-auditor trend --json # machine-readable
 ```
 
 ## Scoring dimensions (D1–D9)
@@ -109,20 +108,20 @@ Total: **140 pts.** Grade bands and CI thresholds: `skill-auditor/cmd/assets/ref
 ### Add a new skill to evaluate
 
 1. Place `SKILL.md` under `skills/<domain>/<name>/`.
-2. Run `./skill-auditor evaluate <domain>/<name> --store`.
+2. Run `./dist/skill-auditor evaluate <domain>/<name> --store`.
 3. Review diagnostics and iterate.
 
 ### Detect and remediate duplication
 
-1. Run `./skill-auditor duplication` to find overlapping skills.
-2. Run `./skill-auditor aggregate --family <prefix>` to plan consolidation.
+1. Run `./dist/skill-auditor duplication` to find overlapping skills.
+2. Run `./dist/skill-auditor aggregate --family <prefix>` to plan consolidation.
 3. Follow the 6-step process in the generated plan.
 
 ### Generate a remediation plan
 
-1. Run `./skill-auditor evaluate <skill> --store` to capture an audit.
-2. Run `./skill-auditor remediate <skill>` to generate the plan.
-3. Run `./skill-auditor remediate <skill> --validate` to verify it is schema-compliant.
+1. Run `./dist/skill-auditor evaluate <skill> --store` to capture an audit.
+2. Run `./dist/skill-auditor remediate <skill>` to generate the plan.
+3. Run `./dist/skill-auditor remediate <skill> --validate` to verify it is schema-compliant.
 4. Implement the phased steps and re-evaluate.
 
 ### Update the Tessl tile
