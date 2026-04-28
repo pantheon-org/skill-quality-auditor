@@ -57,7 +57,9 @@ directory already exists on this machine are targeted automatically.`,
 			}
 
 			dest := filepath.Join(skillDir, "SKILL.md")
-			_ = os.Remove(dest)
+			if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
+				return fmt.Errorf("[%s] remove existing file: %w", a.ID, err)
+			}
 
 			if initMethod == "symlink" {
 				if err := os.Symlink(canonical, dest); err != nil {

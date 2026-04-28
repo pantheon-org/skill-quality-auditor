@@ -14,7 +14,8 @@ type SkillEntry struct {
 	Content string
 }
 
-// Inventory walks skillsDir and returns a SkillEntry for every SKILL.md found.
+// Inventory walks skillsDir and returns one SkillEntry per SKILL.md found.
+// All file content is loaded eagerly; for repos with >500 skills, consider lazy loading.
 func Inventory(skillsDir string) ([]SkillEntry, error) {
 	var entries []SkillEntry
 	err := filepath.WalkDir(skillsDir, func(path string, d os.DirEntry, err error) error {

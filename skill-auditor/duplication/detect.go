@@ -1,9 +1,24 @@
 package duplication
 
+import (
+	"sort"
+	"strings"
+)
+
 const (
 	ThresholdCritical = 0.35
 	ThresholdHigh     = 0.20
 )
+
+// ShortKey returns the skill name portion of a "domain/skill-name" key,
+// stripping the leading domain segment if present.
+func ShortKey(key string) string {
+	parts := strings.SplitN(key, "/", 2)
+	if len(parts) == 2 {
+		return parts[1]
+	}
+	return key
+}
 
 // Pair represents a pair of skills with a computed similarity score.
 type Pair struct {
@@ -36,12 +51,6 @@ func Detect(entries []SkillEntry) []Pair {
 		}
 	}
 	// sort descending by similarity
-	for i := 0; i < len(pairs); i++ {
-		for j := i + 1; j < len(pairs); j++ {
-			if pairs[j].Similarity > pairs[i].Similarity {
-				pairs[i], pairs[j] = pairs[j], pairs[i]
-			}
-		}
-	}
+	sort.Slice(pairs, func(i, j int) bool { return pairs[i].Similarity > pairs[j].Similarity })
 	return pairs
 }

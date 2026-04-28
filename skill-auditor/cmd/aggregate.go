@@ -101,6 +101,8 @@ func init() {
 	aggregateCmd.Flags().BoolVar(&aggDryRun, "dry-run", false, "print plan to stdout without writing to disk")
 	aggregateCmd.Flags().StringVar(&aggSkillsDir, "skills-dir", "", "skills directory (default: <repo-root>/skills)")
 	aggregateCmd.Flags().StringVar(&aggRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
-	_ = aggregateCmd.MarkFlagRequired("family")
+	if err := aggregateCmd.MarkFlagRequired("family"); err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(aggregateCmd)
 }

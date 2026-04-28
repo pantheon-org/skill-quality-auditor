@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/scorer"
 )
 
 // ---- canonicalSkillKey ----
@@ -293,6 +295,30 @@ func TestLoadAuditJSON_missingFile(t *testing.T) {
 	_, err := loadAuditJSON("/nonexistent/audit.json")
 	if err == nil {
 		t.Error("expected error for missing file")
+	}
+}
+
+// ---- resolveSkillPath error cases ----
+
+// TestResolveSkillPath_dirWithNoSKILLMD verifies that scorer.Score returns an
+// error when the resolved path points to a directory that has no SKILL.md.
+func TestResolveSkillPath_dirWithNoSKILLMD(t *testing.T) {
+	tmp := t.TempDir() // a real directory, but contains no SKILL.md
+	path := resolveSkillPath(tmp, tmp)
+	// path will be <tmp>/SKILL.md which does not exist — scorer.Score must error
+	_, err := scorer.Score(path)
+	if err == nil {
+		t.Error("expected error when SKILL.md is absent from the directory")
+	}
+}
+
+// TestResolveSkillPath_nonExistentPath verifies that scorer.Score returns an
+// error when the resolved path does not exist at all.
+func TestResolveSkillPath_nonExistentPath(t *testing.T) {
+	path := resolveSkillPath("/nonexistent/domain/skill", "/nonexistent")
+	_, err := scorer.Score(path)
+	if err == nil {
+		t.Error("expected error for a path that does not exist")
 	}
 }
 

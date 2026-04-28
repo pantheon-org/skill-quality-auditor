@@ -81,3 +81,22 @@ func TestStoreContent(t *testing.T) {
 		t.Errorf("audit.json does not appear to use indented JSON")
 	}
 }
+
+// TestStoreError_readOnlyDestination verifies that Store returns an error when
+// the destination tree cannot be created. We simulate this by making the
+// .context directory a read-only file (not a directory) so MkdirAll fails.
+func TestStoreError_readOnlyDestination(t *testing.T) {
+	root := t.TempDir()
+
+	// Place a regular file where Store would try to MkdirAll a directory tree.
+	contextFile := filepath.Join(root, ".context")
+	if err := os.WriteFile(contextFile, []byte("blocker"), 0o444); err != nil {
+		t.Fatal(err)
+	}
+
+	r := makeStoreResult()
+	err := Store(root, "agentic-harness/skill-quality-auditor", r)
+	if err == nil {
+		t.Error("expected Store to return an error when destination is not writable")
+	}
+}

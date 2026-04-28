@@ -69,7 +69,7 @@ func AggregationPlan(family string, entries []duplication.SkillEntry, pairs []du
 
 	fmt.Fprintf(&sb, "### Step 4: Migrate Content to References\n\n")
 	for _, e := range entries {
-		refName := strings.ReplaceAll(shortKey(e.Key), "-", "-") + ".md"
+		refName := strings.ReplaceAll(duplication.ShortKey(e.Key), "-", "-") + ".md"
 		fmt.Fprintf(&sb, "- Extract content from `%s` → `skills/%s/references/%s`\n", e.Key, hubName, refName)
 	}
 	fmt.Fprintf(&sb, "\n")

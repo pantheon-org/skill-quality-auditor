@@ -75,6 +75,9 @@ type remEffort struct {
 // RemediationPlan generates a schema-compliant YAML-frontmatter + markdown
 // remediation plan. targetScore ≤ 0 defaults to min(current+20, 140).
 func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) (string, error) {
+	if targetScore > 0 && targetScore <= r.Total {
+		return "", fmt.Errorf("targetScore %d must exceed current score %d", targetScore, r.Total)
+	}
 	if targetScore <= 0 || targetScore > 140 {
 		targetScore = r.Total + 20
 		if targetScore > 140 {

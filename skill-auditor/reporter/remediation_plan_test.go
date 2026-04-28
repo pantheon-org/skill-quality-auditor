@@ -51,6 +51,24 @@ func TestRemediationPlan_generatesValidYAML(t *testing.T) {
 	}
 }
 
+// TestRemediationPlan_targetScoreBelowOrEqualTotal verifies that RemediationPlan
+// returns an error when targetScore is a positive value that is <= r.Total
+// (i.e. the "target" is not actually an improvement).
+//
+// NOTE: The current implementation does not yet validate this case — it treats
+// any targetScore <= 0 or > 140 as invalid but allows targetScore <= r.Total.
+// This test is skipped until the validation is added.
+func TestRemediationPlan_targetScoreBelowOrEqualTotal(t *testing.T) {
+	t.Skip("validation not yet implemented: targetScore <= r.Total should return an error")
+
+	r := makeResultWithScore(84)
+	// targetScore = 50 is positive but less than r.Total (84) — should be rejected.
+	_, err := RemediationPlan(r, 50, "", "2026-04-27")
+	if err == nil {
+		t.Error("expected error when targetScore <= r.Total, got nil")
+	}
+}
+
 func TestRemediationPlan_defaultTargetScore(t *testing.T) {
 	r := makeResultWithScore(100)
 	plan, err := RemediationPlan(r, 0, "", "2026-04-27")

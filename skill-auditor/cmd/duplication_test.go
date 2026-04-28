@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/duplication"
@@ -31,6 +32,33 @@ func TestExitCodeForPairs_withCritical(t *testing.T) {
 	}
 	if err := exitCodeForPairs(pairs); err == nil {
 		t.Error("expected error for Critical pair")
+	}
+}
+
+// TestDuplicationCmd_nonExistentSkillsDir verifies that the duplication command
+// returns an error (and does not panic) when the skills directory does not exist.
+func TestDuplicationCmd_nonExistentSkillsDir(t *testing.T) {
+	nonExistent := "/nonexistent/skills-dir-that-does-not-exist"
+	// fileExists returns false → the RunE closure returns a formatted error.
+	// We exercise that guard directly via the cobra command.
+	cmd := duplicationCmd
+	cmd.ResetFlags()
+	// Re-register flags so the command is usable standalone.
+	cmd.Flags().BoolVar(&dupJSON, "json", false, "")
+	cmd.Flags().StringVar(&dupSkillsDir, "skills-dir", "", "")
+	cmd.Flags().StringVar(&dupRepoRoot, "repo-root", "", "")
+
+	// Set skills-dir flag to the non-existent path and provide a fake repo-root
+	// so auto-detection is bypassed.
+	dupSkillsDir = nonExistent
+	dupRepoRoot = t.TempDir() // valid dir so resolveRepoRoot succeeds
+
+	err := cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Fatal("expected error for non-existent skills directory, got nil")
+	}
+	if !strings.Contains(err.Error(), "not found") {
+		t.Errorf("error message should mention 'not found', got: %v", err)
 	}
 }
 
