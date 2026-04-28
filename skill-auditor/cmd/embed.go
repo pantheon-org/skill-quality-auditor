@@ -5,6 +5,9 @@ import (
 	_ "embed"
 )
 
+//go:embed assets/tile.json
+var embeddedTile []byte
+
 //go:embed assets/SKILL.md
 var embeddedSkill []byte
 

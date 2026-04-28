@@ -33,8 +33,7 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
         run: |
           cd skill-auditor
-          go build -ldflags="-X 'github.com/pantheon-org/skill-quality-auditor/cmd.version=${{ github.ref_name }}'" \
-            -o ../dist/skill-auditor-${{ matrix.goos }}-${{ matrix.goarch }} .
+          go build -o ../dist/skill-auditor-${{ matrix.goos }}-${{ matrix.goarch }} .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

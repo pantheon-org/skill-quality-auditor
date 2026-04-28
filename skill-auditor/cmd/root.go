@@ -1,13 +1,22 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
-const version = "0.1.0"
+var version = func() string {
+	var tile struct {
+		Version string `json:"version"`
+	}
+	if err := json.Unmarshal(embeddedTile, &tile); err != nil || tile.Version == "" {
+		return "unknown"
+	}
+	return tile.Version
+}()
 
 var rootCmd = &cobra.Command{
 	Use:   "skill-auditor",
