@@ -26,7 +26,7 @@ jobs:
       - name: go vet
         run: cd skill-auditor && go vet ./...
 
-      - uses: golangci/golangci-lint-action@v6
+      - uses: golangci/golangci-lint-action@v7
         with:
           working-directory: skill-auditor
           version: v2.11.4
