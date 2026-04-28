@@ -8,8 +8,8 @@ Read it before exploring any other files.
 `skill-quality-auditor` is a Go CLI (`skill-auditor`) and a Tessl tile that scores AI skills against a 9-dimension quality
 framework. It produces letter grades, per-dimension diagnostics, and remediation guidance.
 
-The Tessl tile is distributed from this repo: `tile.json` lives at the repo root and points at
-`skill-auditor/cmd/assets/SKILL.md`. All skill assets (SKILL.md, references, evals, schemas, templates)
+The Tessl tile is distributed from this repo: `tile.json` lives at `skill-auditor/cmd/assets/tile.json`,
+co-located with `SKILL.md` and `evals/`. All skill assets (SKILL.md, tile.json, references, evals, schemas, templates)
 live exclusively under `skill-auditor/cmd/assets/` — there is no separate `skill/` directory.
 
 ## Repo map
@@ -21,9 +21,8 @@ live exclusively under `skill-auditor/cmd/assets/` — there is no separate `ski
 | `skill-auditor/duplication/` | Word-level Jaccard similarity engine (inventory, pairwise detect) |
 | `skill-auditor/reporter/` | Formats results as text or JSON; persists to `.context/audits/`; duplication, aggregation, and remediation plan formatters |
 | `skill-auditor/cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune` cobra commands |
-| `skill-auditor/cmd/assets/` | Embedded SKILL.md, references, evals, schemas, templates, requirements — single source of truth |
+| `skill-auditor/cmd/assets/` | Embedded SKILL.md, tile.json, references, evals, schemas, templates, requirements — single source of truth |
 | `skill-auditor/testdata/` | Fixture skills for unit tests — do not modify without updating tests |
-| `tile.json` | Tessl tile manifest (repo root); `skills.path` points at `skill-auditor/cmd/assets/SKILL.md` |
 
 ## How to evaluate a skill
 
@@ -128,4 +127,4 @@ Total: **140 pts.** Grade bands and CI thresholds: `skill-auditor/cmd/assets/ref
 
 1. Edit files under `skill-auditor/cmd/assets/`.
 2. Run `tessl eval run skill-auditor/cmd/assets/`.
-3. Bump `version` in `tile.json` (repo root).
+3. Bump `version` in `skill-auditor/cmd/assets/tile.json`.
