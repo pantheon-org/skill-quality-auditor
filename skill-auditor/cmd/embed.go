@@ -12,7 +12,10 @@ var embeddedSkill []byte
 var embeddedRefs embed.FS
 
 //go:embed assets/schemas
-var embeddedSchemas embed.FS //nolint:unused // reserved for validate command
+var embeddedSchemas embed.FS //nolint:unused // reserved for schema validation
 
 //go:embed assets/templates
-var embeddedTemplates embed.FS //nolint:unused // reserved for plan generation command
+var embeddedTemplates embed.FS //nolint:unused // reserved for plan generation
+
+//go:embed assets/requirements
+var embeddedRequirements embed.FS
