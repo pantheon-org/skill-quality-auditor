@@ -35,6 +35,7 @@ var batchCmd = &cobra.Command{
 			err    error
 		}
 
+		var storeErrors []string
 		entries := make([]entry, len(args))
 		for i, arg := range args {
 			skillPath := resolveSkillPath(arg, repoRoot)
@@ -48,7 +49,8 @@ var batchCmd = &cobra.Command{
 
 			if batchStore {
 				if storeErr := reporter.Store(repoRoot, arg, result); storeErr != nil {
-					fmt.Fprintf(os.Stderr, "warning: store %s: %v\n", arg, storeErr)
+					fmt.Fprintf(os.Stderr, "warn: store %s: %v\n", arg, storeErr)
+					storeErrors = append(storeErrors, fmt.Sprintf("%s: %v", arg, storeErr))
 				}
 			}
 		}
@@ -124,6 +126,10 @@ var batchCmd = &cobra.Command{
 					return fmt.Errorf("skill %s scored %s, below threshold %s", e.arg, e.result.Grade, batchFailBelow)
 				}
 			}
+		}
+
+		if len(storeErrors) > 0 {
+			return fmt.Errorf("store failed for %d skill(s): %s", len(storeErrors), strings.Join(storeErrors, "; "))
 		}
 
 		return nil

@@ -48,6 +48,16 @@ func warnDiag(dimension, message string) Diagnostic {
 	return Diagnostic{Dimension: dimension, Message: message, severity: "warning"}
 }
 
+// NewErrorDiag creates an error-severity Diagnostic for use in tests and external packages.
+func NewErrorDiag(dimension, message string) Diagnostic {
+	return errDiag(dimension, message)
+}
+
+// NewWarnDiag creates a warning-severity Diagnostic for use in tests and external packages.
+func NewWarnDiag(dimension, message string) Diagnostic {
+	return warnDiag(dimension, message)
+}
+
 // countPattern counts case-insensitive substring occurrences.
 func countPattern(content, pattern string) int {
 	lower := strings.ToLower(content)

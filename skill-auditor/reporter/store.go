@@ -36,7 +36,9 @@ func Store(repoRoot, skillPath string, r *scorer.Result) error {
 			return fmt.Errorf("store: write %s: %w", name, err)
 		}
 		if err := os.Rename(tmp, dest); err != nil {
-			_ = os.Remove(tmp)
+			if removeErr := os.Remove(tmp); removeErr != nil && !os.IsNotExist(removeErr) {
+				fmt.Fprintf(os.Stderr, "store: cleanup temp file %s: %v\n", tmp, removeErr)
+			}
 			return fmt.Errorf("store: rename %s: %w", name, err)
 		}
 	}

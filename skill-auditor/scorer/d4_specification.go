@@ -12,66 +12,15 @@ func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 	score := 8
 	var diags []Diagnostic
 
-	// Description length: prefer library result; fall back to custom parse.
-	descLen := b.descriptionLen()
-	if descLen < 0 {
-		descLen = len(extractFrontmatterField(content, "description"))
-	}
-	if descLen > 100 {
-		score += 2
-	}
-	if descLen > 200 {
-		score++
-	}
-
-	// Keyword-stuffing proxy via and/or count (library flags stuffing but no count).
-	description := extractFrontmatterField(content, "description")
-	andOrRe := regexp.MustCompile(`(?i) and | or `)
-	andOrCount := len(andOrRe.FindAllString(description, -1))
-	if andOrCount > 3 {
-		score -= 2
-	} else if andOrCount > 1 {
-		score--
-	}
-
-	// Harness-specific paths — content scan, no library equivalent.
-	if dir := findHarnessPath(content); dir != "" {
-		diags = append(diags, warnDiag("D4", "harness-specific path found: "+dir))
-	} else {
-		score++
-	}
-
-	// Agent name references — content scan, no library equivalent.
-	if ref := findAgentRef(content); ref != "" {
-		diags = append(diags, warnDiag("D4", "agent-specific reference found: "+ref))
-	} else {
-		score++
-	}
-
-	relPathRe := regexp.MustCompile(`(scripts|references|assets)/[a-zA-Z0-9_-]+`)
-	if relPathRe.MatchString(content) {
-		score++
-	}
-
-	nonCode := removeCodeBlocks(content)
-
-	// ../  violations: use library's internal-link check as primary signal.
-	if b.hasInternalLinkWarning() || strings.Contains(nonCode, "../") {
-		score -= 2
-		diags = append(diags, warnDiag("D4", "../ reference outside code blocks (self-containment violation)"))
-	}
+	score += scoreD4Description(content, b)
+	score += scoreD4HarnessRefs(content, &diags)
+	score += scoreD4RelPaths(content)
 
 	absPathRe := regexp.MustCompile(`skills/[a-z][a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+`)
-	if m := absPathRe.FindString(nonCode); m != "" {
-		score--
-		diags = append(diags, warnDiag("D4", "absolute skill path outside code blocks: "+m))
-	}
-
 	ctxAgentsRe := regexp.MustCompile(`\.(context|agents)/`)
-	if m := ctxAgentsRe.FindString(nonCode); m != "" {
-		score--
-		diags = append(diags, warnDiag("D4", ".context/ or .agents/ reference outside code blocks: "+m))
-	}
+	delta, newDiags := scoreD4ContentViolations(content, b, absPathRe, ctxAgentsRe)
+	score += delta
+	diags = append(diags, newDiags...)
 
 	score -= penaltyFromDir(filepath.Join(skillDir, "scripts"), absPathRe)
 	score -= penaltyFromDir(filepath.Join(skillDir, "scripts"), ctxAgentsRe)
@@ -85,6 +34,79 @@ func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 		score = 0
 	}
 
+	score += scoreD4Bonus(content, skillDir)
+	if score > 17 {
+		score = 17
+	}
+	return score, diags
+}
+
+func scoreD4Description(content string, b *validatorBridge) int {
+	delta := 0
+	descLen := b.descriptionLen()
+	if descLen < 0 {
+		descLen = len(extractFrontmatterField(content, "description"))
+	}
+	if descLen > 100 {
+		delta += 2
+	}
+	if descLen > 200 {
+		delta++
+	}
+	description := extractFrontmatterField(content, "description")
+	andOrRe := regexp.MustCompile(`(?i) and | or `)
+	andOrCount := len(andOrRe.FindAllString(description, -1))
+	if andOrCount > 3 {
+		delta -= 2
+	} else if andOrCount > 1 {
+		delta--
+	}
+	return delta
+}
+
+func scoreD4HarnessRefs(content string, diags *[]Diagnostic) int {
+	delta := 0
+	if dir := findHarnessPath(content); dir != "" {
+		*diags = append(*diags, warnDiag("D4", "harness-specific path found: "+dir))
+	} else {
+		delta++
+	}
+	if ref := findAgentRef(content); ref != "" {
+		*diags = append(*diags, warnDiag("D4", "agent-specific reference found: "+ref))
+	} else {
+		delta++
+	}
+	return delta
+}
+
+func scoreD4RelPaths(content string) int {
+	relPathRe := regexp.MustCompile(`(scripts|references|assets)/[a-zA-Z0-9_-]+`)
+	if relPathRe.MatchString(content) {
+		return 1
+	}
+	return 0
+}
+
+func scoreD4ContentViolations(content string, b *validatorBridge, absPathRe, ctxAgentsRe *regexp.Regexp) (int, []Diagnostic) {
+	delta := 0
+	var diags []Diagnostic
+	nonCode := removeCodeBlocks(content)
+	if b.hasInternalLinkWarning() || strings.Contains(nonCode, "../") {
+		delta -= 2
+		diags = append(diags, warnDiag("D4", "../ reference outside code blocks (self-containment violation)"))
+	}
+	if m := absPathRe.FindString(nonCode); m != "" {
+		delta--
+		diags = append(diags, warnDiag("D4", "absolute skill path outside code blocks: "+m))
+	}
+	if m := ctxAgentsRe.FindString(nonCode); m != "" {
+		delta--
+		diags = append(diags, warnDiag("D4", ".context/ or .agents/ reference outside code blocks: "+m))
+	}
+	return delta, diags
+}
+
+func scoreD4Bonus(content, skillDir string) int {
 	bonus := 0
 	scriptsDir := filepath.Join(skillDir, "scripts")
 	if info, err := os.Stat(scriptsDir); err == nil && info.IsDir() {
@@ -97,24 +119,22 @@ func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 			}
 		}
 	}
-
-	lines := strings.Split(content, "\n")
-	lastH2 := ""
-	for _, line := range lines {
-		if strings.HasPrefix(line, "## ") {
-			lastH2 = strings.TrimPrefix(line, "## ")
-		}
-	}
+	lastH2 := extractLastH2(content)
 	bulletLinkRe := regexp.MustCompile(`(?m)^- \[.+\]\(.+\)`)
 	if strings.TrimSpace(lastH2) == "References" && bulletLinkRe.MatchString(content) {
 		bonus++
 	}
+	return bonus
+}
 
-	score += bonus
-	if score > 17 {
-		score = 17
+func extractLastH2(content string) string {
+	last := ""
+	for _, line := range strings.Split(content, "\n") {
+		if strings.HasPrefix(line, "## ") {
+			last = strings.TrimPrefix(line, "## ")
+		}
 	}
-	return score, diags
+	return last
 }
 
 // penaltyFromDir returns the number of files in dir matching re, capped at 2.

@@ -34,6 +34,35 @@ func TestD2_PhilosophyHeading(t *testing.T) {
 	}
 }
 
+func TestD2_FallbackNumberedList(t *testing.T) {
+	// When bridge has no content, falls back to regex for numbered lists.
+	content := "---\ndescription: x\n---\n1. step one\n2. step two\n3. step three"
+	score := scoreD2(content, nilBridge())
+	if score < 2 {
+		t.Errorf("numbered list via fallback should score ≥2, got %d", score)
+	}
+}
+
+func TestD2_LibraryImperativeRatioMid(t *testing.T) {
+	b := &validatorBridge{Content: &types.ContentReport{ImperativeRatio: 0.3, ListItemCount: 2}}
+	content := "---\ndescription: x\n---\nsome content"
+	score := scoreD2(content, b)
+	// 3 (ratio 0.25-0.39) + 1 (listItems 1-3) = 4
+	if score < 3 {
+		t.Errorf("want ≥3 for mid-range imperative ratio, got %d", score)
+	}
+}
+
+func TestD2_LibraryImperativeRatioLow(t *testing.T) {
+	b := &validatorBridge{Content: &types.ContentReport{ImperativeRatio: 0.15, ListItemCount: 0}}
+	content := "---\ndescription: x\n---\nsome content"
+	score := scoreD2(content, b)
+	// 2 (ratio 0.1-0.24) + 0 (no list items)
+	if score < 2 {
+		t.Errorf("want ≥2 for low imperative ratio, got %d", score)
+	}
+}
+
 func TestD2_LibraryImperativeRatio(t *testing.T) {
 	b := &validatorBridge{Content: &types.ContentReport{ImperativeRatio: 0.45, ListItemCount: 5}}
 	content := "---\ndescription: x\n---\n## When to Use\ndo this"

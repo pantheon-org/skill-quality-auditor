@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: skill-auditor/go.mod
+          cache-dependency-path: skill-auditor/go.sum
+
+      - name: gofmt
+        run: |
+          files=$(gofmt -l ./skill-auditor)
+          if [ -n "$files" ]; then
+            echo "Files not formatted:"; echo "$files"; exit 1
+          fi
+
+      - name: go vet
+        run: cd skill-auditor && go vet ./...
+
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: skill-auditor
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: markdownlint
+        run: npx markdownlint-cli2 "**/*.md" "#node_modules"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: skill-auditor/go.mod
+          cache-dependency-path: skill-auditor/go.sum
+
+      - name: go test
+        run: cd skill-auditor && go test ./...
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: skill-auditor/go.mod
+          cache-dependency-path: skill-auditor/go.sum
+
+      - name: go build
+        run: cd skill-auditor && go build ./...

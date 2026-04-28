@@ -8,26 +8,7 @@ func scoreD2(content string, b *validatorBridge) int {
 		score += 2
 	}
 
-	if b.Content != nil {
-		// Imperative ratio via library
-		switch {
-		case b.Content.ImperativeRatio >= 0.4:
-			score += 4
-		case b.Content.ImperativeRatio >= 0.25:
-			score += 3
-		case b.Content.ImperativeRatio >= 0.1:
-			score += 2
-		}
-		if b.Content.ListItemCount > 3 {
-			score += 2
-		} else if b.Content.ListItemCount > 0 {
-			score++
-		}
-	} else {
-		if matchesRegexCI(content, `(?m)^\s*[0-9]+\.`) {
-			score += 2
-		}
-	}
+	score += scoreD2Structure(content, b)
 
 	if countPattern(content, "when to use") > 0 || countPattern(content, "when to apply") > 0 {
 		score += 4
@@ -40,4 +21,28 @@ func scoreD2(content string, b *validatorBridge) int {
 		score = 15
 	}
 	return score
+}
+
+func scoreD2Structure(content string, b *validatorBridge) int {
+	if b.Content != nil {
+		delta := 0
+		switch {
+		case b.Content.ImperativeRatio >= 0.4:
+			delta = 4
+		case b.Content.ImperativeRatio >= 0.25:
+			delta = 3
+		case b.Content.ImperativeRatio >= 0.1:
+			delta = 2
+		}
+		if b.Content.ListItemCount > 3 {
+			delta += 2
+		} else if b.Content.ListItemCount > 0 {
+			delta++
+		}
+		return delta
+	}
+	if matchesRegexCI(content, `(?m)^\s*[0-9]+\.`) {
+		return 2
+	}
+	return 0
 }

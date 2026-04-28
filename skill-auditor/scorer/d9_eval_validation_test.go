@@ -197,6 +197,32 @@ func TestParseCoveragePercentage(t *testing.T) {
 	}
 }
 
+func TestScoreD9Instructions_EmptyArray(t *testing.T) {
+	// Valid JSON but empty instructions array — data is still non-empty so returns 3.
+	evalsDir := t.TempDir()
+	writeTestFile(t, filepath.Join(evalsDir, "instructions.json"), `{"instructions":[]}`)
+	delta, diags := scoreD9Instructions(evalsDir)
+	if len(diags) != 0 {
+		t.Errorf("expected no diags, got %v", diags)
+	}
+	if delta != 3 {
+		t.Errorf("want 3 (non-empty file), got %d", delta)
+	}
+}
+
+func TestScoreD9Summary_NilCoverageNonEmptyFile(t *testing.T) {
+	// summary.json exists, valid JSON, but coverage_percentage is absent → returns 3.
+	evalsDir := t.TempDir()
+	writeTestFile(t, filepath.Join(evalsDir, "summary.json"), `{"instructions_coverage":{}}`)
+	delta, diags := scoreD9Summary(evalsDir)
+	if len(diags) != 0 {
+		t.Errorf("expected no diags, got %v", diags)
+	}
+	if delta != 3 {
+		t.Errorf("want 3 for non-empty file with nil coverage, got %d", delta)
+	}
+}
+
 // writeTestFile creates parent directories and writes content to path.
 func writeTestFile(t *testing.T, path, content string) {
 	t.Helper()

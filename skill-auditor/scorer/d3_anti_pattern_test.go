@@ -61,6 +61,71 @@ func TestD3_AntiPatternInstructionsBonus(t *testing.T) {
 	}
 }
 
+func TestD3_FallbackMultipleNEVER(t *testing.T) {
+	// >3 NEVER → +3 via fallback
+	content := "---\ndescription: x\n---\nNEVER a. NEVER b. NEVER c. NEVER d."
+	score, _ := scoreD3(content, t.TempDir(), nilBridge())
+	if score < 3 {
+		t.Errorf("want ≥3 for >3 NEVER via fallback, got %d", score)
+	}
+}
+
+func TestD3_AntiPatternInstructionsThreeBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	evalsDir := filepath.Join(tmpDir, "evals")
+	if err := os.MkdirAll(evalsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	instrJSON := `{"instructions":[
+		{"original_snippets":"NEVER do this","content":"x"},
+		{"original_snippets":"ALWAYS validate","content":"x"},
+		{"original_snippets":"avoid this pattern","content":"x"}
+	]}`
+	if err := os.WriteFile(filepath.Join(evalsDir, "instructions.json"), []byte(instrJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: x\n---\n# Skill"
+	score, _ := scoreD3(content, tmpDir, nilBridge())
+	if score < 1 {
+		t.Errorf("want ≥1 for 3 anti-pattern instructions, got %d", score)
+	}
+}
+
+func TestD3_AntiPatternInstructionsArraySnippets(t *testing.T) {
+	tmpDir := t.TempDir()
+	evalsDir := filepath.Join(tmpDir, "evals")
+	if err := os.MkdirAll(evalsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// original_snippets as array instead of string
+	instrJSON := `{"instructions":[
+		{"type":"anti-pattern","original_snippets":["NEVER do this","also bad"],"content":"x"},
+		{"type":"anti-pattern","original_snippets":["ALWAYS validate"],"content":"x"},
+		{"type":"anti-pattern","original_snippets":["avoid this"],"content":"x"},
+		{"type":"anti-pattern","original_snippets":["do not use"],"content":"x"},
+		{"type":"anti-pattern","original_snippets":["bad pattern"],"content":"x"}
+	]}`
+	if err := os.WriteFile(filepath.Join(evalsDir, "instructions.json"), []byte(instrJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: x\n---\n# Skill"
+	score, diags := scoreD3(content, tmpDir, nilBridge())
+	if len(diags) != 0 {
+		t.Errorf("expected no diagnostics, got %v", diags)
+	}
+	if score < 2 {
+		t.Errorf("want ≥2 for ≥5 anti-pattern instructions (array snippets), got %d", score)
+	}
+}
+
+func TestD3_DirectiveLanguage_NilBridgeNoNEVER(t *testing.T) {
+	// nil bridge + zero NEVER occurrences → returns 0
+	delta := scoreD3DirectiveLanguage("---\ndescription: x\n---\n# Skill\nNo directives here.", nilBridge())
+	if delta != 0 {
+		t.Errorf("want 0 with no NEVER and nil bridge, got %d", delta)
+	}
+}
+
 func TestD3_InstructionsParseError(t *testing.T) {
 	tmpDir := t.TempDir()
 	evalsDir := filepath.Join(tmpDir, "evals")

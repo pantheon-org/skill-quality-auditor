@@ -1,47 +1,18 @@
 package scorer
 
-import "strings"
+import (
+	"strings"
 
-// harnessDirs are the config/data directory names used by each supported agent
-// (from https://github.com/vercel-labs/skills#supported-agents).
-var harnessDirs = []string{
-	".agents",
-	".aider",
-	".claude",
-	".codeium",
-	".codex",
-	".continue",
-	".copilot",
-	".cursor",
-	".deepagents",
-	".firebender",
-	".gemini",
-	".goose",
-	".pi",
-	".windsurf",
-}
+	"github.com/pantheon-org/skill-quality-auditor/skill-auditor/agents"
+)
 
-// agentNames are the human-readable agent identifiers whose presence in skill
-// content signals a non-portable, agent-specific instruction.
-var agentNames = []string{
-	"aider",
-	"amp agent",
-	"claude code",
-	"cline",
-	"codex",
-	"continue.dev",
-	"cursor agent",
-	"deep agents",
-	"firebender",
-	"gemini cli",
-	"github copilot",
-	"goose",
-	"kimi code",
-	"opencode",
-	"replit agent",
-	"warp agent",
-	"windsurf",
-}
+// harnessDirs and agentNames are derived from the shared agents registry.
+// extraAgentNames covers tools that are real agents but not installable via
+// the init command (e.g. Aider, which has no skills-spec install path).
+var extraAgentNames = []string{"aider"}
+
+var harnessDirs = agents.HarnessDirs()
+var agentNames = append(agents.DisplayNames(), extraAgentNames...)
 
 // findHarnessPath returns the first harness directory reference found in content,
 // or an empty string if none is present.
