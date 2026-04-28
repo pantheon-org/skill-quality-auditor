@@ -23,4 +23,13 @@ pre-push:
       run: cd skill-auditor && go test ./...
     go-build:
       glob: "skill-auditor/**/*.go"
-      run: cd skill-auditor && go build ./...
+      run: cd skill-auditor && go build -o bin/skill-auditor .
+    skill-validate:
+      glob: "skill-auditor/cmd/assets/**"
+      run: cd skill-auditor && ./bin/skill-auditor validate artifacts
+    skill-duplication:
+      glob: "skill-auditor/cmd/assets/**"
+      run: cd skill-auditor && ./bin/skill-auditor duplication
+    skill-batch:
+      glob: "skill-auditor/cmd/assets/**"
+      run: cd skill-auditor && ./bin/skill-auditor batch skill-quality-auditor --fail-below B
