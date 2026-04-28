@@ -210,6 +210,25 @@ func TestExtractKeywords_TFCalculation(t *testing.T) {
 	}
 }
 
+func TestExtractKeywords_IDFNeverNegative(t *testing.T) {
+	// Term appears in every corpus document → log(N/(1+df)) would be negative
+	// without the math.Max clamp. Verify IDF is clamped to 0.
+	corpus := []map[string]bool{
+		{"everywhere": true, "alpha": true},
+		{"everywhere": true, "beta": true},
+		{"everywhere": true, "gamma": true},
+	}
+	keywords := ExtractKeywords("everywhere", corpus, 10)
+	for _, kw := range keywords {
+		if kw.IDF < 0 {
+			t.Errorf("IDF should never be negative, got %f for term %q", kw.IDF, kw.Term)
+		}
+		if kw.Score < 0 {
+			t.Errorf("Score should never be negative, got %f for term %q", kw.Score, kw.Term)
+		}
+	}
+}
+
 func TestExtractKeywords_ZeroLimit(t *testing.T) {
 	content := "alpha beta gamma"
 	keywords := ExtractKeywords(content, nil, 0)

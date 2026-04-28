@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+var (
+	reD3BadGood   = regexp.MustCompile(`(?is)BAD.*GOOD`)
+	reD3AntiInstr = regexp.MustCompile(`(?i)NEVER|ALWAYS|anti-pattern|avoid|do not`)
+)
+
 // scoreD3 — Anti-Pattern Quality (max: 15)
 func scoreD3(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 	score := 0
@@ -15,7 +20,7 @@ func scoreD3(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 
 	score += scoreD3DirectiveLanguage(content, b)
 
-	if matchesRegexCI(content, `(?is)BAD.*GOOD`) {
+	if reD3BadGood.MatchString(content) {
 		score += 2
 	}
 	if countPattern(content, "WHY:") > 0 {
@@ -63,22 +68,21 @@ func scoreD3FromInstructions(instrFile string) (int, []Diagnostic) {
 	}
 	var instrData struct {
 		Instructions []struct {
-			Type             string      `json:"type"`
-			OriginalSnippets interface{} `json:"original_snippets"`
-			Content          string      `json:"content"`
+			Type             string `json:"type"`
+			OriginalSnippets any    `json:"original_snippets"`
+			Content          string `json:"content"`
 		} `json:"instructions"`
 	}
 	if json.Unmarshal(data, &instrData) != nil {
 		return 0, []Diagnostic{errDiag("D3", "instructions.json exists but cannot be parsed")}
 	}
-	antiPat := regexp.MustCompile(`(?i)NEVER|ALWAYS|anti-pattern|avoid|do not`)
 	antiInstr := 0
 	for _, instr := range instrData.Instructions {
 		snippetStr := extractSnippetStr(instr.OriginalSnippets)
 		if snippetStr == "" {
 			snippetStr = instr.Content
 		}
-		if strings.EqualFold(instr.Type, "anti-pattern") || antiPat.MatchString(snippetStr) {
+		if strings.EqualFold(instr.Type, "anti-pattern") || reD3AntiInstr.MatchString(snippetStr) {
 			antiInstr++
 		}
 	}
@@ -91,11 +95,11 @@ func scoreD3FromInstructions(instrFile string) (int, []Diagnostic) {
 	return 0, nil
 }
 
-func extractSnippetStr(v interface{}) string {
+func extractSnippetStr(v any) string {
 	switch val := v.(type) {
 	case string:
 		return val
-	case []interface{}:
+	case []any:
 		parts := make([]string, 0, len(val))
 		for _, item := range val {
 			if s, ok := item.(string); ok {

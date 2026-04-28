@@ -65,7 +65,7 @@ func scoreD9Summary(evalsDir string) (int, []Diagnostic) {
 	}
 	var summaryData struct {
 		InstructionsCoverage struct {
-			CoveragePercentage interface{} `json:"coverage_percentage"`
+			CoveragePercentage any `json:"coverage_percentage"`
 		} `json:"instructions_coverage"`
 	}
 	if json.Unmarshal(data, &summaryData) != nil {
@@ -85,7 +85,7 @@ func scoreD9Summary(evalsDir string) (int, []Diagnostic) {
 }
 
 // parseCoveragePercentage parses a coverage percentage value to int. Returns -1 if unparseable.
-func parseCoveragePercentage(v interface{}) int {
+func parseCoveragePercentage(v any) int {
 	if v == nil {
 		return -1
 	}

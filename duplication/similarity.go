@@ -3,39 +3,16 @@ package duplication
 import (
 	"regexp"
 	"strings"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/tokenize"
 )
 
-var (
-	mdFormatting = regexp.MustCompile(`(?m)^#{1,6}\s+|[*_` + "`" + `~|]|\[.*?\]\(.*?\)|^\s*[-*+]\s+|^\s*\d+\.\s+|^---+$|^===+$`)
-	multiSpace   = regexp.MustCompile(`\s+`)
-	headerLine   = regexp.MustCompile(`(?m)^(#{1,6})\s+(.+)$`)
-)
-
-var stopwords = map[string]bool{
-	"a": true, "an": true, "the": true, "is": true, "are": true, "was": true,
-	"were": true, "be": true, "been": true, "being": true, "to": true, "of": true,
-	"and": true, "or": true, "in": true, "on": true, "at": true, "for": true,
-	"with": true, "by": true, "from": true, "it": true, "its": true, "this": true,
-	"that": true, "you": true, "we": true, "use": true, "can": true, "will": true,
-	"if": true, "as": true, "not": true, "all": true, "when": true, "then": true,
-	"your": true, "how": true, "what": true, "which": true, "have": true, "has": true,
-}
+var headerLine = regexp.MustCompile(`(?m)^(#{1,6})\s+(.+)$`)
 
 // TokenSet strips markdown formatting from text, lowercases, splits on whitespace,
 // removes stopwords, and returns the resulting word set.
 func TokenSet(text string) map[string]bool {
-	clean := mdFormatting.ReplaceAllString(text, " ")
-	clean = multiSpace.ReplaceAllString(clean, " ")
-	tokens := strings.Fields(strings.ToLower(clean))
-	set := make(map[string]bool, len(tokens))
-	for _, t := range tokens {
-		// strip leading/trailing punctuation
-		t = strings.Trim(t, ".,;:!?\"'()[]{}/<>=+\\")
-		if len(t) > 2 && !stopwords[t] {
-			set[t] = true
-		}
-	}
-	return set
+	return tokenize.Set(text)
 }
 
 // Jaccard returns the Jaccard similarity coefficient for two token sets.
@@ -50,9 +27,6 @@ func Jaccard(a, b map[string]bool) float64 {
 		}
 	}
 	union := len(a) + len(b) - intersection
-	if union == 0 {
-		return 0
-	}
 	return float64(intersection) / float64(union)
 }
 

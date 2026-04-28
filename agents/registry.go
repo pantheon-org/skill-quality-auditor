@@ -70,6 +70,16 @@ var Registry = []Agent{
 	{ID: "zencoder", DisplayName: "Zencoder", ProjectPath: ".zencoder/skills", GlobalPath: ".zencoder/skills"},
 }
 
+func init() {
+	seen := make(map[string]bool, len(Registry))
+	for _, a := range Registry {
+		if seen[a.ID] {
+			panic("agents.Registry: duplicate ID " + a.ID)
+		}
+		seen[a.ID] = true
+	}
+}
+
 // ByID returns the Agent for the given id, or false if not found.
 func ByID(id string) (Agent, bool) {
 	for _, a := range Registry {

@@ -14,7 +14,7 @@ func TestD6_HighSpecificity(t *testing.T) {
 		WeakMarkers:            0,
 		InstructionSpecificity: 1.0,
 	}}
-	if score := scoreD6(b); score != 15 {
+	if score, _ := scoreD6(b); score != 15 {
 		t.Errorf("want 15, got %d", score)
 	}
 }
@@ -27,7 +27,7 @@ func TestD6_MixedSpecificity(t *testing.T) {
 		InstructionSpecificity: 0.6,
 	}}
 	want := int(math.Round(0.6 * 15))
-	if score := scoreD6(b); score != want {
+	if score, _ := scoreD6(b); score != want {
 		t.Errorf("want %d, got %d", want, score)
 	}
 }
@@ -39,13 +39,13 @@ func TestD6_ZeroMarkers(t *testing.T) {
 		WeakMarkers:            0,
 		InstructionSpecificity: 1.0, // library returns 1.0 when both zero — we override to 0
 	}}
-	if score := scoreD6(b); score != 0 {
+	if score, _ := scoreD6(b); score != 0 {
 		t.Errorf("want 0 when no markers, got %d", score)
 	}
 }
 
 func TestD6_NilContent(t *testing.T) {
-	if score := scoreD6(nilBridge()); score != 0 {
+	if score, _ := scoreD6(nilBridge()); score != 0 {
 		t.Errorf("want 0 when bridge has no content, got %d", score)
 	}
 }
@@ -58,7 +58,7 @@ func TestD6_LowSpecificity(t *testing.T) {
 		InstructionSpecificity: 0.2,
 	}}
 	want := int(math.Round(0.2 * 15))
-	if score := scoreD6(b); score != want {
+	if score, _ := scoreD6(b); score != want {
 		t.Errorf("want %d, got %d", want, score)
 	}
 }

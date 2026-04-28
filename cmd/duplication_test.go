@@ -39,7 +39,7 @@ func TestExitCodeForPairs_withCritical(t *testing.T) {
 // returns an error (and does not panic) when the skills directory does not exist.
 func TestDuplicationCmd_nonExistentSkillsDir(t *testing.T) {
 	nonExistent := "/nonexistent/skills-dir-that-does-not-exist"
-	// fileExists returns false → the RunE closure returns a formatted error.
+	// pathExists returns false → the RunE closure returns a formatted error.
 	// We exercise that guard directly via the cobra command.
 	cmd := duplicationCmd
 	cmd.ResetFlags()

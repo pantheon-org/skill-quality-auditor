@@ -52,7 +52,10 @@ var analyzeCmd = &cobra.Command{
 		}
 
 		skillPath := resolveSkillPath(skillArg, repoRoot)
-		skillKey := canonicalSkillKey(skillPath, repoRoot)
+		skillKey, err := canonicalSkillKey(skillPath, repoRoot)
+		if err != nil {
+			return err
+		}
 
 		data, err := os.ReadFile(skillPath)
 		if err != nil {

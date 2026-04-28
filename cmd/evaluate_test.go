@@ -13,26 +13,29 @@ import (
 func TestCanonicalSkillKey_standard(t *testing.T) {
 	repoRoot := "/repo"
 	skillPath := "/repo/skills/domain/my-skill/SKILL.md"
-	got := canonicalSkillKey(skillPath, repoRoot)
+	got, err := canonicalSkillKey(skillPath, repoRoot)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if got != "domain/my-skill" {
 		t.Errorf("got %q, want %q", got, "domain/my-skill")
 	}
 }
 
 func TestCanonicalSkillKey_notUnderSkillsDir(t *testing.T) {
-	// If path is outside skills/, TrimPrefix is a no-op — returns the raw path
-	// (minus any SKILL.md suffix). We just verify it doesn't panic.
-	got := canonicalSkillKey("/other/path/SKILL.md", "/repo")
-	if got == "" {
-		t.Error("canonicalSkillKey should return a non-empty string")
+	// Path outside skills/ must return an error.
+	_, err := canonicalSkillKey("/other/path/SKILL.md", "/repo")
+	if err == nil {
+		t.Error("expected error for path outside skills/")
 	}
 }
 
 func TestCanonicalSkillKey_noSKILLMDSuffix(t *testing.T) {
 	repoRoot := "/repo"
-	// Path already points to directory, not the file.
-	got := canonicalSkillKey("/repo/skills/domain/my-skill", repoRoot)
-	// Still returns the directory segment without crashing.
+	got, err := canonicalSkillKey("/repo/skills/domain/my-skill", repoRoot)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if got == "" {
 		t.Error("expected non-empty result")
 	}
@@ -306,7 +309,7 @@ func TestResolveSkillPath_dirWithNoSKILLMD(t *testing.T) {
 	tmp := t.TempDir() // a real directory, but contains no SKILL.md
 	path := resolveSkillPath(tmp, tmp)
 	// path will be <tmp>/SKILL.md which does not exist — scorer.Score must error
-	_, err := scorer.Score(path)
+	_, err := scorer.Score(t.Context(), path)
 	if err == nil {
 		t.Error("expected error when SKILL.md is absent from the directory")
 	}
@@ -316,33 +319,33 @@ func TestResolveSkillPath_dirWithNoSKILLMD(t *testing.T) {
 // error when the resolved path does not exist at all.
 func TestResolveSkillPath_nonExistentPath(t *testing.T) {
 	path := resolveSkillPath("/nonexistent/domain/skill", "/nonexistent")
-	_, err := scorer.Score(path)
+	_, err := scorer.Score(t.Context(), path)
 	if err == nil {
 		t.Error("expected error for a path that does not exist")
 	}
 }
 
-// ---- fileExists ----
+// ---- pathExists ----
 
-func TestFileExists_exists(t *testing.T) {
+func TestPathExists_exists(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "file.txt")
 	if err := os.WriteFile(f, []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if !fileExists(f) {
-		t.Errorf("fileExists should return true for existing file")
+	if !pathExists(f) {
+		t.Errorf("pathExists should return true for existing file")
 	}
 }
 
-func TestFileExists_notExists(t *testing.T) {
-	if fileExists("/nonexistent/path/file.txt") {
-		t.Error("fileExists should return false for nonexistent file")
+func TestPathExists_notExists(t *testing.T) {
+	if pathExists("/nonexistent/path/file.txt") {
+		t.Error("pathExists should return false for nonexistent path")
 	}
 }
 
-func TestFileExists_directory(t *testing.T) {
+func TestPathExists_directory(t *testing.T) {
 	tmp := t.TempDir()
-	if !fileExists(tmp) {
-		t.Error("fileExists should return true for directories")
+	if !pathExists(tmp) {
+		t.Error("pathExists should return true for directories")
 	}
 }

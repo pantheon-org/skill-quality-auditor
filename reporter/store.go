@@ -23,13 +23,17 @@ func Store(repoRoot, skillPath string, r *scorer.Result) error {
 		return fmt.Errorf("store: marshal result: %w", err)
 	}
 
-	files := map[string][]byte{
-		"audit.json":     auditJSON,
-		"Analysis.md":    []byte(Analysis(r)),
-		"Remediation.md": []byte(Remediation(r)),
+	files := []struct {
+		name string
+		data []byte
+	}{
+		{"audit.json", auditJSON},
+		{"Analysis.md", []byte(Analysis(r))},
+		{"Remediation.md", []byte(Remediation(r))},
 	}
 
-	for name, data := range files {
+	for _, f := range files {
+		name, data := f.name, f.data
 		dest := filepath.Join(dir, name)
 		tmp := dest + ".tmp"
 		if err := os.WriteFile(tmp, data, 0o644); err != nil {
