@@ -7,4 +7,4 @@ golangci-lint = "2.11.4"
 "npm:markdownlint-cli2" = "0.22.0"
 lefthook = "2.1.5"
 shellcheck = "latest"
-"brew:tesslio/tap/tessl" = "latest"
+# tessl is not available as a mise backend — install via: curl -fsSL https://get.tessl.io | sh
