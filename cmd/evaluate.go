@@ -117,7 +117,7 @@ func resolveRepoRoot(flagValue string) (string, error) {
 func findRepoRoot(dir string) (string, error) {
 	current := dir
 	for {
-		if fileExists(filepath.Join(current, ".git")) || fileExists(filepath.Join(current, "go.mod")) {
+		if pathExists(filepath.Join(current, ".git")) || pathExists(filepath.Join(current, "go.mod")) {
 			return current, nil
 		}
 		parent := filepath.Dir(current)
@@ -128,8 +128,8 @@ func findRepoRoot(dir string) (string, error) {
 	}
 }
 
-// fileExists reports whether the path exists.
-func fileExists(path string) bool {
+// pathExists reports whether the path exists (file or directory).
+func pathExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }

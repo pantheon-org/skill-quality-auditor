@@ -42,7 +42,7 @@ var trendCmd = &cobra.Command{
 		}
 
 		auditsRoot := filepath.Join(repoRoot, ".context", "audits")
-		if !fileExists(auditsRoot) {
+		if !pathExists(auditsRoot) {
 			return fmt.Errorf("no audits found — run 'batch ... --store' first")
 		}
 
@@ -202,7 +202,7 @@ func latestAuditJSON(auditsBase string) (path, date string, err error) {
 	sort.Strings(dates)
 	latest := dates[len(dates)-1]
 	p := filepath.Join(auditsBase, latest, "audit.json")
-	if !fileExists(p) {
+	if !pathExists(p) {
 		return "", "", fmt.Errorf("audit.json not found at %s", p)
 	}
 	return p, latest, nil

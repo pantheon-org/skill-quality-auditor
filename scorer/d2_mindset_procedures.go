@@ -1,10 +1,17 @@
 package scorer
 
+import "regexp"
+
+var (
+	reD2MindsetHeader = regexp.MustCompile(`(?im)##\s*(mindset|philosophy|principles)`)
+	reD2NumberedList  = regexp.MustCompile(`(?m)^\s*[0-9]+\.`)
+)
+
 // scoreD2 — Mindset + Procedures (max: 15)
 func scoreD2(content string, b *validatorBridge) int {
 	score := 0
 
-	if matchesRegexCI(content, `(?im)##\s*(mindset|philosophy|principles)`) {
+	if reD2MindsetHeader.MatchString(content) {
 		score += 2
 	}
 
@@ -41,7 +48,7 @@ func scoreD2Structure(content string, b *validatorBridge) int {
 		}
 		return delta
 	}
-	if matchesRegexCI(content, `(?m)^\s*[0-9]+\.`) {
+	if reD2NumberedList.MatchString(content) {
 		return 2
 	}
 	return 0

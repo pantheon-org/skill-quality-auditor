@@ -6,20 +6,27 @@ import (
 	"path/filepath"
 )
 
-// scoreD1 — Knowledge Delta (max: 20)
+const (
+	d1BaseScore     = 15 // starting score before adjustments
+	d1PenaltyPerPat = 2  // deducted per beginner-content pattern hit
+	d1BonusPerPat   = 1  // added per expert-signal pattern hit
+	d1Max           = 20
+)
+
+// scoreD1 — Knowledge Delta (max: d1Max)
 func scoreD1(content, skillDir string) (int, []Diagnostic) {
-	score := 15
+	score := d1BaseScore
 	var diags []Diagnostic
 
 	for _, pat := range []string{"npm install", "yarn add", "pip install", "getting started", "introduction", "basic syntax", "hello world"} {
 		if countPattern(content, pat) > 0 {
-			score -= 2
+			score -= d1PenaltyPerPat
 		}
 	}
 
 	for _, pat := range []string{"anti-pattern", "NEVER", "ALWAYS", "production", "gotcha", "pitfall"} {
 		if countPattern(content, pat) > 0 {
-			score++
+			score += d1BonusPerPat
 		}
 	}
 
@@ -31,8 +38,8 @@ func scoreD1(content, skillDir string) (int, []Diagnostic) {
 	if score < 0 {
 		score = 0
 	}
-	if score > 20 {
-		score = 20
+	if score > d1Max {
+		score = d1Max
 	}
 	return score, diags
 }

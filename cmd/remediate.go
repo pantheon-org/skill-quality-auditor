@@ -79,12 +79,12 @@ func runGenerate(skillArg, repoRoot string) error {
 func runValidate(planArg, repoRoot string) error {
 	// planArg may be a bare skill name or a direct file path.
 	planPath := planArg
-	if !filepath.IsAbs(planArg) && !fileExists(planArg) {
+	if !filepath.IsAbs(planArg) && !pathExists(planArg) {
 		skillBase := filepath.Base(planArg)
 		planPath = filepath.Join(repoRoot, ".context", "plans", skillBase+"-remediation-plan.md")
 	}
 
-	if !fileExists(planPath) {
+	if !pathExists(planPath) {
 		return fmt.Errorf("plan file not found: %s", planPath)
 	}
 

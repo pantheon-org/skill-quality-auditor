@@ -5,19 +5,24 @@ import (
 	"testing"
 )
 
-func TestMatchesRegexCI_valid(t *testing.T) {
-	if !matchesRegexCI("Hello World", `(?i)hello`) {
-		t.Error("expected case-insensitive match")
+func TestReD2MindsetHeader(t *testing.T) {
+	if !reD2MindsetHeader.MatchString("## Mindset\n") {
+		t.Error("expected match on ## Mindset")
 	}
-	if matchesRegexCI("Hello World", `(?i)goodbye`) {
-		t.Error("expected no match")
+	if !reD2MindsetHeader.MatchString("## Philosophy\n") {
+		t.Error("expected match on ## Philosophy")
+	}
+	if reD2MindsetHeader.MatchString("## Usage\n") {
+		t.Error("expected no match on ## Usage")
 	}
 }
 
-func TestMatchesRegexCI_invalidPattern(t *testing.T) {
-	// Invalid regex should return false without panicking.
-	if matchesRegexCI("some content", `[invalid(regex`) {
-		t.Error("invalid regex should return false")
+func TestReD3BadGood(t *testing.T) {
+	if !reD3BadGood.MatchString("BAD: do this GOOD: do that") {
+		t.Error("expected BAD/GOOD match")
+	}
+	if reD3BadGood.MatchString("no contrast here") {
+		t.Error("expected no match without BAD...GOOD")
 	}
 }
 

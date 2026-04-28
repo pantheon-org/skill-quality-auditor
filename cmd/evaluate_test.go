@@ -322,27 +322,27 @@ func TestResolveSkillPath_nonExistentPath(t *testing.T) {
 	}
 }
 
-// ---- fileExists ----
+// ---- pathExists ----
 
-func TestFileExists_exists(t *testing.T) {
+func TestPathExists_exists(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "file.txt")
 	if err := os.WriteFile(f, []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if !fileExists(f) {
-		t.Errorf("fileExists should return true for existing file")
+	if !pathExists(f) {
+		t.Errorf("pathExists should return true for existing file")
 	}
 }
 
-func TestFileExists_notExists(t *testing.T) {
-	if fileExists("/nonexistent/path/file.txt") {
-		t.Error("fileExists should return false for nonexistent file")
+func TestPathExists_notExists(t *testing.T) {
+	if pathExists("/nonexistent/path/file.txt") {
+		t.Error("pathExists should return false for nonexistent path")
 	}
 }
 
-func TestFileExists_directory(t *testing.T) {
+func TestPathExists_directory(t *testing.T) {
 	tmp := t.TempDir()
-	if !fileExists(tmp) {
-		t.Error("fileExists should return true for directories")
+	if !pathExists(tmp) {
+		t.Error("pathExists should return true for directories")
 	}
 }

@@ -2,25 +2,10 @@ package analysis
 
 import (
 	"math"
-	"regexp"
 	"sort"
-	"strings"
-)
 
-var (
-	mdFormatting = regexp.MustCompile(`(?m)^#{1,6}\s+|[*_` + "`" + `~|]|\[.*?\]\(.*?\)|^\s*[-*+]\s+|^\s*\d+\.\s+|^---+$|^===+$`)
-	multiSpace   = regexp.MustCompile(`\s+`)
+	"github.com/pantheon-org/skill-quality-auditor/internal/tokenize"
 )
-
-var stopwords = map[string]bool{
-	"a": true, "an": true, "the": true, "is": true, "are": true, "was": true,
-	"were": true, "be": true, "been": true, "being": true, "to": true, "of": true,
-	"and": true, "or": true, "in": true, "on": true, "at": true, "for": true,
-	"with": true, "by": true, "from": true, "it": true, "its": true, "this": true,
-	"that": true, "you": true, "we": true, "use": true, "can": true, "will": true,
-	"if": true, "as": true, "not": true, "all": true, "when": true, "then": true,
-	"your": true, "how": true, "what": true, "which": true, "have": true, "has": true,
-}
 
 // KeywordScore holds a single term's TF-IDF result.
 type KeywordScore struct {
@@ -36,17 +21,7 @@ func TermFrequency(text string) map[string]int {
 	if text == "" {
 		return map[string]int{}
 	}
-	clean := mdFormatting.ReplaceAllString(text, " ")
-	clean = multiSpace.ReplaceAllString(clean, " ")
-	tokens := strings.Fields(strings.ToLower(clean))
-	counts := make(map[string]int, len(tokens))
-	for _, t := range tokens {
-		t = strings.Trim(t, ".,;:!?\"'()[]{}/<>=+\\")
-		if len(t) > 2 && !stopwords[t] {
-			counts[t]++
-		}
-	}
-	return counts
+	return tokenize.Counts(text)
 }
 
 // ExtractKeywords scores all terms in content against the corpus using TF-IDF,

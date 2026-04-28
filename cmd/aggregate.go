@@ -42,7 +42,7 @@ var aggregateCmd = &cobra.Command{
 			skillsDir = filepath.Join(repoRoot, "skills")
 		}
 
-		if !fileExists(skillsDir) {
+		if !pathExists(skillsDir) {
 			return fmt.Errorf("skills directory not found: %s", skillsDir)
 		}
 
