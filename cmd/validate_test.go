@@ -913,3 +913,113 @@ func TestRunValidateReview_strictRecommended(t *testing.T) {
 		t.Error("minimal report should fail with --strict-recommended (missing recommended sections)")
 	}
 }
+
+// ---- checkReviewFrontmatter ----
+
+func TestCheckReviewFrontmatter_recommendedPresent(t *testing.T) {
+	content := "---\nreviewer: alice\noptional_key: yes\n---\nBody"
+	req := reviewRequirements{
+		RecommendedFrontmatterKeys: []string{"optional_key"},
+	}
+	var warns []string
+	checkReviewFrontmatter(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) != 0 {
+		t.Errorf("expected no warnings when recommended key is present, got: %v", warns)
+	}
+}
+
+func TestCheckReviewFrontmatter_recommendedMissing(t *testing.T) {
+	content := "---\nreviewer: alice\n---\nBody"
+	req := reviewRequirements{
+		RecommendedFrontmatterKeys: []string{"optional_key"},
+	}
+	var warns []string
+	checkReviewFrontmatter(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) == 0 {
+		t.Error("expected warning for missing recommended frontmatter key")
+	}
+}
+
+// ---- checkReviewMetadataLabels ----
+
+func TestCheckReviewMetadataLabels_requiredPresent(t *testing.T) {
+	content := "**Score**: 95\n"
+	req := reviewRequirements{RequiredMetadataLabels: []string{"Score"}}
+	var errs []string
+	checkReviewMetadataLabels(content, req, func(s string) { errs = append(errs, s) }, func(string) {})
+	if len(errs) != 0 {
+		t.Errorf("expected no errors when required label is present, got: %v", errs)
+	}
+}
+
+func TestCheckReviewMetadataLabels_requiredMissing(t *testing.T) {
+	content := "no labels here"
+	req := reviewRequirements{RequiredMetadataLabels: []string{"Score"}}
+	var errs []string
+	checkReviewMetadataLabels(content, req, func(s string) { errs = append(errs, s) }, func(string) {})
+	if len(errs) == 0 {
+		t.Error("expected error for missing required metadata label")
+	}
+}
+
+func TestCheckReviewMetadataLabels_recommendedPresent(t *testing.T) {
+	content := "**Grade**: A\n"
+	req := reviewRequirements{RecommendedMetadataLabels: []string{"Grade"}}
+	var warns []string
+	checkReviewMetadataLabels(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) != 0 {
+		t.Errorf("expected no warnings when recommended label is present, got: %v", warns)
+	}
+}
+
+func TestCheckReviewMetadataLabels_recommendedMissing(t *testing.T) {
+	content := "no labels here"
+	req := reviewRequirements{RecommendedMetadataLabels: []string{"Grade"}}
+	var warns []string
+	checkReviewMetadataLabels(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) == 0 {
+		t.Error("expected warning for missing recommended metadata label")
+	}
+}
+
+// ---- checkReviewCommands ----
+
+func TestCheckReviewCommands_requiredPresent(t *testing.T) {
+	content := "Run `skill-auditor evaluate` to score."
+	req := reviewRequirements{RequiredCommands: []string{"skill-auditor evaluate"}}
+	var errs []string
+	checkReviewCommands(content, req, func(s string) { errs = append(errs, s) }, func(string) {})
+	if len(errs) != 0 {
+		t.Errorf("expected no errors when required command is present, got: %v", errs)
+	}
+}
+
+func TestCheckReviewCommands_requiredMissing(t *testing.T) {
+	content := "no commands here"
+	req := reviewRequirements{RequiredCommands: []string{"skill-auditor evaluate"}}
+	var errs []string
+	checkReviewCommands(content, req, func(s string) { errs = append(errs, s) }, func(string) {})
+	if len(errs) == 0 {
+		t.Error("expected error for missing required command")
+	}
+}
+
+func TestCheckReviewCommands_recommendedPresent(t *testing.T) {
+	content := "skill-auditor batch"
+	req := reviewRequirements{RecommendedCommands: []string{"skill-auditor batch"}}
+	var warns []string
+	checkReviewCommands(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) != 0 {
+		t.Errorf("expected no warnings when recommended command is present, got: %v", warns)
+	}
+}
+
+func TestCheckReviewCommands_recommendedMissing(t *testing.T) {
+	content := "no commands"
+	req := reviewRequirements{RecommendedCommands: []string{"skill-auditor batch"}}
+	var warns []string
+	checkReviewCommands(content, req, func(string) {}, func(s string) { warns = append(warns, s) })
+	if len(warns) == 0 {
+		t.Error("expected warning for missing recommended command")
+	}
+}

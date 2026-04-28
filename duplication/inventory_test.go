@@ -76,6 +76,24 @@ func TestInventory_nonexistentDir(t *testing.T) {
 	}
 }
 
+func TestInventory_unreadableFile(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("running as root — permission checks are bypassed")
+	}
+	dir := t.TempDir()
+	full := filepath.Join(dir, "domain", "skill", "SKILL.md")
+	if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	if err := os.WriteFile(full, []byte("content"), 0o000); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	_, err := Inventory(dir)
+	if err == nil {
+		t.Fatal("expected error for unreadable SKILL.md")
+	}
+}
+
 func writeSkill(t *testing.T, base, rel, content string) {
 	t.Helper()
 	full := filepath.Join(base, filepath.FromSlash(rel))
