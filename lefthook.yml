@@ -12,7 +12,9 @@ pre-commit:
       run: golangci-lint run ./...
     mdlint:
       glob: "**/*.md"
-      exclude: "cmd/assets/**"
+      exclude:
+        - "cmd/assets/**"
+        - ".github/**"
       run: mdlint check {staged_files}
     shellcheck:
       glob: "scripts/**/*.sh"
