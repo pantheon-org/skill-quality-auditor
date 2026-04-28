@@ -210,6 +210,33 @@ func TestRemediation_withDiagnostics(t *testing.T) {
 	}
 }
 
+func TestRemediation_warningDiagnostics(t *testing.T) {
+	r := makeResult()
+	r.Dimensions["evalValidation"] = 5 // gap
+	r.WarningDetails = []scorer.Diagnostic{
+		scorer.NewWarnDiag("D9", "low coverage warning"),
+	}
+	out := Remediation(r)
+	if !strings.Contains(out, "low coverage warning") {
+		t.Errorf("remediation should include warning diagnostic messages, got:\n%s", out)
+	}
+	if !strings.Contains(out, "⚠️") {
+		t.Errorf("expected ⚠️ icon for warning-severity diagnostic, got:\n%s", out)
+	}
+}
+
+func TestRemediation_errorSeverityIcon(t *testing.T) {
+	r := makeResult()
+	r.Dimensions["knowledgeDelta"] = 5
+	r.ErrorDetails = []scorer.Diagnostic{
+		scorer.NewErrorDiag("D1", "critical error here"),
+	}
+	out := Remediation(r)
+	if !strings.Contains(out, "🔴") {
+		t.Errorf("expected 🔴 icon for error-severity diagnostic, got:\n%s", out)
+	}
+}
+
 func TestFormatDimensionOrder(t *testing.T) {
 	r := makeResult()
 	out := Format(r)

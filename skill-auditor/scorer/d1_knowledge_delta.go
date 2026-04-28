@@ -24,35 +24,9 @@ func scoreD1(content, skillDir string) (int, []Diagnostic) {
 	}
 
 	instrFile := filepath.Join(skillDir, "evals", "instructions.json")
-	if data, err := os.ReadFile(instrFile); err == nil {
-		var instrData struct {
-			Instructions []struct {
-				WhyGiven string `json:"why_given"`
-			} `json:"instructions"`
-		}
-		if json.Unmarshal(data, &instrData) != nil {
-			diags = append(diags, errDiag("D1", "instructions.json exists but cannot be parsed"))
-		} else {
-			total := len(instrData.Instructions)
-			if total > 0 {
-				newKnow, pref := 0, 0
-				for _, instr := range instrData.Instructions {
-					switch instr.WhyGiven {
-					case "new knowledge":
-						newKnow++
-					case "preference":
-						pref++
-					}
-				}
-				expertRatio := (newKnow + pref) * 100 / total
-				if expertRatio >= 70 {
-					score += 2
-				} else if expertRatio < 30 {
-					score -= 2
-				}
-			}
-		}
-	}
+	delta, instrDiags := scoreD1FromInstructions(instrFile)
+	score += delta
+	diags = append(diags, instrDiags...)
 
 	if score < 0 {
 		score = 0
@@ -61,4 +35,40 @@ func scoreD1(content, skillDir string) (int, []Diagnostic) {
 		score = 20
 	}
 	return score, diags
+}
+
+func scoreD1FromInstructions(instrFile string) (int, []Diagnostic) {
+	data, err := os.ReadFile(instrFile)
+	if err != nil {
+		return 0, nil
+	}
+	var instrData struct {
+		Instructions []struct {
+			WhyGiven string `json:"why_given"`
+		} `json:"instructions"`
+	}
+	if json.Unmarshal(data, &instrData) != nil {
+		return 0, []Diagnostic{errDiag("D1", "instructions.json exists but cannot be parsed")}
+	}
+	total := len(instrData.Instructions)
+	if total == 0 {
+		return 0, nil
+	}
+	newKnow, pref := 0, 0
+	for _, instr := range instrData.Instructions {
+		switch instr.WhyGiven {
+		case "new knowledge":
+			newKnow++
+		case "preference":
+			pref++
+		}
+	}
+	expertRatio := (newKnow + pref) * 100 / total
+	if expertRatio >= 70 {
+		return 2, nil
+	}
+	if expertRatio < 30 {
+		return -2, nil
+	}
+	return 0, nil
 }

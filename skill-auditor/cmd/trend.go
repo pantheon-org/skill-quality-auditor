@@ -75,26 +75,31 @@ var trendCmd = &cobra.Command{
 }
 
 func collectTrends(auditsRoot string) ([]TrendEntry, error) {
-	// Walk one level down: auditsRoot/<domain>/<skill>/ or auditsRoot/<skill>/
-	// The actual layout is auditsRoot/<skillKey>/<date>/audit.json
-	// where skillKey may contain path separators (domain/skill).
-	// We walk two levels: first level = domain (or flat skill), second = skill.
+	auditsBySkill, err := groupAuditsBySkill(auditsRoot)
+	if err != nil {
+		return nil, err
+	}
 
 	var results []TrendEntry
+	for skill, paths := range auditsBySkill {
+		if entry, ok := buildTrendEntry(skill, paths); ok {
+			results = append(results, entry)
+		}
+	}
+	return results, nil
+}
 
-	// Find all audit.json files and group by skill key.
+func groupAuditsBySkill(auditsRoot string) (map[string][]string, error) {
 	auditsBySkill := map[string][]string{}
 	err := filepath.WalkDir(auditsRoot, func(path string, d os.DirEntry, err error) error {
 		if err != nil || d.IsDir() || d.Name() != "audit.json" {
 			return err
 		}
 		rel, _ := filepath.Rel(auditsRoot, path)
-		// rel = <skillKey>/<date>/audit.json
 		parts := strings.Split(filepath.ToSlash(rel), "/")
 		if len(parts) < 3 {
 			return nil
 		}
-		// skill key is everything except last two components (date + filename)
 		skillKey := strings.Join(parts[:len(parts)-2], "/")
 		auditsBySkill[skillKey] = append(auditsBySkill[skillKey], path)
 		return nil
@@ -102,49 +107,47 @@ func collectTrends(auditsRoot string) ([]TrendEntry, error) {
 	if err != nil {
 		return nil, fmt.Errorf("walk audits: %w", err)
 	}
+	return auditsBySkill, nil
+}
 
-	for skill, paths := range auditsBySkill {
-		if len(paths) < 2 {
-			continue
-		}
-		// sort by date component (second-to-last dir)
-		sort.Slice(paths, func(i, j int) bool {
-			return dateFromAuditPath(paths[i]) < dateFromAuditPath(paths[j])
-		})
-
-		oldPath := paths[len(paths)-2]
-		newPath := paths[len(paths)-1]
-
-		oldResult, err := loadAuditJSON(oldPath)
-		if err != nil {
-			continue
-		}
-		newResult, err := loadAuditJSON(newPath)
-		if err != nil {
-			continue
-		}
-
-		delta := newResult.Total - oldResult.Total
-		trend := "—"
-		if delta > 0 {
-			trend = "↑"
-		} else if delta < 0 {
-			trend = "↓"
-		}
-
-		results = append(results, TrendEntry{
-			Skill:    skill,
-			OldDate:  oldResult.Date,
-			NewDate:  newResult.Date,
-			OldScore: oldResult.Total,
-			NewScore: newResult.Total,
-			OldGrade: oldResult.Grade,
-			NewGrade: newResult.Grade,
-			Delta:    delta,
-			Trend:    trend,
-		})
+func buildTrendEntry(skill string, paths []string) (TrendEntry, bool) {
+	if len(paths) < 2 {
+		return TrendEntry{}, false
 	}
-	return results, nil
+	sort.Slice(paths, func(i, j int) bool {
+		return dateFromAuditPath(paths[i]) < dateFromAuditPath(paths[j])
+	})
+	oldResult, err := loadAuditJSON(paths[len(paths)-2])
+	if err != nil {
+		return TrendEntry{}, false
+	}
+	newResult, err := loadAuditJSON(paths[len(paths)-1])
+	if err != nil {
+		return TrendEntry{}, false
+	}
+	delta := newResult.Total - oldResult.Total
+	trend := trendArrow(delta)
+	return TrendEntry{
+		Skill:    skill,
+		OldDate:  oldResult.Date,
+		NewDate:  newResult.Date,
+		OldScore: oldResult.Total,
+		NewScore: newResult.Total,
+		OldGrade: oldResult.Grade,
+		NewGrade: newResult.Grade,
+		Delta:    delta,
+		Trend:    trend,
+	}, true
+}
+
+func trendArrow(delta int) string {
+	if delta > 0 {
+		return "↑"
+	}
+	if delta < 0 {
+		return "↓"
+	}
+	return "—"
 }
 
 func printTrendTable(entries []TrendEntry) {

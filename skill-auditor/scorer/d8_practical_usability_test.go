@@ -43,9 +43,9 @@ func TestD8_LibraryCodeBlockCount(t *testing.T) {
 		want  int
 	}{
 		{0, 5},
-		{1, 6},  // 5 + 1
-		{3, 7},  // 5 + 2
-		{6, 9},  // 5 + 4
+		{1, 6}, // 5 + 1
+		{3, 7}, // 5 + 2
+		{6, 9}, // 5 + 4
 	}
 	for _, tc := range cases {
 		b := &validatorBridge{Content: &types.ContentReport{CodeBlockCount: tc.count}}
@@ -66,6 +66,20 @@ func TestD8_LibraryLanguageTags(t *testing.T) {
 	content := "---\ndescription: x\n---\n```bash\necho hi\n```\n"
 	if score := scoreD8(content, b); score != 8 {
 		t.Errorf("want 8, got %d", score)
+	}
+}
+
+func TestD8_ScoreCappedAt15(t *testing.T) {
+	// 5 + 4 (>5 blocks) + 2 (languages) + 4 (run cmd) = 15 already hit by TestD8_ManyCodeBlocks.
+	// Test with high block count AND many run commands to confirm cap holds.
+	b := &validatorBridge{Content: &types.ContentReport{
+		CodeBlockCount: 10,
+		CodeLanguages:  []string{"bash", "typescript", "go"},
+	}}
+	content := "---\ndescription: x\n---\nRun ./script.sh and npm run build and go run ./main.go"
+	score := scoreD8(content, b)
+	if score != 15 {
+		t.Errorf("want 15 (capped), got %d", score)
 	}
 }
 

@@ -75,8 +75,13 @@ func (v *artifactValidator) walkSkillsDir() {
 	if _, err := os.Stat(skillsDir); os.IsNotExist(err) {
 		return
 	}
-	// Check files inside assets/templates, assets/schemas, scripts
+	v.walkArtifactFiles(skillsDir)
+	v.walkSkillDirs(skillsDir)
+}
+
+func (v *artifactValidator) walkArtifactFiles(skillsDir string) {
 	for _, subpath := range []string{"assets/templates", "assets/schemas", "scripts"} {
+		sub := subpath
 		_ = filepath.Walk(skillsDir, func(path string, info os.FileInfo, err error) error {
 			if err != nil || info.IsDir() {
 				return nil
@@ -86,22 +91,21 @@ func (v *artifactValidator) walkSkillsDir() {
 			if len(parts) < 3 {
 				return nil
 			}
-			dirContext := filepath.Join(parts[0], parts[1])
-			if !strings.Contains(dirContext+"/"+parts[2], subpath) {
-				return nil
+			if strings.Contains(filepath.Join(parts[0], parts[1])+"/"+parts[2], sub) {
+				v.checkFile(path)
 			}
-			v.checkFile(path)
 			return nil
 		})
 	}
-	// Check each skill dir
+}
+
+func (v *artifactValidator) walkSkillDirs(skillsDir string) {
 	_ = filepath.Walk(skillsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || !info.IsDir() {
 			return nil
 		}
 		rel, _ := filepath.Rel(skillsDir, path)
-		parts := strings.Split(rel, string(filepath.Separator))
-		if len(parts) != 2 {
+		if len(strings.Split(rel, string(filepath.Separator))) != 2 {
 			return nil
 		}
 		if _, serr := os.Stat(filepath.Join(path, "SKILL.md")); serr == nil {
@@ -254,47 +258,48 @@ func (v *artifactValidator) checkJSScript(path string) {
 }
 
 func (v *artifactValidator) checkSkillDir(skillDir string) {
-	skillName := filepath.Base(skillDir)
-
-	// assets/ subdirectory names
-	assetsDir := filepath.Join(skillDir, "assets")
-	if info, err := os.Stat(assetsDir); err == nil && info.IsDir() {
-		entries, _ := os.ReadDir(assetsDir)
-		for _, e := range entries {
-			if !e.IsDir() {
-				// YAML directly under assets/ is forbidden
-				name := e.Name()
-				if strings.HasSuffix(name, ".yaml") || strings.HasSuffix(name, ".yml") {
-					v.errorf("%s: YAML files must be placed in assets/templates/, not directly in assets/", filepath.Join(assetsDir, name))
-				}
-				continue
-			}
-			switch e.Name() {
-			case "templates", "schemas", "requirements", "examples":
-			default:
-				v.errorf("%s: non-standard assets/ subdirectory '%s' (allowed: templates/, schemas/, requirements/, examples/)", skillDir, e.Name())
-			}
-		}
-	}
+	v.checkAssetsDir(skillDir)
 
 	skillMD := filepath.Join(skillDir, "SKILL.md")
 	if _, err := os.Stat(skillMD); os.IsNotExist(err) {
 		return
 	}
-
 	data, err := os.ReadFile(skillMD)
 	if err != nil {
 		v.errorf("%s: cannot read: %v", skillMD, err)
 		return
 	}
-	content := string(data)
-	lines := strings.Split(content, "\n")
+	v.validateSkillMD(skillMD, filepath.Base(skillDir), string(data))
+}
 
+func (v *artifactValidator) checkAssetsDir(skillDir string) {
+	assetsDir := filepath.Join(skillDir, "assets")
+	info, err := os.Stat(assetsDir)
+	if err != nil || !info.IsDir() {
+		return
+	}
+	entries, _ := os.ReadDir(assetsDir)
+	for _, e := range entries {
+		if !e.IsDir() {
+			name := e.Name()
+			if strings.HasSuffix(name, ".yaml") || strings.HasSuffix(name, ".yml") {
+				v.errorf("%s: YAML files must be placed in assets/templates/, not directly in assets/", filepath.Join(assetsDir, name))
+			}
+			continue
+		}
+		switch e.Name() {
+		case "templates", "schemas", "requirements", "examples":
+		default:
+			v.errorf("%s: non-standard assets/ subdirectory '%s' (allowed: templates/, schemas/, requirements/, examples/)", skillDir, e.Name())
+		}
+	}
+}
+
+func (v *artifactValidator) validateSkillMD(skillMD, skillName, content string) {
+	lines := strings.Split(content, "\n")
 	if len(lines) > 500 {
 		v.errorf("%s: %d lines exceeds 500-line limit — move detail to references/", skillMD, len(lines))
 	}
-
-	// Frontmatter name must match directory name
 	for _, line := range lines {
 		if strings.HasPrefix(line, "name:") {
 			val := strings.TrimSpace(strings.TrimPrefix(line, "name:"))
@@ -305,8 +310,6 @@ func (v *artifactValidator) checkSkillDir(skillDir string) {
 			break
 		}
 	}
-
-	// No ../ outside fenced code blocks
 	inFence := false
 	for _, line := range lines {
 		if strings.HasPrefix(line, "```") {
@@ -398,87 +401,12 @@ func runValidateReview(reportPath string, strictRecommended bool) error {
 		}
 	}
 
-	// H1 title
-	title := extractH1(content)
-	if title == "" {
-		addErr("missing H1 title")
-	} else if !strings.HasPrefix(title, req.RequiredTitlePrefix) {
-		addErr(fmt.Sprintf("title must start with '%s'", req.RequiredTitlePrefix))
-	}
-
-	// Frontmatter
-	fm := extractFrontmatter(content)
-	for _, key := range req.RequiredFrontmatterKeys {
-		if !hasFrontmatterKey(fm, key) {
-			addErr(fmt.Sprintf("missing required frontmatter key: %s", key))
-		}
-	}
-	for _, key := range req.RecommendedFrontmatterKeys {
-		if !hasFrontmatterKey(fm, key) {
-			addWarnOrErr(fmt.Sprintf("missing recommended frontmatter key: %s", key))
-		}
-	}
-
-	// Metadata labels (bold key: pattern)
-	for _, label := range req.RequiredMetadataLabels {
-		if !strings.Contains(content, "**"+label+"**:") {
-			addErr(fmt.Sprintf("missing metadata label: %s", label))
-		}
-	}
-	for _, label := range req.RecommendedMetadataLabels {
-		if !strings.Contains(content, "**"+label+"**:") {
-			addWarnOrErr(fmt.Sprintf("missing recommended metadata label: %s", label))
-		}
-	}
-
-	// H2 headings
-	h2s := extractH2Headings(content)
-
-	for _, group := range req.RequiredH2Groups {
-		if !h2GroupPresent(group, h2s) {
-			addErr(fmt.Sprintf("missing required H2 heading (one of): %s", strings.Join(group, ", ")))
-		}
-	}
-	for _, group := range req.RecommendedH2Groups {
-		if !h2GroupPresent(group, h2s) {
-			addWarnOrErr(fmt.Sprintf("missing recommended H2 heading (one of): %s", strings.Join(group, ", ")))
-		}
-	}
-
-	// H2 order
-	prevIdx := -1
-	for _, group := range req.RequiredH2Order {
-		idx := h2GroupIndex(group, h2s)
-		if idx < 0 {
-			// Already reported as missing above.
-			continue
-		}
-		if prevIdx >= 0 && idx < prevIdx {
-			addErr(fmt.Sprintf("H2 order violation near group: %s; expected after prior required section", strings.Join(group, ", ")))
-		}
-		if idx >= 0 {
-			prevIdx = idx
-		}
-	}
-
-	// Dimension labels
-	for _, label := range req.RequiredDimensionLabels {
-		if !strings.Contains(content, label) {
-			addErr(fmt.Sprintf("missing dimension label: %s", label))
-		}
-	}
-
-	// Commands
-	for _, cmd := range req.RequiredCommands {
-		if !strings.Contains(content, cmd) {
-			addErr(fmt.Sprintf("missing required command: %s", cmd))
-		}
-	}
-	for _, cmd := range req.RecommendedCommands {
-		if !strings.Contains(content, cmd) {
-			addWarnOrErr(fmt.Sprintf("missing recommended command: %s", cmd))
-		}
-	}
+	checkReviewTitle(content, req, addErr)
+	checkReviewFrontmatter(content, req, addErr, addWarnOrErr)
+	checkReviewMetadataLabels(content, req, addErr, addWarnOrErr)
+	checkReviewH2Headings(content, req, addErr, addWarnOrErr)
+	checkReviewDimensionLabels(content, req, addErr)
+	checkReviewCommands(content, req, addErr, addWarnOrErr)
 
 	if len(warns) > 0 {
 		fmt.Fprintf(os.Stderr, "Review format warnings for: %s\n", reportPath)
@@ -497,6 +425,92 @@ func runValidateReview(reportPath string, strictRecommended bool) error {
 
 	fmt.Printf("✓ review format validation passed: %s\n", reportPath)
 	return nil
+}
+
+func checkReviewTitle(content string, req reviewRequirements, addErr func(string)) {
+	title := extractH1(content)
+	if title == "" {
+		addErr("missing H1 title")
+	} else if !strings.HasPrefix(title, req.RequiredTitlePrefix) {
+		addErr(fmt.Sprintf("title must start with '%s'", req.RequiredTitlePrefix))
+	}
+}
+
+func checkReviewFrontmatter(content string, req reviewRequirements, addErr, addWarnOrErr func(string)) {
+	fm := extractFrontmatter(content)
+	for _, key := range req.RequiredFrontmatterKeys {
+		if !hasFrontmatterKey(fm, key) {
+			addErr(fmt.Sprintf("missing required frontmatter key: %s", key))
+		}
+	}
+	for _, key := range req.RecommendedFrontmatterKeys {
+		if !hasFrontmatterKey(fm, key) {
+			addWarnOrErr(fmt.Sprintf("missing recommended frontmatter key: %s", key))
+		}
+	}
+}
+
+func checkReviewMetadataLabels(content string, req reviewRequirements, addErr, addWarnOrErr func(string)) {
+	for _, label := range req.RequiredMetadataLabels {
+		if !strings.Contains(content, "**"+label+"**:") {
+			addErr(fmt.Sprintf("missing metadata label: %s", label))
+		}
+	}
+	for _, label := range req.RecommendedMetadataLabels {
+		if !strings.Contains(content, "**"+label+"**:") {
+			addWarnOrErr(fmt.Sprintf("missing recommended metadata label: %s", label))
+		}
+	}
+}
+
+func checkReviewH2Headings(content string, req reviewRequirements, addErr, addWarnOrErr func(string)) {
+	h2s := extractH2Headings(content)
+	for _, group := range req.RequiredH2Groups {
+		if !h2GroupPresent(group, h2s) {
+			addErr(fmt.Sprintf("missing required H2 heading (one of): %s", strings.Join(group, ", ")))
+		}
+	}
+	for _, group := range req.RecommendedH2Groups {
+		if !h2GroupPresent(group, h2s) {
+			addWarnOrErr(fmt.Sprintf("missing recommended H2 heading (one of): %s", strings.Join(group, ", ")))
+		}
+	}
+	checkReviewH2Order(h2s, req, addErr)
+}
+
+func checkReviewH2Order(h2s []string, req reviewRequirements, addErr func(string)) {
+	prevIdx := -1
+	for _, group := range req.RequiredH2Order {
+		idx := h2GroupIndex(group, h2s)
+		if idx < 0 {
+			continue
+		}
+		if prevIdx >= 0 && idx < prevIdx {
+			addErr(fmt.Sprintf("H2 order violation near group: %s; expected after prior required section", strings.Join(group, ", ")))
+		}
+		prevIdx = idx
+	}
+}
+
+func checkReviewDimensionLabels(content string, req reviewRequirements, addErr func(string)) {
+	for _, label := range req.RequiredDimensionLabels {
+		if !strings.Contains(content, label) {
+			addErr(fmt.Sprintf("missing dimension label: %s", label))
+		}
+	}
+}
+
+func checkReviewCommands(content string, req reviewRequirements, addErr, addWarnOrErr func(string)) {
+	for _, cmd := range req.RequiredCommands {
+		if !strings.Contains(content, cmd) {
+			addErr(fmt.Sprintf("missing required command: %s", cmd))
+		}
+	}
+	for _, cmd := range req.RecommendedCommands {
+		if !strings.Contains(content, cmd) {
+			addWarnOrErr(fmt.Sprintf("missing recommended command: %s", cmd))
+		}
+	}
 }
 
 // --------------------------------------------------------------------------

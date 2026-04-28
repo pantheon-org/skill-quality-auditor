@@ -76,6 +76,34 @@ func TestD1_ExpertRatioPenalty(t *testing.T) {
 	}
 }
 
+func TestD1_ExpertRatioNeutral(t *testing.T) {
+	// 5 of 10 expert → ratio 50% → neither bonus nor penalty (returns 0)
+	tmpDir := t.TempDir()
+	evalsDir := filepath.Join(tmpDir, "evals")
+	if err := os.MkdirAll(evalsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	instrJSON := `{"instructions":[` +
+		`{"why_given":"new knowledge"},{"why_given":"new knowledge"},` +
+		`{"why_given":"preference"},{"why_given":"preference"},` +
+		`{"why_given":"preference"},{"why_given":"other"},` +
+		`{"why_given":"other"},{"why_given":"other"},` +
+		`{"why_given":"other"},{"why_given":"other"}` +
+		`]}`
+	if err := os.WriteFile(filepath.Join(evalsDir, "instructions.json"), []byte(instrJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: x\n---\n# Skill\nsome content"
+	score, diags := scoreD1(content, tmpDir)
+	if len(diags) != 0 {
+		t.Errorf("expected no diagnostics, got %v", diags)
+	}
+	// base 15, neutral ratio → no delta
+	if score != 15 {
+		t.Errorf("want 15 (neutral ratio), got %d", score)
+	}
+}
+
 func TestD1_InstructionsParseError(t *testing.T) {
 	tmpDir := t.TempDir()
 	evalsDir := filepath.Join(tmpDir, "evals")

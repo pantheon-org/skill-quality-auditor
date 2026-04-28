@@ -118,6 +118,14 @@ func TestD3_AntiPatternInstructionsArraySnippets(t *testing.T) {
 	}
 }
 
+func TestD3_DirectiveLanguage_NilBridgeNoNEVER(t *testing.T) {
+	// nil bridge + zero NEVER occurrences → returns 0
+	delta := scoreD3DirectiveLanguage("---\ndescription: x\n---\n# Skill\nNo directives here.", nilBridge())
+	if delta != 0 {
+		t.Errorf("want 0 with no NEVER and nil bridge, got %d", delta)
+	}
+}
+
 func TestD3_InstructionsParseError(t *testing.T) {
 	tmpDir := t.TempDir()
 	evalsDir := filepath.Join(tmpDir, "evals")

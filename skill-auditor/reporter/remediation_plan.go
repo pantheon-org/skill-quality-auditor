@@ -113,14 +113,22 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 		auditPath = fmt.Sprintf(".context/audits/%s/%s/Analysis.md", skillName, r.Date)
 	}
 
+	fm, gaps, err := buildRemediationFrontmatter(r, targetScore, skillName, auditPath, date)
+	if err != nil {
+		return "", err
+	}
+
+	return renderRemediationPlan(r, fm, gaps, targetScore, date)
+}
+
+func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, auditPath, date string) (remPlanFrontmatter, []gap, error) {
 	gaps := buildGaps(r)
 	sort.Slice(gaps, func(i, j int) bool {
 		return (gaps[i].max - gaps[i].score) > (gaps[j].max - gaps[j].score)
 	})
 
 	totalGap := r.MaxTotal - r.Total
-	overallPriority := gapPriority(totalGap)
-	overallEffort := gapEffort(totalGap)
+	pct := func(score int) int { return int(math.Round(float64(score) / 140.0 * 100)) }
 
 	focusAreas := make([]string, 0, 3)
 	for i, g := range gaps {
@@ -129,12 +137,6 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 		}
 		focusAreas = append(focusAreas, dimLabelToCode(g.label)+": "+g.label)
 	}
-
-	criticals := buildCriticalIssues(gaps)
-	phases := buildPhases(gaps)
-	efforts := buildEffortEstimates(gaps)
-
-	pct := func(score int) int { return int(math.Round(float64(score) / 140.0 * 100)) }
 
 	fm := remPlanFrontmatter{
 		PlanDate:    date,
@@ -149,20 +151,25 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 				Current: r.Grade,
 				Target:  scorer.Grade(targetScore),
 			},
-			Priority:   overallPriority,
-			Effort:     overallEffort,
+			Priority:   gapPriority(totalGap),
+			Effort:     gapEffort(totalGap),
 			FocusAreas: focusAreas,
-			Verdict:    planVerdict(overallPriority),
+			Verdict:    planVerdict(gapPriority(totalGap)),
 		},
-		CriticalIssues:  criticals,
-		RemPhases:       phases,
+		CriticalIssues:  buildCriticalIssues(gaps),
+		RemPhases:       buildPhases(gaps),
 		VerifCmds:       verifCommands(skillName),
 		SuccessCriteria: successCriteria(r, targetScore),
-		EffortEstimates: efforts,
+		EffortEstimates: buildEffortEstimates(gaps),
 		Dependencies:    []string{"Completed audit stored in .context/audits/"},
 		RollbackPlan:    "git checkout HEAD -- skills/" + skillName + "/SKILL.md",
 		Notes:           planNotes(r),
 	}
+	return fm, gaps, nil
+}
+
+func renderRemediationPlan(r *scorer.Result, fm remPlanFrontmatter, _ []gap, targetScore int, date string) (string, error) {
+	pct := func(score int) int { return int(math.Round(float64(score) / 140.0 * 100)) }
 
 	fmBytes, err := yaml.Marshal(fm)
 	if err != nil {
@@ -179,46 +186,58 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 	fmt.Fprintf(&sb, "**Current:** %s (%d/140)  \n", r.Grade, r.Total)
 	fmt.Fprintf(&sb, "**Target:** %s (%d/140)\n\n", scorer.Grade(targetScore), targetScore)
 
+	writeRemediationExecSummary(&sb, r, fm, targetScore, pct)
+	writeRemediationCriticalIssues(&sb, fm.CriticalIssues)
+	writeRemediationPhases(&sb, fm.RemPhases)
+	writeRemediationVerifAndCriteria(&sb, fm)
+
+	return sb.String(), nil
+}
+
+func writeRemediationExecSummary(sb *strings.Builder, r *scorer.Result, fm remPlanFrontmatter, targetScore int, pct func(int) int) {
 	sb.WriteString("## Executive Summary\n\n")
 	sb.WriteString("| Field | Current | Target |\n")
 	sb.WriteString("|-------|---------|--------|\n")
-	fmt.Fprintf(&sb, "| Score | %d/140 (%d%%) | %d/140 (%d%%) |\n",
+	fmt.Fprintf(sb, "| Score | %d/140 (%d%%) | %d/140 (%d%%) |\n",
 		r.Total, pct(r.Total), targetScore, pct(targetScore))
-	fmt.Fprintf(&sb, "| Grade | %s | %s |\n", r.Grade, scorer.Grade(targetScore))
-	fmt.Fprintf(&sb, "| Priority | %s | — |\n\n", overallPriority)
+	fmt.Fprintf(sb, "| Grade | %s | %s |\n", r.Grade, scorer.Grade(targetScore))
+	fmt.Fprintf(sb, "| Priority | %s | — |\n\n", fm.ExecutiveSummary.Priority)
+}
 
+func writeRemediationCriticalIssues(sb *strings.Builder, criticals []remCritical) {
 	sb.WriteString("## Critical Issues\n\n")
 	sb.WriteString("| Issue | Dimension | Severity | Impact |\n")
 	sb.WriteString("|-------|-----------|----------|--------|\n")
 	for _, c := range criticals {
-		fmt.Fprintf(&sb, "| %s | %s | %s | %s |\n", c.Issue, c.Dimension, c.Severity, c.Impact)
+		fmt.Fprintf(sb, "| %s | %s | %s | %s |\n", c.Issue, c.Dimension, c.Severity, c.Impact)
 	}
 	sb.WriteString("\n")
+}
 
+func writeRemediationPhases(sb *strings.Builder, phases []remPhase) {
 	sb.WriteString("## Remediation Phases\n\n")
 	for _, ph := range phases {
-		fmt.Fprintf(&sb, "### Phase %d\n\n", ph.Phase)
-		fmt.Fprintf(&sb, "**Dimension:** %s  \n", ph.Dimension)
-		fmt.Fprintf(&sb, "**Target:** %s  \n", ph.Target)
-		fmt.Fprintf(&sb, "**Priority:** %s\n\n", ph.Priority)
+		fmt.Fprintf(sb, "### Phase %d\n\n", ph.Phase)
+		fmt.Fprintf(sb, "**Dimension:** %s  \n", ph.Dimension)
+		fmt.Fprintf(sb, "**Target:** %s  \n", ph.Target)
+		fmt.Fprintf(sb, "**Priority:** %s\n\n", ph.Priority)
 		for _, step := range ph.Steps {
-			fmt.Fprintf(&sb, "- **%s** (`%s`): %s\n", step.Title, step.Step, step.Description)
+			fmt.Fprintf(sb, "- **%s** (`%s`): %s\n", step.Title, step.Step, step.Description)
 		}
 		sb.WriteString("\n")
 	}
+}
 
+func writeRemediationVerifAndCriteria(sb *strings.Builder, fm remPlanFrontmatter) {
 	sb.WriteString("## Verification Commands\n\n")
 	for _, cmd := range fm.VerifCmds {
-		fmt.Fprintf(&sb, "```bash\n%s\n```\n\n", cmd)
+		fmt.Fprintf(sb, "```bash\n%s\n```\n\n", cmd)
 	}
-
 	sb.WriteString("## Success Criteria\n\n")
 	for _, sc := range fm.SuccessCriteria {
-		fmt.Fprintf(&sb, "- [ ] %s: %s\n", sc.Criterion, sc.Measurement)
+		fmt.Fprintf(sb, "- [ ] %s: %s\n", sc.Criterion, sc.Measurement)
 	}
 	sb.WriteString("\n")
-
-	return sb.String(), nil
 }
 
 // ---- Validation ----

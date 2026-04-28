@@ -36,29 +36,37 @@ func Remediation(r *scorer.Result) string {
 	fmt.Fprintf(&sb, "# Remediation Plan — %s\n\n", r.Skill)
 	fmt.Fprintf(&sb, "**Current Grade:** %s (%d/%d)\n\n", r.Grade, r.Total, r.MaxTotal)
 
-	// Build gaps sorted by points available (largest first).
-	gaps := make([]gap, 0, len(dimensionOrder))
-	for _, d := range dimensionOrder {
-		score, ok := r.Dimensions[d.key]
-		if !ok {
-			continue
-		}
-		if score < d.max {
-			gaps = append(gaps, gap{key: d.key, label: d.label, score: score, max: d.max})
-		}
-	}
-	sort.Slice(gaps, func(i, j int) bool {
-		return (gaps[i].max - gaps[i].score) > (gaps[j].max - gaps[j].score)
-	})
-
+	gaps := buildSortedGaps(r)
 	if len(gaps) == 0 {
 		fmt.Fprintf(&sb, "All dimensions are at maximum score. Nothing to remediate.\n")
 		return sb.String()
 	}
 
 	fmt.Fprintf(&sb, "## Priority Actions\n\n")
+	diagsByDim := groupDiagsByDimension(r)
+	for _, g := range gaps {
+		writeGapSection(&sb, g, diagsByDim)
+	}
 
-	// Collect diagnostics keyed by dimension label prefix (e.g. "D9").
+	return sb.String()
+}
+
+func buildSortedGaps(r *scorer.Result) []gap {
+	gaps := make([]gap, 0, len(dimensionOrder))
+	for _, d := range dimensionOrder {
+		score, ok := r.Dimensions[d.key]
+		if !ok || score >= d.max {
+			continue
+		}
+		gaps = append(gaps, gap{key: d.key, label: d.label, score: score, max: d.max})
+	}
+	sort.Slice(gaps, func(i, j int) bool {
+		return (gaps[i].max - gaps[i].score) > (gaps[j].max - gaps[j].score)
+	})
+	return gaps
+}
+
+func groupDiagsByDimension(r *scorer.Result) map[string][]scorer.Diagnostic {
 	diagsByDim := map[string][]scorer.Diagnostic{}
 	for _, d := range r.ErrorDetails {
 		diagsByDim[d.Dimension] = append(diagsByDim[d.Dimension], d)
@@ -66,30 +74,23 @@ func Remediation(r *scorer.Result) string {
 	for _, d := range r.WarningDetails {
 		diagsByDim[d.Dimension] = append(diagsByDim[d.Dimension], d)
 	}
+	return diagsByDim
+}
 
-	for _, g := range gaps {
-		available := g.max - g.score
-		fmt.Fprintf(&sb, "### %s (%d/%d) — %d pt%s available\n\n", g.label, g.score, g.max, available, plural(available))
-
-		// Emit specific diagnostics for this dimension first.
-		dimKey := dimLabelToCode(g.label)
-		if diags, ok := diagsByDim[dimKey]; ok {
-			for _, d := range diags {
-				prefix := "⚠️"
-				if d.Severity() == "error" {
-					prefix = "🔴"
-				}
-				fmt.Fprintf(&sb, "%s %s\n\n", prefix, d.Message)
-			}
+func writeGapSection(sb *strings.Builder, g gap, diagsByDim map[string][]scorer.Diagnostic) {
+	available := g.max - g.score
+	fmt.Fprintf(sb, "### %s (%d/%d) — %d pt%s available\n\n", g.label, g.score, g.max, available, plural(available))
+	dimKey := dimLabelToCode(g.label)
+	for _, d := range diagsByDim[dimKey] {
+		prefix := "⚠️"
+		if d.Severity() == "error" {
+			prefix = "🔴"
 		}
-
-		// Fall back to generic advice.
-		if advice, ok := dimensionAdvice[g.key]; ok {
-			fmt.Fprintf(&sb, "%s\n\n", advice)
-		}
+		fmt.Fprintf(sb, "%s %s\n\n", prefix, d.Message)
 	}
-
-	return sb.String()
+	if advice, ok := dimensionAdvice[g.key]; ok {
+		fmt.Fprintf(sb, "%s\n\n", advice)
+	}
 }
 
 func plural(n int) string {

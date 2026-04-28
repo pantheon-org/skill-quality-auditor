@@ -19,41 +19,13 @@ func scoreD9(evalsDir string) (int, []Diagnostic) {
 	}
 	score += 4
 
-	instrFile := filepath.Join(evalsDir, "instructions.json")
-	if data, err := os.ReadFile(instrFile); err == nil {
-		var instrData struct {
-			Instructions []json.RawMessage `json:"instructions"`
-		}
-		if json.Unmarshal(data, &instrData) != nil {
-			diags = append(diags, errDiag("D9", "instructions.json exists but is not valid JSON"))
-		} else if len(instrData.Instructions) > 0 || len(data) > 0 {
-			score += 3
-		}
-	}
+	delta, instrDiags := scoreD9Instructions(evalsDir)
+	score += delta
+	diags = append(diags, instrDiags...)
 
-	summaryFile := filepath.Join(evalsDir, "summary.json")
-	if data, err := os.ReadFile(summaryFile); err == nil {
-		var summaryData struct {
-			InstructionsCoverage struct {
-				CoveragePercentage interface{} `json:"coverage_percentage"`
-			} `json:"instructions_coverage"`
-		}
-		if json.Unmarshal(data, &summaryData) != nil {
-			diags = append(diags, errDiag("D9", "summary.json exists but is not valid JSON"))
-		} else {
-			coverage := parseCoveragePercentage(summaryData.InstructionsCoverage.CoveragePercentage)
-			if coverage >= 0 {
-				score += 3
-				if coverage >= 80 {
-					score += 3
-				} else {
-					diags = append(diags, warnDiag("D9", fmt.Sprintf("summary.json coverage is %d%% (below 80%% threshold)", coverage)))
-				}
-			} else if len(data) > 0 {
-				score += 3
-			}
-		}
-	}
+	delta, summaryDiags := scoreD9Summary(evalsDir)
+	score += delta
+	diags = append(diags, summaryDiags...)
 
 	validScenarios, scenarioDiags := countValidScenariosWithDiags(evalsDir)
 	diags = append(diags, scenarioDiags...)
@@ -67,6 +39,49 @@ func scoreD9(evalsDir string) (int, []Diagnostic) {
 		score = 20
 	}
 	return score, diags
+}
+
+func scoreD9Instructions(evalsDir string) (int, []Diagnostic) {
+	data, err := os.ReadFile(filepath.Join(evalsDir, "instructions.json"))
+	if err != nil {
+		return 0, nil
+	}
+	var instrData struct {
+		Instructions []json.RawMessage `json:"instructions"`
+	}
+	if json.Unmarshal(data, &instrData) != nil {
+		return 0, []Diagnostic{errDiag("D9", "instructions.json exists but is not valid JSON")}
+	}
+	if len(instrData.Instructions) > 0 || len(data) > 0 {
+		return 3, nil
+	}
+	return 0, nil
+}
+
+func scoreD9Summary(evalsDir string) (int, []Diagnostic) {
+	data, err := os.ReadFile(filepath.Join(evalsDir, "summary.json"))
+	if err != nil {
+		return 0, nil
+	}
+	var summaryData struct {
+		InstructionsCoverage struct {
+			CoveragePercentage interface{} `json:"coverage_percentage"`
+		} `json:"instructions_coverage"`
+	}
+	if json.Unmarshal(data, &summaryData) != nil {
+		return 0, []Diagnostic{errDiag("D9", "summary.json exists but is not valid JSON")}
+	}
+	coverage := parseCoveragePercentage(summaryData.InstructionsCoverage.CoveragePercentage)
+	if coverage >= 0 {
+		if coverage >= 80 {
+			return 6, nil
+		}
+		return 3, []Diagnostic{warnDiag("D9", fmt.Sprintf("summary.json coverage is %d%% (below 80%% threshold)", coverage))}
+	}
+	if len(data) > 0 {
+		return 3, nil
+	}
+	return 0, nil
 }
 
 // parseCoveragePercentage parses a coverage percentage value to int. Returns -1 if unparseable.
@@ -113,63 +128,17 @@ func countValidScenariosWithDiags(evalsDir string) (int, []Diagnostic) {
 		return 0, diags
 	}
 
-	// Detect flat scenario-NN.md files (legacy format) when no subdirectory scenarios exist.
-	flatCount := 0
-	for _, e := range entries {
-		if !e.IsDir() && strings.HasPrefix(e.Name(), "scenario-") && strings.HasSuffix(e.Name(), ".md") {
-			flatCount++
-		}
-	}
+	flatCount := countFlatScenarios(entries)
 
 	valid := 0
 	for _, e := range entries {
 		if !e.IsDir() || !strings.HasPrefix(e.Name(), "scenario-") {
 			continue
 		}
-		name := e.Name()
-		scenarioDir := filepath.Join(evalsDir, name)
-		hasTask := fileExists(filepath.Join(scenarioDir, "task.md"))
-		hasCriteria := fileExists(filepath.Join(scenarioDir, "criteria.json"))
-		hasCapability := fileExists(filepath.Join(scenarioDir, "capability.txt"))
-
-		if !hasTask || !hasCriteria || !hasCapability {
-			var missing []string
-			if !hasTask {
-				missing = append(missing, "task.md")
-			}
-			if !hasCriteria {
-				missing = append(missing, "criteria.json")
-			}
-			if !hasCapability {
-				missing = append(missing, "capability.txt")
-			}
-			diags = append(diags, warnDiag("D9", fmt.Sprintf("%s missing: %s", name, strings.Join(missing, ", "))))
-			continue
-		}
-
-		data, err := os.ReadFile(filepath.Join(scenarioDir, "criteria.json"))
-		if err != nil {
+		ok, scenDiags := validateScenarioDir(evalsDir, e.Name())
+		diags = append(diags, scenDiags...)
+		if ok {
 			valid++
-			continue
-		}
-		var criteriaData struct {
-			Checklist []struct {
-				MaxScore int `json:"max_score"`
-			} `json:"checklist"`
-		}
-		if json.Unmarshal(data, &criteriaData) != nil {
-			diags = append(diags, errDiag("D9", fmt.Sprintf("%s/criteria.json is not valid JSON", name)))
-			valid++
-			continue
-		}
-		sum := 0
-		for _, item := range criteriaData.Checklist {
-			sum += item.MaxScore
-		}
-		if sum == 100 {
-			valid++
-		} else {
-			diags = append(diags, warnDiag("D9", fmt.Sprintf("%s/criteria.json checklist does not sum to 100 (got %d)", name, sum)))
 		}
 	}
 
@@ -178,4 +147,60 @@ func countValidScenariosWithDiags(evalsDir string) (int, []Diagnostic) {
 	}
 
 	return valid, diags
+}
+
+func countFlatScenarios(entries []os.DirEntry) int {
+	count := 0
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasPrefix(e.Name(), "scenario-") && strings.HasSuffix(e.Name(), ".md") {
+			count++
+		}
+	}
+	return count
+}
+
+func validateScenarioDir(evalsDir, name string) (bool, []Diagnostic) {
+	scenarioDir := filepath.Join(evalsDir, name)
+	hasTask := fileExists(filepath.Join(scenarioDir, "task.md"))
+	hasCriteria := fileExists(filepath.Join(scenarioDir, "criteria.json"))
+	hasCapability := fileExists(filepath.Join(scenarioDir, "capability.txt"))
+
+	if !hasTask || !hasCriteria || !hasCapability {
+		var missing []string
+		if !hasTask {
+			missing = append(missing, "task.md")
+		}
+		if !hasCriteria {
+			missing = append(missing, "criteria.json")
+		}
+		if !hasCapability {
+			missing = append(missing, "capability.txt")
+		}
+		return false, []Diagnostic{warnDiag("D9", fmt.Sprintf("%s missing: %s", name, strings.Join(missing, ", ")))}
+	}
+
+	return validateScenarioCriteria(scenarioDir, name)
+}
+
+func validateScenarioCriteria(scenarioDir, name string) (bool, []Diagnostic) {
+	data, err := os.ReadFile(filepath.Join(scenarioDir, "criteria.json"))
+	if err != nil {
+		return true, nil
+	}
+	var criteriaData struct {
+		Checklist []struct {
+			MaxScore int `json:"max_score"`
+		} `json:"checklist"`
+	}
+	if json.Unmarshal(data, &criteriaData) != nil {
+		return true, []Diagnostic{errDiag("D9", fmt.Sprintf("%s/criteria.json is not valid JSON", name))}
+	}
+	sum := 0
+	for _, item := range criteriaData.Checklist {
+		sum += item.MaxScore
+	}
+	if sum == 100 {
+		return true, nil
+	}
+	return false, []Diagnostic{warnDiag("D9", fmt.Sprintf("%s/criteria.json checklist does not sum to 100 (got %d)", name, sum))}
 }

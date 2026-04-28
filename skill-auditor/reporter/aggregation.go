@@ -100,11 +100,22 @@ func AggregationPlan(family string, entries []duplication.SkillEntry, pairs []du
 }
 
 func aggregationDecision(count, lines int, avgSim float64) (string, string) {
-	reasons := []string{}
+	reasons := buildAggregationReasons(count, lines, avgSim)
+	strongSignal := avgSim >= duplication.ThresholdCritical || (avgSim >= duplication.ThresholdHigh && count >= 3)
+	if len(reasons) >= 2 || (len(reasons) == 1 && strongSignal) {
+		return "AGGREGATE ✅", strings.Join(reasons, "; ")
+	}
+	if len(reasons) == 1 {
+		return "CONSIDER", reasons[0]
+	}
+	return "MONITOR", "No strong duplication or size signals detected"
+}
+
+func buildAggregationReasons(count, lines int, avgSim float64) []string {
+	var reasons []string
 	if avgSim >= duplication.ThresholdCritical {
 		reasons = append(reasons, fmt.Sprintf("%.0f%% avg duplication exceeds critical threshold", avgSim*100))
 	} else if avgSim >= duplication.ThresholdHigh && count >= 3 {
-		// High duplication + multiple confusingly similar skills → aggregate
 		reasons = append(reasons, fmt.Sprintf("%.0f%% avg duplication across %d skills causes confusion", avgSim*100, count))
 	}
 	if count >= 3 && len(reasons) == 0 {
@@ -113,13 +124,7 @@ func aggregationDecision(count, lines int, avgSim float64) (string, string) {
 	if lines > 2000 {
 		reasons = append(reasons, fmt.Sprintf("%d combined lines exceeds 2000-line threshold", lines))
 	}
-	if len(reasons) >= 2 || (len(reasons) == 1 && (avgSim >= duplication.ThresholdCritical || (avgSim >= duplication.ThresholdHigh && count >= 3))) {
-		return "AGGREGATE ✅", strings.Join(reasons, "; ")
-	}
-	if len(reasons) == 1 {
-		return "CONSIDER", reasons[0]
-	}
-	return "MONITOR", "No strong duplication or size signals detected"
+	return reasons
 }
 
 func aggregationEffort(count, lines int) string {
