@@ -25,9 +25,9 @@ framework. It produces letter grades, per-dimension diagnostics, and remediation
 
 ```bash
 cd skill-auditor
-go build -o skill-auditor .
-./skill-auditor evaluate <path-or-key> [--json] [--store]
-./skill-auditor batch <skill1> <skill2> [--fail-below B]
+go build -o bin/skill-auditor .
+./bin/skill-auditor evaluate <path-or-key> [--json] [--store]
+./bin/skill-auditor batch <skill1> <skill2> [--fail-below B]
 ```
 
 `<path-or-key>` is either a `domain/skill-name` key (resolved under `<repo-root>/skills/`), a directory containing
