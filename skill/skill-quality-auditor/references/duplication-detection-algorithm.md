@@ -65,7 +65,7 @@ Identify shared concepts:
 ## Similarity Thresholds
 
 | Similarity | Classification | Action |
-|------------|----------------|--------|
+| ---------- | -------------- | ------ |
 | 0-10% | Unrelated | Keep separate |
 | 10-20% | Marginal | Review for content |
 | 20-35% | Candidate | Plan aggregation |
@@ -95,7 +95,7 @@ Compare every skill against every other skill:
 
 Identify skill families by naming:
 
-```
+```text
 bdd-*        → BDD family
 typescript-* → TypeScript family
 bun-*        → Bun family
@@ -159,7 +159,7 @@ Not all similarity indicates duplication:
 ### Manual Detection
 
 ```bash
-./scripts/detect-duplication.sh
+skill-auditor duplication
 ```
 
 ### Scheduled Detection
@@ -174,7 +174,7 @@ schedule:
 ## Metrics to Track
 
 | Metric | Target | Current |
-|--------|--------|---------|
+| ------ | ------ | ------- |
 | Average duplication | <5% | TBD |
 | Max pair similarity | <20% | TBD |
 | Aggregation candidates | <5 | TBD |

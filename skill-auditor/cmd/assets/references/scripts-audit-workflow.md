@@ -65,10 +65,10 @@ skill-auditor batch <skill1> <skill2> [skill3...]
 
 **Use when:** Auditing multiple skills in phases or batches with consolidated tracking
 
-### Duplication detection (shell helper)
+### Duplication detection
 
 ```bash
-./scripts/detect-duplication.sh [skills-dir]
+skill-auditor duplication [skills-dir]
 ```
 
 **Arguments:**
@@ -80,7 +80,7 @@ skill-auditor batch <skill1> <skill2> [skill3...]
 ### Aggregation planning
 
 ```bash
-bun run scripts/plan-aggregation.ts --family <prefix>
+skill-auditor aggregate --family <prefix>
 ```
 
 **Options:**
@@ -118,7 +118,7 @@ cat .context/audits/*/$(date +%Y-%m-%d)/audit.json | jq '.grade'
 
 ```bash
 # Detect duplication
-./scripts/detect-duplication.sh
+skill-auditor duplication
 
 # Review high-priority pairs
 grep -A5 "High-Priority" .context/analysis/duplication-report-*.md
@@ -128,9 +128,9 @@ grep -A5 "High-Priority" .context/analysis/duplication-report-*.md
 
 ```bash
 # Plan aggregation for each family
-bun run scripts/plan-aggregation.ts --family bdd
-bun run scripts/plan-aggregation.ts --family typescript
-bun run scripts/plan-aggregation.ts --family bun
+skill-auditor aggregate --family bdd
+skill-auditor aggregate --family typescript
+skill-auditor aggregate --family bun
 ```
 
 ### Phase 5: Generate Summary
@@ -182,7 +182,7 @@ jobs:
         run: |
           skills=$(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
           skill-auditor batch $skills --store
-      - run: ./scripts/detect-duplication.sh
+      - run: skill-auditor duplication
       - uses: actions/upload-artifact@v4
         with:
           name: audit-reports
@@ -208,10 +208,13 @@ jobs:
         run: bun run build:skill-auditor
       - name: Check changed skills
         run: |
-          for skill in $(git diff --name-only origin/main | grep "skills/.*/SKILL.md" | sed 's|skills/||;s|/SKILL.md||'); do
+          for skill in $(git diff --name-only origin/main \
+              | grep "skills/.*/SKILL.md" | sed 's|skills/||;s|/SKILL.md||'); do
             skill-auditor evaluate "$skill" --json --store
           done
-          skill-auditor batch $(git diff --name-only origin/main | grep "skills/.*/SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ') --fail-below B
+          changed=$(git diff --name-only origin/main \
+            | grep "skills/.*/SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
+          skill-auditor batch $changed --fail-below B
 ```
 
 ## Single-Skill Report Format
@@ -227,7 +230,7 @@ skill_location: `skills/<skill-name>/SKILL.md`
 Use `templates/review-report-template.yaml` as the canonical format source, then validate generated reports with:
 
 ```bash
-././scripts/validate-review-format.sh .context/audits/<skill>-YYYY-MM-DD.md
+skill-auditor validate artifacts .context/audits/<skill>-YYYY-MM-DD.md
 ```
 
 ## Report Interpretation

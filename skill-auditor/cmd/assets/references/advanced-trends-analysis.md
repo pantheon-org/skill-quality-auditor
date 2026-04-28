@@ -19,8 +19,8 @@ Historical tracking and trend analysis for skill quality metrics over time.
 ### Weekly Snapshot
 
 ```bash
-# Generate weekly snapshot
-./scripts/snapshot-metrics.sh
+# Generate weekly snapshot via trend command
+skill-auditor trend --json
 ```
 
 **Captured Data:**
@@ -61,7 +61,7 @@ Historical tracking and trend analysis for skill quality metrics over time.
 
 ### Quality Score Trend
 
-```
+```text
 Average Score (12 weeks)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 120 ┤
@@ -78,7 +78,7 @@ Driver: BDD family consolidation completed Jan 20
 
 ### Grade Distribution Trend
 
-```
+```text
 A-Grade Rate (12 weeks)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 100% ┤                              ╭────
@@ -95,7 +95,7 @@ Milestone: All B-grade skills improved to A by Feb 3
 
 ### Duplication Trend
 
-```
+```text
 Average Duplication (12 weeks)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 35% ┤╮
@@ -160,7 +160,7 @@ None this month.
 **Alert Conditions:**
 
 | Condition | Threshold | Action |
-|-----------|-----------|--------|
+| --------- | --------- | ------ |
 | Score drop | >5 points | Investigate immediately |
 | Grade drop | Any | Review within 24 hours |
 | Duplication increase | >3% | Schedule remediation |
@@ -191,7 +191,7 @@ Move tutorial content to references/, restore expert focus
 
 ### Directory Structure
 
-```
+```text
 .context/
 ├── analysis/
 │   ├── snapshots/
@@ -212,7 +212,7 @@ Move tutorial content to references/, restore expert focus
 ### Data Retention
 
 | Data Type | Retention | Reason |
-|-----------|-----------|--------|
+| --------- | --------- | ------ |
 | Weekly snapshots | 1 year | Trend analysis |
 | Monthly reports | 3 years | Historical record |
 | Regression alerts | 1 year | Pattern analysis |
@@ -223,8 +223,8 @@ Move tutorial content to references/, restore expert focus
 ### Period Comparison
 
 ```bash
-# Compare two periods
-./scripts/compare-periods.sh 2026-01 2026-02
+# Compare trends across stored audit snapshots
+skill-auditor trend
 ```
 
 **Output:**
@@ -269,7 +269,7 @@ Move tutorial content to references/, restore expert focus
 
 ### Trend Projection
 
-```
+```text
 Based on current improvement rate:
 - A-grade rate: 90% → 95% (projected: March 15)
 - Duplication: 8% → 5% (projected: March 1)
