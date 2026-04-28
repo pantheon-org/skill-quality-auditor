@@ -9,10 +9,11 @@ Calibration, Pattern Recognition, Practical Usability, and Eval Validation.
 ```text
 skill/                  # Tessl tile (pantheon-ai/skill-quality-auditor)
 skill-auditor/          # Go CLI binary
-  cmd/                  # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend
+  cmd/                  # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend, validate, lint, prune, analyze
   scorer/               # D1–D9 dimension scorers
+  analysis/             # TF-IDF keyword extractor + rule-based pattern detectors (used by analyze)
   duplication/          # word-level Jaccard similarity engine (used by duplication + aggregate)
-  reporter/             # text/JSON formatters, audit store, duplication/aggregation/remediation reports
+  reporter/             # text/JSON formatters, audit store, duplication/aggregation/remediation/analysis reports
   testdata/             # fixture skills for unit tests
 ```
 
@@ -20,31 +21,43 @@ skill-auditor/          # Go CLI binary
 
 ```bash
 cd skill-auditor
-go build -o skill-auditor .
+go build -o bin/skill-auditor .
 
 # Evaluate a single skill
-./skill-auditor evaluate skills/my-skill
+./bin/skill-auditor evaluate skills/my-skill
 
 # Evaluate with JSON output and persist result
-./skill-auditor evaluate skills/my-skill --json --store
+./bin/skill-auditor evaluate skills/my-skill --json --store
 
 # Evaluate multiple skills; fail CI if any score below B
-./skill-auditor batch skills/skill-a skills/skill-b --fail-below B
+./bin/skill-auditor batch skills/skill-a skills/skill-b --fail-below B
 
 # Detect duplicate or overlapping skills
-./skill-auditor duplication
+./bin/skill-auditor duplication
 
 # Generate an aggregation plan for a skill family
-./skill-auditor aggregate --family bdd
+./bin/skill-auditor aggregate --family bdd
 
 # Generate a remediation plan from a stored audit
-./skill-auditor remediate domain/my-skill
+./bin/skill-auditor remediate domain/my-skill
 
 # Validate an existing remediation plan
-./skill-auditor remediate domain/my-skill --validate
+./bin/skill-auditor remediate domain/my-skill --validate
 
 # Show score trends across stored audits
-./skill-auditor trend
+./bin/skill-auditor trend
+
+# Validate skill artifact conventions
+./bin/skill-auditor validate artifacts
+
+# Check skill consistency (frontmatter, shebangs)
+./bin/skill-auditor lint
+
+# Prune old stored audits, keep last 5 per skill
+./bin/skill-auditor prune
+
+# Full semantic + pattern analysis pipeline
+./bin/skill-auditor analyze domain/my-skill
 ```
 
 ## CLI reference
@@ -135,6 +148,72 @@ Flags:
 Reads the two most recent stored audits per skill from `.context/audits/` and prints a
 score-delta table with ↑ / ↓ / — indicators.
 
+### `validate`
+
+```text
+skill-auditor validate artifacts [paths...] [flags]
+skill-auditor validate review <file> [flags]
+
+Flags (artifacts):
+  --repo-root  repo root directory (auto-detected if omitted)
+
+Flags (review):
+  --strict-recommended  treat recommended fields as errors
+  --repo-root           repo root directory (auto-detected if omitted)
+```
+
+`validate artifacts` checks `SKILL.md` line limits, frontmatter name match, asset subdirectory
+conventions, script shebangs, and schema file validity. `validate review` checks a review report
+file against the embedded requirements spec for required/recommended sections, headings, and labels.
+Exit code 1 on any error.
+
+### `lint`
+
+```text
+skill-auditor lint [skills-dir] [flags]
+
+Flags:
+  --repo-root  repo root directory (auto-detected if omitted)
+```
+
+Checks each skill directory for a `SKILL.md`, a frontmatter block, and correct script shebangs.
+Prints `MISSING_SKILL`, `NO_FRONTMATTER`, `BAD_SHEBANG` tags per issue. Exits with the issue count
+(0 = clean).
+
+### `prune`
+
+```text
+skill-auditor prune [flags]
+
+Flags:
+  --keep       number of audit date-dirs to retain per skill (default 5)
+  --repo-root  repo root directory (auto-detected if omitted)
+```
+
+Removes old date-stamped audit directories from `.context/audits/`, keeping the N most recent per
+skill. Preserves `latest` symlinks.
+
+### `analyze`
+
+```text
+skill-auditor analyze <skill> [flags]
+
+Flags:
+  --semantic   run TF-IDF keyword extraction only
+  --patterns   run rule-based pattern detection only
+  --pipeline   run full pipeline — semantic + patterns + combined report (default)
+  --json       emit JSON output
+  --store      write report to .context/analysis/
+  --limit int  max keywords to include (default 20)
+  --repo-root  repo root directory (auto-detected if omitted)
+```
+
+Performs semantic and structural analysis of a skill without requiring external NLP or ML tooling.
+`--semantic` extracts TF-IDF top keywords scored against the full skill corpus. `--patterns` runs
+rule-based detectors for required sections, trigger-word frequency, structural conformance, and
+anti-pattern signals. The default `--pipeline` mode runs both and writes a combined report to
+`.context/analysis/pattern-report-<skill>-YYYY-MM-DD.md`.
+
 ## Scoring dimensions
 
 | ID | Dimension | Max pts |
@@ -160,6 +239,7 @@ score-delta table with ↑ / ↓ / — indicators.
 | `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
 | `remediate` | `.context/plans/<skill>-remediation-plan.md` |
+| `analyze --store` | `.context/analysis/pattern-report-<skill>-YYYY-MM-DD.md` |
 
 ## Tessl skill
 
