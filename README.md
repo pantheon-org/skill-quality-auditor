@@ -7,14 +7,15 @@ Calibration, Pattern Recognition, Practical Usability, and Eval Validation.
 ## Repository layout
 
 ```text
-skill/                  # Tessl tile (pantheon-ai/skill-quality-auditor)
-skill-auditor/          # Go CLI binary
-  cmd/                  # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend, validate, lint, prune, analyze
-  scorer/               # D1–D9 dimension scorers
-  analysis/             # TF-IDF keyword extractor + rule-based pattern detectors (used by analyze)
-  duplication/          # word-level Jaccard similarity engine (used by duplication + aggregate)
-  reporter/             # text/JSON formatters, audit store, duplication/aggregation/remediation/analysis reports
-  testdata/             # fixture skills for unit tests
+skill-auditor/              # Go CLI binary
+  cmd/                      # cobra commands: evaluate, batch, duplication, aggregate, remediate, trend, validate, lint, prune, analyze, init
+  cmd/assets/               # Tessl tile — SKILL.md, tile.json, evals, references, schemas, templates (single source of truth)
+  agents/                   # agent registry (supported agent environments for `init`)
+  scorer/                   # D1–D9 dimension scorers
+  analysis/                 # TF-IDF keyword extractor + rule-based pattern detectors (used by analyze)
+  duplication/              # word-level Jaccard similarity engine (used by duplication + aggregate)
+  reporter/                 # text/JSON formatters, audit store, duplication/aggregation/remediation/analysis reports
+  testdata/                 # fixture skills for unit tests
 ```
 
 ## Quick start
@@ -58,6 +59,9 @@ go build -o bin/skill-auditor .
 
 # Full semantic + pattern analysis pipeline
 ./bin/skill-auditor analyze domain/my-skill
+
+# Install the skill into local agent environments
+./bin/skill-auditor init
 ```
 
 ## CLI reference
@@ -193,6 +197,21 @@ Flags:
 Removes old date-stamped audit directories from `.context/audits/`, keeping the N most recent per
 skill. Preserves `latest` symlinks.
 
+### `init`
+
+```text
+skill-auditor init [flags]
+
+Flags:
+  --agent   agent(s) to install into (default: auto-detect from installed environments)
+  --global  install to global skill directory (~/<agent>/skills/)
+  --method  installation method: symlink or copy (default: symlink)
+```
+
+Installs the embedded `skill-quality-auditor` SKILL.md (and its `references/` directory) into one or
+more agent skill directories. Auto-detects supported environments (Claude Code, Cursor, etc.) when
+`--agent` is omitted.
+
 ### `analyze`
 
 ```text
@@ -243,9 +262,10 @@ anti-pattern signals. The default `--pipeline` mode runs both and writes a combi
 
 ## Tessl skill
 
-The `skill/` directory contains the published Tessl tile `pantheon-ai/skill-quality-auditor` (v0.1.5). Agents that install
-this tile get structured guidance for running audits, generating remediation plans, detecting duplication, and enforcing
-CI quality gates.
+The Tessl tile `pantheon-ai/skill-quality-auditor` (v0.1.5) is published from this repo. All tile assets — `SKILL.md`,
+`tile.json`, `evals/`, `references/`, `schemas/`, and `templates/` — live under `skill-auditor/cmd/assets/`. Agents that
+install this tile get structured guidance for running audits, generating remediation plans, detecting duplication, and
+enforcing CI quality gates.
 
 ## Development
 

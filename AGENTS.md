@@ -17,10 +17,11 @@ live exclusively under `skill-auditor/cmd/assets/` — there is no separate `ski
 | Path | What it is |
 | ---- | ---------- |
 | `skill-auditor/` | Go CLI — build and run this to audit skills |
+| `skill-auditor/agents/` | Agent registry — supported environments for the `init` command |
 | `skill-auditor/scorer/` | D1–D9 scorers; each file is one dimension |
 | `skill-auditor/duplication/` | Word-level Jaccard similarity engine (inventory, pairwise detect) |
 | `skill-auditor/reporter/` | Formats results as text or JSON; persists to `.context/audits/`; duplication, aggregation, and remediation plan formatters |
-| `skill-auditor/cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune` cobra commands |
+| `skill-auditor/cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune`, `init` cobra commands |
 | `skill-auditor/cmd/assets/` | Embedded SKILL.md, tile.json, references, evals, schemas, templates, requirements — single source of truth |
 | `skill-auditor/testdata/` | Fixture skills for unit tests — do not modify without updating tests |
 

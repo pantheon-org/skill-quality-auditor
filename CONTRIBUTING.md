@@ -29,14 +29,19 @@ Run a quick smoke test against the fixture skills:
 ./bin/skill-auditor batch testdata/fixtures/skill-minimal testdata/fixtures/skill-full
 ```
 
-### Tessl skill (`skill/`)
+### Tessl skill (`skill-auditor/cmd/assets/`)
 
 ```bash
-cd skill/skill-quality-auditor
-tessl eval run .
+tessl eval run skill-auditor/cmd/assets/
 ```
 
-Evals must pass before bumping the tile version in `tile.json`.
+Evals must pass before bumping the tile version in `skill-auditor/cmd/assets/tile.json`.
+
+## Adding a new `init` target agent
+
+1. Add the agent definition to `skill-auditor/agents/registry.go`.
+2. Add a test case to `skill-auditor/agents/registry_test.go`.
+3. Run `go test ./agents/...` to verify.
 
 ## Adding a new dimension scorer
 
