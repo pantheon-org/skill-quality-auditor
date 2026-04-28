@@ -314,6 +314,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install skill-auditor
+<!-- mdlint-disable-next-line MD013 -->
         run: curl -fsSL https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/scripts/install.sh | sh
 
       - name: Batch audit (fail below B)

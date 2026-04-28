@@ -30,14 +30,10 @@ jobs:
         with:
           version: v2.11.4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: markdownlint
-        run: npx markdownlint-cli2 "**/*.md" "#node_modules" "#.context" "#.claude"
-
       - uses: jdx/mise-action@v2
+
+      - name: mdlint
+        run: mdlint check .
 
       - name: shellcheck
         run: shellcheck scripts/*.sh
