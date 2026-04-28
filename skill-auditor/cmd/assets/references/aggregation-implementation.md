@@ -6,7 +6,8 @@ source: session 2026-02-10 experience + supabase-postgres-best-practices pattern
 
 # Skill Aggregation Implementation Guide
 
-Step-by-step guide to consolidating related skills using the Navigation Hub + References pattern. Proven to achieve 96%+ size reduction with <5% duplication.
+Step-by-step guide to consolidating related skills using the Navigation Hub + References pattern.
+Proven to achieve 96%+ size reduction with <5% duplication.
 
 ## When to Aggregate
 
@@ -37,7 +38,7 @@ ls -1 .agents/skills/ | grep "^bdd-"
 # Output: bdd-collaboration, bdd-gherkin, bdd-patterns, bdd-principles, bdd-scenarios
 
 # Check for duplication
-./scripts/detect-duplication.sh
+skill-auditor duplication
 # Look for >20% similarity pairs
 
 # Measure sizes
@@ -48,7 +49,7 @@ wc -l skills/bdd-*/SKILL.md
 **Decision Criteria:**
 
 | Criteria | Threshold | Weight |
-|----------|-----------|--------|
+| -------- | --------- | ------ |
 | Family relationship | Same prefix | HIGH |
 | Duplication | >20% | CRITICAL |
 | User confusion | >2 similar skills | HIGH |
@@ -57,7 +58,7 @@ wc -l skills/bdd-*/SKILL.md
 
 **Example Analysis:**
 
-```
+```text
 BDD Skills Family:
 - bdd-collaboration (237 lines)
 - bdd-gherkin (646 lines) ⚠️ oversized
@@ -167,7 +168,10 @@ See `AGENTS.md` for complete file listing.
 ```markdown
 ---
 name: bdd-testing
-description: Behavior-Driven Development with Given-When-Then scenarios, Cucumber.js, Three Amigos, Example Mapping, living documentation, acceptance criteria. Use when writing BDD tests, feature files, or planning discovery workshops.
+description: >-
+  Behavior-Driven Development with Given-When-Then scenarios, Cucumber.js, Three Amigos, Example
+  Mapping, living documentation, acceptance criteria. Use when writing BDD tests, feature files,
+  or planning discovery workshops.
 consolidates: bdd-collaboration, bdd-gherkin, bdd-patterns, bdd-principles, bdd-scenarios, cucumber-best-practices
 ---
 
@@ -260,7 +264,8 @@ source: bdd-collaboration, bdd-principles
 
 # Three Amigos Practice
 
-Collaborative discovery session bringing together Business, Development, and Testing perspectives to explore requirements through concrete examples.
+Collaborative discovery session bringing together Business, Development, and Testing perspectives
+to explore requirements through concrete examples.
 
 ## Overview
 
@@ -327,13 +332,11 @@ Scenario: Expired reset link
 - @see principles-ubiquitous-language.md - Shared vocabulary
 - @see gherkin-scenarios.md - Writing Given-When-Then
 
-```
-
 ### Step 5: Create AGENTS.md Navigation Guide
 
 **Template:**
 
-```markdown
+````markdown
 # [Aggregation Name] - Navigation Guide
 
 ## Overview
@@ -368,35 +371,35 @@ Scenario: Expired reset link
 
 ## Complete File Listing
 
-```
+    .agents/skills/[aggregation]/
+    ├── SKILL.md
+    ├── AGENTS.md
+    ├── references/
+    │   ├── category-file1.md
+    │   └── category-file2.md
+    └── scripts/
+        └── script.sh
 
-.agents/skills/[aggregation]/
-├── SKILL.md
-├── AGENTS.md
-├── references/
-│   ├── category-file1.md
-│   └── category-file2.md
-└── scripts/
-    └── script.sh
-
-```
+````
 
 ## Navigation Workflow
 
 ### For [Use Case 1]
+
 1. Load `[file].md`
 2. [Steps]
 
 ### For [Use Case 2]
+
 1. Load `[file].md`
 2. [Steps]
 
 ## Success Criteria
 
 After using this skill:
+
 - ✅ [Outcome 1]
 - ✅ [Outcome 2]
-```
 
 ### Step 6: Deprecate Original Skills
 
@@ -490,7 +493,7 @@ Target outcomes:
 From session 2026-02-10:
 
 | Aggregation | Sources | Before | After | Reduction |
-|-------------|---------|--------|-------|-----------|
+| ----------- | ------- | ------ | ----- | --------- |
 | bdd-testing | 6 | 2,032 | 64 | 96.8% |
 | bun-development | 6 | 1,658 | 61 | 96.3% |
 | markdown-authoring | 4 | 2,199 | 59 | 97.3% |

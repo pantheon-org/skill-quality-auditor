@@ -73,7 +73,7 @@ Strategies for fixing content duplication across skills. Provides actionable app
 ## Decision Matrix
 
 | Scenario | Similarity | Related? | Action |
-|----------|------------|----------|--------|
+| -------- | ---------- | -------- | ------ |
 | Same family, >35% | High | Yes | Aggregation |
 | Same family, 20-35% | Medium | Yes | Aggregation |
 | Different family, >35% | High | No | Extraction |
@@ -137,7 +137,7 @@ For each high-duplication pair:
 
 ```bash
 # Re-run duplication detection
-./scripts/detect-duplication.sh
+skill-auditor duplication
 
 # Verify no broken references
 grep -r "@see" skills/*/SKILL.md | while read ref; do
@@ -201,7 +201,7 @@ See @see references/shared-anti-patterns.md for universal anti-patterns.
 Track improvement:
 
 | Metric | Before | After | Target |
-|--------|--------|-------|--------|
+| ------ | ------ | ----- | ------ |
 | Total duplication | 35% | <5% | <5% |
 | Skill count | 50 | 35 | Optimize |
 | Avg file size | 450 lines | 120 lines | <200 |

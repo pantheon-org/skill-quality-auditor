@@ -51,7 +51,7 @@ Comprehensive patterns and triggers for identifying quality issues and improveme
 
 ### Skill Maturity Indicators
 
-```
+```text
 High Maturity (A-grade):
 ├── Expert terminology used precisely
 ├── Advanced troubleshooting scenarios included
@@ -87,11 +87,13 @@ Low Maturity (C/D-grade):
 High-quality skills have **comprehensive activation patterns** that capture multiple user intent variations.
 
 **Activation Pattern Components:**
+
 - Domain-specific keywords: "BDD", "Gherkin", "TDD", "Cucumber"
 - Process verbs: "audit", "validate", "analyze", "check", "review"
 - Context triggers: "skills", "quality", "standards", "best practices"
 
 ### Example: Comprehensive Trigger Coverage
+
 ```markdown
 skill-quality-auditor: "check my skills", "skill audit", "quality review",
 "find duplicate skills", "analyze skill quality", "validate standards",
@@ -99,6 +101,7 @@ skill-quality-auditor: "check my skills", "skill audit", "quality review",
 ```
 
 ### Anti-Pattern: Narrow Triggers
+
 ```markdown
 # BAD: Single activation pattern
 skill-quality-auditor: "audit skills"
@@ -117,21 +120,24 @@ Advanced pattern recognition now uses **multi-layered algorithmic analysis** bey
 ### Enhanced Duplication Detection
 
 #### Algorithm: Multi-Metric Similarity Analysis
+
 - **Semantic Vectors**: TF-IDF-inspired concept extraction and matching
 - **Structural Analysis**: Document hierarchy and formatting patterns
 - **Lexical Similarity**: Enhanced Jaccard coefficient with normalization
 - **Composite Scoring**: Weighted combination (40% semantic, 35% structural, 25% lexical)
 
 **Implementation:**
+
 ```bash
-# Enhanced duplication detection with semantic analysis
-./scripts/detect-duplication-enhanced.sh skills/
+# Duplication detection with similarity scoring
+skill-auditor duplication [skills-dir]
 
 # Outputs: Critical (≥50%), High (≥30%), Moderate (20-30%)
 # Features: ROI analysis, complexity estimation, remediation planning
 ```
 
 **Quality Thresholds:**
+
 - **Critical (≥50%)**: Immediate merge required, high ROI
 - **High (≥30%)**: Review for aggregation opportunities
 - **Moderate (20-30%)**: Monitor for conceptual drift
@@ -139,21 +145,20 @@ Advanced pattern recognition now uses **multi-layered algorithmic analysis** bey
 ### Semantic Similarity Engine
 
 #### Algorithm: Multi-Layer Semantic Analysis
+
 - **Concept Extraction**: Technical terms, framework references, domain vocabulary
 - **Topic Modeling**: Infrastructure, development, testing, documentation, quality, security
 - **Intent Classification**: Action words and purpose similarity analysis
 - **Vector Space**: 100-dimension simulated semantic vectors
 
 **Implementation:**
-```bash
-# Advanced semantic similarity analysis
-./scripts/semantic-analysis.sh skills/
 
-# Features: Topic clustering, intent matching, vocabulary richness analysis
-# Confidence levels: High (≥0.75), Medium (≥0.50), Low (<0.50)
-```
+Semantic similarity analysis is performed as part of `skill-auditor duplication`, which applies
+word-level Jaccard similarity across skill content. The confidence thresholds
+(High ≥0.75, Medium ≥0.50, Low <0.50) correspond to the similarity bands reported in the duplication output.
 
 **Semantic Categories:**
+
 - 🔴 **High Overlap (≥60%)**: Consider skill aggregation
 - 🟡 **Moderate Similarity (35-60%)**: Review conceptual boundaries
 - 🟢 **Low Overlap (20-35%)**: Distinct semantic spaces
@@ -162,20 +167,18 @@ Advanced pattern recognition now uses **multi-layered algorithmic analysis** bey
 ### Machine Learning Quality Prediction
 
 #### Algorithm: 50-Dimension Feature Classification
+
 - **Structural Features (30% weight)**: Headers, lists, code blocks, formatting density
 - **Content Features (40% weight)**: Vocabulary richness, actionability, technical density, clarity metrics
 - **Quality Indicators (30% weight)**: Metadata completeness, examples, error handling, troubleshooting
 
 **Implementation:**
-```bash
-# ML-based quality pattern detection
-./scripts/ml-pattern-detection.sh skills/
 
-# Outputs: Predicted scores, confidence intervals, improvement recommendations
-# Model accuracy: 92.3% precision, 89.7% recall, 94.1% F1-score
-```
+Quality pattern detection is performed by `skill-auditor evaluate` and `skill-auditor batch`,
+which score each dimension and emit improvement recommendations with confidence-weighted justifications.
 
 **Quality Classifications:**
+
 - 🟢 **Excellent (≥90%)**: Ready for publication
 - 🟡 **Good (75-89%)**: Minor improvements recommended
 - 🟠 **Fair (60-74%)**: Moderate improvements needed
@@ -184,21 +187,20 @@ Advanced pattern recognition now uses **multi-layered algorithmic analysis** bey
 ### Pattern Recognition Workflow
 
 **Integrated Analysis Pipeline:**
+
 ```bash
-# 1. Enhanced duplication detection
-./scripts/detect-duplication-enhanced.sh skills/ > .context/analysis/duplications.md
+# 1. Duplication detection (similarity scoring across all pairs)
+skill-auditor duplication > .context/analysis/duplications.md
 
-# 2. Semantic similarity analysis
-./scripts/semantic-analysis.sh skills/ > .context/analysis/semantic.md
+# 2. Quality scoring with per-dimension diagnostics
+skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||') --store
 
-# 3. ML quality predictions
-./scripts/ml-pattern-detection.sh skills/ > .context/analysis/ml-quality.md
-
-# 4. Combined remediation planning
-./scripts/generate-remediation-plan.sh --all-algorithms
+# 3. Remediation planning for low-scoring skills
+skill-auditor remediate <skill-name>
 ```
 
 **Algorithm Integration Benefits:**
+
 - **Precision**: Multi-metric analysis reduces false positives by 60%
 - **Coverage**: Detects semantic duplications missed by simple text matching
 - **Confidence**: ML confidence scores guide manual review prioritization
@@ -207,17 +209,20 @@ Advanced pattern recognition now uses **multi-layered algorithmic analysis** bey
 ### Advanced Pattern Libraries
 
 **Code Pattern Detection:**
+
 - AST-based analysis for programming concepts
 - Framework usage pattern matching
 - API design pattern recognition
 - Anti-pattern detection with severity scoring
 
 **Quality Pattern Templates:**
+
 - Expert knowledge markers: Advanced concepts, edge cases, performance considerations
 - Completeness indicators: Prerequisites, troubleshooting, integration guidance
 - Maturity signals: Specialized terminology, tool awareness, failure preparedness
 
 **Future Enhancements:**
+
 - Real ML training on historical audit data
 - Transformer-based semantic embeddings
 - Automated improvement suggestion generation

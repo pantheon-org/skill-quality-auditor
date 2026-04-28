@@ -29,7 +29,7 @@ Large skill collections face several challenges:
 
 ### Architecture
 
-```
+```text
 skill-name/
 ├── SKILL.md              # 60-90 line navigation hub
 ├── AGENTS.md             # Complete reference guide
@@ -87,7 +87,7 @@ Look for:
 
 **Example:**
 
-```
+```text
 BDD family: 6 skills, 1,839 lines, 35% duplication → Consolidate
 Random unrelated skills → Keep separate
 ```
@@ -102,7 +102,7 @@ Organize by:
 
 **Example - BDD Testing:**
 
-```
+```text
 CRITICAL: principles-    (philosophy, Three Amigos)
 HIGH:     gherkin-       (syntax, step definitions)
 HIGH:     patterns-      (Given-When-Then, scenarios)
@@ -322,7 +322,7 @@ EOF
 ### Specific Improvements
 
 | Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
+| ------ | ------ | ----- | ----------- |
 | Main file size | 500-700 lines | 60-90 lines | 85-95% |
 | Duplication | 20-35% | <5% | 15-30pp |
 | Skills count | 3-6 | 1 | 66-83% |
@@ -479,21 +479,18 @@ Don't aggregate if:
 
 **Time:** 2-3 hours per aggregation
 
-### Script Opportunities
+### CLI Commands
 
 ```bash
-# Duplication detector
-./scripts/detect-skill-duplication.sh
+# Detect duplication across skills
+skill-auditor duplication [skills-dir]
 
-# Category suggester
-./scripts/suggest-categories.sh skill1 skill2 skill3
-
-# Content extractor
-./scripts/extract-to-references.sh source-skill target-aggregation
-
-# AGENTS.md generator
-./scripts/generate-agents-md.sh aggregation-dir
+# Plan aggregation for a skill family
+skill-auditor aggregate --family <prefix>
 ```
+
+The content extraction into `references/`, category assignment, and `AGENTS.md` authoring are
+manual steps guided by the aggregation plan output.
 
 ---
 

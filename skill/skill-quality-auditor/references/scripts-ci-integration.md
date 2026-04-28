@@ -70,7 +70,7 @@ jobs:
 
       - name: Check for duplication
         run: |
-          ./scripts/detect-duplication.sh
+          skill-auditor duplication
           if grep -q "Critical" .context/analysis/duplication-report-*.md; then
             echo "::warning::Critical duplication detected"
           fi
@@ -123,7 +123,7 @@ jobs:
         run: |
           skills=$(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
           skill-auditor batch $skills --store
-          ./scripts/detect-duplication.sh
+          skill-auditor duplication
 
       - name: Create issue if critical issues found
         run: |
@@ -163,7 +163,7 @@ skill-quality:
         skill=$(echo "$file" | sed 's|skills/||;s|/SKILL.md||')
         skill-auditor evaluate "$skill" --json --store
       done
-    - ./scripts/detect-duplication.sh
+    - skill-auditor duplication
   artifacts:
     paths:
       - .context/analysis/
@@ -182,7 +182,7 @@ weekly-skill-audit:
     - bun install && bun run build:skill-auditor
     - skills=$(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
     - skill-auditor batch $skills --store
-    - ./scripts/detect-duplication.sh
+    - skill-auditor duplication
   artifacts:
     paths:
       - .context/analysis/
@@ -233,7 +233,7 @@ pipeline {
     
     stage('Duplication Check') {
       steps {
-        sh './scripts/detect-duplication.sh'
+        sh 'skill-auditor duplication'
       }
     }
   }
@@ -251,7 +251,7 @@ pipeline {
 ### Thresholds
 
 | Metric | Warning | Error |
-|--------|---------|-------|
+| ------ | ------- | ----- |
 | Skill score | <100 | <90 |
 | Duplication | >20% | >35% |
 | File size | >300 lines | >500 lines |

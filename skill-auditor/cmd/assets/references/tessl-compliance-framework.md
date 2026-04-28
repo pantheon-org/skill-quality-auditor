@@ -6,14 +6,16 @@ source: tessl registry requirements + session experience
 
 # Tessl Registry Compliance Framework
 
-Supplementary validation checks for skills intended for [Tessl](https://tessl.io/) registry submission. These checks extend the core 9-dimension framework with agent-agnostic and performance-focused evaluations.
+Supplementary validation checks for skills intended for [Tessl](https://tessl.io/) registry submission.
+These checks extend the core 9-dimension framework with agent-agnostic and performance-focused evaluations.
 
 **Use after:** Core 9-dimension evaluation (≥126 points required)
 **Target:** 100% tessl compliance for registry acceptance
 
 ## Overview
 
-Tessl focuses on performance-evaluated, agent-agnostic skills that provide measurable effectiveness improvements. This framework adds 3 supplementary validation areas:
+Tessl focuses on performance-evaluated, agent-agnostic skills that provide measurable effectiveness
+improvements. This framework adds 3 supplementary validation areas:
 
 1. **Agent-Agnostic Validation** - Ensure cross-platform compatibility
 2. **Performance Metrics Integration** - Quantify effectiveness improvements  
@@ -23,7 +25,7 @@ Tessl focuses on performance-evaluated, agent-agnostic skills that provide measu
 
 **Purpose:** Ensure skills work across different AI assistant platforms without agent-specific dependencies.
 
-### Validation Checks
+### Agent-Agnostic Validation Checks
 
 #### ❌ NEVER: Agent-Specific Tool Dependencies
 
@@ -69,7 +71,7 @@ Avoid assuming specific agent capabilities:
 ✅ GOOD: "For agents with image capabilities..."
 ```
 
-### Scoring
+### Agent-Agnostic Scoring
 
 - **PASS:** No agent-specific dependencies detected
 - **FAIL:** Any agent-specific references found
@@ -124,13 +126,13 @@ When applied correctly, this skill delivers:
 - Error reduction: <10% incident rate vs 30% baseline
 ```
 
-### Validation Checks
+### Performance Metrics Validation
 
 - **Required sections:** "Success Metrics", "Expected Outcomes", or equivalent
 - **Quantified claims:** Must include specific numbers (percentages, time, error rates)
 - **Comparative data:** Before/after or baseline comparisons
 
-### Scoring
+### Performance Metrics Scoring
 
 - **PASS:** Contains measurable effectiveness claims with quantification
 - **FAIL:** No performance metrics or only qualitative claims
@@ -203,7 +205,7 @@ Avoid assuming specific agent capabilities:
 3. **Feature Check:** Flag agent-specific capability assumptions
 4. **Documentation Review:** Ensure instructions work for any agent
 
-### Scoring
+### Cross-Platform Scoring
 
 - **PASS:** No platform-specific dependencies detected
 - **FAIL:** Contains non-portable tools or commands
@@ -229,7 +231,7 @@ Integration with existing skill-quality-auditor workflow:
 skill-auditor evaluate <skill-name> --json
 
 # Then apply tessl compliance checks
-sh ./scripts/tessl-compliance-check.sh <skill-name>
+skill-auditor validate artifacts skills/<skill-name>/SKILL.md
 ```
 
 ### Automated Validation
@@ -260,7 +262,7 @@ grep -E "[0-9]+(%|x|times|\s(seconds|minutes|hours)|reduction|improvement)" skil
 This framework supplements, not replaces, the 9-dimension evaluation:
 
 | Check Type | When to Apply | Pass Criteria |
-|------------|---------------|---------------|
+| ---------- | ------------- | ------------- |
 | **Core 9-Dimension** | Always | ≥126 points (A-grade) |
 | **Agent-Agnostic** | Tessl submission | No agent-specific deps |
 | **Performance Metrics** | Tessl submission | Quantified effectiveness |
