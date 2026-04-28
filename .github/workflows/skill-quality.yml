@@ -39,6 +39,9 @@ jobs:
       - name: Batch quality gate
         run: ./dist/skill-auditor batch skill-quality-auditor --fail-below B
 
+      - name: Install Tessl CLI
+        run: curl -fsSL https://get.tessl.io | sh
+
       - name: Tessl eval run
         env:
           TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}

@@ -1,0 +1,3 @@
+[tools]
+go = "latest"
+"brew:tesslio/tap/tessl" = "latest"
