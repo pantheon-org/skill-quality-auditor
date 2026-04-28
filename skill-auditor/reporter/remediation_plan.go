@@ -16,18 +16,18 @@ import (
 // ---- YAML structs matching remediation-plan.schema.json ----
 
 type remPlanFrontmatter struct {
-	PlanDate         string         `yaml:"plan_date"`
-	SkillName        string         `yaml:"skill_name"`
-	SourceAudit      string         `yaml:"source_audit"`
-	ExecutiveSummary remExecSummary `yaml:"executive_summary"`
-	CriticalIssues   []remCritical  `yaml:"critical_issues"`
-	RemPhases        []remPhase     `yaml:"remediation_phases"`
-	VerifCmds        []string       `yaml:"verification_commands"`
-	SuccessCriteria  []string       `yaml:"success_criteria"`
-	EffortEstimates  []remEffort    `yaml:"effort_estimates"`
-	Dependencies     []string       `yaml:"dependencies"`
-	RollbackPlan     string         `yaml:"rollback_plan"`
-	Notes            string         `yaml:"notes"`
+	PlanDate         string                `yaml:"plan_date"`
+	SkillName        string                `yaml:"skill_name"`
+	SourceAudit      string                `yaml:"source_audit"`
+	ExecutiveSummary remExecSummary        `yaml:"executive_summary"`
+	CriticalIssues   []remCritical         `yaml:"critical_issues"`
+	RemPhases        []remPhase            `yaml:"remediation_phases"`
+	VerifCmds        []string              `yaml:"verification_commands"`
+	SuccessCriteria  []remSuccessCriterion `yaml:"success_criteria"`
+	EffortEstimates  []remEffort           `yaml:"effort_estimates"`
+	Dependencies     []string              `yaml:"dependencies"`
+	RollbackPlan     string                `yaml:"rollback_plan"`
+	Notes            remNotes              `yaml:"notes"`
 }
 
 type remExecSummary struct {
@@ -57,17 +57,40 @@ type remCritical struct {
 }
 
 type remPhase struct {
-	Phase     string   `yaml:"phase"`
-	Dimension string   `yaml:"dimension"`
-	Priority  string   `yaml:"priority"`
-	Target    string   `yaml:"target"`
-	Steps     []string `yaml:"steps"`
+	Phase     int       `yaml:"phase"`
+	Dimension string    `yaml:"dimension"`
+	Priority  string    `yaml:"priority"`
+	Target    string    `yaml:"target"`
+	Steps     []remStep `yaml:"steps"`
+}
+
+type remStep struct {
+	Step        string   `yaml:"step"`
+	Title       string   `yaml:"title"`
+	Description string   `yaml:"description"`
+	File        string   `yaml:"file,omitempty"`
+	CodeBlock   *remCode `yaml:"code_block,omitempty"`
+}
+
+type remCode struct {
+	Language string `yaml:"language"`
+	Content  string `yaml:"content"`
+}
+
+type remSuccessCriterion struct {
+	Criterion   string `yaml:"criterion"`
+	Measurement string `yaml:"measurement"`
 }
 
 type remEffort struct {
 	Phase  string `yaml:"phase"`
 	Effort string `yaml:"effort"`
 	Time   string `yaml:"time"`
+}
+
+type remNotes struct {
+	Rating     string `yaml:"rating"`
+	Assessment string `yaml:"assessment"`
 }
 
 // ---- Generation ----
@@ -174,24 +197,24 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 
 	sb.WriteString("## Remediation Phases\n\n")
 	for _, ph := range phases {
-		fmt.Fprintf(&sb, "### %s\n\n", ph.Phase)
+		fmt.Fprintf(&sb, "### Phase %d\n\n", ph.Phase)
 		fmt.Fprintf(&sb, "**Dimension:** %s  \n", ph.Dimension)
 		fmt.Fprintf(&sb, "**Target:** %s  \n", ph.Target)
 		fmt.Fprintf(&sb, "**Priority:** %s\n\n", ph.Priority)
 		for _, step := range ph.Steps {
-			fmt.Fprintf(&sb, "- %s\n", step)
+			fmt.Fprintf(&sb, "- **%s** (`%s`): %s\n", step.Title, step.Step, step.Description)
 		}
 		sb.WriteString("\n")
 	}
 
 	sb.WriteString("## Verification Commands\n\n")
-	for _, cmd := range verifCommands(skillName) {
+	for _, cmd := range fm.VerifCmds {
 		fmt.Fprintf(&sb, "```bash\n%s\n```\n\n", cmd)
 	}
 
 	sb.WriteString("## Success Criteria\n\n")
-	for _, sc := range successCriteria(r, targetScore) {
-		fmt.Fprintf(&sb, "- [ ] %s\n", sc)
+	for _, sc := range fm.SuccessCriteria {
+		fmt.Fprintf(&sb, "- [ ] %s: %s\n", sc.Criterion, sc.Measurement)
 	}
 	sb.WriteString("\n")
 
@@ -252,6 +275,8 @@ var (
 	reAuditPattern  = regexp.MustCompile(`^\.context/audits/.+\.md$`)
 	reScorePattern  = regexp.MustCompile(`^\d+/140\s*\(\d+%\)$`)
 	reDimPattern    = regexp.MustCompile(`^D[1-9]:\s+.+\s+\(\d+/\d+\)$`)
+	reStepPattern   = regexp.MustCompile(`^\d+\.\d+$`)
+	reNotesRating   = regexp.MustCompile(`^\d+/10$`)
 	validGrades     = map[string]bool{"A+": true, "A": true, "B+": true, "B": true, "C+": true, "C": true, "D": true, "F": true}
 	validSeverities = map[string]bool{"Critical": true, "High": true, "Medium": true, "Low": true}
 	validPriorities = map[string]bool{"Critical": true, "High": true, "Medium": true, "Low": true}
@@ -289,14 +314,35 @@ func validateFrontmatter(fm *remPlanFrontmatter) []string {
 	}
 
 	check(len(fm.RemPhases) >= 1, "remediation_phases must have at least one entry")
+	for i, ph := range fm.RemPhases {
+		pfx := fmt.Sprintf("remediation_phases[%d]", i)
+		check(ph.Phase >= 1, pfx+".phase must be >= 1")
+		check(len(ph.Steps) >= 1, pfx+" must have at least one step")
+		for j, s := range ph.Steps {
+			spfx := fmt.Sprintf("%s.steps[%d]", pfx, j)
+			check(reStepPattern.MatchString(s.Step), spfx+".step must match N.N pattern (e.g. 1.1)")
+			check(len(s.Title) >= 3, spfx+".title must be at least 3 characters")
+			check(len(s.Description) >= 10, spfx+".description must be at least 10 characters")
+		}
+	}
+
 	check(len(fm.VerifCmds) >= 1, "verification_commands must have at least one entry")
+
 	check(len(fm.SuccessCriteria) >= 1, "success_criteria must have at least one entry")
+	for i, sc := range fm.SuccessCriteria {
+		pfx := fmt.Sprintf("success_criteria[%d]", i)
+		check(len(sc.Criterion) >= 5, pfx+".criterion must be at least 5 characters")
+		check(strings.Contains(sc.Measurement, ">= "), pfx+".measurement must contain '>= '")
+	}
+
 	check(len(fm.EffortEstimates) >= 1, "effort_estimates must have at least one entry")
 	for i, e := range fm.EffortEstimates {
 		check(validEfforts[e.Effort], fmt.Sprintf("effort_estimates[%d].effort must be S/M/L", i))
 	}
+
 	check(len(fm.RollbackPlan) >= 1, "rollback_plan must not be empty")
-	check(len(fm.Notes) >= 1, "notes must not be empty")
+	check(reNotesRating.MatchString(fm.Notes.Rating), "notes.rating must match N/10 pattern")
+	check(len(fm.Notes.Assessment) >= 10, "notes.assessment must be at least 10 characters")
 
 	return errs
 }
@@ -304,9 +350,7 @@ func validateFrontmatter(fm *remPlanFrontmatter) []string {
 // ---- Helpers ----
 
 func planSkillName(skill string) string {
-	// normalise to kebab-case compatible (lowercase, replace path sep with -)
 	base := strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(skill, "/", "-"), "\\", "-"))
-	// strip SKILL.md suffix if present
 	base = strings.TrimSuffix(base, "-skill.md")
 	base = strings.TrimSuffix(base, ".md")
 	return base
@@ -350,9 +394,9 @@ func buildPhases(gaps []gap) []remPhase {
 		gapSize := g.max - g.score
 		dcode := dimLabelToCode(g.label)
 		advice := dimensionAdvice[g.key]
-		steps := splitAdviceIntoSteps(advice)
+		steps := splitAdviceIntoSteps(advice, i+1)
 		phases = append(phases, remPhase{
-			Phase:     fmt.Sprintf("Phase %d: %s", i+1, g.label),
+			Phase:     i + 1,
 			Dimension: fmt.Sprintf("%s: %s (%d/%d)", dcode, g.label, g.score, g.max),
 			Priority:  gapPriority(gapSize),
 			Target:    fmt.Sprintf("Increase from %d/%d to %d/%d (+%d points)", g.score, g.max, g.max, g.max, gapSize),
@@ -382,23 +426,55 @@ func buildEffortEstimates(gaps []gap) []remEffort {
 	return estimates
 }
 
-func splitAdviceIntoSteps(advice string) []string {
-	// Split on '. ' or '. \n' to create individual steps; fallback to single step.
+// splitAdviceIntoSteps converts a multi-sentence advice string into numbered
+// remStep values. phaseNum prefixes each step identifier (e.g. "1.1", "1.2").
+func splitAdviceIntoSteps(advice string, phaseNum int) []remStep {
 	sentences := strings.Split(advice, ". ")
-	var steps []string
+	var steps []remStep
+	stepNum := 1
 	for _, s := range sentences {
 		s = strings.TrimSpace(s)
-		if len(s) > 5 {
-			if !strings.HasSuffix(s, ".") {
-				s += "."
-			}
-			steps = append(steps, s)
+		if len(s) <= 5 {
+			continue
 		}
+		if !strings.HasSuffix(s, ".") {
+			s += "."
+		}
+		steps = append(steps, remStep{
+			Step:        fmt.Sprintf("%d.%d", phaseNum, stepNum),
+			Title:       shortStepTitle(s),
+			Description: s,
+		})
+		stepNum++
 	}
 	if len(steps) == 0 {
-		steps = []string{advice}
+		desc := advice
+		if desc == "" {
+			desc = "Review and improve this dimension."
+		}
+		if !strings.HasSuffix(desc, ".") {
+			desc += "."
+		}
+		steps = []remStep{{
+			Step:        fmt.Sprintf("%d.1", phaseNum),
+			Title:       shortStepTitle(desc),
+			Description: desc,
+		}}
 	}
 	return steps
+}
+
+// shortStepTitle derives a brief title from the first five words of a sentence.
+func shortStepTitle(s string) string {
+	words := strings.Fields(s)
+	if len(words) > 5 {
+		words = words[:5]
+	}
+	title := strings.TrimSuffix(strings.Join(words, " "), ".")
+	if len(title) < 3 {
+		return s
+	}
+	return title
 }
 
 func gapPriority(gap int) string {
@@ -456,24 +532,29 @@ func verifCommands(skillName string) []string {
 	}
 }
 
-func successCriteria(r *scorer.Result, targetScore int) []string {
+func successCriteria(r *scorer.Result, targetScore int) []remSuccessCriterion {
 	targetGrade := scorer.Grade(targetScore)
-	return []string{
-		fmt.Sprintf("Total score reaches %d/140 or higher", targetScore),
-		fmt.Sprintf("Grade improves from %s to %s", r.Grade, targetGrade),
-		"No Critical-severity diagnostics remain",
-		"All remediation phase steps completed",
+	return []remSuccessCriterion{
+		{Criterion: "Total score target", Measurement: fmt.Sprintf("Score >= %d/140", targetScore)},
+		{Criterion: "Grade improvement", Measurement: fmt.Sprintf(">= %s (from %s)", targetGrade, r.Grade)},
+		{Criterion: "No critical diagnostics", Measurement: ">= 0 Critical issues resolved"},
+		{Criterion: "All phase steps completed", Measurement: ">= all phases complete"},
 	}
 }
 
-func planNotes(r *scorer.Result) string {
-	if r.Errors > 0 {
-		return fmt.Sprintf("Audit reported %d error(s) and %d warning(s). Address errors first.", r.Errors, r.Warnings)
+func planNotes(r *scorer.Result) remNotes {
+	pct := r.Total * 100 / 140
+	rating := fmt.Sprintf("%d/10", max(4, min(9, pct/10)))
+	var assessment string
+	switch {
+	case r.Errors > 0:
+		assessment = fmt.Sprintf("Audit reported %d error(s) and %d warning(s). Address errors first.", r.Errors, r.Warnings)
+	case r.Warnings > 0:
+		assessment = fmt.Sprintf("Audit reported %d warning(s). Review before publishing.", r.Warnings)
+	default:
+		assessment = "No errors or warnings from the audit. Focus on dimension gaps above."
 	}
-	if r.Warnings > 0 {
-		return fmt.Sprintf("Audit reported %d warning(s). Review before publishing.", r.Warnings)
-	}
-	return "No errors or warnings from the audit. Focus on dimension gaps above."
+	return remNotes{Rating: rating, Assessment: assessment}
 }
 
 func min(a, b int) int {

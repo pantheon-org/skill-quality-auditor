@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tekhne.io/schemas/remediation-plan.schema.json",
   "title": "Remediation Plan",
   "description": "Schema for validating skill remediation plans",
   "type": "object",
@@ -189,7 +188,7 @@
       "minItems": 1,
       "items": {
         "type": "string",
-        "pattern": "^sh |^bunx |^npm "
+        "minLength": 1
       }
     },
     "success_criteria": {

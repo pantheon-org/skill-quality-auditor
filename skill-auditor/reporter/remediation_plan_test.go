@@ -51,16 +51,7 @@ func TestRemediationPlan_generatesValidYAML(t *testing.T) {
 	}
 }
 
-// TestRemediationPlan_targetScoreBelowOrEqualTotal verifies that RemediationPlan
-// returns an error when targetScore is a positive value that is <= r.Total
-// (i.e. the "target" is not actually an improvement).
-//
-// NOTE: The current implementation does not yet validate this case — it treats
-// any targetScore <= 0 or > 140 as invalid but allows targetScore <= r.Total.
-// This test is skipped until the validation is added.
 func TestRemediationPlan_targetScoreBelowOrEqualTotal(t *testing.T) {
-	t.Skip("validation not yet implemented: targetScore <= r.Total should return an error")
-
 	r := makeResultWithScore(84)
 	// targetScore = 50 is positive but less than r.Total (84) — should be rejected.
 	_, err := RemediationPlan(r, 50, "", "2026-04-27")
@@ -189,7 +180,6 @@ func TestValidateRemediationPlan_badSourceAudit(t *testing.T) {
 }
 
 func TestValidateRemediationPlan_emptyCriticalIssues(t *testing.T) {
-	// Build a plan with an explicitly empty critical_issues list.
 	content := "---\n" + noCriticalIssuesFrontmatter() + "\n---\n"
 	f := writeTempPlan(t, content)
 	errs := ValidateRemediationPlan(f)
@@ -292,24 +282,34 @@ func TestPlanVerdict_allBranches(t *testing.T) {
 func TestPlanNotes_withErrors(t *testing.T) {
 	r := &scorer.Result{Errors: 3, Warnings: 1}
 	got := planNotes(r)
-	if !strings.Contains(got, "error") {
-		t.Errorf("planNotes with errors should mention 'error', got %q", got)
+	if !strings.Contains(got.Assessment, "error") {
+		t.Errorf("planNotes with errors should mention 'error', got %q", got.Assessment)
 	}
 }
 
 func TestPlanNotes_withWarningsOnly(t *testing.T) {
 	r := &scorer.Result{Errors: 0, Warnings: 2}
 	got := planNotes(r)
-	if !strings.Contains(got, "warning") {
-		t.Errorf("planNotes with warnings should mention 'warning', got %q", got)
+	if !strings.Contains(got.Assessment, "warning") {
+		t.Errorf("planNotes with warnings should mention 'warning', got %q", got.Assessment)
 	}
 }
 
 func TestPlanNotes_noIssues(t *testing.T) {
 	r := &scorer.Result{Errors: 0, Warnings: 0}
 	got := planNotes(r)
-	if !strings.Contains(got, "No errors or warnings") {
-		t.Errorf("planNotes with no issues should say 'No errors or warnings', got %q", got)
+	if !strings.Contains(got.Assessment, "No errors or warnings") {
+		t.Errorf("planNotes with no issues should say 'No errors or warnings', got %q", got.Assessment)
+	}
+}
+
+func TestPlanNotes_ratingFormat(t *testing.T) {
+	for _, total := range []int{0, 50, 84, 100, 130, 140} {
+		r := &scorer.Result{Total: total}
+		got := planNotes(r)
+		if !reNotesRating.MatchString(got.Rating) {
+			t.Errorf("planNotes(total=%d).Rating = %q does not match N/10 pattern", total, got.Rating)
+		}
 	}
 }
 
@@ -330,7 +330,6 @@ func TestPlanSkillName_withMDSuffix(t *testing.T) {
 }
 
 func TestPlanSkillName_dotPath(t *testing.T) {
-	// Single-component path like "." falls back to skill itself.
 	got := planSkillName("my-skill")
 	if got == "" {
 		t.Error("planSkillName should return non-empty for simple name")
@@ -341,22 +340,51 @@ func TestPlanSkillName_dotPath(t *testing.T) {
 
 func TestSplitAdviceIntoSteps_multiSentence(t *testing.T) {
 	advice := "Do this first. Then do that. Finally wrap up."
-	steps := splitAdviceIntoSteps(advice)
+	steps := splitAdviceIntoSteps(advice, 1)
 	if len(steps) < 2 {
 		t.Errorf("expected multiple steps, got %d: %v", len(steps), steps)
 	}
 }
 
+func TestSplitAdviceIntoSteps_stepNumbering(t *testing.T) {
+	advice := "Do this first. Then do that."
+	steps := splitAdviceIntoSteps(advice, 2)
+	if steps[0].Step != "2.1" {
+		t.Errorf("first step should be 2.1, got %q", steps[0].Step)
+	}
+	if steps[1].Step != "2.2" {
+		t.Errorf("second step should be 2.2, got %q", steps[1].Step)
+	}
+}
+
+func TestSplitAdviceIntoSteps_hasRequiredFields(t *testing.T) {
+	advice := "Do this important thing for the skill."
+	steps := splitAdviceIntoSteps(advice, 1)
+	if len(steps) == 0 {
+		t.Fatal("expected at least one step")
+	}
+	s := steps[0]
+	if !reStepPattern.MatchString(s.Step) {
+		t.Errorf("step.Step %q does not match N.N pattern", s.Step)
+	}
+	if len(s.Title) < 3 {
+		t.Errorf("step.Title %q is too short (min 3)", s.Title)
+	}
+	if len(s.Description) < 10 {
+		t.Errorf("step.Description %q is too short (min 10)", s.Description)
+	}
+}
+
 func TestSplitAdviceIntoSteps_shortAdvice(t *testing.T) {
 	// Sentences <= 5 chars are filtered; fallback is the full advice string.
-	steps := splitAdviceIntoSteps("Hi.")
-	if len(steps) != 1 || steps[0] != "Hi." {
+	steps := splitAdviceIntoSteps("Hi.", 1)
+	if len(steps) != 1 || steps[0].Description != "Hi." {
 		t.Errorf("short advice should fall back to single step, got %v", steps)
 	}
 }
 
 func TestSplitAdviceIntoSteps_emptyAdvice(t *testing.T) {
-	steps := splitAdviceIntoSteps("")
+	steps := splitAdviceIntoSteps("", 1)
 	if len(steps) != 1 {
 		t.Errorf("empty advice should produce exactly 1 step, got %v", steps)
 	}
@@ -364,10 +392,10 @@ func TestSplitAdviceIntoSteps_emptyAdvice(t *testing.T) {
 
 func TestSplitAdviceIntoSteps_alreadyEndsWithDot(t *testing.T) {
 	advice := "Do this correctly. It matters."
-	steps := splitAdviceIntoSteps(advice)
+	steps := splitAdviceIntoSteps(advice, 1)
 	for _, s := range steps {
-		if !strings.HasSuffix(s, ".") {
-			t.Errorf("step %q should end with '.', got %q", s, s)
+		if !strings.HasSuffix(s.Description, ".") {
+			t.Errorf("step description %q should end with '.'", s.Description)
 		}
 	}
 }
@@ -456,16 +484,19 @@ executive_summary:
   verdict: Priority improvements required
 critical_issues: []
 remediation_phases:
-  - phase: Phase 1
+  - phase: 1
     dimension: "D1: Knowledge Delta (12/20)"
     priority: High
-    target: Increase from 12/20 to 20/20
+    target: Increase from 12/20 to 20/20 (+8 points)
     steps:
-      - Add expert-signal keywords
+      - step: "1.1"
+        title: Add expert-signal keywords
+        description: Add expert-signal keywords that go beyond LLM baseline knowledge.
 verification_commands:
   - ./skill-auditor evaluate my-skill
 success_criteria:
-  - Total score reaches 104/140
+  - criterion: Total score target
+    measurement: "Score >= 104/140"
 effort_estimates:
   - phase: Phase 1
     effort: M
@@ -476,7 +507,9 @@ effort_estimates:
 dependencies:
   - Completed audit stored in .context/audits/
 rollback_plan: git checkout HEAD -- skills/my-skill/SKILL.md
-notes: Review carefully before publishing.
+notes:
+  rating: "6/10"
+  assessment: Review carefully before publishing.
 `
 }
 
@@ -503,16 +536,19 @@ critical_issues:
     severity: High
     impact: Missing points prevent grade improvement
 remediation_phases:
-  - phase: Phase 1
+  - phase: 1
     dimension: "D1: Knowledge Delta (12/20)"
     priority: High
-    target: Increase from 12/20 to 20/20
+    target: Increase from 12/20 to 20/20 (+8 points)
     steps:
-      - Add expert-signal keywords
+      - step: "1.1"
+        title: Add expert-signal keywords
+        description: Add expert-signal keywords that go beyond LLM baseline knowledge.
 verification_commands:
   - ./skill-auditor evaluate my-skill
 success_criteria:
-  - Total score reaches 104/140
+  - criterion: Total score target
+    measurement: "Score >= 104/140"
 effort_estimates:
   - phase: Phase 1
     effort: M
@@ -523,6 +559,8 @@ effort_estimates:
 dependencies:
   - Completed audit stored in .context/audits/
 rollback_plan: git checkout HEAD -- skills/my-skill/SKILL.md
-notes: Review carefully before publishing.
+notes:
+  rating: "6/10"
+  assessment: Review carefully before publishing.
 `
 }
