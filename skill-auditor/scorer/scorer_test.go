@@ -21,6 +21,24 @@ func TestScoreMinimal(t *testing.T) {
 	}
 }
 
+func TestScore_nonexistentFile(t *testing.T) {
+	_, err := Score("/nonexistent/SKILL.md")
+	if err == nil {
+		t.Error("expected error for nonexistent file")
+	}
+}
+
+func TestDiagnosticSeverity(t *testing.T) {
+	e := errDiag("D1", "some error")
+	if e.Severity() != "error" {
+		t.Errorf("errDiag severity should be 'error', got %q", e.Severity())
+	}
+	w := warnDiag("D4", "some warning")
+	if w.Severity() != "warning" {
+		t.Errorf("warnDiag severity should be 'warning', got %q", w.Severity())
+	}
+}
+
 func TestScoreFullAGrade(t *testing.T) {
 	skillPath := filepath.Join(fixturesDir, "skill-full", "SKILL.md")
 	result, err := Score(skillPath)
