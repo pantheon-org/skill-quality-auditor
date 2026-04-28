@@ -45,4 +45,4 @@ jobs:
       - name: Tessl eval run
         env:
           TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
-        run: tessl eval run .
+        run: tessl eval run skill-auditor/cmd/assets/
