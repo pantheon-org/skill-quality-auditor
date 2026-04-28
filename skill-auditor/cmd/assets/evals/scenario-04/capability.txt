@@ -1,0 +1,1 @@
+Identify and document anti-patterns in a skill using NEVER/WHY/consequence structure.

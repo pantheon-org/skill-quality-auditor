@@ -1,0 +1,39 @@
+{
+  "instructions": [
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER produce an audit without per-dimension scores and a total out of 140 — vague qualitative feedback fails D8 practical usability."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER state grade boundaries from memory — always reference quality-thresholds-scoring.md (A: 126+, B: 112-125, C: 98-111)."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER generate a remediation plan without S/M/L effort sizing — plans without effort estimates are not actionable."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "AVOID agent-specific references (e.g. amp, cursor) in skill content — use agent-neutral phrasing to preserve portability."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER commit audit outputs (.context/audits/, .context/plans/, .context/analysis/) — these are ephemeral artefacts."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Load SKILL.md from the skill-quality-auditor tile before beginning any audit — the tile provides the D1-D9 scoring framework."
+    },
+    {
+      "type": "procedure",
+      "why_given": "preference",
+      "content": "Use --store flag when running batch evaluations to persist results and enable trend tracking via the trend command."
+    }
+  ]
+}

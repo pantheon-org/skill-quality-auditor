@@ -1,0 +1,1 @@
+Run duplication detection across a skill collection and produce a similarity analysis report.

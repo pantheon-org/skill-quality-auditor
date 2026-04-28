@@ -37,7 +37,7 @@ jobs:
         run: ./dist/skill-auditor duplication skill-auditor/cmd/assets
 
       - name: Batch quality gate
-        run: ./dist/skill-auditor batch skill-auditor/cmd/assets --fail-below B
+        run: ./dist/skill-auditor batch ./skill-auditor/cmd/assets --fail-below B
 
       - name: Install Tessl CLI
         run: curl -fsSL https://get.tessl.io | sh

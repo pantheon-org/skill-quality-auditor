@@ -1,0 +1,8 @@
+{
+  "checklist": [
+    {"id": "c1", "criterion": "All relevant skill pairs analysed, not just a subset", "max_score": 35},
+    {"id": "c2", "criterion": "Similarity scores calculated for each pair", "max_score": 25},
+    {"id": "c3", "criterion": "Consolidation recommendation provided for each high-similarity pair", "max_score": 25},
+    {"id": "c4", "criterion": "Summary statistics included (total pairs, critical/warning counts)", "max_score": 15}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "checklist": [
+    {"id": "c1", "criterion": "Each anti-pattern leads with NEVER: [action] phrasing", "max_score": 35},
+    {"id": "c2", "criterion": "WHY explanation provided for each anti-pattern", "max_score": 25},
+    {"id": "c3", "criterion": "Consequences of violating each anti-pattern described", "max_score": 25},
+    {"id": "c4", "criterion": "At least 3 distinct anti-patterns identified and documented", "max_score": 15}
+  ]
+}
