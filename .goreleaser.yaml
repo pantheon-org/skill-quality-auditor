@@ -15,7 +15,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X main.version={{.Version}}
+      - -s -w -X github.com/pantheon-org/skill-quality-auditor/cmd.buildVersion={{.Version}}
 
 archives:
   - formats: [tar.gz]
@@ -23,6 +23,20 @@ archives:
     format_overrides:
       - goos: windows
         formats: [zip]
+
+brews:
+  - name: skill-auditor
+    repository:
+      owner: pantheon-org
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/pantheon-org/skill-quality-auditor"
+    description: "Score AI skills against a 9-dimension quality framework"
+    license: "MIT"
+    install: |
+      bin.install "skill-auditor"
+    test: |
+      system "#{bin}/skill-auditor", "version"
 
 checksum:
   name_template: checksums.txt

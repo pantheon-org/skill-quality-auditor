@@ -8,7 +8,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// buildVersion is injected by GoReleaser via ldflags at release time.
+// It takes precedence over the version embedded in tile.json.
+var buildVersion string
+
 var version = func() string {
+	if buildVersion != "" {
+		return buildVersion
+	}
 	var tile struct {
 		Version string `json:"version"`
 	}
