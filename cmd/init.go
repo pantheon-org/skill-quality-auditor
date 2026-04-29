@@ -1,10 +1,14 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -14,14 +18,21 @@ const skillName = "skill-quality-auditor"
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Install the skill-quality-auditor skill into agent environments",
-	Long: `Install the embedded skill-quality-auditor SKILL.md into one or more agent
-skill directories. When no --agent flag is given, all agents whose global skill
-directory already exists on this machine are targeted automatically.`,
+	Long: `Install the embedded skill-quality-auditor skill into one or more agent
+skill directories.
+
+Detection behaviour:
+  • Default  — installs into CWD; auto-detects agents whose harness directory
+               already exists under the current working directory.
+  • --global  — installs into ~ instead; auto-detects against the home directory.
+  • --agent   — skip auto-detection and target the specified agent(s) explicitly.
+  • --interactive — show the full agent list and let you choose interactively.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		out := cmd.OutOrStdout()
 		method, _ := cmd.Flags().GetString("method")
 		global, _ := cmd.Flags().GetBool("global")
-		agents, _ := cmd.Flags().GetStringArray("agent")
+		interactive, _ := cmd.Flags().GetBool("interactive")
+		agentIDs, _ := cmd.Flags().GetStringArray("agent")
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 
 		if method != "copy" && method != "symlink" {
@@ -33,28 +44,44 @@ directory already exists on this machine are targeted automatically.`,
 			return fmt.Errorf("cannot determine home directory: %w", err)
 		}
 
-		targets, err := resolveTargets(agents, homeDir, global)
+		cwd, err := os.Getwd()
+		if err != nil {
+			return fmt.Errorf("cannot determine working directory: %w", err)
+		}
+
+		baseDir := cwd
+		if global {
+			baseDir = homeDir
+		}
+
+		var targets []Agent
+		switch {
+		case len(agentIDs) > 0:
+			targets, err = resolveByIDs(agentIDs)
+		case interactive:
+			targets, err = resolveInteractive(cmd.InOrStdin(), out, baseDir, global)
+		default:
+			targets, err = resolveByHarness(baseDir, global)
+		}
 		if err != nil {
 			return err
 		}
 		if len(targets) == 0 {
-			fmt.Fprintln(out, "No agent environments detected. Use --agent to specify one explicitly.")
+			fmt.Fprintln(out, "No agent environments detected. Use --agent to specify one or --interactive to choose.")
 			return nil
 		}
 
 		if dryRun {
 			for _, a := range targets {
-				skillDir := filepath.Join(a.SkillDir(homeDir, global), skillName)
+				skillDir := agentSkillDir(a, baseDir, global)
 				fmt.Fprintf(out, "[dry-run] would create directory: %s\n", skillDir)
-				dest := filepath.Join(skillDir, "SKILL.md")
 				if method == "symlink" {
 					canonicalPath := filepath.Join(homeDir, ".local", "share", skillName, "SKILL.md")
-					fmt.Fprintf(out, "[dry-run] would write: %s\n", canonicalPath)
-					fmt.Fprintf(out, "[dry-run] would symlink: %s -> %s\n", dest, canonicalPath)
+					fmt.Fprintf(out, "[dry-run] would write canonical: %s\n", canonicalPath)
+					fmt.Fprintf(out, "[dry-run] would symlink: %s -> %s\n", filepath.Join(skillDir, "SKILL.md"), canonicalPath)
 				} else {
-					fmt.Fprintf(out, "[dry-run] would write: %s\n", dest)
+					fmt.Fprintf(out, "[dry-run] would copy all assets to: %s\n", skillDir)
 				}
-				fmt.Fprintf(out, "[dry-run] would write: %s\n", filepath.Join(skillDir, "references", "<files>"))
 			}
 			return nil
 		}
@@ -68,7 +95,7 @@ directory already exists on this machine are targeted automatically.`,
 		}
 
 		for _, a := range targets {
-			skillDir := filepath.Join(a.SkillDir(homeDir, global), skillName)
+			skillDir := agentSkillDir(a, baseDir, global)
 			if err := os.MkdirAll(skillDir, 0o755); err != nil {
 				return fmt.Errorf("[%s] mkdir: %w", a.ID, err)
 			}
@@ -88,8 +115,8 @@ directory already exists on this machine are targeted automatically.`,
 				}
 			}
 
-			if err := writeRefs(skillDir); err != nil {
-				return fmt.Errorf("[%s] write references: %w", a.ID, err)
+			if err := writeAllAssets(skillDir); err != nil {
+				return fmt.Errorf("[%s] write assets: %w", a.ID, err)
 			}
 
 			fmt.Fprintf(out, "  ✓ %s → %s (%s)\n", a.ID, skillDir, method)
@@ -98,31 +125,105 @@ directory already exists on this machine are targeted automatically.`,
 	},
 }
 
-// resolveTargets returns the agents to install into.
-// If ids is non-empty, each id must exist in the registry.
-// Otherwise, auto-detect by probing global skill dirs.
-func resolveTargets(ids []string, homeDir string, global bool) ([]Agent, error) {
-	if len(ids) > 0 {
-		agents := make([]Agent, 0, len(ids))
-		for _, id := range ids {
-			a, ok := agentByID(id)
-			if !ok {
-				return nil, fmt.Errorf("unknown agent %q — run 'skill-auditor init --help' for supported agents", id)
-			}
-			agents = append(agents, a)
-		}
-		return agents, nil
+// agentSkillDir returns the absolute skill install directory for an agent.
+func agentSkillDir(a Agent, baseDir string, global bool) string {
+	if global {
+		return filepath.Join(baseDir, a.GlobalPath, skillName)
 	}
+	return filepath.Join(baseDir, a.ProjectPath, skillName)
+}
 
-	// auto-detect: include any agent whose global skill dir exists
+// harnessRootDir returns the top-level harness directory for an agent
+// (e.g. ".claude" for claude-code), relative to the install base.
+func harnessRootDir(a Agent, global bool) string {
+	p := a.ProjectPath
+	if global {
+		p = a.GlobalPath
+	}
+	parts := strings.SplitN(p, "/", 2)
+	return parts[0]
+}
+
+// resolveByIDs resolves a specific list of agent IDs from the registry.
+func resolveByIDs(ids []string) ([]Agent, error) {
+	out := make([]Agent, 0, len(ids))
+	for _, id := range ids {
+		a, ok := agentByID(id)
+		if !ok {
+			return nil, fmt.Errorf("unknown agent %q — run 'skill-auditor init --help' for supported agents", id)
+		}
+		out = append(out, a)
+	}
+	return out, nil
+}
+
+// resolveByHarness auto-detects agents whose harness root directory exists under baseDir.
+func resolveByHarness(baseDir string, global bool) ([]Agent, error) {
 	var detected []Agent
 	for _, a := range agentRegistry {
-		dir := filepath.Join(homeDir, a.GlobalPath)
-		if _, err := os.Stat(dir); err == nil {
+		harness := filepath.Join(baseDir, harnessRootDir(a, global))
+		if _, err := os.Stat(harness); err == nil {
 			detected = append(detected, a)
 		}
 	}
 	return detected, nil
+}
+
+// resolveInteractive shows a numbered list of all agents and prompts the user to select.
+func resolveInteractive(in io.Reader, out io.Writer, baseDir string, global bool) ([]Agent, error) {
+	fmt.Fprintln(out, "Available agents (* = harness detected in target directory):")
+	for i, a := range agentRegistry {
+		marker := " "
+		harness := filepath.Join(baseDir, harnessRootDir(a, global))
+		if _, err := os.Stat(harness); err == nil {
+			marker = "*"
+		}
+		path := a.ProjectPath
+		if global {
+			path = a.GlobalPath
+		}
+		fmt.Fprintf(out, "  %s %3d) %-20s %-30s (%s)\n", marker, i+1, a.ID, a.DisplayName, path)
+	}
+	fmt.Fprint(out, "\nSelect agents (comma-separated numbers, or 'all'): ")
+
+	scanner := bufio.NewScanner(in)
+	if !scanner.Scan() {
+		return nil, nil
+	}
+	input := strings.TrimSpace(scanner.Text())
+	if input == "" {
+		return nil, nil
+	}
+	if strings.ToLower(input) == "all" {
+		result := make([]Agent, len(agentRegistry))
+		copy(result, agentRegistry)
+		return result, nil
+	}
+
+	var selected []Agent
+	seen := map[string]bool{}
+	for _, part := range strings.Split(input, ",") {
+		part = strings.TrimSpace(part)
+		n, err := strconv.Atoi(part)
+		if err != nil || n < 1 || n > len(agentRegistry) {
+			return nil, fmt.Errorf("invalid selection %q — enter numbers between 1 and %d", part, len(agentRegistry))
+		}
+		a := agentRegistry[n-1]
+		if !seen[a.ID] {
+			seen[a.ID] = true
+			selected = append(selected, a)
+		}
+	}
+	return selected, nil
+}
+
+// resolveTargets is the legacy entry-point used by tests.
+// It delegates to resolveByIDs or resolveByHarness.
+func resolveTargets(ids []string, baseDir string, global bool) ([]Agent, error) {
+	if len(ids) > 0 {
+		return resolveByIDs(ids)
+	}
+	return resolveByHarness(baseDir, global)
 }
 
 // writeCanonical writes the embedded skill to the canonical location
@@ -136,35 +237,57 @@ func writeCanonical(homeDir string) (string, error) {
 	if err := os.WriteFile(dest, embeddedSkill, 0o644); err != nil {
 		return "", err
 	}
-	if err := writeRefs(dir); err != nil {
+	if err := writeAllAssets(dir); err != nil {
 		return "", err
 	}
 	return dest, nil
 }
 
-// writeRefs extracts the embedded references directory into destDir/references/.
+// writeAllAssets copies every embedded asset subdirectory into destDir.
+func writeAllAssets(destDir string) error {
+	type assetDir struct {
+		fsys fs.FS
+		root string
+	}
+	dirs := []assetDir{
+		{embeddedRefs, "assets/references"},
+		{embeddedEvals, "assets/evals"},
+		{embeddedSchemas, "assets/schemas"},
+		{embeddedTemplates, "assets/templates"},
+		{embeddedRequirements, "assets/requirements"},
+	}
+	for _, d := range dirs {
+		subdir := filepath.Base(d.root)
+		if err := fs.WalkDir(d.fsys, d.root, func(path string, entry fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			rel, _ := filepath.Rel(d.root, path)
+			target := filepath.Join(destDir, subdir, rel)
+			if entry.IsDir() {
+				return os.MkdirAll(target, 0o755)
+			}
+			data, err := fs.ReadFile(d.fsys, path)
+			if err != nil {
+				return err
+			}
+			return os.WriteFile(target, data, 0o644)
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// writeRefs is kept for compatibility; delegates to writeAllAssets.
 func writeRefs(destDir string) error {
-	return fs.WalkDir(embeddedRefs, "assets/references", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		// path is like "assets/references/foo.md" — strip "assets/references" prefix
-		rel, _ := filepath.Rel("assets/references", path)
-		target := filepath.Join(destDir, "references", rel)
-		if d.IsDir() {
-			return os.MkdirAll(target, 0o755)
-		}
-		data, err := embeddedRefs.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		return os.WriteFile(target, data, 0o644)
-	})
+	return writeAllAssets(destDir)
 }
 
 func init() {
 	initCmd.Flags().StringArrayP("agent", "a", nil, "agent(s) to install into (default: auto-detect)")
-	initCmd.Flags().BoolP("global", "g", false, "install to global skill directory (~/<agent>/skills/)")
+	initCmd.Flags().BoolP("global", "g", false, "install to global skill directory (~/<agent-path>/)")
+	initCmd.Flags().BoolP("interactive", "I", false, "interactively choose agents from the full registry list")
 	initCmd.Flags().StringP("method", "m", "symlink", "installation method: symlink or copy")
 	initCmd.Flags().BoolP("dry-run", "n", false, "print what would be done without touching disk")
 	rootCmd.AddCommand(initCmd)
