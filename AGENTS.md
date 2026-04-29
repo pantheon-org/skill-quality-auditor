@@ -18,11 +18,13 @@ live exclusively under `cmd/assets/` — there is no separate `skill/` directory
 | ---- | ---------- |
 | `go.mod` / `main.go` | Go CLI root — build and run from repo root |
 | `agents/` | Agent registry — supported environments for the `init` command |
+| `docs/` | Per-dimension documentation — scoring criteria, examples, and academic references |
 | `scorer/` | D1–D9 scorers; each file is one dimension |
 | `duplication/` | Word-level Jaccard similarity engine (inventory, pairwise detect) |
 | `reporter/` | Formats results as text or JSON; persists to `.context/audits/`; duplication, aggregation, and remediation plan formatters |
-| `cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune`, `init` cobra commands |
+| `cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune`, `init`, `update` cobra commands |
 | `cmd/assets/` | Embedded SKILL.md, tile.json, references, evals, schemas, templates, requirements — single source of truth |
+| `internal/` | Shared utilities (tokenizer) |
 | `testdata/` | Fixture skills for unit tests — do not modify without updating tests |
 
 ## How to evaluate a skill
