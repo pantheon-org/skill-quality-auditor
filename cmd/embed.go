@@ -14,6 +14,9 @@ var embeddedSkill []byte
 //go:embed assets/references
 var embeddedRefs embed.FS
 
+//go:embed assets/evals
+var embeddedEvals embed.FS
+
 //go:embed assets/schemas
 var embeddedSchemas embed.FS //nolint:unused // reserved for schema validation
 
