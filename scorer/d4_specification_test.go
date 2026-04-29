@@ -202,6 +202,116 @@ func TestD4_AndOrPenalty(t *testing.T) {
 	}
 }
 
+// --- Mutation Resistance tests ---
+
+func TestD4_MutationResistance_ZeroCredit(t *testing.T) {
+	// No hard constraints, no conditional branches, no exclusions → 0 pts
+	content := "---\ndescription: does something useful\n---\n# Skill\nDo the thing. Be helpful."
+	score1, _ := scoreD4(content, t.TempDir(), nilBridge())
+	// Verify scoreSpecificationMutationResistance returns 0 for this content
+	if got := scoreSpecificationMutationResistance(content); got != 0 {
+		t.Errorf("want 0 mutation resistance pts, got %d", got)
+	}
+	_ = score1
+}
+
+func TestD4_MutationResistance_OneOfThree_HardConstraint(t *testing.T) {
+	// MUST + ≥4-word verb phrase → 1 pt (int(1.5) = 1)
+	content := "---\ndescription: does something useful\n---\n# Skill\nMUST validate all user inputs before processing them."
+	if got := scoreSpecificationMutationResistance(content); got != 1 {
+		t.Errorf("want 1 pt for hard constraint only, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_OneOfThree_Conditional(t *testing.T) {
+	// if + ≥2-word noun phrase → 1 pt (int(1.5) = 1)
+	content := "---\ndescription: does something useful\n---\n# Skill\nif the user provides a file path, validate it first."
+	if got := scoreSpecificationMutationResistance(content); got != 1 {
+		t.Errorf("want 1 pt for conditional branch only, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_OneOfThree_Exclusion(t *testing.T) {
+	// does not + ≥6-word sentence → 1 pt
+	content := "---\ndescription: does something useful\n---\n# Skill\nThis skill does not handle authentication or session management."
+	if got := scoreSpecificationMutationResistance(content); got != 1 {
+		t.Errorf("want 1 pt for exclusion only, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_TwoOfThree_HardConstraintAndConditional(t *testing.T) {
+	// MUST + if → 1.5 + 1.5 = 3 pts
+	content := "---\ndescription: does something useful\n---\n# Skill\nMUST validate all user inputs before processing them.\nif the user provides a file path, validate it first."
+	if got := scoreSpecificationMutationResistance(content); got != 3 {
+		t.Errorf("want 3 pts for hard constraint + conditional, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_TwoOfThree_HardConstraintAndExclusion(t *testing.T) {
+	// MUST + does not → 1.5 + 1.0 = 2 pts (int(2.5) = 2)
+	content := "---\ndescription: does something useful\n---\n# Skill\nMUST validate all user inputs before processing them.\nThis skill does not handle authentication or session management."
+	if got := scoreSpecificationMutationResistance(content); got != 2 {
+		t.Errorf("want 2 pts for hard constraint + exclusion, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_FullCredit(t *testing.T) {
+	// MUST + if + does not → 1.5 + 1.5 + 1.0 = 4 pts
+	content := "---\ndescription: does something useful\n---\n# Skill\n" +
+		"MUST validate all user inputs before processing them.\n" +
+		"if the user provides a file path, validate it first.\n" +
+		"This skill does not handle authentication or session management."
+	if got := scoreSpecificationMutationResistance(content); got != 4 {
+		t.Errorf("want 4 pts for all three criteria, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_CodeBlockFalsePositiveGuard(t *testing.T) {
+	// Keywords inside code blocks must NOT earn credit
+	content := "---\ndescription: does something useful\n---\n# Skill\n```\nMUST validate all user inputs before processing them.\nif the user provides a file path, validate it first.\nThis skill does not handle authentication or session management.\n```"
+	if got := scoreSpecificationMutationResistance(content); got != 0 {
+		t.Errorf("want 0 pts when keywords are inside code blocks, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_NonSpecificMUST_NoCredit(t *testing.T) {
+	// "MUST follow best practices" is explicitly excluded (vague phrase)
+	content := "---\ndescription: does something useful\n---\n# Skill\nMUST follow best practices when writing code."
+	if got := scoreSpecificationMutationResistance(content); got != 0 {
+		t.Errorf("want 0 pts for non-specific MUST phrase, got %d", got)
+	}
+}
+
+func TestD4_MutationResistance_NonSpecificIf_NoCredit(t *testing.T) {
+	// "if needed, proceed" — comma after first word prevents 2-word noun phrase match
+	content := "---\ndescription: does something useful\n---\n# Skill\nif needed, proceed with caution."
+	if got := scoreSpecificationMutationResistance(content); got != 0 {
+		t.Errorf("want 0 pts for non-specific if phrase, got %d", got)
+	}
+}
+
+func TestD4_E2E_VagueSkill_ScoresBelow12(t *testing.T) {
+	// A skill with no specificity markers should score ≤ 11
+	content := "---\ndescription: does something useful\n---\n# Skill\nDo the thing. Be helpful. Work well."
+	score, _ := scoreD4(content, t.TempDir(), nilBridge())
+	if score > 11 {
+		t.Errorf("vague skill: want score <= 11, got %d", score)
+	}
+}
+
+func TestD4_E2E_MutationResistantSkill_ScoresAtLeast13(t *testing.T) {
+	// A well-specified skill with all three criteria should score ≥ 13
+	content := "---\ndescription: Validates and sanitizes user inputs before processing to prevent injection attacks and data corruption in production systems\n---\n# Skill\n" +
+		"MUST validate all user inputs before processing them.\n" +
+		"if the user provides a file path, validate it first.\n" +
+		"This skill does not handle authentication or session management.\n" +
+		"See references/guide.md for details."
+	score, _ := scoreD4(content, t.TempDir(), nilBridge())
+	if score < 13 {
+		t.Errorf("mutation-resistant skill: want score >= 13, got %d", score)
+	}
+}
+
 func TestPenaltyFromDir_notADirectory(t *testing.T) {
 	import_re := regexp.MustCompile(`skills/[a-z]`)
 	// Path doesn't exist → should return 0
