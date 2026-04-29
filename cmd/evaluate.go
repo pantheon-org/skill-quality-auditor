@@ -14,7 +14,7 @@ import (
 
 func init() {
 	var flags struct {
-		json     bool
+		markdown bool
 		store    bool
 		repoRoot string
 	}
@@ -43,14 +43,15 @@ func init() {
 			}
 			result.Skill = skillKey
 
-			if flags.json {
+			out := cmd.OutOrStdout()
+			if flags.markdown {
+				fmt.Fprint(out, reporter.Format(result))
+			} else {
 				data, err := json.MarshalIndent(result, "", "  ")
 				if err != nil {
 					return fmt.Errorf("marshal result: %w", err)
 				}
-				fmt.Println(string(data))
-			} else {
-				fmt.Print(reporter.Format(result))
+				fmt.Fprintln(out, string(data))
 			}
 
 			if flags.store {
@@ -63,9 +64,9 @@ func init() {
 		},
 	}
 
-	cmd.Flags().BoolVar(&flags.json, "json", false, "emit JSON output")
-	cmd.Flags().BoolVar(&flags.store, "store", false, "persist result to .context/audits/")
-	cmd.Flags().StringVar(&flags.repoRoot, "repo-root", "", "repo root (auto-detected if empty)")
+	cmd.Flags().BoolVarP(&flags.markdown, "markdown", "m", false, "emit Markdown output instead of JSON")
+	cmd.Flags().BoolVarP(&flags.store, "store", "s", false, "persist result to .context/audits/")
+	cmd.Flags().StringVarP(&flags.repoRoot, "repo-root", "r", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(cmd)
 }
 

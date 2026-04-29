@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,11 +58,42 @@ func TestEvaluateCmd_minimalSkill(t *testing.T) {
 	}
 }
 
-func TestEvaluateCmd_jsonFlag(t *testing.T) {
+func TestEvaluateCmd_defaultJSONOutput(t *testing.T) {
 	root, key := makeEvalSkill(t, "skill-full", "domain", "json-skill")
-	_, err := runEvaluate(t, "--repo-root", root, "--json", key)
+	out, err := runEvaluate(t, "--repo-root", root, key)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+	var result map[string]interface{}
+	if jsonErr := json.Unmarshal([]byte(out), &result); jsonErr != nil {
+		t.Fatalf("expected valid JSON output by default, got: %s, err: %v", out, jsonErr)
+	}
+}
+
+func TestEvaluateCmd_markdownFlag(t *testing.T) {
+	root, key := makeEvalSkill(t, "skill-full", "domain", "md-skill")
+	out, err := runEvaluate(t, "--repo-root", root, "--markdown", key)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.TrimSpace(out) == "" {
+		t.Fatal("expected non-empty markdown output")
+	}
+	// Markdown output should not be valid JSON
+	var result map[string]interface{}
+	if json.Unmarshal([]byte(out), &result) == nil {
+		t.Error("expected markdown output, not JSON")
+	}
+}
+
+func TestEvaluateCmd_markdownShorthand(t *testing.T) {
+	root, key := makeEvalSkill(t, "skill-full", "domain", "md-short-skill")
+	out, err := runEvaluate(t, "--repo-root", root, "-m", key)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.TrimSpace(out) == "" {
+		t.Fatal("expected non-empty markdown output with -m shorthand")
 	}
 }
 
@@ -86,6 +118,19 @@ func TestEvaluateCmd_storeFlag(t *testing.T) {
 	matches, globErr := filepath.Glob(auditGlob)
 	if globErr != nil || len(matches) == 0 {
 		t.Errorf("expected audit.json to be stored, glob matched: %v (err: %v)", matches, globErr)
+	}
+}
+
+func TestEvaluateCmd_storeFlagShorthand(t *testing.T) {
+	root, key := makeEvalSkill(t, "skill-minimal", "domain", "stored-short-skill")
+	_, err := runEvaluate(t, "-r", root, "-s", key)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	auditGlob := filepath.Join(root, ".context", "audits", "domain", "stored-short-skill", "*", "audit.json")
+	matches, globErr := filepath.Glob(auditGlob)
+	if globErr != nil || len(matches) == 0 {
+		t.Errorf("expected audit.json to be stored with -s shorthand, glob matched: %v (err: %v)", matches, globErr)
 	}
 }
 
