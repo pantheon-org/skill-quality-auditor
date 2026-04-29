@@ -400,6 +400,9 @@ lefthook install
 
 ### Academic References
 
+- **D1 Knowledge Delta:** [Li et al., 2025 — Instruction Agent: Enhancing Agent with Expert Demonstration](https://arxiv.org/abs/2509.07098)
+- **D1 Knowledge Delta:** [Deng et al., 2024 — From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning](https://arxiv.org/abs/2411.03817)
+- **D1 Knowledge Delta:** [Yin et al., 2025 — Grounding Open-Domain Knowledge from LLMs to Real-World RL Tasks: A Survey](https://www.ijcai.org/proceedings/2025/1198.pdf)
 - **D6 Freedom Calibration:** [Zhang et al., 2025 — Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation](https://arxiv.org/abs/2509.14760)
 - **D6 Freedom Calibration:** [Sorensen, 2026 — Specification as the New Management](https://www.researchgate.net/publication/401626622)
 - **D6 Freedom Calibration:** [Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)

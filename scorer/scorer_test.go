@@ -45,8 +45,8 @@ func TestScoreFullAGrade(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Score() error: %v", err)
 	}
-	if result.Total < 119 {
-		t.Errorf("skill-full expected total >= 119, got %d (grade %s)", result.Total, result.Grade)
+	if result.Total < 124 {
+		t.Errorf("skill-full expected total >= 124, got %d (grade %s)", result.Total, result.Grade)
 		for k, v := range result.Dimensions {
 			t.Logf("  %s: %d", k, v)
 		}
