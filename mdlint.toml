@@ -1,9 +1,29 @@
 # mdlint.toml
-# Rule suppression is applied via CLI flags in lefthook.yml:
-#   --select ALL --ignore MD013,MD032,MD051,MD055,MD058
-#
-# MD013 — citation URLs in academic references exceed any reasonable line limit
+
+# Exclude generated/non-canonical files from linting
+exclude = [
+  "cmd/assets",
+  ".github",
+  "testdata",
+  "CHANGELOG.md",
+]
+
+# MD013 — citation URLs and long prose lines in docs exceed any reasonable limit
+[rules.MD013]
+enabled = false
+
 # MD032 — nested bullet lists under numbered items are valid markdown
+[rules.MD032]
+enabled = false
+
 # MD051 — backtick-wrapped headings produce anchors mdlint cannot resolve
+[rules.MD051]
+enabled = false
+
 # MD055 — pipe characters inside backtick spans are not table delimiters
+[rules.MD055]
+enabled = false
+
 # MD058 — mdlint incorrectly flags tables inside fenced code blocks
+[rules.MD058]
+enabled = false
