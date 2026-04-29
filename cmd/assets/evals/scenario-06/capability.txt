@@ -1,0 +1,1 @@
+Produce agent-neutral skill content and correctly exclude ephemeral audit artefacts from git commits.
