@@ -9,12 +9,13 @@ import (
 
 // scoreD4 — Specification Compliance (max: 17)
 func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
-	score := 8
+	score := 6
 	var diags []Diagnostic
 
 	score += scoreD4Description(content, b)
 	score += scoreD4HarnessRefs(content, &diags)
 	score += scoreD4RelPaths(content)
+	score += scoreSpecificationMutationResistance(content)
 
 	absPathRe := regexp.MustCompile(`skills/[a-z][a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+`)
 	ctxAgentsRe := regexp.MustCompile(`\.(context|agents)/`)
@@ -49,9 +50,6 @@ func scoreD4Description(content string, b *validatorBridge) int {
 	}
 	if descLen > d4DescLenMid {
 		delta += 2
-	}
-	if descLen > d4DescLenHigh {
-		delta++
 	}
 	description := extractFrontmatterField(content, "description")
 	andOrRe := regexp.MustCompile(`(?i) and | or `)
@@ -135,6 +133,79 @@ func extractLastH2(content string) string {
 		}
 	}
 	return last
+}
+
+// scoreSpecificationMutationResistance scores mutation-resistance of the specification.
+// Three sub-criteria (code blocks stripped before matching):
+//   - hard constraints (MUST/NEVER/always/ONLY + ≥4-word verb phrase): 1.5 pts
+//   - conditional branches (if/when/unless + ≥2-word noun phrase): 1.5 pts
+//   - explicit exclusions (does not/out of scope/DO NOT/SKIP in ≥6-word sentence): 1 pt
+//
+// Total float is truncated to int (partial credit for 1-of-3 or 2-of-3).
+func scoreSpecificationMutationResistance(content string) int {
+	nonCode := removeCodeBlocks(content)
+	var total float64
+	if hasHardConstraint(nonCode) {
+		total += 1.5
+	}
+	if hasConditionalBranch(nonCode) {
+		total += 1.5
+	}
+	if hasExclusion(nonCode) {
+		total += 1.0
+	}
+	return int(total)
+}
+
+// hasHardConstraint returns true when the content outside code blocks contains
+// a MUST/NEVER/always/ONLY keyword followed by a specific ≥4-word verb phrase.
+// Generic phrases like "follow best practices" or "be careful" are excluded.
+func hasHardConstraint(nonCode string) bool {
+	re := regexp.MustCompile(`(?i)\b(MUST|NEVER|always|ONLY)\b\s+(\S+\s+\S+\s+\S+\s+\S+)`)
+	matches := re.FindAllStringSubmatch(nonCode, -1)
+	for _, m := range matches {
+		phrase := strings.ToLower(strings.TrimSpace(m[2]))
+		if strings.HasPrefix(phrase, "follow best practices") || strings.HasPrefix(phrase, "be careful") {
+			continue
+		}
+		return true
+	}
+	return false
+}
+
+// hasConditionalBranch returns true when the content outside code blocks contains
+// an if/when/unless/only if keyword followed by a ≥2-word noun phrase
+// (no comma between the two words, preventing vague "if needed, proceed" patterns;
+// first word must not be a gerund ending in -ing to exclude purpose clauses like "when writing code").
+func hasConditionalBranch(nonCode string) bool {
+	re := regexp.MustCompile(`(?i)\b(only\s+if|when|unless|if)\b\s+([^\s,;.]+\s+[^\s,;.]+)`)
+	matches := re.FindAllStringSubmatch(nonCode, -1)
+	for _, m := range matches {
+		phrase := strings.ToLower(strings.TrimSpace(m[2]))
+		firstWord := strings.Fields(phrase)[0]
+		if strings.HasSuffix(firstWord, "ing") {
+			continue
+		}
+		return true
+	}
+	return false
+}
+
+// hasExclusion returns true when the content outside code blocks contains
+// a does not/out of scope/DO NOT/SKIP marker inside a ≥6-word sentence.
+func hasExclusion(nonCode string) bool {
+	sentenceRe := regexp.MustCompile(`[^.!?\n]+[.!?\n]?`)
+	exclusionRe := regexp.MustCompile(`(?i)(does not|out of scope|DO NOT|SKIP)`)
+	sentences := sentenceRe.FindAllString(nonCode, -1)
+	for _, s := range sentences {
+		if !exclusionRe.MatchString(s) {
+			continue
+		}
+		if len(strings.Fields(s)) >= 6 {
+			return true
+		}
+	}
+	return false
 }
 
 // penaltyFromDir returns the number of files in dir matching re, capped at 2.
