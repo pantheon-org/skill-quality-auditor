@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.0...v0.12.1) (2026-04-29)
+
+
+### Bug Fixes
+
+* **skill:** self-audit improvements to reach A grade (127/140) ([#66](https://github.com/pantheon-org/skill-quality-auditor/issues/66)) ([05967e2](https://github.com/pantheon-org/skill-quality-auditor/commit/05967e24150b7c5e91f90e819f5e4367fc589ba8))
+
 ## [0.12.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.11.0...v0.12.0) (2026-04-29)
 
 
