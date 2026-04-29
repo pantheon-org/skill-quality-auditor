@@ -395,3 +395,11 @@ Pre-commit and pre-push hooks are managed via [lefthook](https://github.com/evil
 mise install   # installs go, golangci-lint, markdownlint-cli2, shellcheck, lefthook
 lefthook install
 ```
+
+---
+
+### Academic References
+
+- **D6 Freedom Calibration:** [Zhang et al., 2025 — Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation](https://arxiv.org/abs/2509.14760)
+- **D6 Freedom Calibration:** [Sorensen, 2026 — Specification as the New Management](https://www.researchgate.net/publication/401626622)
+- **D6 Freedom Calibration:** [Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)

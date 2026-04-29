@@ -31,17 +31,23 @@ func scoreD5WithMeta(content, skillDir string, b *validatorBridge) (score, lines
 	lines = len(strings.Split(content, "\n"))
 
 	tokens := b.skillMDTokens()
+	var heuristicScore int
 	if tokens > 0 {
-		return scoreD5ByTokens(tokens, lines, refCount, hasRefs)
+		heuristicScore, lines, refCount, hasRefs = scoreD5ByTokens(tokens, lines, refCount, hasRefs)
+	} else {
+		heuristicScore, lines, refCount, hasRefs = scoreD5ByLines(lines, refCount, hasRefs)
 	}
-	return scoreD5ByLines(lines, refCount, hasRefs)
+
+	negScore := scoreNegativeConditions(content)
+	score = min(15, heuristicScore+negScore)
+	return score, lines, refCount, hasRefs
 }
 
 func scoreD5ByTokens(tokens, lines, refCount int, hasRefs bool) (score, outLines, outRefCount int, outHasRefs bool) {
 	if hasRefs {
 		switch {
 		case tokens < d5TokenCompact:
-			return 15, lines, refCount, hasRefs
+			return 13, lines, refCount, hasRefs
 		case tokens < d5TokenModerate:
 			return 13, lines, refCount, hasRefs
 		case tokens < d5TokenVerbose:
@@ -66,7 +72,7 @@ func scoreD5ByLines(lines, refCount int, hasRefs bool) (score, outLines, outRefC
 	if hasRefs {
 		switch {
 		case lines < d5LinesCompact:
-			return 15, lines, refCount, hasRefs
+			return 13, lines, refCount, hasRefs
 		case lines < d5LinesModerate:
 			return 13, lines, refCount, hasRefs
 		case lines < d5LinesVerbose:
@@ -98,4 +104,30 @@ func isReferenceSectionCompliant(content string) bool {
 	}
 	bulletLinkRe := regexp.MustCompile(`(?m)^- \[.+\]\(.+\)`)
 	return strings.TrimSpace(lastH2) == "References" && bulletLinkRe.MatchString(content)
+}
+
+// scoreNegativeConditions scans markdown table rows in content for negative
+// trigger language and returns 0–2 pts. Matching is restricted to table rows
+// (lines beginning with '|') to avoid false positives from prose.
+func scoreNegativeConditions(content string) int {
+	keywords := []string{
+		"skip if",
+		"only when",
+		"unless",
+		"not needed when",
+		"omit if",
+	}
+	for _, line := range strings.Split(content, "\n") {
+		trimmed := strings.TrimLeft(line, " \t")
+		if !strings.HasPrefix(trimmed, "|") {
+			continue
+		}
+		lower := strings.ToLower(trimmed)
+		for _, kw := range keywords {
+			if strings.Contains(lower, kw) {
+				return 2
+			}
+		}
+	}
+	return 0
 }
