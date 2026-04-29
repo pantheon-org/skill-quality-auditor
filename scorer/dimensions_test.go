@@ -46,6 +46,52 @@ func TestNewWarnDiag(t *testing.T) {
 	}
 }
 
+func TestAllDimensions_count(t *testing.T) {
+	if len(AllDimensions) != 9 {
+		t.Errorf("expected 9 dimensions, got %d", len(AllDimensions))
+	}
+}
+
+func TestAllDimensions_uniqueFields(t *testing.T) {
+	codes := map[string]bool{}
+	keys := map[string]bool{}
+	for _, d := range AllDimensions {
+		if codes[d.Code] {
+			t.Errorf("duplicate Code: %s", d.Code)
+		}
+		if keys[d.Key] {
+			t.Errorf("duplicate Key: %s", d.Key)
+		}
+		codes[d.Code] = true
+		keys[d.Key] = true
+		if d.Max <= 0 {
+			t.Errorf("dimension %s has non-positive Max: %d", d.Code, d.Max)
+		}
+	}
+}
+
+func TestAllDimensions_totalMax(t *testing.T) {
+	total := 0
+	for _, d := range AllDimensions {
+		total += d.Max
+	}
+	if total != 140 {
+		t.Errorf("expected AllDimensions total Max=140, got %d", total)
+	}
+}
+
+func TestDimensionScores_keysMatchAllDimensions(t *testing.T) {
+	m := dimensionScores(1, 2, 3, 4, 5, 6, 7, 8, 9)
+	if len(m) != len(AllDimensions) {
+		t.Errorf("expected %d keys, got %d", len(AllDimensions), len(m))
+	}
+	for i, d := range AllDimensions {
+		if m[d.Key] != i+1 {
+			t.Errorf("dimension %s: want %d, got %d", d.Key, i+1, m[d.Key])
+		}
+	}
+}
+
 func TestRemoveCodeBlocks(t *testing.T) {
 	content := "before\n```\ncode line\n```\nafter\n"
 	result := removeCodeBlocks(content)

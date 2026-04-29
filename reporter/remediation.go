@@ -52,13 +52,13 @@ func Remediation(r *scorer.Result) string {
 }
 
 func buildSortedGaps(r *scorer.Result) []gap {
-	gaps := make([]gap, 0, len(dimensionOrder))
-	for _, d := range dimensionOrder {
-		score, ok := r.Dimensions[d.key]
-		if !ok || score >= d.max {
+	gaps := make([]gap, 0, len(scorer.AllDimensions))
+	for _, d := range scorer.AllDimensions {
+		score, ok := r.Dimensions[d.Key]
+		if !ok || score >= d.Max {
 			continue
 		}
-		gaps = append(gaps, gap{key: d.key, label: d.label, score: score, max: d.max})
+		gaps = append(gaps, gap{key: d.Key, label: d.Label, score: score, max: d.Max})
 	}
 	sort.Slice(gaps, func(i, j int) bool {
 		return (gaps[i].max - gaps[i].score) > (gaps[j].max - gaps[j].score)
@@ -100,18 +100,12 @@ func plural(n int) string {
 	return "s"
 }
 
-// dimLabelToCode maps a dimension display label back to its D-code for diagnostic lookup.
-var dimLabelToCode = func() func(string) string {
-	m := map[string]string{
-		"Knowledge Delta":          "D1",
-		"Mindset + Procedures":     "D2",
-		"Anti-Pattern Quality":     "D3",
-		"Specification Compliance": "D4",
-		"Progressive Disclosure":   "D5",
-		"Freedom Calibration":      "D6",
-		"Pattern Recognition":      "D7",
-		"Practical Usability":      "D8",
-		"Eval Validation":          "D9",
+// dimLabelToCode maps a dimension display label to its D-code for diagnostic lookup.
+func dimLabelToCode(label string) string {
+	for _, d := range scorer.AllDimensions {
+		if d.Label == label {
+			return d.Code
+		}
 	}
-	return func(label string) string { return m[label] }
-}()
+	return ""
+}

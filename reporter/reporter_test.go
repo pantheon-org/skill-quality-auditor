@@ -175,8 +175,8 @@ func TestAnalysis_containsDimensionTable(t *testing.T) {
 
 func TestRemediation_allAtMax(t *testing.T) {
 	r := makeResult()
-	for _, d := range dimensionOrder {
-		r.Dimensions[d.key] = d.max
+	for _, d := range scorer.AllDimensions {
+		r.Dimensions[d.Key] = d.Max
 	}
 	out := Remediation(r)
 	if !strings.Contains(out, "Nothing to remediate") {
