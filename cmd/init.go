@@ -22,6 +22,7 @@ directory already exists on this machine are targeted automatically.`,
 		method, _ := cmd.Flags().GetString("method")
 		global, _ := cmd.Flags().GetBool("global")
 		agents, _ := cmd.Flags().GetStringArray("agent")
+		dryRun, _ := cmd.Flags().GetBool("dry-run")
 
 		if method != "copy" && method != "symlink" {
 			return fmt.Errorf("--method must be 'copy' or 'symlink'")
@@ -38,6 +39,23 @@ directory already exists on this machine are targeted automatically.`,
 		}
 		if len(targets) == 0 {
 			fmt.Fprintln(out, "No agent environments detected. Use --agent to specify one explicitly.")
+			return nil
+		}
+
+		if dryRun {
+			for _, a := range targets {
+				skillDir := filepath.Join(a.SkillDir(homeDir, global), skillName)
+				fmt.Fprintf(out, "[dry-run] would create directory: %s\n", skillDir)
+				dest := filepath.Join(skillDir, "SKILL.md")
+				if method == "symlink" {
+					canonicalPath := filepath.Join(homeDir, ".local", "share", skillName, "SKILL.md")
+					fmt.Fprintf(out, "[dry-run] would write: %s\n", canonicalPath)
+					fmt.Fprintf(out, "[dry-run] would symlink: %s -> %s\n", dest, canonicalPath)
+				} else {
+					fmt.Fprintf(out, "[dry-run] would write: %s\n", dest)
+				}
+				fmt.Fprintf(out, "[dry-run] would write: %s\n", filepath.Join(skillDir, "references", "<files>"))
+			}
 			return nil
 		}
 
@@ -145,8 +163,9 @@ func writeRefs(destDir string) error {
 }
 
 func init() {
-	initCmd.Flags().StringArray("agent", nil, "agent(s) to install into (default: auto-detect)")
+	initCmd.Flags().StringArrayP("agent", "a", nil, "agent(s) to install into (default: auto-detect)")
 	initCmd.Flags().BoolP("global", "g", false, "install to global skill directory (~/<agent>/skills/)")
-	initCmd.Flags().String("method", "symlink", "installation method: symlink or copy")
+	initCmd.Flags().StringP("method", "m", "symlink", "installation method: symlink or copy")
+	initCmd.Flags().BoolP("dry-run", "n", false, "print what would be done without touching disk")
 	rootCmd.AddCommand(initCmd)
 }
