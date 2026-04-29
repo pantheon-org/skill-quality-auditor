@@ -12,6 +12,7 @@ and Eval Validation.
 - [Dimension docs](#dimension-docs)
 - [Install](#install)
 - [Command Usage](#command-usage)
+- [Flag Shorthands](#flag-shorthands)
 - [Output Formats](#output-formats)
 - [CI Integration](#ci-integration)
 - [Repository layout](#repository-layout)
@@ -137,9 +138,9 @@ go install github.com/pantheon-org/skill-quality-auditor@latest
 skill-auditor evaluate <skill> [flags]
 
 Flags:
-  --json        emit JSON output instead of human-readable text
-  --store       persist result to .context/audits/
-  --repo-root   repo root directory (auto-detected from .git / go.mod if omitted)
+  -m, --markdown    emit Markdown output (default: JSON)
+  -s, --store       persist result to .context/audits/
+  -r, --repo-root   repo root directory (auto-detected from .git / go.mod if omitted)
 ```
 
 `<skill>` accepts a `domain/skill-name` key (resolved under `<repo-root>/skills/`), a directory
@@ -151,10 +152,11 @@ containing `SKILL.md`, or a direct path to `SKILL.md`.
 skill-auditor batch <skill1> [skill2 ...] [flags]
 
 Flags:
-  --json        emit JSON array output
-  --store       persist each result to .context/audits/
-  --fail-below  exit 1 if any skill scores below this grade (e.g. B+)
-  --repo-root   repo root directory (auto-detected if omitted)
+  -j, --json        emit JSON array output
+  -m, --markdown    emit Markdown table output
+  -s, --store       persist each result to .context/audits/
+  -F, --fail-below  exit 1 if any skill scores below this grade (e.g. B+)
+  -r, --repo-root   repo root directory (auto-detected if omitted)
 ```
 
 ### `duplication`
@@ -163,9 +165,11 @@ Flags:
 skill-auditor duplication [skills-dir] [flags]
 
 Flags:
-  --json        emit JSON array of pairs
-  --skills-dir  skills directory (default: <repo-root>/skills)
-  --repo-root   repo root directory (auto-detected if omitted)
+  -j, --json        emit JSON array of pairs
+  -m, --markdown    emit Markdown output (default)
+  -s, --store       persist report to .context/analysis/
+  -d, --skills-dir  skills directory (default: <repo-root>/skills)
+  -r, --repo-root   repo root directory (auto-detected if omitted)
 ```
 
 Pairwise word-level Jaccard similarity across all `SKILL.md` files. Writes
@@ -192,9 +196,11 @@ Produces a 6-step consolidation plan at `.context/analysis/aggregation-plan-<fam
 skill-auditor remediate <skill> [flags]
 
 Flags:
-  --target-score  desired total score (default: current + 20, max 140)
-  --validate      validate an existing plan file instead of generating one
-  --repo-root     repo root directory (auto-detected if omitted)
+  -j, --json          emit the plan as JSON instead of Markdown
+  -n, --dry-run       print plan to stdout without writing to .context/plans/
+  -t, --target-score  desired total score (default: current + 20, max 140)
+  -v, --validate      validate an existing plan file instead of generating one
+  -r, --repo-root     repo root directory (auto-detected if omitted)
 ```
 
 Reads the most recent stored audit for `<skill>` and generates a schema-compliant remediation
@@ -207,8 +213,10 @@ against `remediation-plan.schema.json`.
 skill-auditor trend [flags]
 
 Flags:
-  --json       emit JSON array output
-  --repo-root  repo root directory (auto-detected if omitted)
+  -j, --json       emit JSON array output
+  -m, --markdown   emit Markdown table output (default)
+  -s, --store      persist report to .context/audits/
+  -r, --repo-root  repo root directory (auto-detected if omitted)
 ```
 
 Reads the two most recent stored audits per skill from `.context/audits/` and prints a score-delta
@@ -238,13 +246,14 @@ against the embedded requirements spec. Exit code 1 on any error.
 skill-auditor analyze <skill> [flags]
 
 Flags:
-  --semantic   run TF-IDF keyword extraction only
-  --patterns   run rule-based pattern detection only
-  --pipeline   run full pipeline — semantic + patterns + combined report (default)
-  --json       emit JSON output
-  --store      write report to .context/analysis/
-  --limit int  max keywords to include (default 20)
-  --repo-root  repo root directory (auto-detected if omitted)
+  -e, --semantic    run TF-IDF keyword extraction only
+  -p, --patterns    run rule-based pattern detection only
+  -P, --pipeline    run full pipeline — semantic + patterns + combined report (default)
+  -j, --json        emit JSON output (default)
+  -m, --markdown    emit Markdown output instead of JSON
+  -s, --store       write report to .context/analysis/
+  -l, --limit int   max keywords to include (default 20)
+  -r, --repo-root   repo root directory (auto-detected if omitted)
 ```
 
 `--semantic` extracts TF-IDF top keywords scored against the full skill corpus. `--patterns` runs
@@ -294,15 +303,46 @@ skill.
 
 ---
 
+## Flag Shorthands
+
+All flags are available via long form and a one-letter shorthand:
+
+| Flag | Short | Commands |
+| ---- | ----- | -------- |
+| `--json` | `-j` | analyze, batch, duplication, trend, remediate, aggregate |
+| `--markdown` | `-m` | evaluate, analyze, batch, duplication, trend |
+| `--store` | `-s` | evaluate, analyze, batch, duplication, trend |
+| `--repo-root` | `-r` | evaluate, analyze, batch, duplication, trend, remediate, aggregate, prune, validate |
+| `--dry-run` | `-n` | aggregate, remediate, prune, init |
+| `--skills-dir` | `-d` | aggregate, duplication |
+| `--family` | `-f` | aggregate |
+| `--fail-below` | `-F` | batch |
+| `--target-score` | `-t` | remediate |
+| `--validate` | `-v` | remediate |
+| `--keep` | `-k` | prune |
+| `--limit` | `-l` | analyze |
+| `--strict-recommended` | `-S` | validate review |
+| `--global` | `-g` | init |
+| `--agent` | `-a` | init |
+| `--method` | `-M` | init |
+
+`--json` and `--markdown` are mutually exclusive. When neither is passed, commands default to
+their natural format (JSON for `evaluate`, `analyze`, `batch`, `remediate`, `aggregate`;
+Markdown for `duplication`, `trend`).
+
+---
+
 ## Output Formats
 
-All commands that produce structured data support `--json`. The text format is the default and is
-optimised for terminal readability.
+All commands that produce structured data support `--json` / `-j` and `--markdown` / `-m`.
+The two flags are mutually exclusive — pass at most one. When neither is given, each command
+uses its own default format (noted in the per-command flag tables above).
 
 **JSON output** — pass `--json` to any command:
 
 ```bash
-skill-auditor evaluate skills/my-skill --json
+skill-auditor evaluate skills/my-skill         # JSON (default)
+skill-auditor evaluate skills/my-skill -m      # Markdown
 skill-auditor batch skills/skill-a skills/skill-b --json
 skill-auditor trend --json
 ```

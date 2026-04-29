@@ -18,11 +18,12 @@ var batchCmd = &cobra.Command{
 	Short: "Evaluate multiple skills",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		asJSON, _ := cmd.Flags().GetBool("json")
-		asMarkdown, _ := cmd.Flags().GetBool("markdown")
-		if asJSON && asMarkdown {
-			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		format, err := resolveOutputFormat(cmd, OutputFormatMarkdown)
+		if err != nil {
+			return err
 		}
+		asJSON := format == OutputFormatJSON
+		asMarkdown := format == OutputFormatMarkdown
 
 		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
 		repoRoot, err := resolveRepoRoot(repoRootFlag)
