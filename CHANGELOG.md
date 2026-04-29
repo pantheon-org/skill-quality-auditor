@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.3.0...v0.4.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** implement D1 demonstration concreteness sub-criterion ([#35](https://github.com/pantheon-org/skill-quality-auditor/issues/35)) ([64f0e04](https://github.com/pantheon-org/skill-quality-auditor/commit/64f0e044bae4eeda78ab79d2afe5cd3e486bc0a5))
+* **scorer:** implement D6 constraint typology sub-scorers ([#34](https://github.com/pantheon-org/skill-quality-auditor/issues/34)) ([6929321](https://github.com/pantheon-org/skill-quality-auditor/commit/692932188e2b31c4d9e7e3a6b60f6a3e38ef400d))
+
 ## [0.3.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.2.0...v0.3.0) (2026-04-29)
 
 
