@@ -1,3 +1,5 @@
+// This file owns simple remediation formatting: deriving a prioritised
+// action plan directly from a scorer.Result without schema validation.
 package reporter
 
 import (

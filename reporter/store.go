@@ -1,3 +1,5 @@
+// This file owns audit persistence: writing scorer results and analysis reports
+// to the .context/audits/ directory tree with date-stamped subdirectories.
 package reporter
 
 import (

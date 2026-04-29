@@ -1,3 +1,7 @@
+// Package reporter formats and persists scorer results, analysis reports,
+// aggregation plans, and remediation plans.
+// This file owns result formatting: converting a scorer.Result into a
+// human-readable text representation.
 package reporter
 
 import (

@@ -1,3 +1,5 @@
+// This file owns aggregation plan formatting: building and rendering the
+// markdown consolidation plan for a skill family.
 package reporter
 
 import (
