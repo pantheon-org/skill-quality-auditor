@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.4.0...v0.5.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** implement D7 discriminativeness diagnostic signal ([#32](https://github.com/pantheon-org/skill-quality-auditor/issues/32)) ([e061f98](https://github.com/pantheon-org/skill-quality-auditor/commit/e061f983ce0c36ddd1c912a3ab5fce8e64502ac3))
+
 ## [0.4.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.3.0...v0.4.0) (2026-04-29)
 
 
