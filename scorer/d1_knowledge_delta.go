@@ -4,14 +4,50 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 const (
-	d1BaseScore     = 15 // starting score before adjustments
+	d1BaseScore     = 12 // starting score before adjustments (lowered from 15 to fund concreteness sub-criterion)
 	d1PenaltyPerPat = 2  // deducted per beginner-content pattern hit
 	d1BonusPerPat   = 1  // added per expert-signal pattern hit
 	d1Max           = 20
 )
+
+var (
+	// signal 1: fenced code block or → arrow notation
+	reFencedCode    = regexp.MustCompile("(?s)```[\\s\\S]+?```")
+	reArrowNotation = regexp.MustCompile(`→`)
+	// signal 2: output/result/expected/returns section marker
+	reOutputSection = regexp.MustCompile(`(?im)^(output|result|expected|returns)\s*:`)
+)
+
+// scoreDemonstrationConcreteness returns 0–3 pts based on the presence of
+// concrete demonstration signals in the skill content.
+//
+// Scoring:
+//   - 3 pts: signal 1 (code fence or → arrow) AND signal 2 (output/result/expected/returns section)
+//   - 2 pts: signal 1 only
+//   - 1 pt:  no signal 1 or 2, but at least one expert-register pattern is present
+//   - 0 pts: none of the above
+func scoreDemonstrationConcreteness(content string) int {
+	hasSignal1 := reFencedCode.MatchString(content) || reArrowNotation.MatchString(content)
+	hasSignal2 := reOutputSection.MatchString(content)
+
+	if hasSignal1 && hasSignal2 {
+		return 3
+	}
+	if hasSignal1 {
+		return 2
+	}
+	// 1 pt: expert-register language present even without a worked example
+	for _, pat := range []string{"anti-pattern", "NEVER", "ALWAYS", "production", "gotcha", "pitfall"} {
+		if countPattern(content, pat) > 0 {
+			return 1
+		}
+	}
+	return 0
+}
 
 // scoreD1 — Knowledge Delta (max: d1Max)
 func scoreD1(content, skillDir string) (int, []Diagnostic) {
@@ -34,6 +70,8 @@ func scoreD1(content, skillDir string) (int, []Diagnostic) {
 	delta, instrDiags := scoreD1FromInstructions(instrFile)
 	score += delta
 	diags = append(diags, instrDiags...)
+
+	score += scoreDemonstrationConcreteness(content)
 
 	if score < 0 {
 		score = 0

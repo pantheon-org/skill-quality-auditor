@@ -2,28 +2,42 @@
   "instructions": [
     {
       "type": "new knowledge",
+      "why_given": "new knowledge",
       "content": "Always validate inputs before processing"
     },
     {
       "type": "preference",
+      "why_given": "preference",
       "content": "Prefer explicit over implicit configuration"
     },
-    { "type": "procedure", "content": "Follow the standard workflow" },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Follow the standard workflow"
+    },
     {
       "type": "anti-pattern",
+      "why_given": "new knowledge",
       "content": "NEVER skip validation in production"
     },
-    { "type": "anti-pattern", "content": "NEVER use hardcoded credentials" },
     {
       "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER use hardcoded credentials"
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
       "content": "NEVER mutate input data before validation is complete"
     },
     {
       "type": "anti-pattern",
+      "why_given": "new knowledge",
       "content": "avoid trusting caller-supplied type assertions without schema verification"
     },
     {
       "type": "anti-pattern",
+      "why_given": "new knowledge",
       "content": "do not defer validation to the persistence layer"
     }
   ]
