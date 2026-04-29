@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.2...v0.13.0) (2026-04-29)
+
+
+### Features
+
+* **init:** harness detection, interactive mode, full asset copy, CWD default ([#70](https://github.com/pantheon-org/skill-quality-auditor/issues/70)) ([7dba25d](https://github.com/pantheon-org/skill-quality-auditor/commit/7dba25d2a89e5b3a513c2e9b3c90619a48b2244c))
+
 ## [0.12.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.1...v0.12.2) (2026-04-29)
 
 
