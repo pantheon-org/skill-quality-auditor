@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
@@ -13,10 +14,18 @@ import (
 // runTrend configures trendCmd flags and calls RunE, returning (stdout, error).
 func runTrend(t *testing.T, repoRoot string, asJSON bool) (string, error) {
 	t.Helper()
+	return runTrendFull(t, repoRoot, asJSON, false, false)
+}
+
+// runTrendFull configures trendCmd with all flags and calls RunE, returning (stdout, error).
+func runTrendFull(t *testing.T, repoRoot string, asJSON, asMarkdown, store bool) (string, error) {
+	t.Helper()
 	cmd := trendCmd
 	cmd.ResetFlags()
-	cmd.Flags().Bool("json", false, "")
-	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().BoolP("json", "j", false, "")
+	cmd.Flags().BoolP("markdown", "m", false, "")
+	cmd.Flags().BoolP("store", "s", false, "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
 
 	if err := cmd.Flags().Set("repo-root", repoRoot); err != nil {
 		t.Fatalf("set repo-root: %v", err)
@@ -24,6 +33,16 @@ func runTrend(t *testing.T, repoRoot string, asJSON bool) (string, error) {
 	if asJSON {
 		if err := cmd.Flags().Set("json", "true"); err != nil {
 			t.Fatalf("set json: %v", err)
+		}
+	}
+	if asMarkdown {
+		if err := cmd.Flags().Set("markdown", "true"); err != nil {
+			t.Fatalf("set markdown: %v", err)
+		}
+	}
+	if store {
+		if err := cmd.Flags().Set("store", "true"); err != nil {
+			t.Fatalf("set store: %v", err)
 		}
 	}
 	buf := &bytes.Buffer{}
@@ -301,5 +320,91 @@ func copyAudits(t *testing.T, src, dst string) {
 		if err := os.WriteFile(filepath.Join(dstDir, "audit.json"), data, 0o644); err != nil {
 			t.Fatalf("write: %v", err)
 		}
+	}
+}
+
+// ---- new flag tests ----
+
+func TestTrendCmd_mutualExclusion(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	skillDir := filepath.Join(auditsRoot, "domain", "skill-a")
+	writeAudit(t, skillDir, "2026-01-01", 70, "C")
+	writeAudit(t, skillDir, "2026-02-01", 80, "B")
+
+	_, err := runTrendFull(t, repoRoot, true, true, false)
+	if err == nil {
+		t.Fatal("expected error when both --json and --markdown are set")
+	}
+	if !strings.Contains(err.Error(), "mutually exclusive") {
+		t.Errorf("error should mention 'mutually exclusive', got: %v", err)
+	}
+}
+
+func TestTrendCmd_markdownOutput(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	skillDir := filepath.Join(auditsRoot, "domain", "skill-a")
+	writeAudit(t, skillDir, "2026-01-01", 70, "C")
+	writeAudit(t, skillDir, "2026-02-01", 80, "B")
+
+	out, err := runTrendFull(t, repoRoot, false, true, false)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if out == "" {
+		t.Error("expected non-empty markdown output")
+	}
+}
+
+func TestTrendCmd_storeMarkdown(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	skillDir := filepath.Join(auditsRoot, "domain", "skill-a")
+	writeAudit(t, skillDir, "2026-01-01", 70, "C")
+	writeAudit(t, skillDir, "2026-02-01", 80, "B")
+
+	if _, err := runTrendFull(t, repoRoot, false, false, true); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	entries, err := os.ReadDir(auditsRoot)
+	if err != nil {
+		t.Fatalf("read audits dir: %v", err)
+	}
+	found := false
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "trend-") && strings.HasSuffix(e.Name(), ".md") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected a trend-*.md file to be written in .context/audits/")
+	}
+}
+
+func TestTrendCmd_storeJSON(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	skillDir := filepath.Join(auditsRoot, "domain", "skill-a")
+	writeAudit(t, skillDir, "2026-01-01", 70, "C")
+	writeAudit(t, skillDir, "2026-02-01", 80, "B")
+
+	if _, err := runTrendFull(t, repoRoot, true, false, true); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	entries, err := os.ReadDir(auditsRoot)
+	if err != nil {
+		t.Fatalf("read audits dir: %v", err)
+	}
+	found := false
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "trend-") && strings.HasSuffix(e.Name(), ".json") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected a trend-*.json file to be written in .context/audits/")
 	}
 }

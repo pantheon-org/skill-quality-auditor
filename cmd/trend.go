@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
 	"github.com/spf13/cobra"
@@ -59,16 +61,44 @@ var trendCmd = &cobra.Command{
 		})
 
 		asJSON, _ := cmd.Flags().GetBool("json")
+		asMarkdown, _ := cmd.Flags().GetBool("markdown")
+		if asJSON && asMarkdown {
+			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		}
+		store, _ := cmd.Flags().GetBool("store")
+		date := time.Now().Format("2006-01-02")
+
+		var rawBytes []byte
 		if asJSON {
 			data, err := json.MarshalIndent(entries, "", "  ")
 			if err != nil {
 				return fmt.Errorf("marshal trends: %w", err)
 			}
+			rawBytes = data
 			fmt.Fprintln(out, string(data))
-			return nil
+		} else {
+			var buf bytes.Buffer
+			printTrendTable(&buf, entries)
+			rawBytes = buf.Bytes()
+			fmt.Fprint(out, buf.String())
 		}
 
-		printTrendTable(out, entries)
+		if store {
+			ext := ".md"
+			if asJSON {
+				ext = ".json"
+			}
+			outDir := filepath.Join(repoRoot, ".context", "audits")
+			if err := os.MkdirAll(outDir, 0o755); err != nil {
+				return fmt.Errorf("create audits dir: %w", err)
+			}
+			outFile := filepath.Join(outDir, fmt.Sprintf("trend-%s%s", date, ext))
+			if err := os.WriteFile(outFile, rawBytes, 0o644); err != nil {
+				return fmt.Errorf("write trend report: %w", err)
+			}
+			fmt.Fprintf(cmd.ErrOrStderr(), "report written to %s\n", outFile)
+		}
+
 		return nil
 	},
 }
@@ -221,7 +251,9 @@ func loadAuditJSON(path string) (*scorer.Result, error) {
 }
 
 func init() {
-	trendCmd.Flags().Bool("json", false, "emit JSON array output")
-	trendCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
+	trendCmd.Flags().BoolP("json", "j", false, "emit JSON array output")
+	trendCmd.Flags().BoolP("markdown", "m", false, "emit Markdown table output (default)")
+	trendCmd.Flags().BoolP("store", "s", false, "persist report to .context/audits/")
+	trendCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(trendCmd)
 }
