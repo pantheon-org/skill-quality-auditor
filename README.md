@@ -398,7 +398,7 @@ lefthook install
 
 ---
 
-### Academic References
+## Academic References
 
 - **D1 Knowledge Delta:** [Li et al., 2025 — Instruction Agent: Enhancing Agent with Expert Demonstration](https://arxiv.org/abs/2509.07098)
 - **D1 Knowledge Delta:** [Deng et al., 2024 — From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning](https://arxiv.org/abs/2411.03817)
@@ -411,3 +411,6 @@ lefthook install
 - **D9 Eval Validation:** [Wang, Chen, Deng, Lin, Harman et al. — A Comprehensive Study on Large Language Models for Mutation Testing](https://dl.acm.org/doi/abs/10.1145/3805038)
 - **D9 Eval Validation:** [Pan, Hu, Xia, Yang — Re-Evaluating Code LLM Benchmarks Under Semantic Mutation](https://arxiv.org/abs/2506.17369)
 - **D9 Eval Validation:** [Bouafif, Hamdaqa, Zulkoski — PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization](https://dl.acm.org/doi/abs/10.1145/3756681.3756991)
+- **D7 Pattern Recognition:** [Zhang et al., 2025 — AgentRouter: A Knowledge-Graph-Guided LLM Router for Collaborative Multi-Agent Question Answering](https://arxiv.org/abs/2510.05445)
+- **D7 Pattern Recognition:** [Wang et al., 2026 — Efficient and Interpretable Multi-Agent LLM Routing via Ant Colony Optimization](https://arxiv.org/abs/2603.12933)
+- **D7 Pattern Recognition:** [Chen et al., NeurIPS 2024 — AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases](https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html)

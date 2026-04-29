@@ -63,6 +63,12 @@ func (b *validatorBridge) descriptionLen() int {
 	return -1
 }
 
+// rawDescription returns the raw text of the description frontmatter field
+// extracted from rawContent, or an empty string when unavailable.
+func (b *validatorBridge) rawDescription() string {
+	return parseFrontmatter(b.rawContent).Description
+}
+
 // hasInternalLinkWarning reports whether CheckInternalLinks emitted a warning,
 // which covers `../` outside-code-block violations.
 func (b *validatorBridge) hasInternalLinkWarning() bool {

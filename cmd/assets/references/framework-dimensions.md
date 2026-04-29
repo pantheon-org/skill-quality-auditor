@@ -590,6 +590,24 @@ Too rigid - let has valid use cases.
 
 **Remember:** Best description = exhaustive trigger list + examples
 
+### Discriminativeness Criteria (diagnostic signal, no points this iteration)
+
+A high-quality description reduces false positives by anchoring the skill to specific contexts:
+
+1. **Negative anchor** — explicitly states when NOT to activate
+   (e.g., `Does not apply`, `SKIP when`, `Not for`, `Exclude`, `DO NOT trigger`, `not intended for`)
+2. **Workflow anchor** — trigger tied to a concrete artifact or action
+   (e.g., references `file`, `PR`, `commit`, `test`, `config`, `pipeline`, `migration`)
+
+Both anchors present → INFO diagnostic (positive signal).
+Neither anchor present → WARN diagnostic (may over-trigger on adjacent topics).
+One anchor → no diagnostic.
+
+**Academic basis:** AgentRouter (Zhang et al., arXiv:2510.05445) shows semantic context
+anchoring reduces routing misfires. ACO routing (Wang et al., arXiv:2603.12933) establishes
+discriminativeness as a routing quality metric. AgentPoison (Chen et al., NeurIPS 2024)
+demonstrates triggers are an active attack surface for adversarial skill hijacking.
+
 ## Dimension 8: Practical Usability (15 points)
 
 **Purpose:** Ensure skill is immediately useful with clear examples.
