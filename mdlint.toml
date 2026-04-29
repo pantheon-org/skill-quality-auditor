@@ -1,4 +1,9 @@
-[rules]
-# Citation URLs in the Academic References section exceed any reasonable line limit.
-# MD013 line-length enforcement is disabled project-wide.
-ignore = ["MD013"]
+# mdlint.toml
+# Rule suppression is applied via CLI flags in lefthook.yml:
+#   --select ALL --ignore MD013,MD032,MD051,MD055,MD058
+#
+# MD013 — citation URLs in academic references exceed any reasonable line limit
+# MD032 — nested bullet lists under numbered items are valid markdown
+# MD051 — backtick-wrapped headings produce anchors mdlint cannot resolve
+# MD055 — pipe characters inside backtick spans are not table delimiters
+# MD058 — mdlint incorrectly flags tables inside fenced code blocks

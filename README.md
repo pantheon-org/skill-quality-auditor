@@ -13,6 +13,7 @@ and Eval Validation.
 - [Output Formats](#output-formats)
 - [CI Integration](#ci-integration)
 - [What it scores & why](#what-it-scores--why)
+- [Dimension docs](#dimension-docs)
 - [Repository layout](#repository-layout)
 - [Development](#development)
 
@@ -83,7 +84,6 @@ go install github.com/pantheon-org/skill-quality-auditor@latest
 | Fix a skill | [`remediate`](#remediate) | What specific changes would raise this skill's score? |
 | Track progress | [`trend`](#trend) | Are scores improving or regressing over time? |
 | Validate format | [`validate`](#validate) | Do artifacts conform to conventions? Does a review report meet spec? |
-| Check consistency | [`lint`](#lint) | Are frontmatter, shebangs, and structure correct across all skills? |
 | Deep analysis | [`analyze`](#analyze) | What are the keyword signals and structural patterns in this skill? |
 | Install skill | [`init`](#init) | How do I install this auditor skill into my agent environment? |
 | Self-update | [`update`](#update) | Is a newer release available, and can I install it in place? |
@@ -189,18 +189,6 @@ Flags (review):
 `validate artifacts` checks `SKILL.md` line limits, frontmatter name match, asset subdirectory
 conventions, script shebangs, and schema file validity. `validate review` checks a review report
 against the embedded requirements spec. Exit code 1 on any error.
-
-### `lint`
-
-```text
-skill-auditor lint [skills-dir] [flags]
-
-Flags:
-  --repo-root  repo root directory (auto-detected if omitted)
-```
-
-Checks each skill for a `SKILL.md`, a frontmatter block, and correct script shebangs. Prints
-`MISSING_SKILL`, `NO_FRONTMATTER`, `BAD_SHEBANG` tags per issue. Exits with the issue count (0 = clean).
 
 ### `analyze`
 
@@ -366,13 +354,15 @@ scoring criteria.
 ```text
 go.mod / main.go      Go CLI root — build and run from here
 cmd/                  cobra commands: evaluate, batch, duplication, aggregate,
-                      remediate, trend, validate, lint, prune, analyze, init, update
+                      remediate, trend, validate, prune, analyze, init, update
 cmd/assets/           Tessl tile — SKILL.md, tile.json, evals, references,
                       schemas, templates (single source of truth)
 agents/               agent registry (supported environments for init)
+docs/                 per-dimension documentation with scoring criteria and references
 scorer/               D1–D9 dimension scorers
 analysis/             TF-IDF keyword extractor + rule-based pattern detectors
 duplication/          word-level Jaccard similarity engine
+internal/             shared utilities (tokenizer)
 reporter/             text/JSON formatters, audit store, report generators
 scripts/              install.sh
 testdata/             fixture skills for unit tests
@@ -392,45 +382,24 @@ shellcheck scripts/install.sh
 Pre-commit and pre-push hooks are managed via [lefthook](https://github.com/evilmartians/lefthook):
 
 ```bash
-mise install   # installs go, golangci-lint, markdownlint-cli2, shellcheck, lefthook
+mise install   # installs go, golangci-lint, mdlint, shellcheck, lefthook
 lefthook install
 ```
 
 ---
 
-## Academic References
+## Dimension docs
 
-- **D1 Knowledge Delta:** [Li et al., 2025 — Instruction Agent: Enhancing Agent with Expert Demonstration](https://arxiv.org/abs/2509.07098)
-- **D1 Knowledge Delta:** [Deng et al., 2024 — From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning](https://arxiv.org/abs/2411.03817)
-- **D1 Knowledge Delta:** [Yin et al., 2025 — Grounding Open-Domain Knowledge from LLMs to Real-World RL Tasks: A Survey](https://www.ijcai.org/proceedings/2025/1198.pdf)
-- **D2 Mindset & Procedures:** [Bakal, 2026 — Knowledge Activation: AI Skills as the Institutional Knowledge Primitive for Agentic Software Development](https://arxiv.org/abs/2603.14805)
-- **D2 Mindset & Procedures:** [Carriero, Scrocca et al. — Procedural Knowledge Ontology (PKO)](https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19)
-- **D2 Mindset & Procedures:** [Bi, Hu, Nasir, 2025 — Real-Time Procedural Learning From Experience for AI Agents](https://arxiv.org/abs/2511.22074)
-- **D2 Mindset & Procedures:** [Bi, Wu, Hao et al., 2026 — Automating Skill Acquisition through Large-Scale Mining of Agentic Repositories](https://arxiv.org/abs/2603.11808)
-- **D3 Anti-Pattern Coverage:** [Brada & Picha, 2019 — Software Process Anti-Patterns Catalogue](https://dl.acm.org/doi/abs/10.1145/3361149.3361178)
-- **D3 Anti-Pattern Coverage:** [Picha & Brada, 2019 — Software Process Anti-Pattern Detection in Project Data](https://dl.acm.org/doi/abs/10.1145/3361149.3361169)
-- **D3 Anti-Pattern Coverage:** [Bhatia, Lin, Rajbahadur, Adams et al., 2024 — Data Quality Anti-Patterns for Software Analytics](https://arxiv.org/abs/2408.12560)
-- **D3 Anti-Pattern Coverage:** [Amarasinghe, Asanka et al., 2024 — Code Quality Alarms: Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns](https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93)
-- **D4 Specification Compliance:** [T Rehan, 2026 — Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications](https://arxiv.org/abs/2603.08806)
-- **D4 Specification Compliance:** [C Paduraru, M Zavelca, A Stefanescu — Agentic AI for Behaviour-Driven Development Testing Using Large Language Models](https://www.researchgate.net/publication/390835646)
-- **D4 Specification Compliance:** [R Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)
-- **D4 Specification Compliance:** [J Kohl, O Kruse, Y Mostafa, A Luckow et al. — Automated Structural Testing of LLM-Based Agents](https://ieeexplore.ieee.org/abstract/document/11401679/)
-- **D5 Progressive Disclosure:** [Springer & Whittaker, 2018 — Progressive Disclosure: Designing for Effective Transparency](https://arxiv.org/abs/1811.02164)
-- **D5 Progressive Disclosure:** [Anik & Bunt, 2021 — Designing Effective Training Dataset Explanations: The Impact of Information Depth and Progressive Disclosure](https://dl.acm.org/doi/10.1145/3411764.3445382)
-- **D5 Progressive Disclosure:** [Timileyin, 2025 — The Role of Cognitive Load in Shaping Web Usability Requirements](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018)
-- **D5 Progressive Disclosure:** [Pastrakis, Konstantakis, Caridakis, 2025 — AI-Enhanced Modular Information Architecture for Cognitive-Efficient User Experiences](https://www.mdpi.com/2078-2489/17/1/92)
-- **D6 Freedom Calibration:** [Zhang et al., 2025 — Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation](https://arxiv.org/abs/2509.14760)
-- **D6 Freedom Calibration:** [Sorensen, 2026 — Specification as the New Management](https://www.researchgate.net/publication/401626622)
-- **D6 Freedom Calibration:** [Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)
-- **D7 Pattern Recognition:** [Zhang et al., 2025 — AgentRouter: A Knowledge-Graph-Guided LLM Router for Collaborative Multi-Agent Question Answering](https://arxiv.org/abs/2510.05445)
-- **D7 Pattern Recognition:** [Wang et al., 2026 — Efficient and Interpretable Multi-Agent LLM Routing via Ant Colony Optimization](https://arxiv.org/abs/2603.12933)
-- **D7 Pattern Recognition:** [Chen et al., NeurIPS 2024 — AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases](https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html)
-- **D8 Practical Usability:** [Xu et al., 2024 — TheAgentCompany: Benchmarking LLM Agents on Consequential Real-World Tasks](https://arxiv.org/abs/2412.14161)
-- **D8 Practical Usability:** [Mohammadi et al., 2025 — Evaluation and Benchmarking of LLM Agents: A Survey](https://dl.acm.org/doi/abs/10.1145/3711896.3736570)
-- **D8 Practical Usability:** [Miller & Tang, 2025 — Evaluating LLM Metrics Through Real-World Capabilities](https://arxiv.org/abs/2505.08253)
-- **D8 Practical Usability:** [Yehudai et al., 2025 — Survey on Evaluation of LLM-Based Agents](https://arxiv.org/abs/2503.16416)
-- **D9 Eval Validation:** [Rehan, 2026 — Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications](https://arxiv.org/abs/2603.08806)
-- **D9 Eval Validation:** [Alami, 2026 — Cognitive Camouflage: Specification Gaming in LLM-Generated Code Evades Holistic Evaluation but Not Adversarial Execution](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6512960)
-- **D9 Eval Validation:** [Wang, Chen, Deng, Lin, Harman et al. — A Comprehensive Study on Large Language Models for Mutation Testing](https://dl.acm.org/doi/abs/10.1145/3805038)
-- **D9 Eval Validation:** [Pan, Hu, Xia, Yang — Re-Evaluating Code LLM Benchmarks Under Semantic Mutation](https://arxiv.org/abs/2506.17369)
-- **D9 Eval Validation:** [Bouafif, Hamdaqa, Zulkoski — PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization](https://dl.acm.org/doi/abs/10.1145/3756681.3756991)
+Each dimension has a dedicated doc with scoring criteria, examples, and academic references:
+
+| Dimension | Doc |
+| --------- | --- |
+| D1 Knowledge Delta | [docs/d1-knowledge-delta.md](docs/d1-knowledge-delta.md) |
+| D2 Mindset & Procedures | [docs/d2-mindset-procedures.md](docs/d2-mindset-procedures.md) |
+| D3 Anti-Pattern Coverage | [docs/d3-anti-pattern-coverage.md](docs/d3-anti-pattern-coverage.md) |
+| D4 Specification Compliance | [docs/d4-specification-compliance.md](docs/d4-specification-compliance.md) |
+| D5 Progressive Disclosure | [docs/d5-progressive-disclosure.md](docs/d5-progressive-disclosure.md) |
+| D6 Freedom Calibration | [docs/d6-freedom-calibration.md](docs/d6-freedom-calibration.md) |
+| D7 Pattern Recognition | [docs/d7-pattern-recognition.md](docs/d7-pattern-recognition.md) |
+| D8 Practical Usability | [docs/d8-practical-usability.md](docs/d8-practical-usability.md) |
+| D9 Eval Validation | [docs/d9-eval-validation.md](docs/d9-eval-validation.md) |
