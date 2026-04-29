@@ -426,3 +426,10 @@ lefthook install
 - **D9 Eval Validation:** [Wang, Chen, Deng, Lin, Harman et al. — A Comprehensive Study on Large Language Models for Mutation Testing](https://dl.acm.org/doi/abs/10.1145/3805038)
 - **D9 Eval Validation:** [Pan, Hu, Xia, Yang — Re-Evaluating Code LLM Benchmarks Under Semantic Mutation](https://arxiv.org/abs/2506.17369)
 - **D9 Eval Validation:** [Bouafif, Hamdaqa, Zulkoski — PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization](https://dl.acm.org/doi/abs/10.1145/3756681.3756991)
+
+### Academic References
+
+- **D2 Mindset & Procedures:** [Bakal, 2026 — Knowledge Activation: AI Skills as the Institutional Knowledge Primitive for Agentic Software Development](https://arxiv.org/abs/2603.14805)
+- **D2 Mindset & Procedures:** [Carriero, Scrocca et al. — Procedural Knowledge Ontology (PKO)](https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19)
+- **D2 Mindset & Procedures:** [Bi, Hu, Nasir, 2024 — Real-Time Procedural Learning From Experience for AI Agents](https://arxiv.org/abs/2511.22074)
+- **D2 Mindset & Procedures:** [Bi, Wu, Hao et al., 2026 — Automating Skill Acquisition through Large-Scale Mining of Agentic Repositories](https://arxiv.org/abs/2603.11808)
