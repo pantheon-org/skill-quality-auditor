@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.11.0...v0.12.0) (2026-04-29)
+
+
+### Features
+
+* **cmd:** extract resolveOutputFormat helper and update README flag reference ([#64](https://github.com/pantheon-org/skill-quality-auditor/issues/64)) ([c03cbeb](https://github.com/pantheon-org/skill-quality-auditor/commit/c03cbeb4a94d89533b7e461921c8ecce205bcee7))
+* **init:** add --dry-run flag and add flag shorthands ([#63](https://github.com/pantheon-org/skill-quality-auditor/issues/63)) ([8aac9ee](https://github.com/pantheon-org/skill-quality-auditor/commit/8aac9ee5c430beede9920312e1e7d272b93e4750))
+* **prune,validate:** add --repo-root and --dry-run flags and add shorthands ([#61](https://github.com/pantheon-org/skill-quality-auditor/issues/61)) ([371a6a5](https://github.com/pantheon-org/skill-quality-auditor/commit/371a6a506857ca94b33b00ea20c14203a3e88eac))
+
 ## [0.11.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.10.0...v0.11.0) (2026-04-29)
 
 
