@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.5.0...v0.6.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** implement D4 mutation-resistance scoring ([#40](https://github.com/pantheon-org/skill-quality-auditor/issues/40)) ([8ebfa6f](https://github.com/pantheon-org/skill-quality-auditor/commit/8ebfa6f851aeb95a154b576f1ef8f8c4da0d43a1))
+
 ## [0.5.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.4.0...v0.5.0) (2026-04-29)
 
 
