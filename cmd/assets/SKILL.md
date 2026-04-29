@@ -38,6 +38,12 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 - Write the skill first — do not audit an unfinished draft
 - Avoid using this as a substitute for peer review of logic or domain accuracy
 
+## Prerequisites
+
+- The skill under review must exist as a directory containing `SKILL.md` and at least one eval scenario.
+- Run `go build -o dist/skill-auditor .` from the repo root before executing any audit command.
+- Requires a prior `--store` run before `remediate` or `trend` commands can produce output.
+
 ## Workflow
 
 1. Run `skill-auditor evaluate <skill> --json --store`
@@ -87,6 +93,12 @@ skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.m
 
 See [Audit Workflow Examples](references/examples-audit-workflows.md) for input/output pairs and CI quality gate examples.
 
+## Troubleshooting
+
+- If `skill-batch` exits below threshold: check which dimension scores lowest, then run `evaluate --store` to capture diagnostics and generate a remediation plan.
+- If `duplication` exits 2 (Critical pair): review the flagged pair — if scopes overlap, use `aggregate --family <prefix>` to plan consolidation; if scopes differ, differentiate trigger descriptions.
+- If `evaluate` returns D9 < 10: verify evals directory exists and each scenario has a `criteria.json` with at least one criterion referencing a MUST/NEVER statement from the skill.
+
 ## Self-Audit
 
 ```bash
@@ -100,9 +112,9 @@ skill-auditor evaluate agentic-harness/skill-quality-auditor --json
 
 | Topic | Reference | When to Use |
 | --- | --- | --- |
-| Per-dimension criteria and bonus rules | [Dimensions](references/framework-dimensions.md) | Evaluating any dimension or understanding the rubric |
-| Score thresholds and grade bands | [Scoring Rubric](references/framework-scoring-rubric.md) | Calculating a total score or assigning a grade |
-| A-grade checklist and red flags | [Quality Standards](references/framework-quality-standards.md) | Targeting A-grade or reviewing blockers |
+| Per-dimension criteria and bonus rules | [Dimensions](references/framework-dimensions.md) | Evaluating any dimension or understanding the rubric; skip if you only need the final grade |
+| Score thresholds and grade bands | [Scoring Rubric](references/framework-scoring-rubric.md) | Calculating a total score or assigning a grade; skip if a stored audit already covers this date |
+| A-grade checklist and red flags | [Quality Standards](references/framework-quality-standards.md) | Targeting A-grade or reviewing blockers; skip if the skill already scores above 126 |
 | Trigger pattern density and keyword analysis | [Pattern Recognition](references/advanced-pattern-recognition.md) | Scoring D7 or improving description keywords |
 | Canonical SKILL.md structure and References table standard | [SKILL Template](references/skill-template.md) | Authoring or refactoring a skill |
 
