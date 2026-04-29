@@ -32,6 +32,20 @@ func TestCountPattern(t *testing.T) {
 	}
 }
 
+func TestNewErrorDiag(t *testing.T) {
+	d := NewErrorDiag("D2", "missing section")
+	if d.Dimension != "D2" || d.Message != "missing section" || d.Severity() != "error" {
+		t.Errorf("unexpected NewErrorDiag: %+v", d)
+	}
+}
+
+func TestNewWarnDiag(t *testing.T) {
+	d := NewWarnDiag("D5", "low score")
+	if d.Dimension != "D5" || d.Message != "low score" || d.Severity() != "warning" {
+		t.Errorf("unexpected NewWarnDiag: %+v", d)
+	}
+}
+
 func TestRemoveCodeBlocks(t *testing.T) {
 	content := "before\n```\ncode line\n```\nafter\n"
 	result := removeCodeBlocks(content)

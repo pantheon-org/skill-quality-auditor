@@ -24,6 +24,9 @@ var (
 
 	// fetchReleaseFunc is a variable so tests can substitute a mock.
 	fetchReleaseFunc = fetchRelease
+
+	// apiBaseURL is the GitHub API root; overridden in tests.
+	apiBaseURL = "https://api.github.com"
 )
 
 var updateCmd = &cobra.Command{
@@ -153,9 +156,9 @@ func latestReleaseTag() (string, error) {
 func fetchRelease(tagOrLatest string) (*ghRelease, error) {
 	var url string
 	if tagOrLatest == "latest" {
-		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", githubRepo)
+		url = fmt.Sprintf("%s/repos/%s/releases/latest", apiBaseURL, githubRepo)
 	} else {
-		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/tags/%s", githubRepo, tagOrLatest)
+		url = fmt.Sprintf("%s/repos/%s/releases/tags/%s", apiBaseURL, githubRepo, tagOrLatest)
 	}
 
 	resp, err := http.Get(url) //nolint:noctx // simple CLI tool, no context needed

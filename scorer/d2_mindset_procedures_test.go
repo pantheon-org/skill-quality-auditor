@@ -72,3 +72,19 @@ func TestD2_LibraryImperativeRatio(t *testing.T) {
 		t.Errorf("want 10, got %d", score)
 	}
 }
+
+func TestD2Structure_AllZeroMarkers(t *testing.T) {
+	// All-zero ContentReport → warning diagnostic, score 0.
+	b := &validatorBridge{Content: &types.ContentReport{
+		StrongMarkers:   0,
+		WeakMarkers:     0,
+		ImperativeRatio: 0,
+	}}
+	score, diags := scoreD2Structure("some content", b)
+	if score != 0 {
+		t.Errorf("want 0 for all-zero markers, got %d", score)
+	}
+	if len(diags) == 0 {
+		t.Error("expected a diagnostic warning for all-zero markers")
+	}
+}

@@ -1,11 +1,31 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/pantheon-org/skill-quality-auditor/duplication"
 )
+
+// makeSkillsDir creates a minimal skills directory with n SKILL.md files.
+func makeSkillsDir(t *testing.T, n int) string {
+	t.Helper()
+	root := t.TempDir()
+	for i := 0; i < n; i++ {
+		dir := filepath.Join(root, "domain", fmt.Sprintf("skill-%d", i))
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		content := strings.Repeat(fmt.Sprintf("This is skill %d. It does thing %d.\n", i, i), 20)
+		if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return root
+}
 
 func TestExitCodeForPairs_empty(t *testing.T) {
 	if err := exitCodeForPairs(nil); err != nil {
@@ -60,6 +80,48 @@ func TestDuplicationCmd_nonExistentSkillsDir(t *testing.T) {
 	if !strings.Contains(err.Error(), "not found") {
 		t.Errorf("error message should mention 'not found', got: %v", err)
 	}
+}
+
+// TestDuplicationCmd_withSkills exercises the full RunE path including report
+// generation and exitCodeForPairs (the markdown text output path).
+func TestDuplicationCmd_withSkills(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+
+	origDir, origRoot := dupSkillsDir, dupRepoRoot
+	dupSkillsDir = skillsDir
+	dupRepoRoot = repoRoot
+	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot }()
+
+	_ = duplicationCmd.RunE(duplicationCmd, []string{})
+}
+
+// TestDuplicationCmd_withSkillsJSON exercises the JSON output path (line 62
+// exitCodeForPairs return).
+func TestDuplicationCmd_withSkillsJSON(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+
+	origDir, origRoot, origJSON := dupSkillsDir, dupRepoRoot, dupJSON
+	dupSkillsDir = skillsDir
+	dupRepoRoot = repoRoot
+	dupJSON = true
+	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot; dupJSON = origJSON }()
+
+	_ = duplicationCmd.RunE(duplicationCmd, []string{})
+}
+
+// TestDuplicationCmd_withArgs exercises the args[0] skillsDir override path.
+func TestDuplicationCmd_withArgs(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 1)
+	repoRoot := t.TempDir()
+
+	origDir, origRoot := dupSkillsDir, dupRepoRoot
+	dupSkillsDir = ""
+	dupRepoRoot = repoRoot
+	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot }()
+
+	_ = duplicationCmd.RunE(duplicationCmd, []string{skillsDir})
 }
 
 func TestExitCodeForPairs_criticalAmongMany(t *testing.T) {
