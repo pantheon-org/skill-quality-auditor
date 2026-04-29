@@ -5,7 +5,7 @@
       "extra-files": [
         {
           "type": "json",
-          "path": "skill-auditor/cmd/assets/tile.json",
+          "path": "cmd/assets/tile.json",
           "jsonpath": "$.version"
         }
       ]
