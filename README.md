@@ -8,14 +8,64 @@ validation with custom scoring across Knowledge Delta, Mindset, Anti-Patterns, S
 Compliance, Progressive Disclosure, Freedom Calibration, Pattern Recognition, Practical Usability,
 and Eval Validation.
 
+- [What it scores \& why](#what-it-scores--why)
+- [Dimension docs](#dimension-docs)
 - [Install](#install)
 - [Command Usage](#command-usage)
 - [Output Formats](#output-formats)
 - [CI Integration](#ci-integration)
-- [What it scores & why](#what-it-scores--why)
-- [Dimension docs](#dimension-docs)
 - [Repository layout](#repository-layout)
 - [Development](#development)
+
+---
+
+## What it scores & why
+
+| ID | Dimension | Max | What a low score signals |
+| -- | --------- | --- | ------------------------ |
+| D1 | Knowledge Delta | 20 | Content restates what the model already knows — no expert uplift |
+| D2 | Mindset & Procedures | 15 | Missing mental models or step-by-step guidance the agent needs |
+| D3 | Anti-Pattern Coverage | 15 | Common failure modes not called out — agent will repeat them |
+| D4 | Specification Compliance | 15 | Frontmatter, structure, or naming deviates from the tile spec |
+| D5 | Progressive Disclosure | 15 | Detail is front-loaded; references not used for depth |
+| D6 | Freedom Calibration | 15 | Skill is either too prescriptive or too vague for the task |
+| D7 | Pattern Recognition | 10 | No trigger conditions — agent won't know when to activate the skill |
+| D8 | Practical Usability | 15 | Examples absent or unrealistic; hard to apply in practice |
+| D9 | Eval Validation | 20 | No evals — quality claims are unverifiable |
+
+**Total: 140 pts.** Grade bands:
+
+| Grade | Score |
+| ----- | ----- |
+| A+ | ≥ 133 |
+| A | ≥ 126 |
+| B+ | ≥ 119 |
+| B | ≥ 112 |
+| C+ | ≥ 105 |
+| C | ≥ 98 |
+| D | ≥ 91 |
+| F | < 91 |
+
+See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric and per-dimension
+scoring criteria.
+
+---
+
+## Dimension docs
+
+Each dimension has a dedicated doc with scoring criteria, examples, and academic references:
+
+| Dimension | Doc |
+| --------- | --- |
+| D1 Knowledge Delta | [docs/d1-knowledge-delta.md](docs/d1-knowledge-delta.md) |
+| D2 Mindset & Procedures | [docs/d2-mindset-procedures.md](docs/d2-mindset-procedures.md) |
+| D3 Anti-Pattern Coverage | [docs/d3-anti-pattern-coverage.md](docs/d3-anti-pattern-coverage.md) |
+| D4 Specification Compliance | [docs/d4-specification-compliance.md](docs/d4-specification-compliance.md) |
+| D5 Progressive Disclosure | [docs/d5-progressive-disclosure.md](docs/d5-progressive-disclosure.md) |
+| D6 Freedom Calibration | [docs/d6-freedom-calibration.md](docs/d6-freedom-calibration.md) |
+| D7 Pattern Recognition | [docs/d7-pattern-recognition.md](docs/d7-pattern-recognition.md) |
+| D8 Practical Usability | [docs/d8-practical-usability.md](docs/d8-practical-usability.md) |
+| D9 Eval Validation | [docs/d9-eval-validation.md](docs/d9-eval-validation.md) |
 
 ---
 
@@ -34,24 +84,17 @@ INSTALL_DIR=~/.local/bin curl -fsSL ... | sh
 VERSION=v1.2.3 curl -fsSL ... | sh
 ```
 
-### Homebrew
-
-```bash
-brew tap pantheon-org/tap
-brew install skill-auditor
-```
-
 ### mise
 
 ```bash
-mise use ubi:pantheon-org/skill-quality-auditor
+mise use github:pantheon-org/skill-quality-auditor
 ```
 
 Or in `mise.toml`:
 
 ```toml
 [tools]
-"ubi:pantheon-org/skill-quality-auditor" = "latest"
+"github:pantheon-org/skill-quality-auditor" = "latest"
 ```
 
 ### Go install
@@ -65,7 +108,6 @@ go install github.com/pantheon-org/skill-quality-auditor@latest
 | Method | Command |
 | --- | --- |
 | install.sh | `skill-auditor update` |
-| Homebrew | `brew upgrade skill-auditor` |
 | mise | `mise upgrade skill-auditor` |
 | Go install | `go install github.com/pantheon-org/skill-quality-auditor@latest` |
 
@@ -317,38 +359,6 @@ jobs:
 
 ---
 
-## What it scores & why
-
-| ID | Dimension | Max | What a low score signals |
-| -- | --------- | --- | ------------------------ |
-| D1 | Knowledge Delta | 20 | Content restates what the model already knows — no expert uplift |
-| D2 | Mindset & Procedures | 15 | Missing mental models or step-by-step guidance the agent needs |
-| D3 | Anti-Pattern Coverage | 15 | Common failure modes not called out — agent will repeat them |
-| D4 | Specification Compliance | 15 | Frontmatter, structure, or naming deviates from the tile spec |
-| D5 | Progressive Disclosure | 15 | Detail is front-loaded; references not used for depth |
-| D6 | Freedom Calibration | 15 | Skill is either too prescriptive or too vague for the task |
-| D7 | Pattern Recognition | 10 | No trigger conditions — agent won't know when to activate the skill |
-| D8 | Practical Usability | 15 | Examples absent or unrealistic; hard to apply in practice |
-| D9 | Eval Validation | 20 | No evals — quality claims are unverifiable |
-
-**Total: 140 pts.** Grade bands:
-
-| Grade | Score |
-| ----- | ----- |
-| A+ | ≥ 133 |
-| A | ≥ 126 |
-| B+ | ≥ 119 |
-| B | ≥ 112 |
-| C+ | ≥ 105 |
-| C | ≥ 98 |
-| D | ≥ 91 |
-| F | < 91 |
-
-See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric and per-dimension
-scoring criteria.
-
----
-
 ## Repository layout
 
 ```text
@@ -385,21 +395,3 @@ Pre-commit and pre-push hooks are managed via [lefthook](https://github.com/evil
 mise install   # installs go, golangci-lint, mdlint, shellcheck, lefthook
 lefthook install
 ```
-
----
-
-## Dimension docs
-
-Each dimension has a dedicated doc with scoring criteria, examples, and academic references:
-
-| Dimension | Doc |
-| --------- | --- |
-| D1 Knowledge Delta | [docs/d1-knowledge-delta.md](docs/d1-knowledge-delta.md) |
-| D2 Mindset & Procedures | [docs/d2-mindset-procedures.md](docs/d2-mindset-procedures.md) |
-| D3 Anti-Pattern Coverage | [docs/d3-anti-pattern-coverage.md](docs/d3-anti-pattern-coverage.md) |
-| D4 Specification Compliance | [docs/d4-specification-compliance.md](docs/d4-specification-compliance.md) |
-| D5 Progressive Disclosure | [docs/d5-progressive-disclosure.md](docs/d5-progressive-disclosure.md) |
-| D6 Freedom Calibration | [docs/d6-freedom-calibration.md](docs/d6-freedom-calibration.md) |
-| D7 Pattern Recognition | [docs/d7-pattern-recognition.md](docs/d7-pattern-recognition.md) |
-| D8 Practical Usability | [docs/d8-practical-usability.md](docs/d8-practical-usability.md) |
-| D9 Eval Validation | [docs/d9-eval-validation.md](docs/d9-eval-validation.md) |
