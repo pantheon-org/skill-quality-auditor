@@ -31,7 +31,7 @@ live exclusively under `cmd/assets/` — there is no separate `skill/` directory
 
 ```bash
 go build -o dist/skill-auditor .
-./dist/skill-auditor evaluate <path-or-key> [--json] [--store]
+./dist/skill-auditor evaluate <path-or-key> [--store]
 ./dist/skill-auditor batch <skill1> <skill2> [--fail-below B]
 ```
 
@@ -46,7 +46,9 @@ go build -o dist/skill-auditor .
 
 # Generate aggregation plan for a skill family
 ./dist/skill-auditor aggregate --family <prefix>        # writes .context/analysis/
+./dist/skill-auditor aggregate -f <prefix>              # writes .context/analysis/
 ./dist/skill-auditor aggregate --family <prefix> --dry-run  # stdout only
+./dist/skill-auditor aggregate -f <prefix> -n           # stdout only (--dry-run)
 ```
 
 ## How to generate and validate remediation plans
@@ -54,7 +56,10 @@ go build -o dist/skill-auditor .
 ```bash
 # Requires a prior --store run for the skill
 ./dist/skill-auditor remediate <skill> [--target-score N]  # writes .context/plans/
+./dist/skill-auditor remediate <skill> [-t N]              # writes .context/plans/
+./dist/skill-auditor remediate <skill> -n                  # dry-run: stdout only
 ./dist/skill-auditor remediate <skill> --validate          # validate existing plan
+./dist/skill-auditor remediate <skill> -v                  # validate existing plan
 ```
 
 ## How to track score trends

@@ -182,10 +182,11 @@ Critical (>35%) pair — suitable as a CI gate.
 skill-auditor aggregate --family <prefix> [skills-dir] [flags]
 
 Flags:
-  --family      skill family prefix to analyse (required, e.g. bdd, typescript)
-  --dry-run     print plan to stdout without writing to disk
-  --skills-dir  skills directory (default: <repo-root>/skills)
-  --repo-root   repo root directory (auto-detected if omitted)
+  -j, --json        emit JSON output instead of Markdown
+  -n, --dry-run     print plan to stdout without writing to disk
+  -f, --family      skill family prefix to analyse (required, e.g. bdd, typescript)
+  -d, --skills-dir  skills directory (default: <repo-root>/skills)
+  -r, --repo-root   repo root directory (auto-detected if omitted)
 ```
 
 Produces a 6-step consolidation plan at `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md`.
@@ -229,11 +230,11 @@ skill-auditor validate artifacts [paths...] [flags]
 skill-auditor validate review <file> [flags]
 
 Flags (artifacts):
-  --repo-root              repo root directory (auto-detected if omitted)
+  -r, --repo-root              repo root directory (auto-detected if omitted)
 
 Flags (review):
-  --strict-recommended     treat recommended fields as errors
-  --repo-root              repo root directory (auto-detected if omitted)
+  -S, --strict-recommended     treat recommended fields as errors
+  -r, --repo-root              repo root directory (auto-detected if omitted)
 ```
 
 `validate artifacts` checks `SKILL.md` line limits, frontmatter name match, asset subdirectory
@@ -266,9 +267,10 @@ anti-pattern signals. Default `--pipeline` runs both and writes a combined repor
 skill-auditor init [flags]
 
 Flags:
-  --agent   agent(s) to install into (default: auto-detect from installed environments)
-  --global  install to global skill directory (~/<agent>/skills/)
-  --method  installation method: symlink or copy (default: symlink)
+  -n, --dry-run   preview what would be created without touching disk
+  -a, --agent     agent(s) to install into (default: auto-detect from installed environments)
+  -g, --global    install to global skill directory (~/<agent>/skills/)
+  -m, --method    installation method: symlink or copy (default: symlink)
 ```
 
 Installs the embedded `skill-quality-auditor` SKILL.md and its `references/` directory into one or
@@ -294,8 +296,9 @@ when installed via `install.sh` — Homebrew and mise users should use their own
 skill-auditor prune [flags]
 
 Flags:
-  --keep       number of audit date-dirs to retain per skill (default 5)
-  --repo-root  repo root directory (auto-detected if omitted)
+  -n, --dry-run    list audit runs that would be removed without deleting anything
+  -k, --keep       number of audit date-dirs to retain per skill (default 5)
+  -r, --repo-root  repo root directory (auto-detected if omitted)
 ```
 
 Removes old date-stamped audit directories from `.context/audits/`, keeping the N most recent per
@@ -324,7 +327,7 @@ All flags are available via long form and a one-letter shorthand:
 | `--strict-recommended` | `-S` | validate review |
 | `--global` | `-g` | init |
 | `--agent` | `-a` | init |
-| `--method` | `-M` | init |
+| `--method` | `-m` | init |
 
 `--json` and `--markdown` are mutually exclusive. When neither is passed, commands default to
 their natural format (JSON for `evaluate`, `analyze`, `batch`, `remediate`, `aggregate`;
