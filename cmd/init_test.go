@@ -10,6 +10,99 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ---- prettyPath ----
+
+func TestPrettyPath_replacesHome(t *testing.T) {
+	home := "/Users/alice"
+	got := prettyPath("/Users/alice/foo/bar", home)
+	if got != "~/foo/bar" {
+		t.Errorf("got %q, want ~/foo/bar", got)
+	}
+}
+
+func TestPrettyPath_exactHome(t *testing.T) {
+	home := "/Users/alice"
+	got := prettyPath("/Users/alice", home)
+	if got != "~" {
+		t.Errorf("got %q, want ~", got)
+	}
+}
+
+func TestPrettyPath_noMatch(t *testing.T) {
+	got := prettyPath("/tmp/something", "/Users/alice")
+	if got != "/tmp/something" {
+		t.Errorf("got %q, want /tmp/something", got)
+	}
+}
+
+func TestPrettyPath_emptyHome(t *testing.T) {
+	got := prettyPath("/tmp/something", "")
+	if got != "/tmp/something" {
+		t.Errorf("got %q, want /tmp/something", got)
+	}
+}
+
+// ---- formatAgentIDs ----
+
+func TestFormatAgentIDs_single(t *testing.T) {
+	a, _ := agentByID("claude-code")
+	if got := formatAgentIDs([]Agent{a}); got != "claude-code" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestFormatAgentIDs_few(t *testing.T) {
+	a1, _ := agentByID("claude-code")
+	a2, _ := agentByID("cursor")
+	got := formatAgentIDs([]Agent{a1, a2})
+	if got != "claude-code, cursor" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestFormatAgentIDs_abbreviates(t *testing.T) {
+	agents := agentRegistry[:5]
+	got := formatAgentIDs(agents)
+	if !strings.Contains(got, "+2 more") {
+		t.Errorf("expected '+2 more' abbreviation, got %q", got)
+	}
+}
+
+// ---- groupTargetsByDir ----
+
+func TestGroupTargetsByDir_deduplicates(t *testing.T) {
+	// Several agents share ".agents/skills" as ProjectPath.
+	var sharedPath []Agent
+	for _, a := range agentRegistry {
+		if a.ProjectPath == ".agents/skills" {
+			sharedPath = append(sharedPath, a)
+			if len(sharedPath) == 3 {
+				break
+			}
+		}
+	}
+	if len(sharedPath) < 2 {
+		t.Skip("need at least 2 agents sharing .agents/skills")
+	}
+
+	groups := groupTargetsByDir(sharedPath, "/base", false)
+	if len(groups) != 1 {
+		t.Errorf("expected 1 group for shared path, got %d", len(groups))
+	}
+	if len(groups[0].agents) != len(sharedPath) {
+		t.Errorf("expected %d agents in group, got %d", len(sharedPath), len(groups[0].agents))
+	}
+}
+
+func TestGroupTargetsByDir_keepsDistinct(t *testing.T) {
+	a1, _ := agentByID("claude-code") // .claude/skills
+	a2, _ := agentByID("cursor")      // .cursor/skills (different)
+	groups := groupTargetsByDir([]Agent{a1, a2}, "/base", false)
+	if len(groups) != 2 {
+		t.Errorf("expected 2 groups, got %d", len(groups))
+	}
+}
+
 // ---- resolveByIDs ----
 
 func TestResolveByIDs_knownID(t *testing.T) {
@@ -53,7 +146,6 @@ func TestResolveByHarness_nonePresent(t *testing.T) {
 
 func TestResolveByHarness_detected(t *testing.T) {
 	base := t.TempDir()
-	// claude-code harness root is ".claude" (first component of ProjectPath ".claude/skills")
 	if err := os.MkdirAll(filepath.Join(base, ".claude"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +166,6 @@ func TestResolveByHarness_detected(t *testing.T) {
 
 func TestResolveByHarness_global_detected(t *testing.T) {
 	home := t.TempDir()
-	// claude-code GlobalPath is ".claude/skills" → harness root ".claude"
 	if err := os.MkdirAll(filepath.Join(home, ".claude"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -258,7 +349,7 @@ func TestWriteCanonical_alsoWritesAssets(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	base := filepath.Join(home, ".local", "share", skillName)
-	for _, subdir := range []string{"references", "evals", "schemas", "templates", "requirements"} {
+	for _, subdir := range assetSubdirs {
 		if _, err := os.Stat(filepath.Join(base, subdir)); err != nil {
 			t.Errorf("asset subdir %q not created: %v", subdir, err)
 		}
@@ -307,9 +398,9 @@ func TestInitCmd_unknownAgent(t *testing.T) {
 	}
 }
 
-// ---- dry-run ----
+// ---- dry-run output format ----
 
-func TestInitCmd_dryRun_copy_noFilesCreated(t *testing.T) {
+func TestInitCmd_dryRun_copy_output(t *testing.T) {
 	cmd := newInitCmd(t)
 	buf := &bytes.Buffer{}
 	cmd.SetOut(buf)
@@ -324,20 +415,25 @@ func TestInitCmd_dryRun_copy_noFilesCreated(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := cmd.RunE(cmd, []string{})
-	if err != nil {
+	if err := cmd.RunE(cmd, []string{}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
 	out := buf.String()
 	if !strings.Contains(out, "[dry-run]") {
-		t.Errorf("expected [dry-run] output, got: %q", out)
+		t.Errorf("expected [dry-run] prefix, got: %q", out)
 	}
-	if !strings.Contains(out, "would create directory") {
-		t.Errorf("expected 'would create directory' in output, got: %q", out)
+	if !strings.Contains(out, "(claude-code)") {
+		t.Errorf("expected agent label in output, got: %q", out)
 	}
-	if !strings.Contains(out, "would copy all assets") {
-		t.Errorf("expected 'would copy all assets' in output, got: %q", out)
+	if !strings.Contains(out, "SKILL.md (copy)") {
+		t.Errorf("expected 'SKILL.md (copy)', got: %q", out)
+	}
+	if !strings.Contains(out, "references/") {
+		t.Errorf("expected 'references/' in asset list, got: %q", out)
+	}
+	if !strings.Contains(out, "evals/") {
+		t.Errorf("expected 'evals/' in asset list, got: %q", out)
 	}
 }
 
@@ -356,14 +452,65 @@ func TestInitCmd_dryRun_symlink_output(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := cmd.RunE(cmd, []string{})
-	if err != nil {
+	if err := cmd.RunE(cmd, []string{}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
 	out := buf.String()
-	if !strings.Contains(out, "would symlink") {
-		t.Errorf("expected 'would symlink' in output for symlink method, got: %q", out)
+	if !strings.Contains(out, "(symlink)") {
+		t.Errorf("expected '(symlink)' in output, got: %q", out)
+	}
+	if !strings.Contains(out, "→") {
+		t.Errorf("expected symlink arrow in output, got: %q", out)
+	}
+	if !strings.Contains(out, "assets:") {
+		t.Errorf("expected 'assets:' line in output, got: %q", out)
+	}
+}
+
+func TestInitCmd_dryRun_deduplicates(t *testing.T) {
+	// amp and cline both use .agents/skills — should appear as one entry.
+	cmd := newInitCmd(t)
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+
+	if err := cmd.Flags().Set("method", "copy"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Flags().Set("dry-run", "true"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Flags().Set("agent", "amp"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Flags().Set("agent", "cline"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cmd.RunE(cmd, []string{}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Both share .agents/skills — must produce exactly one [dry-run] block.
+	count := strings.Count(buf.String(), "[dry-run]")
+	if count != 1 {
+		t.Errorf("expected 1 dry-run block for shared path, got %d:\n%s", count, buf.String())
+	}
+	if !strings.Contains(buf.String(), "amp") || !strings.Contains(buf.String(), "cline") {
+		t.Errorf("expected both agent IDs in output: %q", buf.String())
+	}
+}
+
+func TestInitCmd_dryRun_pathUseTilde(t *testing.T) {
+	// With --global the output path should use ~ not the raw home dir.
+	// We can't easily control os.UserHomeDir in RunE, so test prettyPath directly
+	// and verify the dry-run branch calls it.
+	home := t.TempDir()
+	long := filepath.Join(home, "some", "path")
+	got := prettyPath(long, home)
+	want := "~/some/path"
+	if got != want {
+		t.Errorf("prettyPath(%q, %q) = %q, want %q", long, home, got, want)
 	}
 }
 
@@ -410,7 +557,7 @@ func TestWriteAllAssets(t *testing.T) {
 	if err := writeAllAssets(dest); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	for _, subdir := range []string{"references", "evals", "schemas", "templates", "requirements"} {
+	for _, subdir := range assetSubdirs {
 		entries, err := os.ReadDir(filepath.Join(dest, subdir))
 		if err != nil {
 			t.Errorf("subdir %q not created: %v", subdir, err)

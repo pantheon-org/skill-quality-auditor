@@ -15,6 +15,9 @@ import (
 
 const skillName = "skill-quality-auditor"
 
+// assetSubdirs is the ordered list of subdirectories bundled alongside SKILL.md.
+var assetSubdirs = []string{"references", "evals", "schemas", "templates", "requirements"}
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Install the skill-quality-auditor skill into agent environments",
@@ -71,17 +74,23 @@ Detection behaviour:
 			return nil
 		}
 
+		groups := groupTargetsByDir(targets, baseDir, global)
+
 		if dryRun {
-			for _, a := range targets {
-				skillDir := agentSkillDir(a, baseDir, global)
-				fmt.Fprintf(out, "[dry-run] would create directory: %s\n", skillDir)
+			canonicalPath := prettyPath(
+				filepath.Join(homeDir, ".local", "share", skillName, "SKILL.md"),
+				homeDir,
+			)
+			assetList := formatAssetList()
+			for _, g := range groups {
+				dir := prettyPath(g.skillDir, homeDir)
+				fmt.Fprintf(out, "[dry-run] %s  (%s)\n", dir, formatAgentIDs(g.agents))
 				if method == "symlink" {
-					canonicalPath := filepath.Join(homeDir, ".local", "share", skillName, "SKILL.md")
-					fmt.Fprintf(out, "[dry-run] would write canonical: %s\n", canonicalPath)
-					fmt.Fprintf(out, "[dry-run] would symlink: %s -> %s\n", filepath.Join(skillDir, "SKILL.md"), canonicalPath)
+					fmt.Fprintf(out, "          SKILL.md → %s (symlink)\n", canonicalPath)
 				} else {
-					fmt.Fprintf(out, "[dry-run] would copy all assets to: %s\n", skillDir)
+					fmt.Fprintf(out, "          SKILL.md (copy)\n")
 				}
+				fmt.Fprintf(out, "          assets: %s\n", assetList)
 			}
 			return nil
 		}
@@ -94,35 +103,96 @@ Detection behaviour:
 			}
 		}
 
-		for _, a := range targets {
-			skillDir := agentSkillDir(a, baseDir, global)
+		for _, g := range groups {
+			skillDir := g.skillDir
+			label := formatAgentIDs(g.agents)
+
 			if err := os.MkdirAll(skillDir, 0o755); err != nil {
-				return fmt.Errorf("[%s] mkdir: %w", a.ID, err)
+				return fmt.Errorf("[%s] mkdir: %w", label, err)
 			}
 
 			dest := filepath.Join(skillDir, "SKILL.md")
 			if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
-				return fmt.Errorf("[%s] remove existing file: %w", a.ID, err)
+				return fmt.Errorf("[%s] remove existing file: %w", label, err)
 			}
 
 			if method == "symlink" {
 				if err := os.Symlink(canonical, dest); err != nil {
-					return fmt.Errorf("[%s] symlink: %w", a.ID, err)
+					return fmt.Errorf("[%s] symlink: %w", label, err)
 				}
 			} else {
 				if err := os.WriteFile(dest, embeddedSkill, 0o644); err != nil {
-					return fmt.Errorf("[%s] write SKILL.md: %w", a.ID, err)
+					return fmt.Errorf("[%s] write SKILL.md: %w", label, err)
 				}
 			}
 
 			if err := writeAllAssets(skillDir); err != nil {
-				return fmt.Errorf("[%s] write assets: %w", a.ID, err)
+				return fmt.Errorf("[%s] write assets: %w", label, err)
 			}
 
-			fmt.Fprintf(out, "  ✓ %s → %s (%s)\n", a.ID, skillDir, method)
+			fmt.Fprintf(out, "  ✓ %s → %s (%s)\n", label, prettyPath(skillDir, homeDir), method)
 		}
 		return nil
 	},
+}
+
+// prettyPath replaces the home directory prefix with ~ for display.
+func prettyPath(path, homeDir string) string {
+	if homeDir == "" {
+		return path
+	}
+	if path == homeDir {
+		return "~"
+	}
+	if strings.HasPrefix(path, homeDir+string(filepath.Separator)) {
+		return "~" + string(filepath.Separator) + path[len(homeDir)+1:]
+	}
+	return path
+}
+
+// targetGroup is a unique install directory together with the agents that share it.
+type targetGroup struct {
+	skillDir string
+	agents   []Agent
+}
+
+// groupTargetsByDir groups targets by their computed install directory,
+// preserving first-occurrence order and merging agents that map to the same path.
+func groupTargetsByDir(targets []Agent, baseDir string, global bool) []targetGroup {
+	seen := map[string]int{}
+	var groups []targetGroup
+	for _, a := range targets {
+		dir := agentSkillDir(a, baseDir, global)
+		if idx, ok := seen[dir]; ok {
+			groups[idx].agents = append(groups[idx].agents, a)
+		} else {
+			seen[dir] = len(groups)
+			groups = append(groups, targetGroup{skillDir: dir, agents: []Agent{a}})
+		}
+	}
+	return groups
+}
+
+// formatAgentIDs formats a list of agents for display, abbreviating long lists.
+func formatAgentIDs(agents []Agent) string {
+	const maxShow = 3
+	ids := make([]string, len(agents))
+	for i, a := range agents {
+		ids[i] = a.ID
+	}
+	if len(ids) <= maxShow {
+		return strings.Join(ids, ", ")
+	}
+	return strings.Join(ids[:maxShow], ", ") + fmt.Sprintf(" +%d more", len(ids)-maxShow)
+}
+
+// formatAssetList returns the asset subdirectory list for display.
+func formatAssetList() string {
+	parts := make([]string, len(assetSubdirs))
+	for i, s := range assetSubdirs {
+		parts[i] = s + "/"
+	}
+	return strings.Join(parts, ", ")
 }
 
 // agentSkillDir returns the absolute skill install directory for an agent.
@@ -218,7 +288,6 @@ func resolveInteractive(in io.Reader, out io.Writer, baseDir string, global bool
 }
 
 // resolveTargets is the legacy entry-point used by tests.
-// It delegates to resolveByIDs or resolveByHarness.
 func resolveTargets(ids []string, baseDir string, global bool) ([]Agent, error) {
 	if len(ids) > 0 {
 		return resolveByIDs(ids)
