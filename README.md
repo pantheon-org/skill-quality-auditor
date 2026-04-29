@@ -267,15 +267,25 @@ anti-pattern signals. Default `--pipeline` runs both and writes a combined repor
 skill-auditor init [flags]
 
 Flags:
-  -n, --dry-run   preview what would be created without touching disk
-  -a, --agent     agent(s) to install into (default: auto-detect from installed environments)
-  -g, --global    install to global skill directory (~/<agent>/skills/)
-  -m, --method    installation method: symlink or copy (default: symlink)
+  -n, --dry-run      preview what would be created without touching disk
+  -a, --agent        agent(s) to install into (default: auto-detect from current directory)
+  -g, --global       install to global skill directory (~/<agent-path>/) instead of CWD
+  -I, --interactive  choose agents interactively from the full registry list
+  -m, --method       installation method: symlink or copy (default: symlink)
 ```
 
-Installs the embedded `skill-quality-auditor` SKILL.md and its `references/` directory into one or
-more agent skill directories. Auto-detects supported environments (Claude Code, Cursor, etc.) when
-`--agent` is omitted.
+Installs the embedded `skill-quality-auditor` skill — `SKILL.md` plus all asset subdirectories
+(`references/`, `evals/`, `schemas/`, `templates/`, `requirements/`) — into one or more agent skill
+directories.
+
+**Detection behaviour:**
+
+- **Default (no flags)** — targets the current working directory; auto-detects any agent whose
+  harness root directory (e.g. `.claude/`, `.cursor/`) already exists under CWD.
+- **`--global` / `-g`** — targets the home directory instead; auto-detects against `~`.
+- **`--agent` / `-a`** — skips auto-detection and installs into the specified agent(s) explicitly.
+- **`--interactive` / `-I`** — shows a numbered list of all supported agents (`*` marks detected
+  ones) and lets you choose by number or type `all`.
 
 ### `update`
 
@@ -327,6 +337,7 @@ All flags are available via long form and a one-letter shorthand:
 | `--strict-recommended` | `-S` | validate review |
 | `--global` | `-g` | init |
 | `--agent` | `-a` | init |
+| `--interactive` | `-I` | init |
 | `--method` | `-m` | init |
 
 `--json` and `--markdown` are mutually exclusive. When neither is passed, commands default to

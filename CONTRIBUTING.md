@@ -42,6 +42,11 @@ Evals must pass before bumping the tile version in `cmd/assets/tile.json`.
 2. Add a test case to `agents/registry_test.go`.
 3. Run `go test ./agents/...` to verify.
 
+The `init` command auto-detects agents by checking whether the harness root directory
+(first path component of `ProjectPath` / `GlobalPath`, e.g. `.claude/`) exists in the
+install target. No changes to `cmd/init.go` are needed when adding a new agent — the
+registry drives everything.
+
 ## Adding a new dimension scorer
 
 1. Create `scorer/dN_<name>.go` with a `scoreDN(content, skillDir string) (int, []Diagnostic)` function.
