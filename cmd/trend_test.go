@@ -164,6 +164,96 @@ func TestCollectTrends_skipsSkillWithOneAudit(t *testing.T) {
 	}
 }
 
+// TestBuildTrendEntry_unreadableNew: old audit exists, new audit is missing —
+// covers the second loadAuditJSON error return in buildTrendEntry.
+func TestBuildTrendEntry_unreadableNew(t *testing.T) {
+	dir := t.TempDir()
+	writeAudit(t, dir, "2026-01-01", 80, "B") // old exists
+	// new does NOT exist
+	paths := []string{
+		filepath.Join(dir, "2026-01-01", "audit.json"),
+		filepath.Join(dir, "2026-02-01", "audit.json"), // missing
+	}
+	_, ok := buildTrendEntry("domain/skill", paths)
+	if ok {
+		t.Error("expected ok=false when new audit is missing")
+	}
+}
+
+// TestGroupAuditsBySkill_shallowPath: audit.json at depth < 3 should be skipped
+// (covers the len(parts) < 3 early-return in the walk callback).
+func TestGroupAuditsBySkill_shallowPath(t *testing.T) {
+	root := t.TempDir()
+	// depth-2 path: root/2026-01-01/audit.json — only 2 slash-separated parts
+	dateDir := filepath.Join(root, "2026-01-01")
+	if err := os.MkdirAll(dateDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dateDir, "audit.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	groups, err := groupAuditsBySkill(root)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(groups) != 0 {
+		t.Errorf("expected no groups for shallow audit path, got %d", len(groups))
+	}
+}
+
+// ---- trendCmd.RunE paths ----
+
+// TestTrendCmd_noAuditsDir exercises the !pathExists branch (auditsRoot does not exist).
+func TestTrendCmd_noAuditsDir(t *testing.T) {
+	origRoot := trendRepoRoot
+	trendRepoRoot = t.TempDir() // empty dir — no .context/audits subdir
+	defer func() { trendRepoRoot = origRoot }()
+
+	err := trendCmd.RunE(trendCmd, []string{})
+	if err == nil {
+		t.Error("expected error when audits dir is missing")
+	}
+}
+
+// TestTrendCmd_emptyAudits exercises the len(entries)==0 branch.
+func TestTrendCmd_emptyAudits(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	if err := os.MkdirAll(auditsRoot, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// Single audit per skill — collectTrends returns 0 entries.
+	skillDir := filepath.Join(auditsRoot, "domain", "solo")
+	writeAudit(t, skillDir, "2026-01-01", 80, "B")
+
+	origRoot := trendRepoRoot
+	trendRepoRoot = repoRoot
+	defer func() { trendRepoRoot = origRoot }()
+
+	if err := trendCmd.RunE(trendCmd, []string{}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+// TestTrendCmd_jsonOutput exercises the trendJSON==true branch.
+func TestTrendCmd_jsonOutput(t *testing.T) {
+	repoRoot := t.TempDir()
+	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
+	skillDir := filepath.Join(auditsRoot, "domain", "skill-a")
+	writeAudit(t, skillDir, "2026-01-01", 70, "C")
+	writeAudit(t, skillDir, "2026-02-01", 80, "B")
+
+	origRoot, origJSON := trendRepoRoot, trendJSON
+	trendRepoRoot = repoRoot
+	trendJSON = true
+	defer func() { trendRepoRoot = origRoot; trendJSON = origJSON }()
+
+	if err := trendCmd.RunE(trendCmd, []string{}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 // ---- printTrendTable ----
 
 func TestPrintTrendTable_doesNotPanic(t *testing.T) {

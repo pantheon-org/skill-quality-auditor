@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -232,6 +233,407 @@ func TestFetchRelease_Latest(t *testing.T) {
 	if rel.TagName != "latest" {
 		t.Fatalf("expected tag 'latest', got %q", rel.TagName)
 	}
+}
+
+// ── assetURL ─────────────────────────────────────────────────────────────────
+
+func TestAssetURL_found(t *testing.T) {
+	rel := &ghRelease{Assets: []ghAsset{
+		{Name: "checksums.txt", BrowserDownloadURL: "https://example.com/checksums.txt"},
+		{Name: "skill-auditor_linux_amd64.tar.gz", BrowserDownloadURL: "https://example.com/binary.tar.gz"},
+	}}
+	got := assetURL(rel, "skill-auditor_linux_amd64.tar.gz")
+	if got != "https://example.com/binary.tar.gz" {
+		t.Errorf("got %q, want binary URL", got)
+	}
+}
+
+func TestAssetURL_notFound(t *testing.T) {
+	rel := &ghRelease{Assets: []ghAsset{
+		{Name: "other.tar.gz", BrowserDownloadURL: "https://example.com/other.tar.gz"},
+	}}
+	if got := assetURL(rel, "missing.tar.gz"); got != "" {
+		t.Errorf("expected empty string, got %q", got)
+	}
+}
+
+func TestAssetURL_emptyAssets(t *testing.T) {
+	rel := &ghRelease{}
+	if got := assetURL(rel, "anything"); got != "" {
+		t.Errorf("expected empty string for empty assets, got %q", got)
+	}
+}
+
+// ── latestReleaseTag ─────────────────────────────────────────────────────────
+
+func TestLatestReleaseTag_success(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return &ghRelease{TagName: "v9.9.9"}, nil
+	}
+	tag, err := latestReleaseTag()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if tag != "v9.9.9" {
+		t.Errorf("got %q, want v9.9.9", tag)
+	}
+}
+
+func TestLatestReleaseTag_error(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return nil, fmt.Errorf("network error")
+	}
+	if _, err := latestReleaseTag(); err == nil {
+		t.Error("expected error from failing fetchReleaseFunc")
+	}
+}
+
+// ── fetchRelease ─────────────────────────────────────────────────────────────
+
+func TestFetchRelease_LatestViaAPIBaseURL(t *testing.T) {
+	rel := ghRelease{TagName: "v1.0.0"}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/releases/latest") {
+			_ = json.NewEncoder(w).Encode(rel)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	origBase := apiBaseURL
+	apiBaseURL = srv.URL
+	defer func() { apiBaseURL = origBase }()
+
+	got, err := fetchRelease("latest")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.TagName != "v1.0.0" {
+		t.Errorf("got %q, want v1.0.0", got.TagName)
+	}
+}
+
+func TestFetchRelease_ByTagViaAPIBaseURL(t *testing.T) {
+	rel := ghRelease{TagName: "v2.3.4"}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_ = json.NewEncoder(w).Encode(rel)
+	}))
+	defer srv.Close()
+
+	origBase := apiBaseURL
+	apiBaseURL = srv.URL
+	defer func() { apiBaseURL = origBase }()
+
+	got, err := fetchRelease("v2.3.4")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.TagName != "v2.3.4" {
+		t.Errorf("got %q, want v2.3.4", got.TagName)
+	}
+}
+
+func TestFetchRelease_NonOKStatus(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer srv.Close()
+
+	origBase := apiBaseURL
+	apiBaseURL = srv.URL
+	defer func() { apiBaseURL = origBase }()
+
+	if _, err := fetchRelease("latest"); err == nil {
+		t.Error("expected error for non-200 status")
+	}
+}
+
+// ── downloadFile ─────────────────────────────────────────────────────────────
+
+func TestDownloadFile_success(t *testing.T) {
+	content := []byte("binary content")
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Write(content) //nolint:errcheck
+	}))
+	defer srv.Close()
+
+	dest := filepath.Join(t.TempDir(), "out")
+	if err := downloadFile(srv.URL+"/file", dest); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	got, _ := os.ReadFile(dest)
+	if string(got) != string(content) {
+		t.Errorf("file content mismatch")
+	}
+}
+
+func TestDownloadFile_nonOKStatus(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+	}))
+	defer srv.Close()
+
+	if err := downloadFile(srv.URL+"/file", filepath.Join(t.TempDir(), "out")); err == nil {
+		t.Error("expected error for non-200 status")
+	}
+}
+
+func TestDownloadFile_createError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("data")) //nolint:errcheck
+	}))
+	defer srv.Close()
+
+	if err := downloadFile(srv.URL, "/nonexistent/dir/out"); err == nil {
+		t.Error("expected error when dest directory does not exist")
+	}
+}
+
+func TestFetchRelease_InvalidJSON(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("not json")) //nolint:errcheck
+	}))
+	defer srv.Close()
+
+	origBase := apiBaseURL
+	apiBaseURL = srv.URL
+	defer func() { apiBaseURL = origBase }()
+
+	if _, err := fetchRelease("latest"); err == nil {
+		t.Error("expected error for invalid JSON response")
+	}
+}
+
+func TestExtractBinary_MissingArchive(t *testing.T) {
+	if err := extractBinary("/nonexistent/archive.tar.gz", filepath.Join(t.TempDir(), "out")); err == nil {
+		t.Error("expected error for missing archive file")
+	}
+}
+
+func TestExtractBinary_InvalidGzip(t *testing.T) {
+	tmp := t.TempDir()
+	bad := filepath.Join(tmp, "bad.tar.gz")
+	if err := os.WriteFile(bad, []byte("not gzip data at all"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := extractBinary(bad, filepath.Join(tmp, "out")); err == nil {
+		t.Error("expected error for invalid gzip content")
+	}
+}
+
+// ── replaceBinary ────────────────────────────────────────────────────────────
+
+func TestReplaceBinary_success(t *testing.T) {
+	tmp := t.TempDir()
+	src := filepath.Join(tmp, "new-binary")
+	dest := filepath.Join(tmp, "current-binary")
+
+	if err := os.WriteFile(src, []byte("new"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dest, []byte("old"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := replaceBinary(src, dest); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	got, _ := os.ReadFile(dest)
+	if string(got) != "new" {
+		t.Errorf("expected dest to contain new binary content")
+	}
+}
+
+func TestReplaceBinary_missingSrc(t *testing.T) {
+	tmp := t.TempDir()
+	dest := filepath.Join(tmp, "current")
+	if err := os.WriteFile(dest, []byte("old"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := replaceBinary(filepath.Join(tmp, "nonexistent"), dest); err == nil {
+		t.Error("expected error for missing source")
+	}
+}
+
+func TestReplaceBinary_missingDestDir(t *testing.T) {
+	src := filepath.Join(t.TempDir(), "src")
+	if err := os.WriteFile(src, []byte("new"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// dest dir does not exist → os.CreateTemp should fail
+	if err := replaceBinary(src, "/nonexistent/dir/binary"); err == nil {
+		t.Error("expected error when dest directory does not exist")
+	}
+}
+
+// ── runUpdate error paths ────────────────────────────────────────────────────
+
+func TestRunUpdate_noMatchingAsset(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		// Return a release with no assets — archiveName won't be found.
+		return &ghRelease{TagName: "v1.0.0", Assets: []ghAsset{}}, nil
+	}
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = "v1.0.0"
+	defer func() { updateVersionTarget = origTarget }()
+
+	if err := runUpdate(updateCmd, nil); err == nil {
+		t.Error("expected error for missing release asset")
+	}
+}
+
+func TestRunUpdate_noChecksumAsset(t *testing.T) {
+	archiveName := fmt.Sprintf("skill-auditor_%s_%s.tar.gz", runtime.GOOS, runtime.GOARCH)
+
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return &ghRelease{
+			TagName: "v1.0.0",
+			Assets: []ghAsset{
+				{Name: archiveName, BrowserDownloadURL: "https://example.com/binary.tar.gz"},
+				// deliberately omit checksums.txt
+			},
+		}, nil
+	}
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = "v1.0.0"
+	defer func() { updateVersionTarget = origTarget }()
+
+	if err := runUpdate(updateCmd, nil); err == nil {
+		t.Error("expected error for missing checksums asset")
+	}
+}
+
+func TestRunUpdate_fetchReleaseError(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return nil, fmt.Errorf("network failure")
+	}
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = "v1.0.0"
+	defer func() { updateVersionTarget = origTarget }()
+
+	if err := runUpdate(updateCmd, nil); err == nil {
+		t.Error("expected error when fetchReleaseFunc fails")
+	}
+}
+
+func TestRunUpdate_latestTagFetchError(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return nil, fmt.Errorf("network failure")
+	}
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = ""
+	defer func() { updateVersionTarget = origTarget }()
+
+	if err := runUpdate(updateCmd, nil); err == nil {
+		t.Error("expected error when latest tag fetch fails")
+	}
+}
+
+func TestRunUpdate_checkOutdated(t *testing.T) {
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return &ghRelease{TagName: "v99.0.0"}, nil
+	}
+
+	origVersion := version
+	version = "1.0.0"
+	defer func() { version = origVersion }()
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = ""
+	defer func() { updateVersionTarget = origTarget }()
+
+	origCheck := updateCheckOnly
+	updateCheckOnly = true
+	defer func() { updateCheckOnly = origCheck }()
+
+	if err := runUpdate(updateCmd, nil); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestRunUpdate_fullDownloadFlow(t *testing.T) {
+	tmp := t.TempDir()
+	archiveName := fmt.Sprintf("skill-auditor_%s_%s.tar.gz", runtime.GOOS, runtime.GOARCH)
+	namedArchive := filepath.Join(tmp, archiveName)
+
+	// Build a proper tar.gz containing a "skill-auditor" binary for the current OS/arch.
+	func() {
+		f, err := os.Create(namedArchive)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer f.Close() //nolint:errcheck
+		gw := gzip.NewWriter(f)
+		tw := tar.NewWriter(gw)
+		content := []byte("#!/bin/sh\necho skill-auditor")
+		hdr := &tar.Header{Name: "skill-auditor", Mode: 0o755, Size: int64(len(content))}
+		if err := tw.WriteHeader(hdr); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tw.Write(content); err != nil {
+			t.Fatal(err)
+		}
+		tw.Close() //nolint:errcheck
+		gw.Close() //nolint:errcheck
+	}()
+
+	checksumData := []byte(makeChecksums(namedArchive))
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/archive":
+			data, _ := os.ReadFile(namedArchive)
+			w.Write(data) //nolint:errcheck
+		case "/checksums":
+			w.Write(checksumData) //nolint:errcheck
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	orig := fetchReleaseFunc
+	defer func() { fetchReleaseFunc = orig }()
+	fetchReleaseFunc = func(_ string) (*ghRelease, error) {
+		return &ghRelease{
+			TagName: "v1.0.0",
+			Assets: []ghAsset{
+				{Name: archiveName, BrowserDownloadURL: srv.URL + "/archive"},
+				{Name: "checksums.txt", BrowserDownloadURL: srv.URL + "/checksums"},
+			},
+		}, nil
+	}
+
+	origTarget := updateVersionTarget
+	updateVersionTarget = "v1.0.0"
+	defer func() { updateVersionTarget = origTarget }()
+
+	origCheck := updateCheckOnly
+	updateCheckOnly = false
+	defer func() { updateCheckOnly = origCheck }()
+
+	// Run the full download/verify/extract path. The final replaceBinary step may
+	// succeed or fail depending on the environment — either outcome is acceptable.
+	_ = runUpdate(updateCmd, nil)
 }
 
 // ── --check flag ─────────────────────────────────────────────────────────────

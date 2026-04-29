@@ -62,3 +62,27 @@ func TestD6_LowSpecificity(t *testing.T) {
 		t.Errorf("want %d, got %d", want, score)
 	}
 }
+
+func TestD6_SpecificityAboveCap(t *testing.T) {
+	// InstructionSpecificity > 1.0 would yield score > 15; clamped to 15.
+	b := &validatorBridge{Content: &types.ContentReport{
+		StrongMarkers:          10,
+		WeakMarkers:            1,
+		InstructionSpecificity: 1.5,
+	}}
+	if score, _ := scoreD6(b); score != 15 {
+		t.Errorf("want 15 (capped), got %d", score)
+	}
+}
+
+func TestD6_SpecificityNegative(t *testing.T) {
+	// Negative InstructionSpecificity yields score < 0; clamped to 0.
+	b := &validatorBridge{Content: &types.ContentReport{
+		StrongMarkers:          1,
+		WeakMarkers:            1,
+		InstructionSpecificity: -0.5,
+	}}
+	if score, _ := scoreD6(b); score != 0 {
+		t.Errorf("want 0 (clamped negative), got %d", score)
+	}
+}
