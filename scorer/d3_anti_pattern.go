@@ -32,8 +32,8 @@ func scoreD3(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 	score += delta
 	diags = append(diags, instrDiags...)
 
-	if score > 15 {
-		score = 15
+	if score > d3Max {
+		score = d3Max
 	}
 	if score < 0 {
 		score = 0
@@ -45,9 +45,9 @@ func scoreD3DirectiveLanguage(content string, b *validatorBridge) int {
 	if b.Content != nil {
 		sm := b.Content.StrongMarkers
 		switch {
-		case sm > 8:
+		case sm > d3StrongMarkersHigh:
 			return 5
-		case sm > 4:
+		case sm > d3StrongMarkersMid:
 			return 3
 		case sm > 0:
 			return 1
@@ -55,7 +55,7 @@ func scoreD3DirectiveLanguage(content string, b *validatorBridge) int {
 		return 0
 	}
 	neverCount := countPattern(content, "NEVER")
-	if neverCount > 3 {
+	if neverCount > d3NeverCountMin {
 		return 3
 	}
 	return neverCount
@@ -86,10 +86,10 @@ func scoreD3FromInstructions(instrFile string) (int, []Diagnostic) {
 			antiInstr++
 		}
 	}
-	if antiInstr >= 5 {
+	if antiInstr >= d3AntiInstrHigh {
 		return 2, nil
 	}
-	if antiInstr >= 3 {
+	if antiInstr >= d3AntiInstrMid {
 		return 1, nil
 	}
 	return 0, nil

@@ -2,6 +2,8 @@ package scorer
 
 import (
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Dimension is the canonical descriptor for one scoring rubric dimension.
@@ -26,9 +28,18 @@ var AllDimensions = []Dimension{
 	{"D9", "evalValidation", "Eval Validation", 20},
 }
 
-// dimensionScores builds the Result.Dimensions map from the nine raw scores in AllDimensions order.
-func dimensionScores(d1, d2, d3, d4, d5, d6, d7, d8, d9 int) map[string]int {
-	scores := []int{d1, d2, d3, d4, d5, d6, d7, d8, d9}
+// dimensionFn is the uniform signature for all per-dimension scorers as used in the registry.
+// Adapters in scorer.go wrap functions whose native signatures differ.
+type dimensionFn func(content, skillDir string, b *validatorBridge) (int, []Diagnostic)
+
+// dimensionEntry binds a Dimension descriptor to its scorer function.
+type dimensionEntry struct {
+	Dimension
+	fn dimensionFn
+}
+
+// buildDimensionMap builds the Result.Dimensions map from a parallel slice of scores.
+func buildDimensionMap(scores []int) map[string]int {
 	m := make(map[string]int, len(AllDimensions))
 	for i, d := range AllDimensions {
 		m[d.Key] = scores[i]
@@ -118,32 +129,39 @@ func countLines(content string) int {
 	return count
 }
 
-// extractFrontmatterField parses a YAML frontmatter field between --- delimiters.
+// skillFrontmatter holds the YAML fields consumed from a SKILL.md front-matter block.
+type skillFrontmatter struct {
+	Description string `yaml:"description"`
+	Name        string `yaml:"name"`
+}
+
+// extractFrontmatterField parses a single YAML frontmatter field using yaml.v3.
+// Returns an empty string when the field is absent or the block cannot be parsed.
 func extractFrontmatterField(content, field string) string {
-	lines := strings.Split(content, "\n")
-	inFrontmatter := false
-	fmStarted := false
-	for _, line := range lines {
-		trimmed := strings.TrimRight(line, "\r")
-		if trimmed == "---" {
-			if !fmStarted {
-				fmStarted = true
-				inFrontmatter = true
-				continue
-			}
-			break
-		}
-		if inFrontmatter {
-			prefix := field + ":"
-			if strings.HasPrefix(trimmed, prefix) {
-				val := strings.TrimPrefix(trimmed, prefix)
-				val = strings.TrimSpace(val)
-				val = strings.Trim(val, `"'`)
-				return val
-			}
-		}
+	fm := parseFrontmatter(content)
+	switch field {
+	case "description":
+		return fm.Description
+	case "name":
+		return fm.Name
 	}
 	return ""
+}
+
+// parseFrontmatter unmarshals the YAML front-matter block from content.
+func parseFrontmatter(content string) skillFrontmatter {
+	start := strings.Index(content, "---")
+	if start < 0 {
+		return skillFrontmatter{}
+	}
+	rest := content[start+3:]
+	end := strings.Index(rest, "---")
+	if end < 0 {
+		return skillFrontmatter{}
+	}
+	var fm skillFrontmatter
+	_ = yaml.Unmarshal([]byte(rest[:end]), &fm)
+	return fm
 }
 
 // codeBlockCount counts the number of triple-backtick fence pairs.

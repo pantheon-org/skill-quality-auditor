@@ -17,7 +17,7 @@ func scoreD9(evalsDir string) (int, []Diagnostic) {
 		diags = append(diags, warnDiag("D9", "evals/ directory missing entirely"))
 		return score, diags
 	}
-	score += 4
+	score += d9EvalsDirPoints
 
 	delta, instrDiags := scoreD9Instructions(evalsDir)
 	score += delta
@@ -29,14 +29,14 @@ func scoreD9(evalsDir string) (int, []Diagnostic) {
 
 	validScenarios, scenarioDiags := countValidScenariosWithDiags(evalsDir)
 	diags = append(diags, scenarioDiags...)
-	if validScenarios >= 3 {
+	if validScenarios >= d9ScenariosHigh {
 		score += 4
-	} else if validScenarios >= 1 {
+	} else if validScenarios >= d9ScenariosMid {
 		score += 2
 	}
 
-	if score > 20 {
-		score = 20
+	if score > d9Max {
+		score = d9Max
 	}
 	return score, diags
 }
@@ -73,10 +73,10 @@ func scoreD9Summary(evalsDir string) (int, []Diagnostic) {
 	}
 	coverage := parseCoveragePercentage(summaryData.InstructionsCoverage.CoveragePercentage)
 	if coverage >= 0 {
-		if coverage >= 80 {
+		if coverage >= d9CoverageMin {
 			return 6, nil
 		}
-		return 3, []Diagnostic{warnDiag("D9", fmt.Sprintf("summary.json coverage is %d%% (below 80%% threshold)", coverage))}
+		return 3, []Diagnostic{warnDiag("D9", fmt.Sprintf("summary.json coverage is %d%% (below %d%% threshold)", coverage, d9CoverageMin))}
 	}
 	if len(data) > 0 {
 		return 3, nil

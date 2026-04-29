@@ -80,8 +80,9 @@ func TestAllDimensions_totalMax(t *testing.T) {
 	}
 }
 
-func TestDimensionScores_keysMatchAllDimensions(t *testing.T) {
-	m := dimensionScores(1, 2, 3, 4, 5, 6, 7, 8, 9)
+func TestBuildDimensionMap_keysMatchAllDimensions(t *testing.T) {
+	scores := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	m := buildDimensionMap(scores)
 	if len(m) != len(AllDimensions) {
 		t.Errorf("expected %d keys, got %d", len(AllDimensions), len(m))
 	}

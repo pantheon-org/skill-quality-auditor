@@ -8,6 +8,10 @@ import (
 const (
 	ThresholdCritical = 0.35
 	ThresholdHigh     = 0.20
+
+	// MaxDetectEntries caps the corpus size fed to Detect. O(n²) comparisons become
+	// expensive beyond a few hundred entries; entries beyond this cap are silently dropped.
+	MaxDetectEntries = 500
 )
 
 // ShortKey returns the skill name portion of a "domain/skill-name" key,
@@ -30,7 +34,11 @@ type Pair struct {
 
 // Detect performs an O(n²) pairwise similarity check across all entries and
 // returns pairs above ThresholdHigh, sorted by similarity descending.
+// Corpus is silently truncated to MaxDetectEntries before comparison.
 func Detect(entries []SkillEntry) []Pair {
+	if len(entries) > MaxDetectEntries {
+		entries = entries[:MaxDetectEntries]
+	}
 	var pairs []Pair
 	for i := 0; i < len(entries); i++ {
 		for j := i + 1; j < len(entries); j++ {

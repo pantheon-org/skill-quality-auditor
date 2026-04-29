@@ -40,22 +40,22 @@ func scoreD5WithMeta(content, skillDir string, b *validatorBridge) (score, lines
 func scoreD5ByTokens(tokens, lines, refCount int, hasRefs bool) (score, outLines, outRefCount int, outHasRefs bool) {
 	if hasRefs {
 		switch {
-		case tokens < 800:
+		case tokens < d5TokenCompact:
 			return 15, lines, refCount, hasRefs
-		case tokens < 1200:
+		case tokens < d5TokenModerate:
 			return 13, lines, refCount, hasRefs
-		case tokens < 1600:
+		case tokens < d5TokenVerbose:
 			return 11, lines, refCount, hasRefs
 		default:
 			return 10, lines, refCount, hasRefs
 		}
 	}
 	switch {
-	case tokens < 1200:
+	case tokens < d5TokenModerate:
 		return 12, lines, refCount, hasRefs
-	case tokens < 2400:
+	case tokens < d5TokenLong:
 		return 10, lines, refCount, hasRefs
-	case tokens < 4000:
+	case tokens < d5TokenVeryLong:
 		return 7, lines, refCount, hasRefs
 	default:
 		return 5, lines, refCount, hasRefs
@@ -65,22 +65,22 @@ func scoreD5ByTokens(tokens, lines, refCount int, hasRefs bool) (score, outLines
 func scoreD5ByLines(lines, refCount int, hasRefs bool) (score, outLines, outRefCount int, outHasRefs bool) {
 	if hasRefs {
 		switch {
-		case lines < 100:
+		case lines < d5LinesCompact:
 			return 15, lines, refCount, hasRefs
-		case lines < 150:
+		case lines < d5LinesModerate:
 			return 13, lines, refCount, hasRefs
-		case lines < 200:
+		case lines < d5LinesVerbose:
 			return 11, lines, refCount, hasRefs
 		default:
 			return 10, lines, refCount, hasRefs
 		}
 	}
 	switch {
-	case lines < 200:
+	case lines < d5LinesVerbose:
 		return 12, lines, refCount, hasRefs
-	case lines < 300:
+	case lines < d5LinesLong:
 		return 10, lines, refCount, hasRefs
-	case lines < 500:
+	case lines < d5LinesVeryLong:
 		return 7, lines, refCount, hasRefs
 	default:
 		return 5, lines, refCount, hasRefs
