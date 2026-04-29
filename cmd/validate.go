@@ -33,7 +33,8 @@ Checks:
 
 Exit code 1 if any error is found.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		repoRoot, err := resolveRepoRoot("")
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
@@ -346,8 +347,9 @@ Exit code 1 if any error is found.`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		reportPath := args[0]
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
 		if !filepath.IsAbs(reportPath) {
-			repoRoot, err := resolveRepoRoot("")
+			repoRoot, err := resolveRepoRoot(repoRootFlag)
 			if err != nil {
 				return fmt.Errorf("cannot determine repo root: %w", err)
 			}
@@ -589,7 +591,10 @@ func h2GroupIndex(group, h2s []string) int {
 // --------------------------------------------------------------------------
 
 func init() {
-	validateReviewCmd.Flags().Bool("strict-recommended", false, "treat recommended items as errors")
+	validateArtifactsCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
+
+	validateReviewCmd.Flags().BoolP("strict-recommended", "S", false, "treat recommended items as errors")
+	validateReviewCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
 
 	validateCmd.AddCommand(validateArtifactsCmd)
 	validateCmd.AddCommand(validateReviewCmd)

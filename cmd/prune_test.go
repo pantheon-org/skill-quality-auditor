@@ -27,11 +27,24 @@ func makeAuditTree(t *testing.T, root string, skill string, dates []string) stri
 // runPrune exercises the prune command's RunE directly with a synthetic repo root.
 func runPrune(t *testing.T, _ string, keep int) error {
 	t.Helper()
+	return runPruneOpts(t, keep, false)
+}
+
+// runPruneOpts exercises the prune command with optional dry-run flag.
+func runPruneOpts(t *testing.T, keep int, dryRun bool) error {
+	t.Helper()
 	cmd := pruneCmd
 	cmd.ResetFlags()
-	cmd.Flags().Int("keep", 5, "")
+	cmd.Flags().IntP("keep", "k", 5, "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
+	cmd.Flags().BoolP("dry-run", "n", false, "")
 	if err := cmd.Flags().Set("keep", fmt.Sprintf("%d", keep)); err != nil {
 		t.Fatalf("set keep: %v", err)
+	}
+	if dryRun {
+		if err := cmd.Flags().Set("dry-run", "true"); err != nil {
+			t.Fatalf("set dry-run: %v", err)
+		}
 	}
 	cmd.SetOut(&bytes.Buffer{})
 	return cmd.RunE(cmd, []string{})
@@ -213,5 +226,85 @@ func TestPruneCmd_helpFlagMentionsKeep(t *testing.T) {
 	usage := pruneCmd.UsageString()
 	if !strings.Contains(usage, "--keep") {
 		t.Error("expected --keep flag to appear in usage string")
+	}
+}
+
+func TestPruneCmd_helpFlagMentionsDryRun(t *testing.T) {
+	usage := pruneCmd.UsageString()
+	if !strings.Contains(usage, "--dry-run") {
+		t.Error("expected --dry-run flag to appear in usage string")
+	}
+}
+
+func TestPruneCmd_helpFlagMentionsRepoRoot(t *testing.T) {
+	usage := pruneCmd.UsageString()
+	if !strings.Contains(usage, "--repo-root") {
+		t.Error("expected --repo-root flag to appear in usage string")
+	}
+}
+
+func TestPrune_dryRunDoesNotDelete(t *testing.T) {
+	tmp := t.TempDir()
+	writeFile(t, filepath.Join(tmp, "go.mod"), "module x\n")
+
+	dates := []string{"2026-01-01", "2026-02-01", "2026-03-01", "2026-04-28"}
+	makeAuditTree(t, tmp, "my-skill", dates)
+
+	origDir, _ := os.Getwd()
+	if err := os.Chdir(tmp); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(origDir) })
+
+	if err := runPruneOpts(t, 2, true); err != nil {
+		t.Errorf("dry-run should not error, got: %v", err)
+	}
+
+	// All 4 directories should still exist — dry-run must not remove anything.
+	skillAuditDir := filepath.Join(tmp, ".context", "audits", "my-skill")
+	remaining, err := os.ReadDir(skillAuditDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var dirs []string
+	for _, e := range remaining {
+		if e.IsDir() {
+			dirs = append(dirs, e.Name())
+		}
+	}
+	if len(dirs) != 4 {
+		t.Errorf("dry-run: expected all 4 dirs to remain, got %d: %v", len(dirs), dirs)
+	}
+}
+
+func TestPrune_dryRunOutputMentionsRemoving(t *testing.T) {
+	tmp := t.TempDir()
+	writeFile(t, filepath.Join(tmp, "go.mod"), "module x\n")
+	makeAuditTree(t, tmp, "my-skill", []string{"2026-01-01", "2026-02-01", "2026-04-28"})
+
+	origDir, _ := os.Getwd()
+	if err := os.Chdir(tmp); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(origDir) })
+
+	buf := &bytes.Buffer{}
+	cmd := pruneCmd
+	cmd.ResetFlags()
+	cmd.Flags().IntP("keep", "k", 5, "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
+	cmd.Flags().BoolP("dry-run", "n", false, "")
+	_ = cmd.Flags().Set("keep", "1")
+	_ = cmd.Flags().Set("dry-run", "true")
+	cmd.SetOut(buf)
+	if err := cmd.RunE(cmd, []string{}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	output := buf.String()
+	if !strings.Contains(output, "dry-run") {
+		t.Errorf("expected dry-run notice in output, got: %s", output)
+	}
+	if !strings.Contains(output, "Removing:") {
+		t.Errorf("expected 'Removing:' lines in dry-run output, got: %s", output)
 	}
 }

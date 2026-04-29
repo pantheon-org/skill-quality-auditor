@@ -1023,3 +1023,49 @@ func TestCheckReviewCommands_recommendedMissing(t *testing.T) {
 		t.Error("expected warning for missing recommended command")
 	}
 }
+
+// --------------------------------------------------------------------------
+// flag registration — validate review
+// --------------------------------------------------------------------------
+
+func TestValidateReviewCmd_hasStrictRecommendedShorthand(t *testing.T) {
+	f := validateReviewCmd.Flags().ShorthandLookup("S")
+	if f == nil {
+		t.Fatal("expected -S shorthand for --strict-recommended")
+	}
+	if f.Name != "strict-recommended" {
+		t.Errorf("expected flag name 'strict-recommended', got %q", f.Name)
+	}
+}
+
+func TestValidateReviewCmd_hasRepoRootFlag(t *testing.T) {
+	f := validateReviewCmd.Flags().Lookup("repo-root")
+	if f == nil {
+		t.Error("expected --repo-root flag on validate review")
+	}
+}
+
+func TestValidateReviewCmd_hasRepoRootShorthand(t *testing.T) {
+	f := validateReviewCmd.Flags().ShorthandLookup("r")
+	if f == nil {
+		t.Error("expected -r shorthand for --repo-root on validate review")
+	}
+}
+
+// --------------------------------------------------------------------------
+// flag registration — validate artifacts
+// --------------------------------------------------------------------------
+
+func TestValidateArtifactsCmd_hasRepoRootFlag(t *testing.T) {
+	f := validateArtifactsCmd.Flags().Lookup("repo-root")
+	if f == nil {
+		t.Error("expected --repo-root flag on validate artifacts")
+	}
+}
+
+func TestValidateArtifactsCmd_hasRepoRootShorthand(t *testing.T) {
+	f := validateArtifactsCmd.Flags().ShorthandLookup("r")
+	if f == nil {
+		t.Error("expected -r shorthand for --repo-root on validate artifacts")
+	}
+}
