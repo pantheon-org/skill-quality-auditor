@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.1...v0.12.2) (2026-04-29)
+
+
+### Bug Fixes
+
+* **evals:** add scenario-06 to cover agent-neutral authoring and audit artefact hygiene ([#68](https://github.com/pantheon-org/skill-quality-auditor/issues/68)) ([e5ac62e](https://github.com/pantheon-org/skill-quality-auditor/commit/e5ac62e75eb94a828941b7df9079c7ff7b1cd858))
+
 ## [0.12.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.0...v0.12.1) (2026-04-29)
 
 
