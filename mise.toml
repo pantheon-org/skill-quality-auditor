@@ -4,7 +4,7 @@ minimum_release_age = "7d"
 [tools]
 go = "1.25.5"
 golangci-lint = "2.11.4"
-"ubi:swanysimon/mdlint" = "latest"
+"github:swanysimon/mdlint" = "latest"
 lefthook = "2.1.5"
 shellcheck = "latest"
 # tessl is not available as a mise backend — install via: curl -fsSL https://get.tessl.io | sh
