@@ -45,6 +45,6 @@ const (
 	d9CoverageMin    = 80 // coverage % must meet or exceed this to score full summary points
 	d9ScenariosHigh  = 3  // ≥ this many valid scenarios → full scenario score
 	d9ScenariosMid   = 1  // ≥ this many valid scenarios → partial scenario score
-	d9EvalsDirPoints = 4  // points awarded simply for having an evals/ directory
+	d9EvalsDirPoints = 3  // points awarded simply for having an evals/ directory
 	d9Max            = 20
 )

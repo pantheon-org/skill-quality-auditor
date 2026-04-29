@@ -403,3 +403,8 @@ lefthook install
 - **D6 Freedom Calibration:** [Zhang et al., 2025 — Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation](https://arxiv.org/abs/2509.14760)
 - **D6 Freedom Calibration:** [Sorensen, 2026 — Specification as the New Management](https://www.researchgate.net/publication/401626622)
 - **D6 Freedom Calibration:** [Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)
+- **D9 Eval Validation:** [Rehan, 2026 — Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications](https://arxiv.org/abs/2603.08806)
+- **D9 Eval Validation:** [Alami, 2026 — Cognitive Camouflage: Specification Gaming in LLM-Generated Code Evades Holistic Evaluation but Not Adversarial Execution](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6512960)
+- **D9 Eval Validation:** [Wang, Chen, Deng, Lin, Harman et al. — A Comprehensive Study on Large Language Models for Mutation Testing](https://dl.acm.org/doi/abs/10.1145/3805038)
+- **D9 Eval Validation:** [Pan, Hu, Xia, Yang — Re-Evaluating Code LLM Benchmarks Under Semantic Mutation](https://arxiv.org/abs/2506.17369)
+- **D9 Eval Validation:** [Bouafif, Hamdaqa, Zulkoski — PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization](https://dl.acm.org/doi/abs/10.1145/3756681.3756991)

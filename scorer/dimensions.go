@@ -91,6 +91,10 @@ func warnDiag(dimension, message string) Diagnostic {
 	return Diagnostic{Dimension: dimension, Message: message, severity: "warning"}
 }
 
+func hintDiag(dimension, message string) Diagnostic {
+	return Diagnostic{Dimension: dimension, Message: message, severity: "hint"}
+}
+
 // NewErrorDiag creates an error-severity Diagnostic for use in tests and external packages.
 func NewErrorDiag(dimension, message string) Diagnostic {
 	return errDiag(dimension, message)

@@ -50,7 +50,7 @@ func ScoreFromContent(_ context.Context, skillPath, content, evalsDir string) (*
 			return scoreD8(c, b)
 		}},
 		{AllDimensions[8], func(_, _ string, _ *validatorBridge) (int, []Diagnostic) {
-			return scoreD9(evalsDir)
+			return scoreD9(evalsDir, skillPath)
 		}},
 	}
 

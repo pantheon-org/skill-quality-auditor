@@ -1,7 +1,7 @@
 {
   "checklist": [
-    { "description": "Correct output format", "max_score": 40 },
-    { "description": "No errors", "max_score": 30 },
-    { "description": "Follows the procedure", "max_score": 30 }
+    { "description": "Validates and sanitizes untrusted input at boundary", "max_score": 40 },
+    { "description": "Never assumes internal callers are trusted", "max_score": 30 },
+    { "description": "Always returns structured error with validation failure reason", "max_score": 30 }
   ]
 }
