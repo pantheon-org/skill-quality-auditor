@@ -2,7 +2,7 @@ default_enabled = true
 gitignore = true
 fix = false
 
-exclude = [".context", ".claude", "cmd/assets", "testdata", ".github"]
+exclude = [".context", ".claude", "cmd/assets", "testdata", ".github", "CHANGELOG.md"]
 
 [rules.MD013]
 line_length = 130

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,10 +25,16 @@ func makeAuditTree(t *testing.T, root string, skill string, dates []string) stri
 }
 
 // runPrune exercises the prune command's RunE directly with a synthetic repo root.
-func runPrune(t *testing.T, repoRoot string, keep int) error {
+func runPrune(t *testing.T, _ string, keep int) error {
 	t.Helper()
-	pruneKeep = keep
-	return pruneCmd.RunE(pruneCmd, []string{})
+	cmd := pruneCmd
+	cmd.ResetFlags()
+	cmd.Flags().Int("keep", 5, "")
+	if err := cmd.Flags().Set("keep", fmt.Sprintf("%d", keep)); err != nil {
+		t.Fatalf("set keep: %v", err)
+	}
+	cmd.SetOut(&bytes.Buffer{})
+	return cmd.RunE(cmd, []string{})
 }
 
 // --------------------------------------------------------------------------

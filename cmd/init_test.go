@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 // ---- resolveTargets ----
@@ -95,26 +98,41 @@ func TestWriteCanonical_alsoWritesRefs(t *testing.T) {
 	}
 }
 
+// newInitCmd returns initCmd with fresh flags for isolated testing.
+func newInitCmd(t *testing.T) *cobra.Command {
+	t.Helper()
+	cmd := initCmd
+	cmd.ResetFlags()
+	cmd.Flags().StringArray("agent", nil, "")
+	cmd.Flags().BoolP("global", "g", false, "")
+	cmd.Flags().String("method", "symlink", "")
+	cmd.SetOut(&bytes.Buffer{})
+	return cmd
+}
+
 // ---- initCmd RunE error paths ----
 
 func TestInitCmd_invalidMethod(t *testing.T) {
-	origMethod := initMethod
-	initMethod = "invalid"
-	defer func() { initMethod = origMethod }()
-
-	err := initCmd.RunE(initCmd, []string{})
+	cmd := newInitCmd(t)
+	if err := cmd.Flags().Set("method", "invalid"); err != nil {
+		t.Fatal(err)
+	}
+	err := cmd.RunE(cmd, []string{})
 	if err == nil || !strings.Contains(err.Error(), "--method must be") {
 		t.Errorf("expected method validation error, got: %v", err)
 	}
 }
 
 func TestInitCmd_unknownAgent(t *testing.T) {
-	origMethod, origAgents := initMethod, initAgents
-	initMethod = "copy"
-	initAgents = []string{"unknown-agent-xyz"}
-	defer func() { initMethod = origMethod; initAgents = origAgents }()
-
-	err := initCmd.RunE(initCmd, []string{})
+	cmd := newInitCmd(t)
+	if err := cmd.Flags().Set("method", "copy"); err != nil {
+		t.Fatal(err)
+	}
+	// StringArray flags must be set with repeated Set calls or use the slice variant.
+	if err := cmd.Flags().Set("agent", "unknown-agent-xyz"); err != nil {
+		t.Fatal(err)
+	}
+	err := cmd.RunE(cmd, []string{})
 	if err == nil || !strings.Contains(err.Error(), "unknown agent") {
 		t.Errorf("expected unknown agent error, got: %v", err)
 	}

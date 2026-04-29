@@ -1,3 +1,5 @@
+// This file owns combined analysis formatting: the CombinedAnalysis struct
+// and its markdown and JSON serialisation functions.
 package reporter
 
 import (

@@ -128,4 +128,5 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 
 1. Edit files under `cmd/assets/`.
 2. Run `tessl eval run cmd/assets/`.
-3. Bump `version` in `cmd/assets/tile.json`.
+3. Do **not** bump `version` in `cmd/assets/tile.json` manually — release-please auto-bumps it
+   alongside the binary version on every release PR.

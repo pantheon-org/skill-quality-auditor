@@ -13,16 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	analyzeJSON     bool
-	analyzeStore    bool
-	analyzeSemantic bool
-	analyzePatterns bool
-	analyzePipeline bool
-	analyzeRepoRoot string
-	analyzeLimit    int
-)
-
 var canonicalSections = []string{
 	"when to use", "usage", "examples", "prerequisites",
 	"trigger", "anti-patterns", "output", "context",
@@ -46,7 +36,8 @@ var analyzeCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		skillArg := args[0]
 
-		repoRoot, err := resolveRepoRoot(analyzeRepoRoot)
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
@@ -72,48 +63,56 @@ var analyzeCmd = &cobra.Command{
 
 		date := time.Now().Format("2006-01-02")
 
+		semantic, _ := cmd.Flags().GetBool("semantic")
+		patterns, _ := cmd.Flags().GetBool("patterns")
+		asJSON, _ := cmd.Flags().GetBool("json")
+		store, _ := cmd.Flags().GetBool("store")
+		limit, _ := cmd.Flags().GetInt("limit")
 		switch {
-		case analyzeSemantic:
-			return runSemanticOnly(cmd, content, corpus, analyzeLimit)
-		case analyzePatterns:
+		case semantic:
+			return runSemanticOnly(cmd, content, corpus, limit)
+		case patterns:
 			return runPatternsOnly(cmd, content)
 		default:
-			return runPipeline(cmd, content, corpus, skillKey, date, analyzeLimit, analyzeJSON, analyzeStore, repoRoot)
+			return runPipeline(cmd, content, corpus, skillKey, date, limit, asJSON, store, repoRoot)
 		}
 	},
 }
 
-func runSemanticOnly(_ *cobra.Command, content string, corpus []map[string]bool, limit int) error {
+func runSemanticOnly(cmd *cobra.Command, content string, corpus []map[string]bool, limit int) error {
+	out := cmd.OutOrStdout()
 	keywords := analysis.ExtractKeywords(content, corpus, limit)
-	fmt.Print("| Rank | Term | Score |\n")
-	fmt.Print("|------|------|-------|\n")
+	fmt.Fprint(out, "| Rank | Term | Score |\n")
+	fmt.Fprint(out, "|------|------|-------|\n")
 	for i, kw := range keywords {
-		fmt.Printf("| %d | %s | %.4f |\n", i+1, kw.Term, kw.Score)
+		fmt.Fprintf(out, "| %d | %s | %.4f |\n", i+1, kw.Term, kw.Score)
 	}
 	return nil
 }
 
-func runPatternsOnly(_ *cobra.Command, content string) error {
+func runPatternsOnly(cmd *cobra.Command, content string) error {
+	out := cmd.OutOrStdout()
 	var rules []analysis.RuleMatch
 	rules = append(rules, analysis.DetectRequiredSections(content, requiredSections)...)
 	rules = append(rules, analysis.DetectTriggerFrequency(content, triggerWords)...)
 	rules = append(rules, analysis.DetectStructuralConformance(content, canonicalSections))
 	rules = append(rules, analysis.DetectAntiPatternSignals(content)...)
 
-	fmt.Print("| Rule | Matched | Score | Evidence |\n")
-	fmt.Print("|------|---------|-------|----------|\n")
+	fmt.Fprint(out, "| Rule | Matched | Score | Evidence |\n")
+	fmt.Fprint(out, "|------|---------|-------|----------|\n")
 	for _, rm := range rules {
 		matched := "false"
 		if rm.Matched {
 			matched = "true"
 		}
 		evidence := strings.Join(rm.Evidence, ", ")
-		fmt.Printf("| %s | %s | %.2f | %s |\n", rm.Rule, matched, rm.Score, evidence)
+		fmt.Fprintf(out, "| %s | %s | %.2f | %s |\n", rm.Rule, matched, rm.Score, evidence)
 	}
 	return nil
 }
 
-func runPipeline(_ *cobra.Command, content string, corpus []map[string]bool, skillKey, date string, limit int, asJSON, store bool, repoRoot string) error {
+func runPipeline(cmd *cobra.Command, content string, corpus []map[string]bool, skillKey, date string, limit int, asJSON, store bool, repoRoot string) error {
+	out := cmd.OutOrStdout()
 	keywords := analysis.ExtractKeywords(content, corpus, limit)
 
 	var rules []analysis.RuleMatch
@@ -140,11 +139,11 @@ func runPipeline(_ *cobra.Command, content string, corpus []map[string]bool, ski
 			return fmt.Errorf("marshal analysis: %w", err)
 		}
 		rawBytes = data
-		fmt.Println(string(data))
+		fmt.Fprintln(out, string(data))
 	} else {
 		output := reporter.CombinedMarkdown(ca)
 		rawBytes = []byte(output)
-		fmt.Print(output)
+		fmt.Fprint(out, output)
 	}
 
 	if store {
@@ -161,7 +160,7 @@ func runPipeline(_ *cobra.Command, content string, corpus []map[string]bool, ski
 		if err := os.WriteFile(outFile, rawBytes, 0o644); err != nil {
 			return fmt.Errorf("write report: %w", err)
 		}
-		fmt.Fprintf(os.Stderr, "report written to %s\n", outFile)
+		fmt.Fprintf(cmd.ErrOrStderr(), "report written to %s\n", outFile)
 	}
 
 	return nil
@@ -190,12 +189,12 @@ func buildSummary(rules []analysis.RuleMatch, keywords []analysis.KeywordScore) 
 }
 
 func init() {
-	analyzeCmd.Flags().BoolVar(&analyzeSemantic, "semantic", false, "run TF-IDF keyword extraction only")
-	analyzeCmd.Flags().BoolVar(&analyzePatterns, "patterns", false, "run rule-based pattern detection only")
-	analyzeCmd.Flags().BoolVar(&analyzePipeline, "pipeline", false, "run full pipeline (default when no flag given)")
-	analyzeCmd.Flags().BoolVar(&analyzeJSON, "json", false, "emit JSON output")
-	analyzeCmd.Flags().BoolVar(&analyzeStore, "store", false, "write report to .context/analysis/")
-	analyzeCmd.Flags().StringVar(&analyzeRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
-	analyzeCmd.Flags().IntVar(&analyzeLimit, "limit", 20, "max keywords to show")
+	analyzeCmd.Flags().Bool("semantic", false, "run TF-IDF keyword extraction only")
+	analyzeCmd.Flags().Bool("patterns", false, "run rule-based pattern detection only")
+	analyzeCmd.Flags().Bool("pipeline", false, "run full pipeline (default when no flag given)")
+	analyzeCmd.Flags().Bool("json", false, "emit JSON output")
+	analyzeCmd.Flags().Bool("store", false, "write report to .context/analysis/")
+	analyzeCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
+	analyzeCmd.Flags().Int("limit", 20, "max keywords to show")
 	rootCmd.AddCommand(analyzeCmd)
 }

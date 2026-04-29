@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,11 +32,30 @@ var rootCmd = &cobra.Command{
 	Long:  "skill-auditor evaluates skills against the 9-dimension quality framework, combining skill-validator structural checks with custom D1-D9 scoring.",
 }
 
+// NewRootCmd returns a root command with all subcommands registered.
+// Passing a non-nil out wires it as the default output writer, enabling
+// test code to capture output without mutating os.Stdout.
+func NewRootCmd(out io.Writer) *cobra.Command {
+	root := &cobra.Command{
+		Use:   rootCmd.Use,
+		Short: rootCmd.Short,
+		Long:  rootCmd.Long,
+	}
+	root.Version = version
+	if out != nil {
+		root.SetOut(out)
+	}
+	for _, sub := range rootCmd.Commands() {
+		root.AddCommand(sub)
+	}
+	return root
+}
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("skill-auditor v%s\n", version)
+		fmt.Fprintf(cmd.OutOrStdout(), "skill-auditor v%s\n", version)
 	},
 }
 

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -25,6 +26,37 @@ func makeSkillsDir(t *testing.T, n int) string {
 		}
 	}
 	return root
+}
+
+// runDuplication resets and configures duplicationCmd then calls RunE.
+func runDuplication(t *testing.T, skillsDir, repoRoot string, asJSON bool, posArgs []string) (string, error) {
+	t.Helper()
+	cmd := duplicationCmd
+	cmd.ResetFlags()
+	cmd.Flags().Bool("json", false, "")
+	cmd.Flags().String("skills-dir", "", "")
+	cmd.Flags().String("repo-root", "", "")
+
+	if skillsDir != "" {
+		if err := cmd.Flags().Set("skills-dir", skillsDir); err != nil {
+			t.Fatalf("set skills-dir: %v", err)
+		}
+	}
+	if repoRoot != "" {
+		if err := cmd.Flags().Set("repo-root", repoRoot); err != nil {
+			t.Fatalf("set repo-root: %v", err)
+		}
+	}
+	if asJSON {
+		if err := cmd.Flags().Set("json", "true"); err != nil {
+			t.Fatalf("set json: %v", err)
+		}
+	}
+
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.RunE(cmd, posArgs)
+	return buf.String(), err
 }
 
 func TestExitCodeForPairs_empty(t *testing.T) {
@@ -55,25 +87,10 @@ func TestExitCodeForPairs_withCritical(t *testing.T) {
 	}
 }
 
-// TestDuplicationCmd_nonExistentSkillsDir verifies that the duplication command
-// returns an error (and does not panic) when the skills directory does not exist.
 func TestDuplicationCmd_nonExistentSkillsDir(t *testing.T) {
 	nonExistent := "/nonexistent/skills-dir-that-does-not-exist"
-	// pathExists returns false → the RunE closure returns a formatted error.
-	// We exercise that guard directly via the cobra command.
-	cmd := duplicationCmd
-	cmd.ResetFlags()
-	// Re-register flags so the command is usable standalone.
-	cmd.Flags().BoolVar(&dupJSON, "json", false, "")
-	cmd.Flags().StringVar(&dupSkillsDir, "skills-dir", "", "")
-	cmd.Flags().StringVar(&dupRepoRoot, "repo-root", "", "")
-
-	// Set skills-dir flag to the non-existent path and provide a fake repo-root
-	// so auto-detection is bypassed.
-	dupSkillsDir = nonExistent
-	dupRepoRoot = t.TempDir() // valid dir so resolveRepoRoot succeeds
-
-	err := cmd.RunE(cmd, []string{})
+	repoRoot := t.TempDir()
+	_, err := runDuplication(t, nonExistent, repoRoot, false, []string{})
 	if err == nil {
 		t.Fatal("expected error for non-existent skills directory, got nil")
 	}
@@ -82,46 +99,24 @@ func TestDuplicationCmd_nonExistentSkillsDir(t *testing.T) {
 	}
 }
 
-// TestDuplicationCmd_withSkills exercises the full RunE path including report
-// generation and exitCodeForPairs (the markdown text output path).
 func TestDuplicationCmd_withSkills(t *testing.T) {
 	skillsDir := makeSkillsDir(t, 2)
 	repoRoot := t.TempDir()
-
-	origDir, origRoot := dupSkillsDir, dupRepoRoot
-	dupSkillsDir = skillsDir
-	dupRepoRoot = repoRoot
-	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot }()
-
-	_ = duplicationCmd.RunE(duplicationCmd, []string{})
+	_ = func() { _, _ = runDuplication(t, skillsDir, repoRoot, false, []string{}) }
+	// ignore exitCodeForPairs error (no Critical pairs expected)
+	_, _ = runDuplication(t, skillsDir, repoRoot, false, []string{})
 }
 
-// TestDuplicationCmd_withSkillsJSON exercises the JSON output path (line 62
-// exitCodeForPairs return).
 func TestDuplicationCmd_withSkillsJSON(t *testing.T) {
 	skillsDir := makeSkillsDir(t, 2)
 	repoRoot := t.TempDir()
-
-	origDir, origRoot, origJSON := dupSkillsDir, dupRepoRoot, dupJSON
-	dupSkillsDir = skillsDir
-	dupRepoRoot = repoRoot
-	dupJSON = true
-	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot; dupJSON = origJSON }()
-
-	_ = duplicationCmd.RunE(duplicationCmd, []string{})
+	_, _ = runDuplication(t, skillsDir, repoRoot, true, []string{})
 }
 
-// TestDuplicationCmd_withArgs exercises the args[0] skillsDir override path.
 func TestDuplicationCmd_withArgs(t *testing.T) {
 	skillsDir := makeSkillsDir(t, 1)
 	repoRoot := t.TempDir()
-
-	origDir, origRoot := dupSkillsDir, dupRepoRoot
-	dupSkillsDir = ""
-	dupRepoRoot = repoRoot
-	defer func() { dupSkillsDir = origDir; dupRepoRoot = origRoot }()
-
-	_ = duplicationCmd.RunE(duplicationCmd, []string{skillsDir})
+	_, _ = runDuplication(t, "", repoRoot, false, []string{skillsDir})
 }
 
 func TestExitCodeForPairs_criticalAmongMany(t *testing.T) {

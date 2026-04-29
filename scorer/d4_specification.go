@@ -27,16 +27,16 @@ func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 	score -= penaltyFromDir(filepath.Join(skillDir, "references"), absPathRe)
 	score -= penaltyFromDir(filepath.Join(skillDir, "references"), ctxAgentsRe)
 
-	if score > 15 {
-		score = 15
+	if score > d4Max {
+		score = d4Max
 	}
 	if score < 0 {
 		score = 0
 	}
 
 	score += scoreD4Bonus(content, skillDir)
-	if score > 17 {
-		score = 17
+	if score > d4MaxWithBonus {
+		score = d4MaxWithBonus
 	}
 	return score, diags
 }
@@ -47,18 +47,18 @@ func scoreD4Description(content string, b *validatorBridge) int {
 	if descLen < 0 {
 		descLen = len(extractFrontmatterField(content, "description"))
 	}
-	if descLen > 100 {
+	if descLen > d4DescLenMid {
 		delta += 2
 	}
-	if descLen > 200 {
+	if descLen > d4DescLenHigh {
 		delta++
 	}
 	description := extractFrontmatterField(content, "description")
 	andOrRe := regexp.MustCompile(`(?i) and | or `)
 	andOrCount := len(andOrRe.FindAllString(description, -1))
-	if andOrCount > 3 {
+	if andOrCount > d4AndOrCountHigh {
 		delta -= 2
-	} else if andOrCount > 1 {
+	} else if andOrCount > d4AndOrCountMid {
 		delta--
 	}
 	return delta

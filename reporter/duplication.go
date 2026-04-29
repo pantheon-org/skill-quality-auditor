@@ -1,3 +1,5 @@
+// This file owns duplication report formatting: rendering similarity pairs
+// detected by the duplication engine into a markdown report.
 package reporter
 
 import (

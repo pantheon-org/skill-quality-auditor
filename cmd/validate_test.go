@@ -789,13 +789,13 @@ func TestRunValidateReview_valid(t *testing.T) {
 	tmp := t.TempDir()
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, minimalValidReport())
-	if err := runValidateReview(p, false); err != nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err != nil {
 		t.Errorf("expected valid report to pass, got: %v", err)
 	}
 }
 
 func TestRunValidateReview_missingFile(t *testing.T) {
-	err := runValidateReview("/nonexistent/report.md", false)
+	err := runValidateReview(validateReviewCmd, "/nonexistent/report.md", false)
 	if err == nil {
 		t.Error("expected error for missing report file")
 	}
@@ -806,7 +806,7 @@ func TestRunValidateReview_missingH1(t *testing.T) {
 	report := strings.ReplaceAll(minimalValidReport(), "# Skill Evaluation Report: my-skill", "## Not an H1")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for missing H1")
 	}
 }
@@ -816,7 +816,7 @@ func TestRunValidateReview_wrongTitlePrefix(t *testing.T) {
 	report := strings.ReplaceAll(minimalValidReport(), "# Skill Evaluation Report: my-skill", "# Wrong Title")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for wrong title prefix")
 	}
 }
@@ -826,7 +826,7 @@ func TestRunValidateReview_missingFrontmatterKey(t *testing.T) {
 	report := strings.ReplaceAll(minimalValidReport(), "reviewer: alice\n", "")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for missing required frontmatter key")
 	}
 }
@@ -836,7 +836,7 @@ func TestRunValidateReview_missingRequiredH2(t *testing.T) {
 	report := strings.ReplaceAll(minimalValidReport(), "## Dimension Scores\nScores here.\n\n", "")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for missing required H2")
 	}
 }
@@ -850,7 +850,7 @@ func TestRunValidateReview_h2OrderViolation(t *testing.T) {
 		"## Critical Issues\nNone.\n\n## Dimension Scores\nScores here.\n")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for H2 order violation")
 	}
 }
@@ -860,7 +860,7 @@ func TestRunValidateReview_missingDimensionLabel(t *testing.T) {
 	report := strings.ReplaceAll(minimalValidReport(), "D1: Knowledge Delta\n", "")
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err == nil {
 		t.Error("expected error for missing dimension label")
 	}
 }
@@ -893,7 +893,7 @@ skill-auditor batch
 `
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, report)
-	if err := runValidateReview(p, false); err != nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err != nil {
 		t.Errorf("report with all recommended sections should pass, got: %v", err)
 	}
 }
@@ -906,10 +906,10 @@ func TestRunValidateReview_strictRecommended(t *testing.T) {
 	p := filepath.Join(tmp, "report.md")
 	writeFile(t, p, minimalValidReport())
 
-	if err := runValidateReview(p, false); err != nil {
+	if err := runValidateReview(validateReviewCmd, p, false); err != nil {
 		t.Errorf("minimal report should pass without strict mode, got: %v", err)
 	}
-	if err := runValidateReview(p, true); err == nil {
+	if err := runValidateReview(validateReviewCmd, p, true); err == nil {
 		t.Error("minimal report should fail with --strict-recommended (missing recommended sections)")
 	}
 }

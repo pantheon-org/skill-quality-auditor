@@ -9,8 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var pruneKeep int
-
 var pruneCmd = &cobra.Command{
 	Use:   "prune",
 	Short: "Prune old audit directories, keeping only the most recent ones",
@@ -19,6 +17,8 @@ date-stamped directories per skill (default: 5).
 
 The 'latest' symlink inside each skill's audit directory is preserved.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		out := cmd.OutOrStdout()
+		keep, _ := cmd.Flags().GetInt("keep")
 		repoRoot, err := resolveRepoRoot("")
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
@@ -26,12 +26,12 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 
 		auditRoot := filepath.Join(repoRoot, ".context", "audits")
 		if _, err := os.Stat(auditRoot); os.IsNotExist(err) {
-			fmt.Printf("No audit directory found: %s\n", auditRoot)
+			fmt.Fprintf(out, "No audit directory found: %s\n", auditRoot)
 			return nil
 		}
 
-		fmt.Println("=== Audit Pruning ===")
-		fmt.Printf("Keeping last %d audit(s) per skill\n\n", pruneKeep)
+		fmt.Fprintln(out, "=== Audit Pruning ===")
+		fmt.Fprintf(out, "Keeping last %d audit(s) per skill\n\n", keep)
 
 		skillDirs, err := os.ReadDir(auditRoot)
 		if err != nil {
@@ -64,13 +64,13 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 
 			for i, name := range dirs {
 				fullPath := filepath.Join(skillAuditDir, name)
-				if i < pruneKeep {
-					fmt.Printf("Keeping:  %s\n", fullPath)
+				if i < keep {
+					fmt.Fprintf(out, "Keeping:  %s\n", fullPath)
 					totalKept++
 				} else {
-					fmt.Printf("Removing: %s\n", fullPath)
+					fmt.Fprintf(out, "Removing: %s\n", fullPath)
 					if err := os.RemoveAll(fullPath); err != nil {
-						fmt.Fprintf(os.Stderr, "WARNING: could not remove %s: %v\n", fullPath, err)
+						fmt.Fprintf(cmd.ErrOrStderr(), "WARNING: could not remove %s: %v\n", fullPath, err)
 					}
 					totalRemoved++
 				}
@@ -79,16 +79,16 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 			// Report latest symlink target if it exists.
 			latestPath := filepath.Join(skillAuditDir, "latest")
 			if target, err := os.Readlink(latestPath); err == nil {
-				fmt.Printf("Latest symlink (%s) → %s\n", sd.Name(), target)
+				fmt.Fprintf(out, "Latest symlink (%s) → %s\n", sd.Name(), target)
 			}
 		}
 
-		fmt.Printf("\nDone. Kept %d, removed %d audit run(s).\n", totalKept, totalRemoved)
+		fmt.Fprintf(out, "\nDone. Kept %d, removed %d audit run(s).\n", totalKept, totalRemoved)
 		return nil
 	},
 }
 
 func init() {
-	pruneCmd.Flags().IntVar(&pruneKeep, "keep", 5, "number of audit runs to keep per skill")
+	pruneCmd.Flags().Int("keep", 5, "number of audit runs to keep per skill")
 	rootCmd.AddCommand(pruneCmd)
 }

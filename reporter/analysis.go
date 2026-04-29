@@ -1,3 +1,5 @@
+// This file owns pattern analysis persistence: writing CombinedAnalysis
+// reports to .context/analysis/ as markdown or JSON.
 package reporter
 
 import (

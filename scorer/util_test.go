@@ -58,6 +58,25 @@ func TestExtractFrontmatterField_noFrontmatter(t *testing.T) {
 	}
 }
 
+func TestParseFrontmatter_multiLineValue(t *testing.T) {
+	content := "---\ndescription: |\n  multi\n  line\nname: my-skill\n---\n# Body"
+	fm := parseFrontmatter(content)
+	if fm.Name != "my-skill" {
+		t.Errorf("got name %q, want 'my-skill'", fm.Name)
+	}
+}
+
+func TestParseFrontmatter_nameField(t *testing.T) {
+	content := "---\nname: cool-skill\ndescription: does things\n---\n# Body"
+	fm := parseFrontmatter(content)
+	if fm.Name != "cool-skill" {
+		t.Errorf("got name %q, want 'cool-skill'", fm.Name)
+	}
+	if fm.Description != "does things" {
+		t.Errorf("got description %q, want 'does things'", fm.Description)
+	}
+}
+
 func TestRemoveCodeBlocks_languageTagged(t *testing.T) {
 	content := "before\n```bash\ncode here\n```\nafter"
 	got := removeCodeBlocks(content)
