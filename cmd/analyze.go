@@ -63,9 +63,19 @@ var analyzeCmd = &cobra.Command{
 
 		date := time.Now().Format("2006-01-02")
 
+		asJSON, _ := cmd.Flags().GetBool("json")
+		asMarkdown, _ := cmd.Flags().GetBool("markdown")
+		if asJSON && asMarkdown {
+			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		}
+		if asMarkdown {
+			asJSON = false
+		} else {
+			asJSON = true
+		}
+
 		semantic, _ := cmd.Flags().GetBool("semantic")
 		patterns, _ := cmd.Flags().GetBool("patterns")
-		asJSON, _ := cmd.Flags().GetBool("json")
 		store, _ := cmd.Flags().GetBool("store")
 		limit, _ := cmd.Flags().GetInt("limit")
 		switch {
@@ -189,12 +199,13 @@ func buildSummary(rules []analysis.RuleMatch, keywords []analysis.KeywordScore) 
 }
 
 func init() {
-	analyzeCmd.Flags().Bool("semantic", false, "run TF-IDF keyword extraction only")
-	analyzeCmd.Flags().Bool("patterns", false, "run rule-based pattern detection only")
-	analyzeCmd.Flags().Bool("pipeline", false, "run full pipeline (default when no flag given)")
-	analyzeCmd.Flags().Bool("json", false, "emit JSON output")
-	analyzeCmd.Flags().Bool("store", false, "write report to .context/analysis/")
-	analyzeCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
-	analyzeCmd.Flags().Int("limit", 20, "max keywords to show")
+	analyzeCmd.Flags().BoolP("semantic", "e", false, "run TF-IDF keyword extraction only")
+	analyzeCmd.Flags().BoolP("patterns", "p", false, "run rule-based pattern detection only")
+	analyzeCmd.Flags().BoolP("pipeline", "P", false, "run full pipeline (default when no flag given)")
+	analyzeCmd.Flags().BoolP("json", "j", false, "emit JSON output (default)")
+	analyzeCmd.Flags().BoolP("markdown", "m", false, "emit Markdown output instead of JSON")
+	analyzeCmd.Flags().BoolP("store", "s", false, "write report to .context/analysis/")
+	analyzeCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
+	analyzeCmd.Flags().IntP("limit", "l", 20, "max keywords to show")
 	rootCmd.AddCommand(analyzeCmd)
 }
