@@ -1,0 +1,8 @@
+{
+  "checklist": [
+    {"id": "c1", "criterion": "No agent-specific tool names (e.g. amp, cursor, copilot) appear in generated skill content", "max_score": 35},
+    {"id": "c2", "criterion": "Agent-neutral phrasing used throughout (e.g. 'the agent', 'the assistant', not a named tool)", "max_score": 25},
+    {"id": "c3", "criterion": "Audit output paths (.context/audits/, .context/plans/, .context/analysis/) explicitly excluded from git commits", "max_score": 25},
+    {"id": "c4", "criterion": "User reminded that audit artefacts are ephemeral and should not be committed", "max_score": 15}
+  ]
+}
