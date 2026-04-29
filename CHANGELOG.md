@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.2.0...v0.3.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** implement D5 negative-condition detection with table-row scoping ([#30](https://github.com/pantheon-org/skill-quality-auditor/issues/30)) ([df75ed6](https://github.com/pantheon-org/skill-quality-auditor/commit/df75ed6ef6fde17a47f5451749be1b1289d9c67e))
+* **scorer:** implement D9 mutation-coverage scoring and CI-safe independent-authoring ([#33](https://github.com/pantheon-org/skill-quality-auditor/issues/33)) ([eb9e9ad](https://github.com/pantheon-org/skill-quality-auditor/commit/eb9e9ad7a81e2743881887dbf774b4f258dcfced))
+
 ## [0.2.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.1.5...v0.2.0) (2026-04-29)
 
 
