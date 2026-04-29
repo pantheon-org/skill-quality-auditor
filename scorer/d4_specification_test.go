@@ -82,6 +82,27 @@ func TestD4_AgentRefWarning(t *testing.T) {
 	}
 }
 
+func TestD4_AgentRefNoFalsePositive(t *testing.T) {
+	// "example" and "sample" contain "amp" as a substring but must not trigger
+	// the agent-reference warning after switching to word-boundary matching.
+	cases := []string{
+		"See the examples section for details.",
+		"Here is a sample workflow.",
+		"A champion approach to scoring.",
+	}
+	for _, content := range cases {
+		full := "---\ndescription: does something useful\n---\n# Skill\n" + content
+		_, diags := scoreD4(full, t.TempDir(), nilBridge())
+		for _, d := range diags {
+			if d.Dimension == "D4" && d.severity == "warning" && d.Message != "" {
+				if len(d.Message) > 30 && d.Message[len(d.Message)-3:] == "amp" {
+					t.Errorf("false positive: %q triggered amp agent warning", content)
+				}
+			}
+		}
+	}
+}
+
 func TestD4_RelativePathViolation(t *testing.T) {
 	content := "---\ndescription: does something useful\n---\n# Skill\nSee ../other-skill/SKILL.md for more."
 	score, diags := scoreD4(content, t.TempDir(), nilBridge())
