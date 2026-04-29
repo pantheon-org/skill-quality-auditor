@@ -1,0 +1,11 @@
+version: "2"
+
+linters:
+  settings:
+    errcheck:
+      # fmt.Fprint* to cli output writers is fire-and-forget, matching pre-existing
+      # fmt.Print* usage. Suppress the same pattern project-wide.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintln
+        - fmt.Fprintf

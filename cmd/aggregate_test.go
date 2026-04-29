@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -25,12 +26,48 @@ func makeAggSkillsDir(t *testing.T, family string, n int) string {
 	return root
 }
 
-func TestAggregateCmd_missingFamily(t *testing.T) {
-	origFamily := aggFamily
-	aggFamily = ""
-	defer func() { aggFamily = origFamily }()
+// runAggregate executes aggregateCmd with the given flags and returns (stdout, error).
+func runAggregate(t *testing.T, family, repoRoot, skillsDir string, dryRun bool, posArgs []string) (string, error) {
+	t.Helper()
+	cmd := aggregateCmd
+	cmd.ResetFlags()
+	cmd.Flags().String("family", "", "")
+	cmd.Flags().Bool("dry-run", false, "")
+	cmd.Flags().String("skills-dir", "", "")
+	cmd.Flags().String("repo-root", "", "")
 
-	err := aggregateCmd.RunE(aggregateCmd, []string{})
+	if err := cmd.Flags().Set("family", family); err != nil {
+		t.Fatalf("set family: %v", err)
+	}
+	if err := cmd.Flags().Set("repo-root", repoRoot); err != nil {
+		t.Fatalf("set repo-root: %v", err)
+	}
+	if skillsDir != "" {
+		if err := cmd.Flags().Set("skills-dir", skillsDir); err != nil {
+			t.Fatalf("set skills-dir: %v", err)
+		}
+	}
+	if dryRun {
+		if err := cmd.Flags().Set("dry-run", "true"); err != nil {
+			t.Fatalf("set dry-run: %v", err)
+		}
+	}
+
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.RunE(cmd, posArgs)
+	return buf.String(), err
+}
+
+func TestAggregateCmd_missingFamily(t *testing.T) {
+	cmd := aggregateCmd
+	cmd.ResetFlags()
+	cmd.Flags().String("family", "", "")
+	cmd.Flags().Bool("dry-run", false, "")
+	cmd.Flags().String("skills-dir", "", "")
+	cmd.Flags().String("repo-root", "", "")
+
+	err := cmd.RunE(cmd, []string{})
 	if err == nil || !strings.Contains(err.Error(), "--family is required") {
 		t.Errorf("expected --family required error, got: %v", err)
 	}
@@ -39,16 +76,8 @@ func TestAggregateCmd_missingFamily(t *testing.T) {
 func TestAggregateCmd_args0SkillsDir(t *testing.T) {
 	skillsDir := makeAggSkillsDir(t, "test", 2)
 	repoRoot := t.TempDir()
-
-	origFamily, origRoot, origDry := aggFamily, aggRepoRoot, aggDryRun
-	aggFamily = "test"
-	aggRepoRoot = repoRoot
-	aggDryRun = true
-	defer func() { aggFamily = origFamily; aggRepoRoot = origRoot; aggDryRun = origDry }()
-
 	// Pass skills dir as positional arg — exercises the args[0] branch.
-	err := aggregateCmd.RunE(aggregateCmd, []string{skillsDir})
-	if err != nil {
+	if _, err := runAggregate(t, "test", repoRoot, "", true, []string{skillsDir}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -56,20 +85,7 @@ func TestAggregateCmd_args0SkillsDir(t *testing.T) {
 func TestAggregateCmd_dryRun(t *testing.T) {
 	skillsDir := makeAggSkillsDir(t, "myskill", 2)
 	repoRoot := t.TempDir()
-
-	origFamily, origRoot, origSkills, origDry := aggFamily, aggRepoRoot, aggSkillsDir, aggDryRun
-	aggFamily = "myskill"
-	aggRepoRoot = repoRoot
-	aggSkillsDir = skillsDir
-	aggDryRun = true
-	defer func() {
-		aggFamily = origFamily
-		aggRepoRoot = origRoot
-		aggSkillsDir = origSkills
-		aggDryRun = origDry
-	}()
-
-	if err := aggregateCmd.RunE(aggregateCmd, []string{}); err != nil {
+	if _, err := runAggregate(t, "myskill", repoRoot, skillsDir, true, []string{}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -77,20 +93,7 @@ func TestAggregateCmd_dryRun(t *testing.T) {
 func TestAggregateCmd_writeOutput(t *testing.T) {
 	skillsDir := makeAggSkillsDir(t, "writeskill", 2)
 	repoRoot := t.TempDir()
-
-	origFamily, origRoot, origSkills, origDry := aggFamily, aggRepoRoot, aggSkillsDir, aggDryRun
-	aggFamily = "writeskill"
-	aggRepoRoot = repoRoot
-	aggSkillsDir = skillsDir
-	aggDryRun = false
-	defer func() {
-		aggFamily = origFamily
-		aggRepoRoot = origRoot
-		aggSkillsDir = origSkills
-		aggDryRun = origDry
-	}()
-
-	if err := aggregateCmd.RunE(aggregateCmd, []string{}); err != nil {
+	if _, err := runAggregate(t, "writeskill", repoRoot, skillsDir, false, []string{}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -98,14 +101,7 @@ func TestAggregateCmd_writeOutput(t *testing.T) {
 func TestAggregateCmd_noFamilyMatch(t *testing.T) {
 	skillsDir := makeAggSkillsDir(t, "other", 2)
 	repoRoot := t.TempDir()
-
-	origFamily, origRoot, origSkills := aggFamily, aggRepoRoot, aggSkillsDir
-	aggFamily = "nomatch"
-	aggRepoRoot = repoRoot
-	aggSkillsDir = skillsDir
-	defer func() { aggFamily = origFamily; aggRepoRoot = origRoot; aggSkillsDir = origSkills }()
-
-	err := aggregateCmd.RunE(aggregateCmd, []string{})
+	_, err := runAggregate(t, "nomatch", repoRoot, skillsDir, false, []string{})
 	if err == nil || !strings.Contains(err.Error(), "no skills found") {
 		t.Errorf("expected 'no skills found' error, got: %v", err)
 	}

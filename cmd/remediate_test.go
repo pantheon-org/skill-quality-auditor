@@ -1,25 +1,43 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
+	"github.com/spf13/cobra"
 )
+
+// newRemediateCmd returns a fresh remediateCmd with all flags registered and
+// output wired to buf, ready for RunE calls.
+func newRemediateCmd(t *testing.T) (*bytes.Buffer, *cobra.Command) {
+	t.Helper()
+	cmd := remediateCmd
+	cmd.ResetFlags()
+	cmd.Flags().Int("target-score", 0, "")
+	cmd.Flags().Bool("validate", false, "")
+	cmd.Flags().String("repo-root", "", "")
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	return buf, cmd
+}
 
 // ---- runGenerate ----
 
 func TestRunGenerate_noStoredAudit(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
-	err := runGenerate("nonexistent-skill", root)
+	err := runGenerate(cmd, "nonexistent-skill", root, 0)
 	if err == nil {
 		t.Error("expected error when no stored audit exists")
 	}
 }
 
 func TestRunGenerate_valid(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
 	skill := "test/my-skill"
 	date := "2026-04-29"
@@ -45,7 +63,7 @@ func TestRunGenerate_valid(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := runGenerate(skill, root); err != nil {
+	if err := runGenerate(cmd, skill, root, 0); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
@@ -58,23 +76,25 @@ func TestRunGenerate_valid(t *testing.T) {
 // ---- runValidate ----
 
 func TestRunValidate_missingFile(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
-	err := runValidate("/nonexistent/plan.md", root)
+	err := runValidate(cmd, "/nonexistent/plan.md", root)
 	if err == nil {
 		t.Error("expected error for missing plan file")
 	}
 }
 
 func TestRunValidate_missingSkillByName(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
-	// Pass a bare skill name — no plan file in .context/plans/
-	err := runValidate("no-such-skill", root)
+	err := runValidate(cmd, "no-such-skill", root)
 	if err == nil {
 		t.Error("expected error when plan file not found by skill name")
 	}
 }
 
 func TestRunValidate_invalidPlan(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
 	planDir := filepath.Join(root, ".context", "plans")
 	if err := os.MkdirAll(planDir, 0o755); err != nil {
@@ -84,23 +104,22 @@ func TestRunValidate_invalidPlan(t *testing.T) {
 	if err := os.WriteFile(planPath, []byte("not a valid plan"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := runValidate(planPath, root); err == nil {
+	if err := runValidate(cmd, planPath, root); err == nil {
 		t.Error("expected validation error for malformed plan")
 	}
 }
 
 func TestRunValidate_bySkillName(t *testing.T) {
+	_, cmd := newRemediateCmd(t)
 	root := t.TempDir()
 	planDir := filepath.Join(root, ".context", "plans")
 	if err := os.MkdirAll(planDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	// Write a minimal plan file so it's "found" — validation may still fail but the
-	// path-resolution branch (bare name → .context/plans/<name>-remediation-plan.md) is exercised.
 	planPath := filepath.Join(planDir, "my-skill-remediation-plan.md")
 	if err := os.WriteFile(planPath, []byte("# plan"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	// Error is expected (plan content is invalid) — we only care that it reached runValidate logic.
-	_ = runValidate("my-skill", root)
+	// Error is expected (plan content is invalid) — we only care that path resolution works.
+	_ = runValidate(cmd, "my-skill", root)
 }

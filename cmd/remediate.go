@@ -10,12 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	remTargetScore int
-	remValidate    bool
-	remRepoRoot    string
-)
-
 var remediateCmd = &cobra.Command{
 	Use:   "remediate <skill>",
 	Short: "Generate or validate a remediation plan",
@@ -25,21 +19,25 @@ With --validate, parses an existing plan file and checks it against the
 remediation-plan.schema.json constraints instead of generating a new plan.`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		repoRoot, err := resolveRepoRoot(remRepoRoot)
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
 
 		skillArg := args[0]
+		validate, _ := cmd.Flags().GetBool("validate")
+		targetScore, _ := cmd.Flags().GetInt("target-score")
 
-		if remValidate {
-			return runValidate(skillArg, repoRoot)
+		if validate {
+			return runValidate(cmd, skillArg, repoRoot)
 		}
-		return runGenerate(skillArg, repoRoot)
+		return runGenerate(cmd, skillArg, repoRoot, targetScore)
 	},
 }
 
-func runGenerate(skillArg, repoRoot string) error {
+func runGenerate(cmd *cobra.Command, skillArg, repoRoot string, targetScore int) error {
+	out := cmd.OutOrStdout()
 	// Locate the most recent stored audit for this skill.
 	auditsBase := filepath.Join(repoRoot, ".context", "audits", skillArg)
 	auditJSON, auditDate, err := latestAuditJSON(auditsBase)
@@ -55,7 +53,7 @@ func runGenerate(skillArg, repoRoot string) error {
 	auditPath := fmt.Sprintf(".context/audits/%s/%s/Analysis.md", skillArg, auditDate)
 	date := time.Now().Format("2006-01-02")
 
-	plan, err := reporter.RemediationPlan(result, remTargetScore, auditPath, date)
+	plan, err := reporter.RemediationPlan(result, targetScore, auditPath, date)
 	if err != nil {
 		return fmt.Errorf("generate plan: %w", err)
 	}
@@ -71,12 +69,13 @@ func runGenerate(skillArg, repoRoot string) error {
 		return fmt.Errorf("write plan: %w", err)
 	}
 
-	fmt.Print(plan)
-	fmt.Fprintf(os.Stderr, "plan written to %s\n", outFile)
+	fmt.Fprint(out, plan)
+	fmt.Fprintf(cmd.ErrOrStderr(), "plan written to %s\n", outFile)
 	return nil
 }
 
-func runValidate(planArg, repoRoot string) error {
+func runValidate(cmd *cobra.Command, planArg, repoRoot string) error {
+	out := cmd.OutOrStdout()
 	// planArg may be a bare skill name or a direct file path.
 	planPath := planArg
 	if !filepath.IsAbs(planArg) && !pathExists(planArg) {
@@ -90,20 +89,20 @@ func runValidate(planArg, repoRoot string) error {
 
 	errs := reporter.ValidateRemediationPlan(planPath)
 	if len(errs) == 0 {
-		fmt.Printf("✓ %s — valid\n", planPath)
+		fmt.Fprintf(out, "✓ %s — valid\n", planPath)
 		return nil
 	}
 
-	fmt.Fprintf(os.Stderr, "✗ %s — %d validation error(s):\n", planPath, len(errs))
+	fmt.Fprintf(cmd.ErrOrStderr(), "✗ %s — %d validation error(s):\n", planPath, len(errs))
 	for _, e := range errs {
-		fmt.Fprintf(os.Stderr, "  • %s\n", e)
+		fmt.Fprintf(cmd.ErrOrStderr(), "  • %s\n", e)
 	}
 	return fmt.Errorf("validation failed (%d errors)", len(errs))
 }
 
 func init() {
-	remediateCmd.Flags().IntVar(&remTargetScore, "target-score", 0, "target score (default: current+20, max 140)")
-	remediateCmd.Flags().BoolVar(&remValidate, "validate", false, "validate an existing plan file instead of generating")
-	remediateCmd.Flags().StringVar(&remRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
+	remediateCmd.Flags().Int("target-score", 0, "target score (default: current+20, max 140)")
+	remediateCmd.Flags().Bool("validate", false, "validate an existing plan file instead of generating")
+	remediateCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(remediateCmd)
 }

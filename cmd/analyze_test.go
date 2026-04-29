@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"io"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -43,33 +43,42 @@ func makeAnalyzeTestSkill(t *testing.T) (skillPath string, repoRoot string) {
 	return skillPath, tmp
 }
 
-// captureAnalyzeOutput resets flag globals, calls RunE, and returns stdout.
+// captureAnalyzeOutput configures analyzeCmd flags and returns (stdout, error).
+// It uses cmd.SetOut so no os.Pipe mutation is needed.
 func captureAnalyzeOutput(t *testing.T, skillArg, repoRoot string, semantic, patterns, pipeline, asJSON, store bool, limit int) (string, error) {
 	t.Helper()
-	analyzeSemantic = semantic
-	analyzePatterns = patterns
-	analyzePipeline = pipeline
-	analyzeJSON = asJSON
-	analyzeStore = store
-	analyzeRepoRoot = repoRoot
-	analyzeLimit = limit
+	cmd := analyzeCmd
+	cmd.ResetFlags()
+	cmd.Flags().Bool("semantic", false, "")
+	cmd.Flags().Bool("patterns", false, "")
+	cmd.Flags().Bool("pipeline", false, "")
+	cmd.Flags().Bool("json", false, "")
+	cmd.Flags().Bool("store", false, "")
+	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().Int("limit", 20, "")
 
-	// Capture stdout
-	r, w, _ := os.Pipe()
-	old := os.Stdout
-	os.Stdout = w
-
-	err := analyzeCmd.RunE(analyzeCmd, []string{skillArg})
-
-	if err := w.Close(); err != nil {
-		t.Fatalf("close pipe: %v", err)
+	setBool := func(name string, v bool) {
+		if v {
+			if err := cmd.Flags().Set(name, "true"); err != nil {
+				t.Fatalf("set %s: %v", name, err)
+			}
+		}
 	}
-	os.Stdout = old
-
-	var buf bytes.Buffer
-	if _, copyErr := io.Copy(&buf, r); copyErr != nil {
-		t.Fatalf("copy pipe: %v", copyErr)
+	setBool("semantic", semantic)
+	setBool("patterns", patterns)
+	setBool("pipeline", pipeline)
+	setBool("json", asJSON)
+	setBool("store", store)
+	if err := cmd.Flags().Set("repo-root", repoRoot); err != nil {
+		t.Fatalf("set repo-root: %v", err)
 	}
+	if err := cmd.Flags().Set("limit", fmt.Sprintf("%d", limit)); err != nil {
+		t.Fatalf("set limit: %v", err)
+	}
+
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.RunE(cmd, []string{skillArg})
 	return buf.String(), err
 }
 

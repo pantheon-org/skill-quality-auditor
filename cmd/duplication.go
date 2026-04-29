@@ -12,24 +12,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	dupJSON      bool
-	dupRepoRoot  string
-	dupSkillsDir string
-)
-
 var duplicationCmd = &cobra.Command{
 	Use:   "duplication [skills-dir]",
 	Short: "Detect duplicate or overlapping skills",
 	Long:  "Performs pairwise word-level Jaccard similarity across all SKILL.md files and reports pairs above the High (20%) and Critical (35%) thresholds.",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		repoRoot, err := resolveRepoRoot(dupRepoRoot)
+		out := cmd.OutOrStdout()
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
 
-		skillsDir := dupSkillsDir
+		skillsDirFlag, _ := cmd.Flags().GetString("skills-dir")
+		skillsDir := skillsDirFlag
 		if len(args) == 1 {
 			skillsDir = args[0]
 		}
@@ -46,24 +43,25 @@ var duplicationCmd = &cobra.Command{
 			return fmt.Errorf("inventory skills: %w", err)
 		}
 		if len(entries) == 0 {
-			fmt.Fprintln(os.Stderr, "no SKILL.md files found")
+			fmt.Fprintln(cmd.ErrOrStderr(), "no SKILL.md files found")
 			return nil
 		}
 
 		pairs := duplication.Detect(entries)
 		date := time.Now().Format("2006-01-02")
 
-		if dupJSON {
+		asJSON, _ := cmd.Flags().GetBool("json")
+		if asJSON {
 			data, err := json.MarshalIndent(pairs, "", "  ")
 			if err != nil {
 				return fmt.Errorf("marshal pairs: %w", err)
 			}
-			fmt.Println(string(data))
+			fmt.Fprintln(out, string(data))
 			return exitCodeForPairs(pairs)
 		}
 
 		report := reporter.DuplicationReport(pairs, entries, date)
-		fmt.Print(report)
+		fmt.Fprint(out, report)
 
 		outDir := filepath.Join(repoRoot, ".context", "analysis")
 		if err := os.MkdirAll(outDir, 0o755); err != nil {
@@ -73,7 +71,7 @@ var duplicationCmd = &cobra.Command{
 		if err := os.WriteFile(outFile, []byte(report), 0o644); err != nil {
 			return fmt.Errorf("write report: %w", err)
 		}
-		fmt.Fprintf(os.Stderr, "report written to %s\n", outFile)
+		fmt.Fprintf(cmd.ErrOrStderr(), "report written to %s\n", outFile)
 
 		return exitCodeForPairs(pairs)
 	},
@@ -89,8 +87,8 @@ func exitCodeForPairs(pairs []duplication.Pair) error {
 }
 
 func init() {
-	duplicationCmd.Flags().BoolVar(&dupJSON, "json", false, "emit JSON array output")
-	duplicationCmd.Flags().StringVar(&dupSkillsDir, "skills-dir", "", "skills directory (default: <repo-root>/skills)")
-	duplicationCmd.Flags().StringVar(&dupRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
+	duplicationCmd.Flags().Bool("json", false, "emit JSON array output")
+	duplicationCmd.Flags().String("skills-dir", "", "skills directory (default: <repo-root>/skills)")
+	duplicationCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(duplicationCmd)
 }

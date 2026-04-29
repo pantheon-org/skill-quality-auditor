@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -10,11 +11,6 @@ import (
 
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
 	"github.com/spf13/cobra"
-)
-
-var (
-	trendJSON     bool
-	trendRepoRoot string
 )
 
 // TrendEntry holds the computed trend for a single skill.
@@ -36,7 +32,9 @@ var trendCmd = &cobra.Command{
 	Long:  "Reads the two most recent stored audits per skill from .context/audits/ and reports score deltas.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		repoRoot, err := resolveRepoRoot(trendRepoRoot)
+		out := cmd.OutOrStdout()
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
@@ -51,7 +49,7 @@ var trendCmd = &cobra.Command{
 			return err
 		}
 		if len(entries) == 0 {
-			fmt.Println("No skills with at least two stored audits.")
+			fmt.Fprintln(out, "No skills with at least two stored audits.")
 			return nil
 		}
 
@@ -60,16 +58,17 @@ var trendCmd = &cobra.Command{
 			return entries[i].Skill < entries[j].Skill
 		})
 
-		if trendJSON {
+		asJSON, _ := cmd.Flags().GetBool("json")
+		if asJSON {
 			data, err := json.MarshalIndent(entries, "", "  ")
 			if err != nil {
 				return fmt.Errorf("marshal trends: %w", err)
 			}
-			fmt.Println(string(data))
+			fmt.Fprintln(out, string(data))
 			return nil
 		}
 
-		printTrendTable(entries)
+		printTrendTable(out, entries)
 		return nil
 	},
 }
@@ -150,7 +149,7 @@ func trendArrow(delta int) string {
 	return "—"
 }
 
-func printTrendTable(entries []TrendEntry) {
+func printTrendTable(out io.Writer, entries []TrendEntry) {
 	// column widths
 	maxSkill := 5
 	for _, e := range entries {
@@ -162,12 +161,12 @@ func printTrendTable(entries []TrendEntry) {
 	hdr := fmt.Sprintf("%-*s  %-10s  %-10s  %6s  %6s  %5s  %5s  %6s  %s",
 		maxSkill, "Skill", "Old Date", "New Date", "Old", "New", "Old G", "New G", "Delta", "Trend")
 	sep := strings.Repeat("─", len(hdr))
-	fmt.Println(hdr)
-	fmt.Println(sep)
+	fmt.Fprintln(out, hdr)
+	fmt.Fprintln(out, sep)
 
 	for _, e := range entries {
 		deltaStr := fmt.Sprintf("%+d", e.Delta)
-		fmt.Printf("%-*s  %-10s  %-10s  %6d  %6d  %5s  %5s  %6s  %s\n",
+		fmt.Fprintf(out, "%-*s  %-10s  %-10s  %6d  %6d  %5s  %5s  %6s  %s\n",
 			maxSkill, e.Skill,
 			e.OldDate, e.NewDate,
 			e.OldScore, e.NewScore,
@@ -222,7 +221,7 @@ func loadAuditJSON(path string) (*scorer.Result, error) {
 }
 
 func init() {
-	trendCmd.Flags().BoolVar(&trendJSON, "json", false, "emit JSON array output")
-	trendCmd.Flags().StringVar(&trendRepoRoot, "repo-root", "", "repo root (auto-detected if empty)")
+	trendCmd.Flags().Bool("json", false, "emit JSON array output")
+	trendCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(trendCmd)
 }

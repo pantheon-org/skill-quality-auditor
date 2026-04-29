@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -8,6 +9,28 @@ import (
 
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
 )
+
+// runTrend configures trendCmd flags and calls RunE, returning (stdout, error).
+func runTrend(t *testing.T, repoRoot string, asJSON bool) (string, error) {
+	t.Helper()
+	cmd := trendCmd
+	cmd.ResetFlags()
+	cmd.Flags().Bool("json", false, "")
+	cmd.Flags().String("repo-root", "", "")
+
+	if err := cmd.Flags().Set("repo-root", repoRoot); err != nil {
+		t.Fatalf("set repo-root: %v", err)
+	}
+	if asJSON {
+		if err := cmd.Flags().Set("json", "true"); err != nil {
+			t.Fatalf("set json: %v", err)
+		}
+	}
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.RunE(cmd, []string{})
+	return buf.String(), err
+}
 
 // ---- trendArrow ----
 
@@ -112,7 +135,6 @@ func TestGroupAuditsBySkill_groupsCorrectly(t *testing.T) {
 	writeAudit(t, dir, "2026-01-01", 80, "B")
 	writeAudit(t, dir, "2026-02-01", 90, "A-")
 
-	// groupAuditsBySkill expects auditsRoot/domain/skill/date/audit.json
 	auditsRoot := t.TempDir()
 	skillDir := filepath.Join(auditsRoot, "domain", "my-skill")
 	copyAudits(t, dir, skillDir)
@@ -164,12 +186,9 @@ func TestCollectTrends_skipsSkillWithOneAudit(t *testing.T) {
 	}
 }
 
-// TestBuildTrendEntry_unreadableNew: old audit exists, new audit is missing —
-// covers the second loadAuditJSON error return in buildTrendEntry.
 func TestBuildTrendEntry_unreadableNew(t *testing.T) {
 	dir := t.TempDir()
-	writeAudit(t, dir, "2026-01-01", 80, "B") // old exists
-	// new does NOT exist
+	writeAudit(t, dir, "2026-01-01", 80, "B")
 	paths := []string{
 		filepath.Join(dir, "2026-01-01", "audit.json"),
 		filepath.Join(dir, "2026-02-01", "audit.json"), // missing
@@ -180,11 +199,8 @@ func TestBuildTrendEntry_unreadableNew(t *testing.T) {
 	}
 }
 
-// TestGroupAuditsBySkill_shallowPath: audit.json at depth < 3 should be skipped
-// (covers the len(parts) < 3 early-return in the walk callback).
 func TestGroupAuditsBySkill_shallowPath(t *testing.T) {
 	root := t.TempDir()
-	// depth-2 path: root/2026-01-01/audit.json — only 2 slash-separated parts
 	dateDir := filepath.Join(root, "2026-01-01")
 	if err := os.MkdirAll(dateDir, 0o755); err != nil {
 		t.Fatal(err)
@@ -204,39 +220,28 @@ func TestGroupAuditsBySkill_shallowPath(t *testing.T) {
 
 // ---- trendCmd.RunE paths ----
 
-// TestTrendCmd_noAuditsDir exercises the !pathExists branch (auditsRoot does not exist).
 func TestTrendCmd_noAuditsDir(t *testing.T) {
-	origRoot := trendRepoRoot
-	trendRepoRoot = t.TempDir() // empty dir — no .context/audits subdir
-	defer func() { trendRepoRoot = origRoot }()
-
-	err := trendCmd.RunE(trendCmd, []string{})
+	repoRoot := t.TempDir() // empty dir — no .context/audits subdir
+	_, err := runTrend(t, repoRoot, false)
 	if err == nil {
 		t.Error("expected error when audits dir is missing")
 	}
 }
 
-// TestTrendCmd_emptyAudits exercises the len(entries)==0 branch.
 func TestTrendCmd_emptyAudits(t *testing.T) {
 	repoRoot := t.TempDir()
 	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
 	if err := os.MkdirAll(auditsRoot, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	// Single audit per skill — collectTrends returns 0 entries.
 	skillDir := filepath.Join(auditsRoot, "domain", "solo")
 	writeAudit(t, skillDir, "2026-01-01", 80, "B")
 
-	origRoot := trendRepoRoot
-	trendRepoRoot = repoRoot
-	defer func() { trendRepoRoot = origRoot }()
-
-	if err := trendCmd.RunE(trendCmd, []string{}); err != nil {
+	if _, err := runTrend(t, repoRoot, false); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
 
-// TestTrendCmd_jsonOutput exercises the trendJSON==true branch.
 func TestTrendCmd_jsonOutput(t *testing.T) {
 	repoRoot := t.TempDir()
 	auditsRoot := filepath.Join(repoRoot, ".context", "audits")
@@ -244,12 +249,7 @@ func TestTrendCmd_jsonOutput(t *testing.T) {
 	writeAudit(t, skillDir, "2026-01-01", 70, "C")
 	writeAudit(t, skillDir, "2026-02-01", 80, "B")
 
-	origRoot, origJSON := trendRepoRoot, trendJSON
-	trendRepoRoot = repoRoot
-	trendJSON = true
-	defer func() { trendRepoRoot = origRoot; trendJSON = origJSON }()
-
-	if err := trendCmd.RunE(trendCmd, []string{}); err != nil {
+	if _, err := runTrend(t, repoRoot, true); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -261,12 +261,11 @@ func TestPrintTrendTable_doesNotPanic(t *testing.T) {
 		{Skill: "domain/skill", OldDate: "2026-01-01", NewDate: "2026-02-01", OldScore: 80, NewScore: 100, OldGrade: "B", NewGrade: "A", Delta: 20, Trend: "↑"},
 		{Skill: "x", OldDate: "2026-01-01", NewDate: "2026-02-01", OldScore: 90, NewScore: 90, OldGrade: "A-", NewGrade: "A-", Delta: 0, Trend: "—"},
 	}
-	printTrendTable(entries)
+	printTrendTable(&bytes.Buffer{}, entries)
 }
 
 // ---- helpers ----
 
-// writeAudit creates <base>/<date>/audit.json with a minimal scorer.Result.
 func writeAudit(t *testing.T, base, date string, total int, grade string) {
 	t.Helper()
 	dir := filepath.Join(base, date)
@@ -280,7 +279,6 @@ func writeAudit(t *testing.T, base, date string, total int, grade string) {
 	}
 }
 
-// copyAudits copies date/<audit.json> subdirs from src into dst.
 func copyAudits(t *testing.T, src, dst string) {
 	t.Helper()
 	entries, err := os.ReadDir(src)

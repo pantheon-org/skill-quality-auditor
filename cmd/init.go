@@ -11,12 +11,6 @@ import (
 
 const skillName = "skill-quality-auditor"
 
-var (
-	initAgents []string
-	initGlobal bool
-	initMethod string
-)
-
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Install the skill-quality-auditor skill into agent environments",
@@ -24,7 +18,12 @@ var initCmd = &cobra.Command{
 skill directories. When no --agent flag is given, all agents whose global skill
 directory already exists on this machine are targeted automatically.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if initMethod != "copy" && initMethod != "symlink" {
+		out := cmd.OutOrStdout()
+		method, _ := cmd.Flags().GetString("method")
+		global, _ := cmd.Flags().GetBool("global")
+		agents, _ := cmd.Flags().GetStringArray("agent")
+
+		if method != "copy" && method != "symlink" {
 			return fmt.Errorf("--method must be 'copy' or 'symlink'")
 		}
 
@@ -33,17 +32,17 @@ directory already exists on this machine are targeted automatically.`,
 			return fmt.Errorf("cannot determine home directory: %w", err)
 		}
 
-		targets, err := resolveTargets(initAgents, homeDir, initGlobal)
+		targets, err := resolveTargets(agents, homeDir, global)
 		if err != nil {
 			return err
 		}
 		if len(targets) == 0 {
-			fmt.Println("No agent environments detected. Use --agent to specify one explicitly.")
+			fmt.Fprintln(out, "No agent environments detected. Use --agent to specify one explicitly.")
 			return nil
 		}
 
 		var canonical string
-		if initMethod == "symlink" {
+		if method == "symlink" {
 			canonical, err = writeCanonical(homeDir)
 			if err != nil {
 				return fmt.Errorf("write canonical skill: %w", err)
@@ -51,7 +50,7 @@ directory already exists on this machine are targeted automatically.`,
 		}
 
 		for _, a := range targets {
-			skillDir := filepath.Join(a.SkillDir(homeDir, initGlobal), skillName)
+			skillDir := filepath.Join(a.SkillDir(homeDir, global), skillName)
 			if err := os.MkdirAll(skillDir, 0o755); err != nil {
 				return fmt.Errorf("[%s] mkdir: %w", a.ID, err)
 			}
@@ -61,7 +60,7 @@ directory already exists on this machine are targeted automatically.`,
 				return fmt.Errorf("[%s] remove existing file: %w", a.ID, err)
 			}
 
-			if initMethod == "symlink" {
+			if method == "symlink" {
 				if err := os.Symlink(canonical, dest); err != nil {
 					return fmt.Errorf("[%s] symlink: %w", a.ID, err)
 				}
@@ -75,7 +74,7 @@ directory already exists on this machine are targeted automatically.`,
 				return fmt.Errorf("[%s] write references: %w", a.ID, err)
 			}
 
-			fmt.Printf("  ✓ %s → %s (%s)\n", a.ID, skillDir, initMethod)
+			fmt.Fprintf(out, "  ✓ %s → %s (%s)\n", a.ID, skillDir, method)
 		}
 		return nil
 	},
@@ -146,8 +145,8 @@ func writeRefs(destDir string) error {
 }
 
 func init() {
-	initCmd.Flags().StringArrayVar(&initAgents, "agent", nil, "agent(s) to install into (default: auto-detect)")
-	initCmd.Flags().BoolVarP(&initGlobal, "global", "g", false, "install to global skill directory (~/<agent>/skills/)")
-	initCmd.Flags().StringVar(&initMethod, "method", "symlink", "installation method: symlink or copy")
+	initCmd.Flags().StringArray("agent", nil, "agent(s) to install into (default: auto-detect)")
+	initCmd.Flags().BoolP("global", "g", false, "install to global skill directory (~/<agent>/skills/)")
+	initCmd.Flags().String("method", "symlink", "installation method: symlink or copy")
 	rootCmd.AddCommand(initCmd)
 }

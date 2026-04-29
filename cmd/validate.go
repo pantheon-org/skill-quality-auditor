@@ -55,7 +55,7 @@ Exit code 1 if any error is found.`,
 		if v.errors > 0 {
 			return fmt.Errorf("artifact validation failed (%d error(s))", v.errors)
 		}
-		fmt.Println("✓ artifact validation passed")
+		fmt.Fprintln(cmd.OutOrStdout(), "✓ artifact validation passed")
 		return nil
 	},
 }
@@ -329,8 +329,6 @@ func (v *artifactValidator) validateSkillMD(skillMD, skillName, content string) 
 // validate review
 // --------------------------------------------------------------------------
 
-var validateStrictRecommended bool
-
 var validateReviewCmd = &cobra.Command{
 	Use:   "review <report-file>",
 	Short: "Validate a review report against the required format",
@@ -355,7 +353,8 @@ Exit code 1 if any error is found.`,
 			}
 			reportPath = filepath.Join(repoRoot, reportPath)
 		}
-		return runValidateReview(reportPath, validateStrictRecommended)
+		strictRecommended, _ := cmd.Flags().GetBool("strict-recommended")
+		return runValidateReview(cmd, reportPath, strictRecommended)
 	},
 }
 
@@ -375,7 +374,7 @@ type reviewRequirements struct {
 	RecommendedCommands        []string   `json:"recommended_commands"`
 }
 
-func runValidateReview(reportPath string, strictRecommended bool) error {
+func runValidateReview(cmd *cobra.Command, reportPath string, strictRecommended bool) error {
 	reqData, err := embeddedRequirements.ReadFile("assets/requirements/review-report.requirements.json")
 	if err != nil {
 		return fmt.Errorf("cannot read embedded requirements: %w", err)
@@ -410,22 +409,23 @@ func runValidateReview(reportPath string, strictRecommended bool) error {
 	checkReviewDimensionLabels(content, req, addErr)
 	checkReviewCommands(content, req, addErr, addWarnOrErr)
 
+	errOut := cmd.ErrOrStderr()
 	if len(warns) > 0 {
-		fmt.Fprintf(os.Stderr, "Review format warnings for: %s\n", reportPath)
+		fmt.Fprintf(errOut, "Review format warnings for: %s\n", reportPath)
 		for _, w := range warns {
-			fmt.Fprintf(os.Stderr, "  - %s\n", w)
+			fmt.Fprintf(errOut, "  - %s\n", w)
 		}
 	}
 
 	if len(errs) > 0 {
-		fmt.Fprintf(os.Stderr, "Review format validation failed for: %s\n", reportPath)
+		fmt.Fprintf(errOut, "Review format validation failed for: %s\n", reportPath)
 		for _, e := range errs {
-			fmt.Fprintf(os.Stderr, "  - %s\n", e)
+			fmt.Fprintf(errOut, "  - %s\n", e)
 		}
 		return fmt.Errorf("validation failed (%d error(s))", len(errs))
 	}
 
-	fmt.Printf("✓ review format validation passed: %s\n", reportPath)
+	fmt.Fprintf(cmd.OutOrStdout(), "✓ review format validation passed: %s\n", reportPath)
 	return nil
 }
 
@@ -589,7 +589,7 @@ func h2GroupIndex(group, h2s []string) int {
 // --------------------------------------------------------------------------
 
 func init() {
-	validateReviewCmd.Flags().BoolVar(&validateStrictRecommended, "strict-recommended", false, "treat recommended items as errors")
+	validateReviewCmd.Flags().Bool("strict-recommended", false, "treat recommended items as errors")
 
 	validateCmd.AddCommand(validateArtifactsCmd)
 	validateCmd.AddCommand(validateReviewCmd)
