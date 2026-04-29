@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.6.0...v0.7.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** implement D3 SYMPTOM/CONSEQUENCE per-block detection ([#36](https://github.com/pantheon-org/skill-quality-auditor/issues/36)) ([73b554a](https://github.com/pantheon-org/skill-quality-auditor/commit/73b554afd6697ab641ad733325670554249315fc))
+
 ## [0.6.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.5.0...v0.6.0) (2026-04-29)
 
 
