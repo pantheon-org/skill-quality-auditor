@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.7.0...v0.8.0) (2026-04-29)
+
+
+### Features
+
+* **scorer:** D2 preconditions/postconditions/decision-point sub-scorers ([#44](https://github.com/pantheon-org/skill-quality-auditor/issues/44)) ([47d75eb](https://github.com/pantheon-org/skill-quality-auditor/commit/47d75ebf10e669c729226b28526dbb9568b5ba8d))
+* **scorer:** implement D8 outcome-linkage sub-criterion ([#39](https://github.com/pantheon-org/skill-quality-auditor/issues/39)) ([4967c17](https://github.com/pantheon-org/skill-quality-auditor/commit/4967c17ffbebf61f104e35ef19e315e6ff7bb001))
+
 ## [0.7.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.6.0...v0.7.0) (2026-04-29)
 
 
