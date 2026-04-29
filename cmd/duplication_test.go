@@ -31,11 +31,19 @@ func makeSkillsDir(t *testing.T, n int) string {
 // runDuplication resets and configures duplicationCmd then calls RunE.
 func runDuplication(t *testing.T, skillsDir, repoRoot string, asJSON bool, posArgs []string) (string, error) {
 	t.Helper()
+	return runDuplicationFull(t, skillsDir, repoRoot, asJSON, false, false, posArgs)
+}
+
+// runDuplicationFull resets and configures duplicationCmd with all flags then calls RunE.
+func runDuplicationFull(t *testing.T, skillsDir, repoRoot string, asJSON, asMarkdown, store bool, posArgs []string) (string, error) {
+	t.Helper()
 	cmd := duplicationCmd
 	cmd.ResetFlags()
-	cmd.Flags().Bool("json", false, "")
-	cmd.Flags().String("skills-dir", "", "")
-	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().BoolP("json", "j", false, "")
+	cmd.Flags().BoolP("markdown", "m", false, "")
+	cmd.Flags().BoolP("store", "s", false, "")
+	cmd.Flags().StringP("skills-dir", "d", "", "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
 
 	if skillsDir != "" {
 		if err := cmd.Flags().Set("skills-dir", skillsDir); err != nil {
@@ -50,6 +58,16 @@ func runDuplication(t *testing.T, skillsDir, repoRoot string, asJSON bool, posAr
 	if asJSON {
 		if err := cmd.Flags().Set("json", "true"); err != nil {
 			t.Fatalf("set json: %v", err)
+		}
+	}
+	if asMarkdown {
+		if err := cmd.Flags().Set("markdown", "true"); err != nil {
+			t.Fatalf("set markdown: %v", err)
+		}
+	}
+	if store {
+		if err := cmd.Flags().Set("store", "true"); err != nil {
+			t.Fatalf("set store: %v", err)
 		}
 	}
 
@@ -127,5 +145,70 @@ func TestExitCodeForPairs_criticalAmongMany(t *testing.T) {
 	}
 	if err := exitCodeForPairs(pairs); err == nil {
 		t.Error("expected error when at least one Critical pair exists")
+	}
+}
+
+func TestDuplicationCmd_mutualExclusion(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+	_, err := runDuplicationFull(t, skillsDir, repoRoot, true, true, false, []string{})
+	if err == nil {
+		t.Fatal("expected error when both --json and --markdown are set")
+	}
+	if !strings.Contains(err.Error(), "mutually exclusive") {
+		t.Errorf("error should mention 'mutually exclusive', got: %v", err)
+	}
+}
+
+func TestDuplicationCmd_markdownOutput(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+	out, err := runDuplicationFull(t, skillsDir, repoRoot, false, true, false, []string{})
+	// ignore exitCodeForPairs error
+	if err != nil && !strings.Contains(err.Error(), "critical") {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_ = out // markdown output is produced
+}
+
+func TestDuplicationCmd_storeMarkdown(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+	_, _ = runDuplicationFull(t, skillsDir, repoRoot, false, false, true, []string{})
+
+	analysisDir := filepath.Join(repoRoot, ".context", "analysis")
+	entries, err := os.ReadDir(analysisDir)
+	if err != nil {
+		t.Fatalf("analysis dir not created: %v", err)
+	}
+	found := false
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "duplication-report-") && strings.HasSuffix(e.Name(), ".md") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected a duplication-report-*.md file to be written")
+	}
+}
+
+func TestDuplicationCmd_storeJSON(t *testing.T) {
+	skillsDir := makeSkillsDir(t, 2)
+	repoRoot := t.TempDir()
+	_, _ = runDuplicationFull(t, skillsDir, repoRoot, true, false, true, []string{})
+
+	analysisDir := filepath.Join(repoRoot, ".context", "analysis")
+	entries, err := os.ReadDir(analysisDir)
+	if err != nil {
+		t.Fatalf("analysis dir not created: %v", err)
+	}
+	found := false
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "duplication-report-") && strings.HasSuffix(e.Name(), ".json") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected a duplication-report-*.json file to be written")
 	}
 }

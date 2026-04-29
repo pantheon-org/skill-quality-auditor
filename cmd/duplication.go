@@ -51,27 +51,41 @@ var duplicationCmd = &cobra.Command{
 		date := time.Now().Format("2006-01-02")
 
 		asJSON, _ := cmd.Flags().GetBool("json")
+		asMarkdown, _ := cmd.Flags().GetBool("markdown")
+		if asJSON && asMarkdown {
+			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		}
+		store, _ := cmd.Flags().GetBool("store")
+
+		var rawBytes []byte
 		if asJSON {
 			data, err := json.MarshalIndent(pairs, "", "  ")
 			if err != nil {
 				return fmt.Errorf("marshal pairs: %w", err)
 			}
+			rawBytes = data
 			fmt.Fprintln(out, string(data))
-			return exitCodeForPairs(pairs)
+		} else {
+			report := reporter.DuplicationReport(pairs, entries, date)
+			rawBytes = []byte(report)
+			fmt.Fprint(out, report)
 		}
 
-		report := reporter.DuplicationReport(pairs, entries, date)
-		fmt.Fprint(out, report)
-
-		outDir := filepath.Join(repoRoot, ".context", "analysis")
-		if err := os.MkdirAll(outDir, 0o755); err != nil {
-			return fmt.Errorf("create analysis dir: %w", err)
+		if store {
+			ext := ".md"
+			if asJSON {
+				ext = ".json"
+			}
+			outDir := filepath.Join(repoRoot, ".context", "analysis")
+			if err := os.MkdirAll(outDir, 0o755); err != nil {
+				return fmt.Errorf("create analysis dir: %w", err)
+			}
+			outFile := filepath.Join(outDir, fmt.Sprintf("duplication-report-%s%s", date, ext))
+			if err := os.WriteFile(outFile, rawBytes, 0o644); err != nil {
+				return fmt.Errorf("write report: %w", err)
+			}
+			fmt.Fprintf(cmd.ErrOrStderr(), "report written to %s\n", outFile)
 		}
-		outFile := filepath.Join(outDir, fmt.Sprintf("duplication-report-%s.md", date))
-		if err := os.WriteFile(outFile, []byte(report), 0o644); err != nil {
-			return fmt.Errorf("write report: %w", err)
-		}
-		fmt.Fprintf(cmd.ErrOrStderr(), "report written to %s\n", outFile)
 
 		return exitCodeForPairs(pairs)
 	},
@@ -87,8 +101,10 @@ func exitCodeForPairs(pairs []duplication.Pair) error {
 }
 
 func init() {
-	duplicationCmd.Flags().Bool("json", false, "emit JSON array output")
-	duplicationCmd.Flags().String("skills-dir", "", "skills directory (default: <repo-root>/skills)")
-	duplicationCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
+	duplicationCmd.Flags().BoolP("json", "j", false, "emit JSON array output")
+	duplicationCmd.Flags().BoolP("markdown", "m", false, "emit Markdown output (default)")
+	duplicationCmd.Flags().BoolP("store", "s", false, "persist report to .context/analysis/")
+	duplicationCmd.Flags().StringP("skills-dir", "d", "", "skills directory (default: <repo-root>/skills)")
+	duplicationCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(duplicationCmd)
 }
