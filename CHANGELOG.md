@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.9.0...v0.10.0) (2026-04-29)
+
+
+### Features
+
+* **analyze:** add --json flag and add flag shorthands ([#54](https://github.com/pantheon-org/skill-quality-auditor/issues/54)) ([0ee0d5b](https://github.com/pantheon-org/skill-quality-auditor/commit/0ee0d5bbb1de336460aac4324da8f74f019036f8))
+* **batch:** add --markdown flag and add flag shorthands ([#56](https://github.com/pantheon-org/skill-quality-auditor/issues/56)) ([0322889](https://github.com/pantheon-org/skill-quality-auditor/commit/0322889012c55177cbed7716b0a9fb2a7f57d690))
+* **duplication,trend:** add --markdown and --store flags and add shorthands ([#57](https://github.com/pantheon-org/skill-quality-auditor/issues/57)) ([52b5ad0](https://github.com/pantheon-org/skill-quality-auditor/commit/52b5ad0d4f3d4ff47b8df2dd51569300d95570e5))
+
 ## [0.9.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.2...v0.9.0) (2026-04-29)
 
 
