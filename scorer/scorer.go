@@ -21,6 +21,7 @@ func Score(ctx context.Context, skillPath string) (*Result, error) {
 func ScoreFromContent(_ context.Context, skillPath, content, evalsDir string) (*Result, error) {
 	skillDir := filepath.Dir(skillPath)
 	bridge := newValidatorBridge(skillDir)
+	bridge.rawContent = content
 
 	// D5 returns metadata beyond the score; capture via closure side-effect.
 	var lines, refCount int
@@ -40,8 +41,8 @@ func ScoreFromContent(_ context.Context, skillPath, content, evalsDir string) (*
 			lines, refCount, hasRefs = l, rc, hr
 			return s, nil
 		}},
-		{AllDimensions[5], func(_, _ string, b *validatorBridge) (int, []Diagnostic) {
-			return scoreD6(b)
+		{AllDimensions[5], func(c, _ string, b *validatorBridge) (int, []Diagnostic) {
+			return scoreD6(c, b)
 		}},
 		{AllDimensions[6], func(_, _ string, b *validatorBridge) (int, []Diagnostic) {
 			return scoreD7(b)
