@@ -16,7 +16,10 @@ var remediateCmd = &cobra.Command{
 	Long: `Generate a schema-compliant remediation plan from a stored audit result.
 
 With --validate, parses an existing plan file and checks it against the
-remediation-plan.schema.json constraints instead of generating a new plan.`,
+remediation-plan.schema.json constraints instead of generating a new plan.
+
+Use --json to emit the plan as JSON instead of Markdown.
+Use --dry-run to print the plan to stdout without writing to .context/plans/.`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
@@ -38,6 +41,9 @@ remediation-plan.schema.json constraints instead of generating a new plan.`,
 
 func runGenerate(cmd *cobra.Command, skillArg, repoRoot string, targetScore int) error {
 	out := cmd.OutOrStdout()
+	asJSON, _ := cmd.Flags().GetBool("json")
+	dryRun, _ := cmd.Flags().GetBool("dry-run")
+
 	// Locate the most recent stored audit for this skill.
 	auditsBase := filepath.Join(repoRoot, ".context", "audits", skillArg)
 	auditJSON, auditDate, err := latestAuditJSON(auditsBase)
@@ -53,9 +59,27 @@ func runGenerate(cmd *cobra.Command, skillArg, repoRoot string, targetScore int)
 	auditPath := fmt.Sprintf(".context/audits/%s/%s/Analysis.md", skillArg, auditDate)
 	date := time.Now().Format("2006-01-02")
 
-	plan, err := reporter.RemediationPlan(result, targetScore, auditPath, date)
-	if err != nil {
-		return fmt.Errorf("generate plan: %w", err)
+	var content string
+	var ext string
+	if asJSON {
+		raw, err := reporter.RemediationPlanJSON(result, targetScore, auditPath, date)
+		if err != nil {
+			return fmt.Errorf("generate plan: %w", err)
+		}
+		content = string(raw)
+		ext = ".json"
+	} else {
+		plan, err := reporter.RemediationPlan(result, targetScore, auditPath, date)
+		if err != nil {
+			return fmt.Errorf("generate plan: %w", err)
+		}
+		content = plan
+		ext = ".md"
+	}
+
+	if dryRun {
+		fmt.Fprint(out, content)
+		return nil
 	}
 
 	outDir := filepath.Join(repoRoot, ".context", "plans")
@@ -64,12 +88,12 @@ func runGenerate(cmd *cobra.Command, skillArg, repoRoot string, targetScore int)
 	}
 
 	skillBase := filepath.Base(skillArg)
-	outFile := filepath.Join(outDir, skillBase+"-remediation-plan.md")
-	if err := os.WriteFile(outFile, []byte(plan), 0o644); err != nil {
+	outFile := filepath.Join(outDir, skillBase+"-remediation-plan"+ext)
+	if err := os.WriteFile(outFile, []byte(content), 0o644); err != nil {
 		return fmt.Errorf("write plan: %w", err)
 	}
 
-	fmt.Fprint(out, plan)
+	fmt.Fprint(out, content)
 	fmt.Fprintf(cmd.ErrOrStderr(), "plan written to %s\n", outFile)
 	return nil
 }
@@ -101,8 +125,10 @@ func runValidate(cmd *cobra.Command, planArg, repoRoot string) error {
 }
 
 func init() {
-	remediateCmd.Flags().Int("target-score", 0, "target score (default: current+20, max 140)")
-	remediateCmd.Flags().Bool("validate", false, "validate an existing plan file instead of generating")
-	remediateCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
+	remediateCmd.Flags().IntP("target-score", "t", 0, "target score (default: current+20, max 140)")
+	remediateCmd.Flags().BoolP("validate", "v", false, "validate an existing plan file instead of generating")
+	remediateCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
+	remediateCmd.Flags().BoolP("json", "j", false, "emit the plan as JSON instead of Markdown")
+	remediateCmd.Flags().BoolP("dry-run", "n", false, "print plan to stdout without writing to .context/plans/")
 	rootCmd.AddCommand(remediateCmd)
 }

@@ -17,9 +17,11 @@ func newRemediateCmd(t *testing.T) (*bytes.Buffer, *cobra.Command) {
 	t.Helper()
 	cmd := remediateCmd
 	cmd.ResetFlags()
-	cmd.Flags().Int("target-score", 0, "")
-	cmd.Flags().Bool("validate", false, "")
-	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().IntP("target-score", "t", 0, "")
+	cmd.Flags().BoolP("validate", "v", false, "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
+	cmd.Flags().BoolP("json", "j", false, "")
+	cmd.Flags().BoolP("dry-run", "n", false, "")
 	buf := &bytes.Buffer{}
 	cmd.SetOut(buf)
 	return buf, cmd
@@ -70,6 +72,152 @@ func TestRunGenerate_valid(t *testing.T) {
 	planPath := filepath.Join(root, ".context", "plans", "my-skill-remediation-plan.md")
 	if _, err := os.Stat(planPath); err != nil {
 		t.Errorf("plan file not written to %s: %v", planPath, err)
+	}
+}
+
+func TestRunGenerate_dryRun(t *testing.T) {
+	buf, cmd := newRemediateCmd(t)
+	root := t.TempDir()
+	skill := "test/dry-skill"
+	date := "2026-04-29"
+
+	auditDir := filepath.Join(root, ".context", "audits", skill, date)
+	if err := os.MkdirAll(auditDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	result := &scorer.Result{
+		Skill:    skill,
+		Date:     date,
+		Total:    80,
+		MaxTotal: 140,
+		Grade:    "C",
+		Dimensions: map[string]int{
+			"D1": 12, "D2": 10, "D3": 8, "D4": 10,
+			"D5": 10, "D6": 10, "D7": 6, "D8": 10, "D9": 4,
+		},
+	}
+	data, _ := json.Marshal(result)
+	if err := os.WriteFile(filepath.Join(auditDir, "audit.json"), data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cmd.Flags().Set("dry-run", "true"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := runGenerate(cmd, skill, root, 0); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// With --dry-run, no plan file should be written.
+	planPath := filepath.Join(root, ".context", "plans", "dry-skill-remediation-plan.md")
+	if _, err := os.Stat(planPath); err == nil {
+		t.Error("plan file should not be written in dry-run mode")
+	}
+
+	// Output should be non-empty (plan printed to stdout).
+	if buf.Len() == 0 {
+		t.Error("expected plan output on stdout in dry-run mode")
+	}
+}
+
+func TestRunGenerate_jsonOutput(t *testing.T) {
+	buf, cmd := newRemediateCmd(t)
+	root := t.TempDir()
+	skill := "test/json-skill"
+	date := "2026-04-29"
+
+	auditDir := filepath.Join(root, ".context", "audits", skill, date)
+	if err := os.MkdirAll(auditDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	result := &scorer.Result{
+		Skill:    skill,
+		Date:     date,
+		Total:    80,
+		MaxTotal: 140,
+		Grade:    "C",
+		Dimensions: map[string]int{
+			"D1": 12, "D2": 10, "D3": 8, "D4": 10,
+			"D5": 10, "D6": 10, "D7": 6, "D8": 10, "D9": 4,
+		},
+	}
+	data, _ := json.Marshal(result)
+	if err := os.WriteFile(filepath.Join(auditDir, "audit.json"), data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cmd.Flags().Set("json", "true"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := runGenerate(cmd, skill, root, 0); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Output should be valid JSON.
+	var out map[string]interface{}
+	if err := json.Unmarshal(buf.Bytes(), &out); err != nil {
+		t.Errorf("expected valid JSON output, got: %v\noutput: %s", err, buf.String())
+	}
+
+	// Plan file should be written as .json.
+	planPath := filepath.Join(root, ".context", "plans", "json-skill-remediation-plan.json")
+	if _, err := os.Stat(planPath); err != nil {
+		t.Errorf("expected JSON plan file at %s: %v", planPath, err)
+	}
+}
+
+func TestRunGenerate_jsonDryRun(t *testing.T) {
+	buf, cmd := newRemediateCmd(t)
+	root := t.TempDir()
+	skill := "test/json-dry-skill"
+	date := "2026-04-29"
+
+	auditDir := filepath.Join(root, ".context", "audits", skill, date)
+	if err := os.MkdirAll(auditDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	result := &scorer.Result{
+		Skill:    skill,
+		Date:     date,
+		Total:    80,
+		MaxTotal: 140,
+		Grade:    "C",
+		Dimensions: map[string]int{
+			"D1": 12, "D2": 10, "D3": 8, "D4": 10,
+			"D5": 10, "D6": 10, "D7": 6, "D8": 10, "D9": 4,
+		},
+	}
+	data, _ := json.Marshal(result)
+	if err := os.WriteFile(filepath.Join(auditDir, "audit.json"), data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cmd.Flags().Set("json", "true"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Flags().Set("dry-run", "true"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := runGenerate(cmd, skill, root, 0); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Output should be valid JSON.
+	var out map[string]interface{}
+	if err := json.Unmarshal(buf.Bytes(), &out); err != nil {
+		t.Errorf("expected valid JSON output, got: %v\noutput: %s", err, buf.String())
+	}
+
+	// No file should be written.
+	planDir := filepath.Join(root, ".context", "plans")
+	if _, err := os.Stat(planDir); err == nil {
+		t.Error("plans directory should not be created in dry-run mode")
 	}
 }
 

@@ -5,6 +5,7 @@
 package reporter
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"sort"
@@ -17,81 +18,81 @@ import (
 // ---- YAML structs matching remediation-plan.schema.json ----
 
 type remPlanFrontmatter struct {
-	PlanDate         string                `yaml:"plan_date"`
-	SkillName        string                `yaml:"skill_name"`
-	SourceAudit      string                `yaml:"source_audit"`
-	ExecutiveSummary remExecSummary        `yaml:"executive_summary"`
-	CriticalIssues   []remCritical         `yaml:"critical_issues"`
-	RemPhases        []remPhase            `yaml:"remediation_phases"`
-	VerifCmds        []string              `yaml:"verification_commands"`
-	SuccessCriteria  []remSuccessCriterion `yaml:"success_criteria"`
-	EffortEstimates  []remEffort           `yaml:"effort_estimates"`
-	Dependencies     []string              `yaml:"dependencies"`
-	RollbackPlan     string                `yaml:"rollback_plan"`
-	Notes            remNotes              `yaml:"notes"`
+	PlanDate         string                `yaml:"plan_date"          json:"plan_date"`
+	SkillName        string                `yaml:"skill_name"         json:"skill_name"`
+	SourceAudit      string                `yaml:"source_audit"       json:"source_audit"`
+	ExecutiveSummary remExecSummary        `yaml:"executive_summary"  json:"executive_summary"`
+	CriticalIssues   []remCritical         `yaml:"critical_issues"    json:"critical_issues"`
+	RemPhases        []remPhase            `yaml:"remediation_phases" json:"remediation_phases"`
+	VerifCmds        []string              `yaml:"verification_commands" json:"verification_commands"`
+	SuccessCriteria  []remSuccessCriterion `yaml:"success_criteria"   json:"success_criteria"`
+	EffortEstimates  []remEffort           `yaml:"effort_estimates"   json:"effort_estimates"`
+	Dependencies     []string              `yaml:"dependencies"       json:"dependencies"`
+	RollbackPlan     string                `yaml:"rollback_plan"      json:"rollback_plan"`
+	Notes            remNotes              `yaml:"notes"              json:"notes"`
 }
 
 type remExecSummary struct {
-	Score      remScoreRange `yaml:"score"`
-	Grade      remGradeRange `yaml:"grade"`
-	Priority   string        `yaml:"priority"`
-	Effort     string        `yaml:"effort"`
-	FocusAreas []string      `yaml:"focus_areas"`
-	Verdict    string        `yaml:"verdict"`
+	Score      remScoreRange `yaml:"score"        json:"score"`
+	Grade      remGradeRange `yaml:"grade"        json:"grade"`
+	Priority   string        `yaml:"priority"     json:"priority"`
+	Effort     string        `yaml:"effort"       json:"effort"`
+	FocusAreas []string      `yaml:"focus_areas"  json:"focus_areas"`
+	Verdict    string        `yaml:"verdict"      json:"verdict"`
 }
 
 type remScoreRange struct {
-	Current string `yaml:"current"`
-	Target  string `yaml:"target"`
+	Current string `yaml:"current" json:"current"`
+	Target  string `yaml:"target"  json:"target"`
 }
 
 type remGradeRange struct {
-	Current string `yaml:"current"`
-	Target  string `yaml:"target"`
+	Current string `yaml:"current" json:"current"`
+	Target  string `yaml:"target"  json:"target"`
 }
 
 type remCritical struct {
-	Issue     string `yaml:"issue"`
-	Dimension string `yaml:"dimension"`
-	Severity  string `yaml:"severity"`
-	Impact    string `yaml:"impact"`
+	Issue     string `yaml:"issue"      json:"issue"`
+	Dimension string `yaml:"dimension"  json:"dimension"`
+	Severity  string `yaml:"severity"   json:"severity"`
+	Impact    string `yaml:"impact"     json:"impact"`
 }
 
 type remPhase struct {
-	Phase     int       `yaml:"phase"`
-	Dimension string    `yaml:"dimension"`
-	Priority  string    `yaml:"priority"`
-	Target    string    `yaml:"target"`
-	Steps     []remStep `yaml:"steps"`
+	Phase     int       `yaml:"phase"     json:"phase"`
+	Dimension string    `yaml:"dimension" json:"dimension"`
+	Priority  string    `yaml:"priority"  json:"priority"`
+	Target    string    `yaml:"target"    json:"target"`
+	Steps     []remStep `yaml:"steps"     json:"steps"`
 }
 
 type remStep struct {
-	Step        string   `yaml:"step"`
-	Title       string   `yaml:"title"`
-	Description string   `yaml:"description"`
-	File        string   `yaml:"file,omitempty"`
-	CodeBlock   *remCode `yaml:"code_block,omitempty"`
+	Step        string   `yaml:"step"                  json:"step"`
+	Title       string   `yaml:"title"                 json:"title"`
+	Description string   `yaml:"description"           json:"description"`
+	File        string   `yaml:"file,omitempty"        json:"file,omitempty"`
+	CodeBlock   *remCode `yaml:"code_block,omitempty"  json:"code_block,omitempty"`
 }
 
 type remCode struct {
-	Language string `yaml:"language"`
-	Content  string `yaml:"content"`
+	Language string `yaml:"language" json:"language"`
+	Content  string `yaml:"content"  json:"content"`
 }
 
 type remSuccessCriterion struct {
-	Criterion   string `yaml:"criterion"`
-	Measurement string `yaml:"measurement"`
+	Criterion   string `yaml:"criterion"   json:"criterion"`
+	Measurement string `yaml:"measurement" json:"measurement"`
 }
 
 type remEffort struct {
-	Phase  string `yaml:"phase"`
-	Effort string `yaml:"effort"`
-	Time   string `yaml:"time"`
+	Phase  string `yaml:"phase"  json:"phase"`
+	Effort string `yaml:"effort" json:"effort"`
+	Time   string `yaml:"time"   json:"time"`
 }
 
 type remNotes struct {
-	Rating     string `yaml:"rating"`
-	Assessment string `yaml:"assessment"`
+	Rating     string `yaml:"rating"     json:"rating"`
+	Assessment string `yaml:"assessment" json:"assessment"`
 }
 
 // ---- Generation ----
@@ -120,6 +121,31 @@ func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) 
 	}
 
 	return renderRemediationPlan(r, fm, gaps, targetScore, date)
+}
+
+// RemediationPlanJSON returns the remediation plan data as a JSON byte slice.
+// targetScore semantics are identical to RemediationPlan.
+func RemediationPlanJSON(r *scorer.Result, targetScore int, auditPath, date string) ([]byte, error) {
+	if targetScore > 0 && targetScore <= r.Total {
+		return nil, fmt.Errorf("targetScore %d must exceed current score %d", targetScore, r.Total)
+	}
+	if targetScore <= 0 || targetScore > 140 {
+		targetScore = r.Total + 20
+		if targetScore > 140 {
+			targetScore = 140
+		}
+	}
+
+	skillName := planSkillName(r.Skill)
+	if auditPath == "" {
+		auditPath = fmt.Sprintf(".context/audits/%s/%s/Analysis.md", skillName, r.Date)
+	}
+
+	fm, _, err := buildRemediationFrontmatter(r, targetScore, skillName, auditPath, date)
+	if err != nil {
+		return nil, err
+	}
+	return json.MarshalIndent(fm, "", "  ")
 }
 
 func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, auditPath, date string) (remPlanFrontmatter, []gap, error) {
