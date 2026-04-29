@@ -50,11 +50,11 @@ var duplicationCmd = &cobra.Command{
 		pairs := duplication.Detect(entries)
 		date := time.Now().Format("2006-01-02")
 
-		asJSON, _ := cmd.Flags().GetBool("json")
-		asMarkdown, _ := cmd.Flags().GetBool("markdown")
-		if asJSON && asMarkdown {
-			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		format, err := resolveOutputFormat(cmd, OutputFormatMarkdown)
+		if err != nil {
+			return err
 		}
+		asJSON := format == OutputFormatJSON
 		store, _ := cmd.Flags().GetBool("store")
 
 		var rawBytes []byte

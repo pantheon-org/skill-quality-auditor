@@ -63,16 +63,11 @@ var analyzeCmd = &cobra.Command{
 
 		date := time.Now().Format("2006-01-02")
 
-		asJSON, _ := cmd.Flags().GetBool("json")
-		asMarkdown, _ := cmd.Flags().GetBool("markdown")
-		if asJSON && asMarkdown {
-			return fmt.Errorf("--json and --markdown are mutually exclusive")
+		format, err := resolveOutputFormat(cmd, OutputFormatJSON)
+		if err != nil {
+			return err
 		}
-		if asMarkdown {
-			asJSON = false
-		} else {
-			asJSON = true
-		}
+		asJSON := format == OutputFormatJSON
 
 		semantic, _ := cmd.Flags().GetBool("semantic")
 		patterns, _ := cmd.Flags().GetBool("patterns")
