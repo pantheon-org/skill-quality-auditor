@@ -17,12 +17,12 @@ func Analysis(r *scorer.Result) string {
 	fmt.Fprintf(&sb, "## Dimension Scores\n\n")
 	fmt.Fprintf(&sb, "| Dimension | Score | Max |\n")
 	fmt.Fprintf(&sb, "|---|---|---|\n")
-	for _, d := range dimensionOrder {
-		score, ok := r.Dimensions[d.key]
+	for _, d := range scorer.AllDimensions {
+		score, ok := r.Dimensions[d.Key]
 		if !ok {
 			continue
 		}
-		fmt.Fprintf(&sb, "| %s | %d | %d |\n", d.label, score, d.max)
+		fmt.Fprintf(&sb, "| %s | %d | %d |\n", d.Label, score, d.Max)
 	}
 
 	if len(r.ErrorDetails) > 0 || len(r.WarningDetails) > 0 {

@@ -376,14 +376,14 @@ func planSkillName(skill string) string {
 }
 
 func buildGaps(r *scorer.Result) []gap {
-	gaps := make([]gap, 0, len(dimensionOrder))
-	for _, d := range dimensionOrder {
-		score, ok := r.Dimensions[d.key]
+	gaps := make([]gap, 0, len(scorer.AllDimensions))
+	for _, d := range scorer.AllDimensions {
+		score, ok := r.Dimensions[d.Key]
 		if !ok {
 			continue
 		}
-		if score < d.max {
-			gaps = append(gaps, gap{key: d.key, label: d.label, score: score, max: d.max})
+		if score < d.Max {
+			gaps = append(gaps, gap{key: d.Key, label: d.Label, score: score, max: d.Max})
 		}
 	}
 	return gaps

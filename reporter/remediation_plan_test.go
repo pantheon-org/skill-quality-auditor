@@ -13,8 +13,8 @@ func makeResultWithScore(total int) *scorer.Result {
 	grade := scorer.Grade(total)
 	// distribute score proportionally across dimensions
 	dims := map[string]int{}
-	for _, d := range dimensionOrder {
-		dims[d.key] = d.max * total / 140
+	for _, d := range scorer.AllDimensions {
+		dims[d.Key] = d.Max * total / 140
 	}
 	return &scorer.Result{
 		Skill:      "tools/my-skill",
@@ -85,8 +85,8 @@ func TestRemediationPlan_targetScoreCappedAt140(t *testing.T) {
 
 func TestRemediationPlan_perfectScore(t *testing.T) {
 	r := makeResultWithScore(140)
-	for _, d := range dimensionOrder {
-		r.Dimensions[d.key] = d.max
+	for _, d := range scorer.AllDimensions {
+		r.Dimensions[d.Key] = d.Max
 	}
 	r.Total = 140
 	r.Grade = "A+"
@@ -404,8 +404,8 @@ func TestSplitAdviceIntoSteps_alreadyEndsWithDot(t *testing.T) {
 
 func TestBuildGaps_allAtMax(t *testing.T) {
 	r := makeResultWithScore(140)
-	for _, d := range dimensionOrder {
-		r.Dimensions[d.key] = d.max
+	for _, d := range scorer.AllDimensions {
+		r.Dimensions[d.Key] = d.Max
 	}
 	gaps := buildGaps(r)
 	if len(gaps) != 0 {

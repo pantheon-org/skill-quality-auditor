@@ -4,6 +4,38 @@ import (
 	"strings"
 )
 
+// Dimension is the canonical descriptor for one scoring rubric dimension.
+type Dimension struct {
+	Code  string // "D1"–"D9"
+	Key   string // camelCase map key used in Result.Dimensions
+	Label string // human-readable display name
+	Max   int    // maximum points for this dimension
+}
+
+// AllDimensions is the single source of truth for all nine scoring dimensions,
+// in canonical display order.
+var AllDimensions = []Dimension{
+	{"D1", "knowledgeDelta", "Knowledge Delta", 20},
+	{"D2", "mindsetProcedures", "Mindset + Procedures", 15},
+	{"D3", "antiPatternQuality", "Anti-Pattern Quality", 15},
+	{"D4", "specificationCompliance", "Specification Compliance", 15},
+	{"D5", "progressiveDisclosure", "Progressive Disclosure", 15},
+	{"D6", "freedomCalibration", "Freedom Calibration", 15},
+	{"D7", "patternRecognition", "Pattern Recognition", 10},
+	{"D8", "practicalUsability", "Practical Usability", 15},
+	{"D9", "evalValidation", "Eval Validation", 20},
+}
+
+// dimensionScores builds the Result.Dimensions map from the nine raw scores in AllDimensions order.
+func dimensionScores(d1, d2, d3, d4, d5, d6, d7, d8, d9 int) map[string]int {
+	scores := []int{d1, d2, d3, d4, d5, d6, d7, d8, d9}
+	m := make(map[string]int, len(AllDimensions))
+	for i, d := range AllDimensions {
+		m[d.Key] = scores[i]
+	}
+	return m
+}
+
 // DimensionScore holds the score and max for a single rubric dimension.
 // Used internally; not serialized directly.
 type DimensionScore struct {

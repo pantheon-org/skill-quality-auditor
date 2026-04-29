@@ -70,16 +70,6 @@ func ScoreFromContent(_ context.Context, skillPath, content, evalsDir string) (*
 		Warnings:                  len(warningDetails),
 		ErrorDetails:              errorDetails,
 		WarningDetails:            warningDetails,
-		Dimensions: map[string]int{
-			"knowledgeDelta":          d1,
-			"mindsetProcedures":       d2,
-			"antiPatternQuality":      d3,
-			"specificationCompliance": d4,
-			"progressiveDisclosure":   d5,
-			"freedomCalibration":      d6,
-			"patternRecognition":      d7,
-			"practicalUsability":      d8,
-			"evalValidation":          d9,
-		},
+		Dimensions:                dimensionScores(d1, d2, d3, d4, d5, d6, d7, d8, d9),
 	}, nil
 }
