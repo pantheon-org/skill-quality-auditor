@@ -15,7 +15,29 @@ func TestD5_WithRefsShort(t *testing.T) {
 	if err := writeRefFile(tmpDir, "deep.md", "# Deep Reference"); err != nil {
 		t.Fatal(err)
 	}
-	// 50+3 = 53 lines < 100 → 15
+	// 50+3 = 53 lines < 100 → heuristic 13 + 0 negScore (no table rows) = 13
+	if score := scoreD5(content, tmpDir, nilBridge()); score != 13 {
+		t.Errorf("want 13, got %d", score)
+	}
+}
+
+func TestD5_WithRefsShort_NegativeConditions(t *testing.T) {
+	// compact content with a table row containing negative-trigger language
+	var sb strings.Builder
+	sb.WriteString("---\ndescription: x\n---\n")
+	for i := 0; i < 50; i++ {
+		sb.WriteString("line content here\n")
+	}
+	// inject a table row with "skip if" language — should add 2 pts
+	sb.WriteString("| Reference | When to Load | When to Skip |\n")
+	sb.WriteString("| deep.md | Always | skip if context is minimal |\n")
+	content := sb.String()
+
+	tmpDir := t.TempDir()
+	if err := writeRefFile(tmpDir, "deep.md", "# Deep Reference"); err != nil {
+		t.Fatal(err)
+	}
+	// heuristic 13 + 2 negScore = 15
 	if score := scoreD5(content, tmpDir, nilBridge()); score != 15 {
 		t.Errorf("want 15, got %d", score)
 	}
@@ -96,8 +118,8 @@ func TestD5_TokenPath_WithRefs(t *testing.T) {
 	// Since validatorBridge.skillMDTokens() reads b.Structure.TokenCounts,
 	// we test the token path indirectly through scoreD5ByTokens directly.
 	score, _, _, _ := scoreD5ByTokens(600, 50, 1, true)
-	if score != 15 {
-		t.Errorf("tokens=600 with refs: want 15, got %d", score)
+	if score != 13 {
+		t.Errorf("tokens=600 with refs: want 13, got %d", score)
 	}
 	score, _, _, _ = scoreD5ByTokens(1000, 120, 1, true)
 	if score != 13 {
@@ -129,6 +151,68 @@ func TestD5_TokenPath_NoRefs(t *testing.T) {
 		if score != tc.want {
 			t.Errorf("tokens=%d no refs: want %d, got %d", tc.tokens, tc.want, score)
 		}
+	}
+}
+
+func TestScoreNegativeConditions(t *testing.T) {
+	cases := []struct {
+		desc    string
+		content string
+		want    int
+	}{
+		{
+			desc:    "0 pts: no table rows at all",
+			content: "# Some skill\n\nJust prose here.\n",
+			want:    0,
+		},
+		{
+			desc:    "0 pts: table rows without keywords",
+			content: "| Reference | When to Load |\n| deep.md | Always |\n",
+			want:    0,
+		},
+		{
+			desc:    "0 pts: keyword in prose only (false-positive guard)",
+			content: "You can skip if you have time, but otherwise load.\n\nNo table rows here.\n",
+			want:    0,
+		},
+		{
+			desc:    "2 pts: skip if in table row",
+			content: "| Reference | When to Skip |\n| deep.md | skip if context is minimal |\n",
+			want:    2,
+		},
+		{
+			desc:    "2 pts: only when in table row",
+			content: "| Ref | Condition |\n| guide.md | only when auth is required |\n",
+			want:    2,
+		},
+		{
+			desc:    "2 pts: unless in table row",
+			content: "| Ref | Notes |\n| ref.md | Load unless already cached |\n",
+			want:    2,
+		},
+		{
+			desc:    "2 pts: not needed when in table row",
+			content: "| Ref | Notes |\n| ref.md | not needed when offline |\n",
+			want:    2,
+		},
+		{
+			desc:    "2 pts: omit if in table row",
+			content: "| Ref | Notes |\n| ref.md | omit if simple task |\n",
+			want:    2,
+		},
+		{
+			desc:    "2 pts: keyword in table row even when also in prose",
+			content: "You can skip if needed.\n\n| Ref | Notes |\n| ref.md | skip if simple task |\n",
+			want:    2,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.desc, func(t *testing.T) {
+			got := scoreNegativeConditions(tc.content)
+			if got != tc.want {
+				t.Errorf("want %d, got %d", tc.want, got)
+			}
+		})
 	}
 }
 
