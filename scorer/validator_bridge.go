@@ -12,8 +12,9 @@ import (
 // validatorBridge holds cached results from skill-validator for a single skill.
 // Constructed once per Score call and passed into dimension functions that use it.
 type validatorBridge struct {
-	Content   *types.ContentReport
-	Structure *types.Report
+	Content    *types.ContentReport
+	Structure  *types.Report
+	rawContent string // SKILL.md prose, set by ScoreFromContent
 }
 
 func newValidatorBridge(skillDir string) *validatorBridge {

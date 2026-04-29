@@ -11,6 +11,10 @@ const (
 	d3AntiInstrHigh     = 5 // ≥ this many anti-pattern instructions → bonus +2
 	d3AntiInstrMid      = 3 // ≥ this many anti-pattern instructions → bonus +1
 	d3Max               = 15
+	d3BlocksMin         = 2 // ≥ this many valid NEVER-anchored blocks → count bonus
+	d3PointsCountBonus  = 1 // bonus pts when ≥ d3BlocksMin valid blocks are present
+	d3PointsSymptom     = 1 // per-block pts for a SYMPTOM bold header
+	d3PointsConsequence = 1 // per-block pts for a CONSEQUENCE bold header
 
 	// D4 — Specification Compliance
 	d4DescLenMid     = 100 // description bytes above this → +2

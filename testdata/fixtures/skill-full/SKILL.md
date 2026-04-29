@@ -20,9 +20,9 @@ Core rules:
 5. PREFER schema-driven validation over ad-hoc checks whenever a schema library is available
 6. AVOID duplicating validation logic across layers — validate once at the entry boundary
 7. TYPICALLY use zod, joi, or equivalent typed-schema libraries in TypeScript projects
-8. By default, log validation failures at WARN level unless the payload contains PII, in which case omit field values
-9. Consider caching compiled schemas for high-throughput paths to reduce repeated validation overhead
-10. You may skip schema compilation caching in low-volume services where simplicity is preferred
+8. By default, log validation failures at WARN level unless the payload contains PII
+9. Consider caching compiled schemas for high-throughput paths to reduce overhead
+10. You may skip schema compilation caching in low-volume services where simplicity matters
 
 ## When to Use
 
