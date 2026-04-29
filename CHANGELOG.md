@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.1...v0.8.2) (2026-04-29)
+
+
+### Bug Fixes
+
+* **lint:** move mdlint rule suppression from CLI flags to mdlint.toml ([#49](https://github.com/pantheon-org/skill-quality-auditor/issues/49)) ([a6c8576](https://github.com/pantheon-org/skill-quality-auditor/commit/a6c85762405b3d780bae7dc7cd3a5c7c1787bbaa))
+
 ## [0.8.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.0...v0.8.1) (2026-04-29)
 
 
