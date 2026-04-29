@@ -19,7 +19,10 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		out := cmd.OutOrStdout()
 		keep, _ := cmd.Flags().GetInt("keep")
-		repoRoot, err := resolveRepoRoot("")
+		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
+		dryRun, _ := cmd.Flags().GetBool("dry-run")
+
+		repoRoot, err := resolveRepoRoot(repoRootFlag)
 		if err != nil {
 			return fmt.Errorf("cannot determine repo root: %w", err)
 		}
@@ -31,6 +34,9 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 		}
 
 		fmt.Fprintln(out, "=== Audit Pruning ===")
+		if dryRun {
+			fmt.Fprintln(out, "(dry-run: no files will be removed)")
+		}
 		fmt.Fprintf(out, "Keeping last %d audit(s) per skill\n\n", keep)
 
 		skillDirs, err := os.ReadDir(auditRoot)
@@ -69,8 +75,10 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 					totalKept++
 				} else {
 					fmt.Fprintf(out, "Removing: %s\n", fullPath)
-					if err := os.RemoveAll(fullPath); err != nil {
-						fmt.Fprintf(cmd.ErrOrStderr(), "WARNING: could not remove %s: %v\n", fullPath, err)
+					if !dryRun {
+						if err := os.RemoveAll(fullPath); err != nil {
+							fmt.Fprintf(cmd.ErrOrStderr(), "WARNING: could not remove %s: %v\n", fullPath, err)
+						}
 					}
 					totalRemoved++
 				}
@@ -89,6 +97,8 @@ The 'latest' symlink inside each skill's audit directory is preserved.`,
 }
 
 func init() {
-	pruneCmd.Flags().Int("keep", 5, "number of audit runs to keep per skill")
+	pruneCmd.Flags().IntP("keep", "k", 5, "number of audit runs to keep per skill")
+	pruneCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
+	pruneCmd.Flags().BoolP("dry-run", "n", false, "list directories that would be removed without deleting them")
 	rootCmd.AddCommand(pruneCmd)
 }
