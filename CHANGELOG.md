@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.2...v0.9.0) (2026-04-29)
+
+
+### Features
+
+* **evaluate:** remove --json flag and add flag shorthands ([#52](https://github.com/pantheon-org/skill-quality-auditor/issues/52)) ([74def52](https://github.com/pantheon-org/skill-quality-auditor/commit/74def52c75e7e58024d3c5c72ce7efcd33395418))
+
 ## [0.8.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.1...v0.8.2) (2026-04-29)
 
 
