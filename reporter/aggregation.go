@@ -3,12 +3,68 @@
 package reporter
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"strings"
 
 	"github.com/pantheon-org/skill-quality-auditor/duplication"
 )
+
+// AggregationPlanJSON holds the structured data for a skill-family aggregation plan.
+type AggregationPlanJSON struct {
+	Family     string   `json:"family"`
+	Date       string   `json:"date"`
+	SkillCount int      `json:"skill_count"`
+	TotalLines int      `json:"total_lines"`
+	AvgSim     float64  `json:"avg_duplication"`
+	PairCount  int      `json:"duplicate_pairs"`
+	Skills     []string `json:"skills"`
+	Decision   string   `json:"decision"`
+	Rationale  string   `json:"rationale"`
+}
+
+// AggregationPlanAsJSON returns the aggregation plan as a JSON string.
+func AggregationPlanAsJSON(family string, entries []duplication.SkillEntry, pairs []duplication.Pair, date string) (string, error) {
+	totalLines := 0
+	for _, e := range entries {
+		totalLines += strings.Count(e.Content, "\n") + 1
+	}
+
+	avgSim := 0.0
+	if len(pairs) > 0 {
+		sum := 0.0
+		for _, p := range pairs {
+			sum += p.Similarity
+		}
+		avgSim = sum / float64(len(pairs))
+	}
+
+	skills := make([]string, 0, len(entries))
+	for _, e := range entries {
+		skills = append(skills, e.Key)
+	}
+
+	decision, rationale := aggregationDecision(len(entries), totalLines, avgSim)
+
+	plan := AggregationPlanJSON{
+		Family:     family,
+		Date:       date,
+		SkillCount: len(entries),
+		TotalLines: totalLines,
+		AvgSim:     math.Round(avgSim*1000) / 1000,
+		PairCount:  len(pairs),
+		Skills:     skills,
+		Decision:   decision,
+		Rationale:  rationale,
+	}
+
+	data, err := json.MarshalIndent(plan, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
 
 // AggregationPlan returns a markdown aggregation plan for a skill family.
 func AggregationPlan(family string, entries []duplication.SkillEntry, pairs []duplication.Pair, date string) string {

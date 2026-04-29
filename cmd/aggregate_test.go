@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -29,12 +30,19 @@ func makeAggSkillsDir(t *testing.T, family string, n int) string {
 // runAggregate executes aggregateCmd with the given flags and returns (stdout, error).
 func runAggregate(t *testing.T, family, repoRoot, skillsDir string, dryRun bool, posArgs []string) (string, error) {
 	t.Helper()
+	return runAggregateJSON(t, family, repoRoot, skillsDir, dryRun, false, posArgs)
+}
+
+// runAggregateJSON executes aggregateCmd and returns (stdout, error).
+func runAggregateJSON(t *testing.T, family, repoRoot, skillsDir string, dryRun, asJSON bool, posArgs []string) (string, error) {
+	t.Helper()
 	cmd := aggregateCmd
 	cmd.ResetFlags()
-	cmd.Flags().String("family", "", "")
-	cmd.Flags().Bool("dry-run", false, "")
-	cmd.Flags().String("skills-dir", "", "")
-	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().StringP("family", "f", "", "")
+	cmd.Flags().BoolP("dry-run", "n", false, "")
+	cmd.Flags().StringP("skills-dir", "d", "", "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
+	cmd.Flags().BoolP("json", "j", false, "")
 
 	if err := cmd.Flags().Set("family", family); err != nil {
 		t.Fatalf("set family: %v", err)
@@ -52,6 +60,11 @@ func runAggregate(t *testing.T, family, repoRoot, skillsDir string, dryRun bool,
 			t.Fatalf("set dry-run: %v", err)
 		}
 	}
+	if asJSON {
+		if err := cmd.Flags().Set("json", "true"); err != nil {
+			t.Fatalf("set json: %v", err)
+		}
+	}
 
 	buf := &bytes.Buffer{}
 	cmd.SetOut(buf)
@@ -62,10 +75,11 @@ func runAggregate(t *testing.T, family, repoRoot, skillsDir string, dryRun bool,
 func TestAggregateCmd_missingFamily(t *testing.T) {
 	cmd := aggregateCmd
 	cmd.ResetFlags()
-	cmd.Flags().String("family", "", "")
-	cmd.Flags().Bool("dry-run", false, "")
-	cmd.Flags().String("skills-dir", "", "")
-	cmd.Flags().String("repo-root", "", "")
+	cmd.Flags().StringP("family", "f", "", "")
+	cmd.Flags().BoolP("dry-run", "n", false, "")
+	cmd.Flags().StringP("skills-dir", "d", "", "")
+	cmd.Flags().StringP("repo-root", "r", "", "")
+	cmd.Flags().BoolP("json", "j", false, "")
 
 	err := cmd.RunE(cmd, []string{})
 	if err == nil || !strings.Contains(err.Error(), "--family is required") {
@@ -104,5 +118,44 @@ func TestAggregateCmd_noFamilyMatch(t *testing.T) {
 	_, err := runAggregate(t, "nomatch", repoRoot, skillsDir, false, []string{})
 	if err == nil || !strings.Contains(err.Error(), "no skills found") {
 		t.Errorf("expected 'no skills found' error, got: %v", err)
+	}
+}
+
+func TestAggregateCmd_jsonOutput(t *testing.T) {
+	skillsDir := makeAggSkillsDir(t, "jsonskill", 3)
+	repoRoot := t.TempDir()
+	out, err := runAggregateJSON(t, "jsonskill", repoRoot, skillsDir, false, true, []string{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	var result map[string]interface{}
+	if err := json.Unmarshal([]byte(out), &result); err != nil {
+		t.Fatalf("output is not valid JSON: %v\noutput: %s", err, out)
+	}
+	if result["family"] != "jsonskill" {
+		t.Errorf("expected family=jsonskill, got: %v", result["family"])
+	}
+	if _, ok := result["decision"]; !ok {
+		t.Errorf("expected 'decision' field in JSON output")
+	}
+	if _, ok := result["skills"]; !ok {
+		t.Errorf("expected 'skills' field in JSON output")
+	}
+}
+
+func TestAggregateCmd_jsonOutputSkipsFile(t *testing.T) {
+	skillsDir := makeAggSkillsDir(t, "jsonwrite", 2)
+	repoRoot := t.TempDir()
+	_, err := runAggregateJSON(t, "jsonwrite", repoRoot, skillsDir, false, true, []string{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// JSON mode must not write any file to .context/analysis/
+	analysisDir := filepath.Join(repoRoot, ".context", "analysis")
+	if _, statErr := os.Stat(analysisDir); statErr == nil {
+		entries, _ := os.ReadDir(analysisDir)
+		if len(entries) > 0 {
+			t.Errorf("expected no files written in JSON mode, found %d file(s)", len(entries))
+		}
 	}
 }

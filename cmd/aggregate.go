@@ -63,9 +63,21 @@ var aggregateCmd = &cobra.Command{
 
 		pairs := duplication.Detect(familyEntries)
 		date := time.Now().Format("2006-01-02")
+
+		asJSON, _ := cmd.Flags().GetBool("json")
+		dryRun, _ := cmd.Flags().GetBool("dry-run")
+
+		if asJSON {
+			jsonOut, err := reporter.AggregationPlanAsJSON(family, familyEntries, pairs, date)
+			if err != nil {
+				return fmt.Errorf("marshal plan: %w", err)
+			}
+			fmt.Fprintln(out, jsonOut)
+			return nil
+		}
+
 		plan := reporter.AggregationPlan(family, familyEntries, pairs, date)
 
-		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		if dryRun {
 			fmt.Fprint(out, plan)
 			return nil
@@ -95,9 +107,10 @@ func skillBaseName(key string) string {
 }
 
 func init() {
-	aggregateCmd.Flags().String("family", "", "skill family prefix (e.g. bdd, typescript)")
-	aggregateCmd.Flags().Bool("dry-run", false, "print plan to stdout without writing to disk")
-	aggregateCmd.Flags().String("skills-dir", "", "skills directory (default: <repo-root>/skills)")
-	aggregateCmd.Flags().String("repo-root", "", "repo root (auto-detected if empty)")
+	aggregateCmd.Flags().StringP("family", "f", "", "skill family prefix (e.g. bdd, typescript)")
+	aggregateCmd.Flags().BoolP("dry-run", "n", false, "print plan to stdout without writing to disk")
+	aggregateCmd.Flags().StringP("skills-dir", "d", "", "skills directory (default: <repo-root>/skills)")
+	aggregateCmd.Flags().StringP("repo-root", "r", "", "repo root (auto-detected if empty)")
+	aggregateCmd.Flags().BoolP("json", "j", false, "emit aggregation plan as JSON instead of Markdown")
 	rootCmd.AddCommand(aggregateCmd)
 }
