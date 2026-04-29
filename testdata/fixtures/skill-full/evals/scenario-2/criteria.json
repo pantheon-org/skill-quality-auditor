@@ -1,6 +1,6 @@
 {
   "checklist": [
-    { "description": "Edge case detected", "max_score": 50 },
-    { "description": "Graceful handling", "max_score": 50 }
+    { "description": "Never assume trust without verifying the call chain", "max_score": 50 },
+    { "description": "Always validate input before any mutation is applied", "max_score": 50 }
   ]
 }
