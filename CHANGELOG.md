@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.13.0...v0.13.1) (2026-04-29)
+
+
+### Bug Fixes
+
+* **init:** tilde paths, deduplicate shared targets, list assets in dry-run ([#72](https://github.com/pantheon-org/skill-quality-auditor/issues/72)) ([521e55e](https://github.com/pantheon-org/skill-quality-auditor/commit/521e55ed900c764518884fb486bb91bcbf3126ba))
+
 ## [0.13.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.12.2...v0.13.0) (2026-04-29)
 
 
