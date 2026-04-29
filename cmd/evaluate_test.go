@@ -8,6 +8,22 @@ import (
 	"github.com/pantheon-org/skill-quality-auditor/scorer"
 )
 
+// ---- inferSkillKey ----
+
+func TestInferSkillKey_directory(t *testing.T) {
+	got := inferSkillKey("/some/path/cmd/assets/SKILL.md")
+	if got != "assets" {
+		t.Errorf("got %q, want %q", got, "assets")
+	}
+}
+
+func TestInferSkillKey_simpleDir(t *testing.T) {
+	got := inferSkillKey("/skills/my-skill/SKILL.md")
+	if got != "my-skill" {
+		t.Errorf("got %q, want %q", got, "my-skill")
+	}
+}
+
 // ---- canonicalSkillKey ----
 
 func TestCanonicalSkillKey_standard(t *testing.T) {

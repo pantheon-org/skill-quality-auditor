@@ -289,6 +289,19 @@ func TestScoreMutationCoverage_ZeroCoverage(t *testing.T) {
 	}
 }
 
+func TestScoreMutationCoverage_CriterionFieldFallback(t *testing.T) {
+	// criteria.json uses "criterion" (not "description") — must still count for mutation coverage.
+	skillPath := writeTempSKILL(t, "NEVER skip the baseline comparison.")
+	evalsDir := t.TempDir()
+	dir := filepath.Join(evalsDir, "scenario-1")
+	writeTestFile(t, filepath.Join(dir, "criteria.json"),
+		`{"checklist":[{"criterion":"always compare against baseline","max_score":100}]}`)
+	score, _ := scoreMutationCoverage(skillPath, evalsDir)
+	if score < 1 {
+		t.Errorf("want ≥1 pt when criterion field covers a NEVER statement, got %d", score)
+	}
+}
+
 func TestScoreMutationCoverage_MissingSKILLMd(t *testing.T) {
 	// SKILL.md does not exist — should return 0 pts, no error diagnostic.
 	skillPath := filepath.Join(t.TempDir(), "SKILL.md")

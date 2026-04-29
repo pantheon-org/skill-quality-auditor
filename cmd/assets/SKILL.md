@@ -5,11 +5,9 @@ description: "Evaluate, score, and remediate agent skill collections using a 9-d
 
 # Skill Quality Auditor
 
-Navigation hub for evaluating, maintaining, and improving skill quality with 9-dimension framework scoring.
+Evaluate, maintain, and improve skill quality with 9-dimension framework scoring.
 
 ## Quick Start
-
-Build once, then audit:
 
 Build once:
 
@@ -40,34 +38,53 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 
 ## Prerequisites
 
-- The skill under review must exist as a directory containing `SKILL.md` and at least one eval scenario.
-- Run `go build -o dist/skill-auditor .` from the repo root before executing any audit command.
-- Requires a prior `--store` run before `remediate` or `trend` commands can produce output.
+- MUST have the skill directory with `SKILL.md` and at least one eval scenario.
+- MUST build the binary (`go build -o dist/skill-auditor .`) before any audit command.
+- MUST run `--store` at least once before `remediate` or `trend` can produce output.
 
 ## Workflow
 
 1. Run `skill-auditor evaluate <skill> --json --store`
 2. Check artifacts and eval coverage using deterministic criteria
 3. Generate a remediation plan with T-shirt sizing and score delta estimates
-4. Run the auditor again to verify improvement; if score is below target, check `remediation-plan.md` and focus on the lowest-scoring dimension
+4. Re-run the auditor to verify improvement; if below target, focus on the lowest-scoring dimension
 
 ## Mindset
 
-- Use scores as directional signals, not absolute truth.
-- Apply deterministic, reproducible checks over manual review.
-- Use threshold-based evaluation rather than relative comparisons.
-- Keep audit rules strict for safety and consistency; stay flexible elsewhere.
+- Use scores as directional signals, not verdicts; consider them a compass.
+- Apply deterministic, reproducible checks over manual review — you may supplement with peer review but must not replace it.
+- PREFER threshold-based evaluation — thresholds are automatable; relative rankings are not.
+- Keep rules strict for safety and consistency; stay flexible elsewhere.
+- AVOID running consecutive audits without `--store` — score trends require at least one persisted baseline.
+- UNLESS a skill is in active development, treat a B grade or below as a PR merge blocker.
 
-## Anti-Patterns (Summary)
+## Anti-Patterns
 
-- NEVER skip baseline comparison in recurring audits — WHY: score regressions go undetected without a prior audit.json
-- NEVER ignore Knowledge Delta below 15/20 — WHY: low D1 means the skill adds no value over LLM baseline
-- NEVER apply subjective scoring — WHY: scores drift between evaluators and cannot be automated in CI
-- NEVER create kitchen-sink skills covering unrelated tasks — WHY: broad scope kills D7 and prevents correct triggering
-- NEVER use harness-specific paths in skill content — WHY: absolute paths break when installed in a different repo
-- NEVER list references without "When to Use" conditions — WHY: unconditional loading bloats context and penalises D5
+**NEVER** skip baseline comparison in recurring audits.
+**WHY:** Score regressions go undetected without a prior stored audit.
+**BAD:** `skill-auditor evaluate my-skill` with no prior `--store` run.
+**GOOD:** `skill-auditor evaluate my-skill --store` after a prior stored audit exists.
 
-Ensure you review [Detailed Anti-Patterns](references/detailed-anti-patterns.md) for all WHY/BAD/GOOD failure modes including agent name references and D4 heading rules.
+**NEVER** ignore Knowledge Delta below 15/20.
+**WHY:** Low D1 means the skill adds no value over LLM baseline knowledge.
+**BAD:** Shipping a skill that restates generic framework documentation the LLM already knows.
+**GOOD:** Ensuring every skill section contains constraints or thresholds absent from public docs.
+
+**NEVER** apply subjective scoring.
+**WHY:** Scores drift between evaluators and cannot be automated in CI pipelines.
+**BAD:** Assigning D6 a score without checking hard:soft marker ratios.
+**GOOD:** Running `skill-auditor evaluate` and using the numeric output as the canonical score.
+
+**NEVER** create kitchen-sink skills covering unrelated tasks.
+**WHY:** Broad scope kills D7 pattern recognition and prevents correct agent triggering.
+
+**NEVER** use harness-specific paths in skill content.
+**WHY:** Absolute paths break portability; use agent-neutral relative paths instead.
+
+**NEVER** list references without "When to Use" conditions.
+**WHY:** Unconditional loading bloats context and penalises D5 progressive disclosure.
+
+See [Detailed Anti-Patterns](references/detailed-anti-patterns.md) for full failure modes, agent name references, and D4 heading rules.
 
 ## Examples
 
@@ -81,8 +98,8 @@ skill-auditor evaluate documentation/markdown-authoring --json --store
 PR-scoped triage:
 
 ```bash
-skills=$(git diff --name-only origin/main | grep "skills/.*/SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
-skill-auditor batch $skills --fail-below B --store
+# Extract changed skills from the PR diff and batch-audit them
+skill-auditor batch <skill1> <skill2> --fail-below B --store
 ```
 
 Audit all skills:
@@ -91,19 +108,15 @@ Audit all skills:
 skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
 ```
 
-See [Audit Workflow Examples](references/examples-audit-workflows.md) for input/output pairs and CI quality gate examples.
-
 ## Troubleshooting
 
-- If `skill-batch` exits below threshold: check which dimension scores lowest, then run `evaluate --store` to capture diagnostics and generate a remediation plan.
-- If `duplication` exits 2 (Critical pair): review the flagged pair — if scopes overlap, use `aggregate --family <prefix>` to plan consolidation; if scopes differ, differentiate trigger descriptions.
-- If `evaluate` returns D9 < 10: verify evals directory exists and each scenario has a `criteria.json` with at least one criterion referencing a MUST/NEVER statement from the skill.
+- If a command exits below threshold, consider running `evaluate --store` to capture diagnostics; see [Scripts Workflow](references/scripts-audit-workflow.md) for per-command failure modes.
 
 ## Self-Audit
 
 ```bash
 skill-auditor evaluate agentic-harness/skill-quality-auditor --json
-# Expected: A grade, total >= 126/140
+# Expected: A grade (>= 126/140)
 ```
 
 ## References
@@ -113,8 +126,8 @@ skill-auditor evaluate agentic-harness/skill-quality-auditor --json
 | Topic | Reference | When to Use |
 | --- | --- | --- |
 | Per-dimension criteria and bonus rules | [Dimensions](references/framework-dimensions.md) | Evaluating any dimension or understanding the rubric; skip if you only need the final grade |
-| Score thresholds and grade bands | [Scoring Rubric](references/framework-scoring-rubric.md) | Calculating a total score or assigning a grade; skip if a stored audit already covers this date |
-| A-grade checklist and red flags | [Quality Standards](references/framework-quality-standards.md) | Targeting A-grade or reviewing blockers; skip if the skill already scores above 126 |
+| Score thresholds and grade bands | [Scoring Rubric](references/framework-scoring-rubric.md) | Calculating a total score or assigning a grade |
+| A-grade checklist and red flags | [Quality Standards](references/framework-quality-standards.md) | Targeting A-grade or reviewing blockers |
 | Trigger pattern density and keyword analysis | [Pattern Recognition](references/advanced-pattern-recognition.md) | Scoring D7 or improving description keywords |
 | Canonical SKILL.md structure and References table standard | [SKILL Template](references/skill-template.md) | Authoring or refactoring a skill |
 

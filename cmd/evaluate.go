@@ -32,9 +32,16 @@ func init() {
 			}
 
 			skillPath := resolveSkillPath(skillArg, repoRoot)
-			skillKey, err := canonicalSkillKey(skillPath, repoRoot)
-			if err != nil {
-				return err
+
+			var skillKey string
+			if flags.store {
+				key, err := canonicalSkillKey(skillPath, repoRoot)
+				if err != nil {
+					return err
+				}
+				skillKey = key
+			} else {
+				skillKey = inferSkillKey(skillPath)
 			}
 
 			result, err := scorer.Score(cmd.Context(), skillPath)
@@ -68,6 +75,13 @@ func init() {
 	cmd.Flags().BoolVarP(&flags.store, "store", "s", false, "persist result to .context/audits/")
 	cmd.Flags().StringVarP(&flags.repoRoot, "repo-root", "r", "", "repo root (auto-detected if empty)")
 	rootCmd.AddCommand(cmd)
+}
+
+// inferSkillKey derives a best-effort display key from a SKILL.md path when
+// the path is not under <repoRoot>/skills/ (e.g. cmd/assets or an ad-hoc path).
+func inferSkillKey(skillPath string) string {
+	dir := filepath.Dir(skillPath)
+	return filepath.Base(dir)
 }
 
 // canonicalSkillKey derives the domain/skill-name storage key from an absolute

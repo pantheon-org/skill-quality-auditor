@@ -132,14 +132,19 @@ func gatherCriteriaDescriptions(evalsDir string) []string {
 		var cd struct {
 			Checklist []struct {
 				Description string `json:"description"`
+				Criterion   string `json:"criterion"`
 			} `json:"checklist"`
 		}
 		if json.Unmarshal(data, &cd) != nil {
 			continue
 		}
 		for _, item := range cd.Checklist {
-			if item.Description != "" {
-				descs = append(descs, item.Description)
+			text := item.Description
+			if text == "" {
+				text = item.Criterion
+			}
+			if text != "" {
+				descs = append(descs, text)
 			}
 		}
 	}
