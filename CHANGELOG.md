@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.8.0...v0.8.1) (2026-04-29)
+
+
+### Bug Fixes
+
+* **lint:** add mdlint.toml, fix duplicate references heading, restore skill grade to B ([#46](https://github.com/pantheon-org/skill-quality-auditor/issues/46)) ([5384a31](https://github.com/pantheon-org/skill-quality-auditor/commit/5384a3133580cc2cea9a891398b67bcd3518e5ee))
+
 ## [0.8.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.7.0...v0.8.0) (2026-04-29)
 
 
