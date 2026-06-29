@@ -1,5 +1,0 @@
-# Generated outputs and worktree snapshots — not authored markdown
-.context/**
-.claude/**
-# Test fixtures use SKILL.md frontmatter that conflicts with markdown linting rules
-testdata/**

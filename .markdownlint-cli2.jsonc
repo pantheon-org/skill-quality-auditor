@@ -1,0 +1,46 @@
+// .markdownlint-cli2.jsonc — DavidAnson markdownlint-cli2 config.
+// Replaces mdlint.toml + .markdownlintignore. Carries both rule config and
+// ignore globs so it is the single source of truth for markdown linting.
+{
+  "config": {
+    // MD007 ul-indent — DavidAnson reads our 2-space sub-bullets under numbered
+    // items as flush-left lists; auto-fix would flatten the visual nesting in
+    // docs/d1-d3. Disabled to preserve parity with the prior linter; revisit by
+    // restructuring those lists in a follow-up.
+    "MD007": false,
+    // MD013 line-length — citation URLs and long prose lines in docs exceed
+    // any sensible limit; disabled to avoid noise on reference-heavy docs.
+    "MD013": false,
+    // MD032 blanks-around-lists — kept disabled to match the prior linter and
+    // avoid churn; nested lists under numbered items tripped the old config.
+    "MD032": false,
+    // MD051 link-fragments — backtick-wrapped headings produce anchors the
+    // checker cannot resolve; disabled to avoid false positives.
+    "MD051": false,
+    // MD055 table-pipe-style — pipe characters inside backtick spans are not
+    // table delimiters; disabled to avoid false positives.
+    "MD055": false,
+    // MD058 blanks-around-tables — disabled to match the prior linter and
+    // avoid churn on docs that embed tables in tight layouts.
+    "MD058": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "cmd/assets/**",
+    "testdata/**",
+    ".github/**",
+    "CHANGELOG.md",
+    ".context/**",
+    "node_modules/**",
+    // Generated / installed agent-harness assets (all gitignored, not authored
+    // markdown). Mirrors the prior .markdownlintignore .claude/.context entries.
+    ".claude/**",
+    ".agents/**",
+    ".vscode/**",
+    ".cursor/**",
+    ".codex/**",
+    ".tessl/**",
+    ".aislop/**",
+    "dist/**"
+  ]
+}

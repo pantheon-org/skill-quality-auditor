@@ -32,8 +32,8 @@ jobs:
 
       - uses: jdx/mise-action@v2
 
-      - name: mdlint
-        run: mdlint check .
+      - name: markdownlint
+        run: markdownlint-cli2 "**/*.md"
 
       - name: shellcheck
         run: shellcheck scripts/*.sh

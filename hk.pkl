@@ -1,0 +1,76 @@
+amends "package://github.com/jdx/hk/releases/download/v1.48.0/hk@1.48.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.48.0/hk@1.48.0#/Builtins.pkl"
+
+local preCommit = new Mapping<String, Step> {
+    ["go-fmt"] {
+        // Mirror lefthook's "**/*.go" — `*.go` would not match nested files and
+        // would silently skip scorer/, cmd/, reporter/, etc.
+        glob = List("**/*.go")
+        // fail if any staged Go file is not gofmt-clean
+        check = "test -z \"$(gofmt -l {{files}})\""
+    }
+    ["go-vet"] {
+        glob = List("**/*.go")
+        check = "go vet ./..."
+    }
+    ["golangci-lint"] {
+        glob = List("**/*.go")
+        check = "golangci-lint run ./..."
+    }
+    ["markdownlint"] {
+        glob = List("**/*.md")
+        exclude = List("cmd/assets/**", "testdata/**", ".github/**", "CHANGELOG.md")
+        check = "markdownlint-cli2 {{files}}"
+        fix = "markdownlint-cli2 --fix {{files}}"
+    }
+    ["shellcheck"] {
+        glob = List("scripts/**/*.sh")
+        check = "shellcheck {{files}}"
+    }
+}
+
+local prePush = new Mapping<String, Step> {
+    ["go-test"] {
+        glob = List("**/*.go")
+        check = "go test ./..."
+    }
+    // Build always runs (no glob) so the skill-* steps below have a fresh binary,
+    // even on a push that touches only cmd/assets/** and no .go files.
+    ["go-build"] {
+        check = "go build -o dist/skill-auditor ."
+    }
+    ["skill-validate"] {
+        glob = List("cmd/assets/**")
+        depends = List("go-build")
+        check = "./dist/skill-auditor validate artifacts"
+    }
+    ["skill-duplication"] {
+        glob = List("cmd/assets/**")
+        depends = List("go-build")
+        check = "./dist/skill-auditor duplication cmd/assets"
+    }
+    ["skill-batch"] {
+        glob = List("cmd/assets/**")
+        depends = List("go-build")
+        check = "./dist/skill-auditor batch ./cmd/assets --fail-below B"
+    }
+}
+
+hooks {
+    ["pre-commit"] {
+        fix = true       // run fix steps (markdownlint --fix) and restage
+        stash = "git"    // stash unstaged changes while fixing
+        steps = preCommit
+    }
+    ["pre-push"] {
+        steps = prePush
+    }
+    // enable `hk check` / `hk fix` for manual + CI use
+    ["check"] {
+        steps = preCommit
+    }
+    ["fix"] {
+        fix = true
+        steps = preCommit
+    }
+}

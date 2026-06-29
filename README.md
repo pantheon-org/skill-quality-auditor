@@ -443,9 +443,22 @@ golangci-lint run ./...
 shellcheck scripts/install.sh
 ```
 
-Pre-commit and pre-push hooks are managed via [lefthook](https://github.com/evilmartians/lefthook):
+Pre-commit and pre-push hooks are managed via [hk](https://hk.jdx.dev):
 
 ```bash
-mise install   # installs go, golangci-lint, mdlint, shellcheck, lefthook
-lefthook install
+mise install   # installs go, node, golangci-lint, markdownlint-cli2, shellcheck, hk
+               # the postinstall hook runs `hk install` automatically
+               # (in an activated mise shell, the enter hook runs `mise install` for you)
 ```
+
+Useful hook commands:
+
+```bash
+hk run pre-commit   # run the pre-commit steps manually
+hk check            # lint without fixing (same steps as pre-commit)
+hk fix              # run fixers (e.g. markdownlint --fix) and restage
+HK=0 git commit ... # bypass hooks for a single commit
+```
+
+Markdown is linted with [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2);
+its rules and ignore globs live in `.markdownlint-cli2.jsonc`.
