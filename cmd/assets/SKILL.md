@@ -28,7 +28,7 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 ## When to Use
 
 - Evaluate skills before merge or publication using 9-dimension scoring
-- Generate remediation plans, detect duplication (>20% threshold), or enforce CI quality gates
+- Generate remediation plans, detect duplication (High at 20%, Critical at 35%), or enforce CI quality gates
 - Validate eval scenario coverage and artifact conventions
 
 ## When Not to Use
@@ -110,6 +110,7 @@ skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.m
 
 ## Troubleshooting
 
+- A non-zero exit from `batch` means a skill scored below `--fail-below`; `duplication` exits 2 when a Critical (>=35%) pair is found.
 - If a command exits below threshold, consider running `evaluate --store` to capture diagnostics; see [Scripts Workflow](references/scripts-audit-workflow.md) for per-command failure modes.
 
 ## Self-Audit
