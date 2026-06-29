@@ -1,10 +1,29 @@
 [settings]
 minimum_release_age = "7d"
+experimental = true                 # required for the [hooks] section
 
 [tools]
 go = "1.25.5"
 golangci-lint = "2.11.4"
-"github:swanysimon/mdlint" = "latest"
-lefthook = "2.1.5"
+hk = "1.48.0"                        # replaces lefthook — git hook runner
+node = "latest"                     # required: the npm: backend below needs Node
+"npm:markdownlint-cli2" = "0.22.1"  # replaces github:swanysimon/mdlint
 shellcheck = "latest"
 # tessl is not available as a mise backend — install via: curl -fsSL https://get.tessl.io | sh
+
+[env]
+# HK_MISE deep integration: hk wraps each step with `mise x` so tools resolve
+# without an active mise shell. Gives local/CI parity.
+HK_MISE = "1"
+
+[hooks]
+# enter: fires on entering the project dir in a `mise activate` shell.
+# Installs/refreshes all deps so contributors do not run `mise install` by hand.
+enter = "mise install"
+# postinstall: runs after `mise install` (so it also runs as a result of the
+# enter hook above); does NOT itself require activation. Installs the hk git hooks.
+postinstall = "hk install"
+
+[tasks]
+[tasks.build]
+run = "go build -o dist/skill-auditor ."
