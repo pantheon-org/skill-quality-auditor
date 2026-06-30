@@ -31,7 +31,6 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 ## Prerequisites
 
 - MUST have the skill directory with `SKILL.md` and at least one eval scenario.
-- MUST build the binary (`go build -o dist/skill-auditor .`) before any audit command.
 - MUST run `--store` at least once before `remediate` or `trend` can produce output.
 
 ## Workflow
@@ -40,6 +39,28 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 2. Check artifacts and eval coverage using deterministic criteria
 3. Generate a remediation plan with T-shirt sizing and score delta estimates
 4. Re-run the auditor to verify improvement; if below target, focus on the lowest-scoring dimension
+
+## Git Hooks
+
+This project ships with `hk.pkl` — a configuration for the [hk](https://github.com/jdx/hk) hook manager. Install hk and run `hk install` from the repo root to activate:
+
+```bash
+hk install
+```
+
+Once installed, hook triggers automatically:
+
+- **pre-commit** — `go-fmt`, `go-vet`, `golangci-lint`, `markdownlint`, `shellcheck`, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
+- **pre-push** — full test suite (`go test ./...`), binary build, artifact validation, duplication detection, and batch audit (`--fail-below B`).
+
+To run manually without a commit:
+
+```bash
+hk check        # run pre-commit checks
+hk fix          # run checks and apply auto-fixes
+```
+
+For alternative hook managers (pre-commit, lefthook), see [Git Hooks Setup](references/git-hooks-setup.md).
 
 ## Mindset
 
@@ -137,4 +158,5 @@ Audit all skills:
 | T-shirt sizing and remediation roadmaps | [Remediation Planning](references/remediation-planning.md) | Writing a remediation plan for a C/D-grade skill |
 | Deduplication workflow and aggregation guidance | [Duplication Detection](references/duplication-detection-algorithm.md) | Detecting skill overlap or planning aggregations |
 | `skill-auditor evaluate/batch` usage and output formats | [Scripts Workflow](references/scripts-audit-workflow.md) | Running audits from the command line |
+| Git hook setup for hk, pre-commit, and lefthook integration | [Git Hooks Setup](references/git-hooks-setup.md) | Setting up pre-commit or pre-push hooks in this repository |
 | Registry publication gates and tessl compliance checks | [Tessl Compliance](references/tessl-compliance-framework.md) | Preparing a skill for public registry submission |
