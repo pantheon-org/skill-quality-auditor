@@ -13,7 +13,7 @@ Capture Architecture Decision Records from `.context/` analysis, findings, plans
 
 - A `.context/` file (plan, finding, or analysis) containing a **binding decision** — a choice that affects future development direction, architecture, conventions, or processes
 - The `context-file` skill to create the source `.context/` file if it doesn't exist yet
-- `schemas/adr-frontmatter.schema.json` and `templates/adr-template.yaml` for schema validation
+- `assets/schemas/adr-frontmatter.schema.json` and `assets/templates/adr-template.yaml` for schema validation
 
 ## Quick Start
 
@@ -38,7 +38,7 @@ docs/ADR/
 
 ### ADR Frontmatter Schema
 
-Every ADR MUST start with frontmatter. Use the template at `templates/adr-template.yaml` to bootstrap new files.
+Every ADR MUST start with frontmatter. Use the template at `assets/templates/adr-template.yaml` to bootstrap new files.
 
 ```yaml
 ---

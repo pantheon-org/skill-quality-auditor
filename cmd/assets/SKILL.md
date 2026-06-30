@@ -91,21 +91,21 @@ See [Detailed Anti-Patterns](references/detailed-anti-patterns.md) for full fail
 Remediation workflow:
 
 ```bash
-skill-auditor evaluate documentation/markdown-authoring --json --store
-# Score: 98/140 (C+) -> review remediation-plan.md -> fix -> re-audit -> 128/140 (A)
+./dist/skill-auditor evaluate cmd/assets --json --store
+# Score increases after each remediation cycle
 ```
 
 PR-scoped triage:
 
 ```bash
 # Extract changed skills from the PR diff and batch-audit them
-skill-auditor batch <skill1> <skill2> --fail-below B --store
+./dist/skill-auditor batch cmd/assets testdata/fixtures/skill-full --fail-below B --store
 ```
 
 Audit all skills:
 
 ```bash
-skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
+./dist/skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.md||' | tr '\n' ' ')
 ```
 
 ## Troubleshooting
@@ -116,9 +116,13 @@ skill-auditor batch $(find skills -name "SKILL.md" | sed 's|skills/||;s|/SKILL.m
 ## Self-Audit
 
 ```bash
-skill-auditor evaluate agentic-harness/skill-quality-auditor --json
+./dist/skill-auditor evaluate cmd/assets --json --store
 # Expected: A grade (>= 126/140)
 ```
+
+```bash
+./dist/skill-auditor evaluate cmd/assets --json | jq '.grade'
+# Confirms the grade: "A"
 
 ## References
 

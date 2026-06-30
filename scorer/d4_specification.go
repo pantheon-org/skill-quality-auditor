@@ -129,11 +129,11 @@ func scoreD4Bonus(content, skillDir string) int {
 }
 
 // scoreD4ArtifactTrio awards +1 when a skill ships all three self-contained
-// artifacts: a JSON schema (schemas/*.json), a YAML template (templates/*.yaml),
-// and a validation script (scripts/*.{sh,py,ts,js}).
+// artifacts: a JSON schema (assets/schemas/*.json), a YAML template
+// (assets/templates/*.yaml), and a validation script (scripts/*.{sh,py,ts,js}).
 func scoreD4ArtifactTrio(skillDir string) int {
-	hasSchema := hasFileInDir(filepath.Join(skillDir, "schemas"), ".json")
-	hasTemplate := hasFileInDir(filepath.Join(skillDir, "templates"), ".yaml")
+	hasSchema := hasFileInDir(filepath.Join(skillDir, "assets", "schemas"), ".json")
+	hasTemplate := hasFileInDir(filepath.Join(skillDir, "assets", "templates"), ".yaml")
 	hasScript := false
 	scriptsDir := filepath.Join(skillDir, "scripts")
 	for _, ext := range looseScriptExts {

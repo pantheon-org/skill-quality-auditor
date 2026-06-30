@@ -437,19 +437,19 @@ func TestPenaltyFromDir_cappedAtTwo(t *testing.T) {
 
 func TestD4_ArtifactTrio_FullBonus(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
@@ -467,19 +467,19 @@ func TestD4_ArtifactTrio_NonShellScript(t *testing.T) {
 	for _, script := range []string{"validate.py", "validate.ts", "validate.js"} {
 		t.Run(script, func(t *testing.T) {
 			tmpDir := t.TempDir()
-			if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+			if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+			if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 				t.Fatal(err)
 			}
 			if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.WriteFile(filepath.Join(tmpDir, "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+			if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.WriteFile(filepath.Join(tmpDir, "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+			if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
 				t.Fatal(err)
 			}
 			if err := os.WriteFile(filepath.Join(tmpDir, "scripts", script), []byte("content"), 0o644); err != nil {
@@ -497,16 +497,16 @@ func TestD4_ArtifactTrio_NonShellScript(t *testing.T) {
 
 func TestD4_ArtifactTrio_MissingScript_NoBonus(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
@@ -519,13 +519,13 @@ func TestD4_ArtifactTrio_MissingScript_NoBonus(t *testing.T) {
 
 func TestD4_ArtifactTrio_MissingSchemas_NoBonus(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
@@ -541,13 +541,13 @@ func TestD4_ArtifactTrio_MissingSchemas_NoBonus(t *testing.T) {
 
 func TestD4_ArtifactTrio_MissingTemplates_NoBonus(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
@@ -563,10 +563,10 @@ func TestD4_ArtifactTrio_MissingTemplates_NoBonus(t *testing.T) {
 
 func TestD4_ArtifactTrio_EmptyDirs_NoBonus(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
@@ -587,19 +587,19 @@ func TestD4_E2E_FullArtifactTrioSkill_ScoresAboveBaseline(t *testing.T) {
 	baseScore, _ := scoreD4(baseContent, t.TempDir(), nilBridge())
 
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "schemas"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "templates"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {

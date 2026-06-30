@@ -14,7 +14,7 @@ Use this guide when:
 
 1. **Completed Audit**: Run `skill-auditor evaluate <skill-name> --json`
 2. **Audit Report**: Location should be `.context/audits/<skill-name>-audit-YYYY-MM-DD.md`
-3. **Template**: Load `templates/remediation-plan-template.yaml`
+3. **Template**: Load `assets/templates/remediation-plan-template.yaml`
 
 ## Standard Remediation Plan Format
 

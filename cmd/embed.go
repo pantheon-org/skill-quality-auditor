@@ -17,10 +17,10 @@ var embeddedRefs embed.FS
 //go:embed assets/evals
 var embeddedEvals embed.FS
 
-//go:embed assets/schemas
+//go:embed assets/assets/schemas
 var embeddedSchemas embed.FS //nolint:unused // reserved for schema validation
 
-//go:embed assets/templates
+//go:embed assets/assets/templates
 var embeddedTemplates embed.FS //nolint:unused // reserved for plan generation
 
 //go:embed assets/requirements

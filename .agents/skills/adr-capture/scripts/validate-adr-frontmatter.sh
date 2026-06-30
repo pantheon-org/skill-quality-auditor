@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 # Validates YAML frontmatter in docs/ADR/adr-*.md files against
-# .agents/skills/adr-capture/schemas/adr-frontmatter.schema.json.
+# .agents/skills/adr-capture/assets/schemas/adr-frontmatter.schema.json.
 # Usage: validate-adr-frontmatter.sh <file> [<file> ...]
-set -euo pipefail
-
-ROOT="$(git rev-parse --show-toplevel)"
-SCHEMA="$ROOT/.agents/skills/adr-capture/schemas/adr-frontmatter.schema.json"
+SCHEMA="$ROOT/.agents/skills/adr-capture/assets/schemas/adr-frontmatter.schema.json"
 
 python3 - "$SCHEMA" "$@" <<'PYEOF'
 import sys

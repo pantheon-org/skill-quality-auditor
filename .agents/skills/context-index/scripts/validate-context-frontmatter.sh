@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Validates YAML frontmatter in .context/*.md files against
-# .agents/skills/context-file/schemas/context-frontmatter.schema.json.
+# .agents/skills/context-file/assets/schemas/context-frontmatter.schema.json.
 # Usage: validate-context-frontmatter.sh <file> [<file> ...]
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
-SCHEMA="$ROOT/.agents/skills/context-file/schemas/context-frontmatter.schema.json"
+SCHEMA="$ROOT/.agents/skills/context-file/assets/schemas/context-frontmatter.schema.json"
 
 python3 - "$SCHEMA" "$@" <<'PYEOF'
 import sys
