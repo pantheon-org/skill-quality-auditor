@@ -1,4 +1,8 @@
 ---
+title: "Remediation Plan: adr-capture"
+type: plan
+status: active
+date: 2026-06-30
 plan_date: "2026-06-30"
 skill_name: adr-capture
 source_audit: .context/audits/adr-capture/2026-06-30/Analysis.md

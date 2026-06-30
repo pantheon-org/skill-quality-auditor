@@ -1,4 +1,8 @@
 ---
+title: "Remediation Plan: context-file"
+type: plan
+status: active
+date: 2026-06-30
 plan_date: "2026-06-30"
 skill_name: context-file
 source_audit: .context/audits/context-file/2026-06-30/Analysis.md
