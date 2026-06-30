@@ -9,18 +9,18 @@ coverage.html
 .tessl/
 .env
 
+# Override the global ~/.gitignore `tessl.json` exclusion so the project
+# manifest is tracked for CI and local eval.
+!tessl.json
+
 # Override the global ~/.gitignore `.agents/` and `.context/` exclusions so
 # project-managed files under these directories are tracked.
 # Must un-ignore parent dirs first — git won't descend into an excluded directory.
 !.agents/
 !.agents/skills/
 .agents/skills/tessl__*
+!.agents/skills/adr-capture/
 !.agents/skills/context-file/
 !.agents/skills/context-index/
 !.context/
 !.context/**/
-!.agents/
-!.agents/skills/
-.agents/skills/tessl__*
-!.agents/skills/context-file/
-!.agents/skills/context-index/

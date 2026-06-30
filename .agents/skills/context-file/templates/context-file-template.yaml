@@ -1,5 +1,5 @@
 # Context file frontmatter template
-# Schema: cmd/assets/schemas/context-frontmatter.schema.json
+# Schema: ../schemas/context-frontmatter.schema.json
 #
 # Copy the block below to the very first line of any new .context/**/*.md file.
 # Remove the "related" field if there are no related files — do not leave it empty.

@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to identify a binding decision in a context file, create a properly formatted ADR with frontmatter, link the source in context:, and run the post-creation index regeneration.",
+  "checklist": [
+    {"name": "Decision extraction", "description": "Binding decision correctly identified from the context file", "max_score": 25},
+    {"name": "ADR frontmatter correct", "description": "ADR frontmatter includes title (ADR-NNN: prefix), status, date, and context: fields per schema", "max_score": 25},
+    {"name": "Source context linked", "description": "context: field links to the source .context/ file", "max_score": 20},
+    {"name": "Body structure", "description": "ADR body has Context, Decision, and Consequences sections", "max_score": 15},
+    {"name": "Index regenerated", "description": "Regenerate-adr-index.sh run after ADR creation", "max_score": 15}
+  ]
+}

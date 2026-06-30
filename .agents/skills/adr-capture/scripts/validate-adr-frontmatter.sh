@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Validates YAML frontmatter in .context/*.md files against
-# cmd/assets/schemas/context-frontmatter.schema.json.
-# Usage: validate-context-frontmatter.sh <file> [<file> ...]
+# Validates YAML frontmatter in docs/ADR/adr-*.md files against
+# .agents/skills/adr-capture/schemas/adr-frontmatter.schema.json.
+# Usage: validate-adr-frontmatter.sh <file> [<file> ...]
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
-SCHEMA="$ROOT/cmd/assets/schemas/context-frontmatter.schema.json"
+SCHEMA="$ROOT/.agents/skills/adr-capture/schemas/adr-frontmatter.schema.json"
 
 python3 - "$SCHEMA" "$@" <<'PYEOF'
 import sys
@@ -61,7 +61,7 @@ for f in files:
             errors.append(f"{f}: '{field}' does not match pattern '{pattern.pattern}', got '{fm[field]}'")
 
 if errors:
-    print("Frontmatter validation errors:")
+    print("ADR frontmatter validation errors:")
     for e in errors:
         print(f"  {e}")
     sys.exit(1)

@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to validate ADR frontmatter against the JSON schema and regenerate the ADR index after validation passes.",
+  "checklist": [
+    {"name": "Validation script used", "description": "validate-adr-frontmatter.sh run against ADR files", "max_score": 30},
+    {"name": "Schema compliance", "description": "All ADRs pass schema validation (or non-compliant fields called out)", "max_score": 30},
+    {"name": "Index regeneration", "description": "regenerate-adr-index.sh run after validation", "max_score": 20},
+    {"name": "Error reporting", "description": "Clear output showing which files passed/failed validation", "max_score": 20}
+  ]
+}

@@ -1,5 +1,5 @@
 # ADR frontmatter template
-# Schema: cmd/assets/schemas/adr-frontmatter.schema.json
+# Schema: ../schemas/adr-frontmatter.schema.json
 #
 # Copy the block below to the very first line of any new docs/ADR/adr-NNN-*.md file.
 # Remove the "superseded_by" and "context" fields if not applicable — do not leave them empty.

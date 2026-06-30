@@ -29,25 +29,41 @@ local preCommit = new Mapping<String, Step> {
     }
     ["context-frontmatter"] {
         glob = List(".context/**/*.md")
-        check = ".agents/skills/context-index/validate-context-frontmatter.sh {{files}}"
+        exclude = List(".context/audits/**", ".context/plans/**")
+        check = ".agents/skills/context-index/scripts/validate-context-frontmatter.sh {{files}}"
     }
     ["context-index"] {
         glob = List(".context/**/*.md")
-        fix = ".agents/skills/context-index/regenerate-context-index.sh"
+        exclude = List(".context/audits/**", ".context/plans/**")
+        fix = ".agents/skills/context-index/scripts/regenerate-context-index.sh"
         check = "test -f .context/index.yaml"
     }
     ["adr-frontmatter"] {
         glob = List("docs/ADR/adr-*.md")
-        check = ".agents/skills/context-index/check-context-frontmatter.sh {{files}}"
+        check = ".agents/skills/context-index/scripts/check-context-frontmatter.sh {{files}}"
     }
     ["adr-index"] {
         glob = List("docs/ADR/adr-*.md")
-        fix = ".agents/skills/adr-capture/regenerate-adr-index.sh"
+        fix = ".agents/skills/adr-capture/scripts/regenerate-adr-index.sh"
         check = "test -f docs/ADR/index.yaml"
     }
     ["adr-undocumented"] {
         glob = List(".context/**/*.md")
-        check = ".agents/skills/adr-capture/check-undocumented-decisions.sh"
+        exclude = List(".context/audits/**", ".context/plans/**")
+        check = ".agents/skills/adr-capture/scripts/check-undocumented-decisions.sh"
+    }
+    ["adr-frontmatter"] {
+        glob = List("docs/ADR/adr-*.md")
+        check = ".agents/skills/context-index/scripts/check-context-frontmatter.sh {{files}}"
+    }
+    ["adr-index"] {
+        glob = List("docs/ADR/adr-*.md")
+        fix = ".agents/skills/adr-capture/scripts/regenerate-adr-index.sh"
+        check = "test -f docs/ADR/index.yaml"
+    }
+    ["adr-undocumented"] {
+        glob = List(".context/**/*.md")
+        check = ".agents/skills/adr-capture/scripts/check-undocumented-decisions.sh"
     }
 }
 

@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to create a .context/finding file from research output, with summary, detail, and recommended action sections.",
+  "checklist": [
+    {"name": "Correct type", "description": "File created under .context/findings/ with type: finding in frontmatter", "max_score": 20},
+    {"name": "Valid frontmatter", "description": "Frontmatter has title, type, status, date, and related if applicable", "max_score": 20},
+    {"name": "Summary section", "description": "One-sentence summary at the top", "max_score": 15},
+    {"name": "Detail section", "description": "Detail section with thorough findings", "max_score": 15},
+    {"name": "Recommended action", "description": "Recommended Action section with concrete next steps", "max_score": 15},
+    {"name": "Filename convention", "description": "Filename uses topic-YYYY-MM-DD.md convention", "max_score": 15}
+  ]
+}

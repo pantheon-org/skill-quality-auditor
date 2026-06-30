@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to create a valid .context/plan file with correct frontmatter, structured steps, and open questions from a feature request.",
+  "checklist": [
+    {"name": "Correct type", "description": "File created under .context/plans/ with type: plan in frontmatter", "max_score": 20},
+    {"name": "Valid frontmatter", "description": "Frontmatter has title, type, status, date; status is draft", "max_score": 20},
+    {"name": "Goal section", "description": "Goal section describes the desired end state", "max_score": 15},
+    {"name": "Numbered steps", "description": "Steps section with numbered implementation steps", "max_score": 15},
+    {"name": "Open questions", "description": "Open Questions section included for unresolved items", "max_score": 15},
+    {"name": "Filename convention", "description": "Filename uses kebab-case with optional date", "max_score": 15}
+  ]
+}

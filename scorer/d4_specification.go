@@ -23,6 +23,8 @@ func scoreD4(content, skillDir string, b *validatorBridge) (int, []Diagnostic) {
 	score += delta
 	diags = append(diags, newDiags...)
 
+	checkLooseScripts(skillDir, &diags)
+
 	score -= penaltyFromDir(filepath.Join(skillDir, "scripts"), absPathRe)
 	score -= penaltyFromDir(filepath.Join(skillDir, "scripts"), ctxAgentsRe)
 	score -= penaltyFromDir(filepath.Join(skillDir, "references"), absPathRe)
@@ -122,7 +124,43 @@ func scoreD4Bonus(content, skillDir string) int {
 	if strings.TrimSpace(lastH2) == "References" && bulletLinkRe.MatchString(content) {
 		bonus++
 	}
+	bonus += scoreD4ArtifactTrio(skillDir)
 	return bonus
+}
+
+// scoreD4ArtifactTrio awards +1 when a skill ships all three self-contained
+// artifacts: a JSON schema (schemas/*.json), a YAML template (templates/*.yaml),
+// and a validation script (scripts/*.{sh,py,ts,js}).
+func scoreD4ArtifactTrio(skillDir string) int {
+	hasSchema := hasFileInDir(filepath.Join(skillDir, "schemas"), ".json")
+	hasTemplate := hasFileInDir(filepath.Join(skillDir, "templates"), ".yaml")
+	hasScript := false
+	scriptsDir := filepath.Join(skillDir, "scripts")
+	for _, ext := range looseScriptExts {
+		if hasFileInDir(scriptsDir, ext) {
+			hasScript = true
+			break
+		}
+	}
+	if hasSchema && hasTemplate && hasScript {
+		return 1
+	}
+	return 0
+}
+
+// hasFileInDir reports whether dir contains a non-directory entry with the given extension.
+func hasFileInDir(dir, ext string) bool {
+	info, err := os.Stat(dir)
+	if err != nil || !info.IsDir() {
+		return false
+	}
+	entries, _ := os.ReadDir(dir)
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ext) {
+			return true
+		}
+	}
+	return false
 }
 
 func extractLastH2(content string) string {
@@ -232,4 +270,31 @@ func penaltyFromDir(dir string, re *regexp.Regexp) int {
 		}
 	}
 	return penalty
+}
+
+// looseScriptExts lists file extensions that should live in scripts/ not in the skill root.
+var looseScriptExts = []string{".sh", ".py", ".ts", ".js"}
+
+// checkLooseScripts warns when script files sit directly next to SKILL.md
+// instead of under a scripts/ directory.
+func checkLooseScripts(skillDir string, diags *[]Diagnostic) {
+	entries, err := os.ReadDir(skillDir)
+	if err != nil {
+		return
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		name := e.Name()
+		if name == "SKILL.md" {
+			continue
+		}
+		for _, ext := range looseScriptExts {
+			if strings.HasSuffix(name, ext) {
+				*diags = append(*diags, warnDiag("D4", "script file "+name+" should live in scripts/ directory instead of skill root"))
+				break
+			}
+		}
+	}
 }

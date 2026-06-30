@@ -1,0 +1,1 @@
+Handle ADR supersession — mark an old ADR as superseded and create a new one.

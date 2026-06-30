@@ -1,0 +1,29 @@
+{
+  "instructions": [
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER create an ADR without linking the source context file in the `context:` frontmatter field — decisions without provenance are untethered from their evidence."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER edit or delete an ADR after creation — ADRs are immutable records. Only `status` and `superseded_by` may change. Supersede rather than modify."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "ADR numbers are permanent identifiers — always increment to the next unused number, never reuse a number even if the old ADR was superseded."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Use `status: proposed` as the default on creation; promote to `accepted` after implementation starts."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER skip creating an ADR when a .context/ file contains a clear decision — without an ADR the decision is invisible to future agents."
+    }
+  ]
+}

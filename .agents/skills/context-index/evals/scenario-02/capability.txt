@@ -1,0 +1,1 @@
+Detect missing YAML frontmatter in staged .context/ files and apply fixes before regenerating the index.

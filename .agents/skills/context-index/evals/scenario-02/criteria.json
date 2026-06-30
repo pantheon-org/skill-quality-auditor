@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to run the frontmatter check script, identify files missing required frontmatter, fix them, then regenerate a clean index.",
+  "checklist": [
+    {"name": "Check script used", "description": "check-context-frontmatter.sh run against .context/ files", "max_score": 30},
+    {"name": "Missing frontmatter identified", "description": "Files missing frontmatter correctly identified", "max_score": 30},
+    {"name": "Frontmatter added", "description": "Missing frontmatter added with all required fields", "max_score": 20},
+    {"name": "Clean regenerate", "description": "Index regenerated with zero warnings", "max_score": 20}
+  ]
+}

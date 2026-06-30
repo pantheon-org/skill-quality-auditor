@@ -1,23 +1,28 @@
 ---
 name: context-file
-description: "Create a new .context/ file (plan, finding, or analysis) with standard YAML frontmatter. Use when documenting a decision, writing an implementation plan, recording research findings, or capturing analysis output. Triggers: 'create a plan', 'new finding', 'document this', 'write analysis', 'new context file', 'capture findings', 'draft a plan', 'record decision'."
+description: "Create a new .context/ file (plan, finding, or analysis) with standard YAML frontmatter. Use when documenting a decision, writing an implementation plan, recording research findings, or capturing analysis output. DO NOT use for ephemeral notes, secrets storage, or skill remediation plans (use skill-auditor remediate instead). Triggers: 'create a plan', 'new finding', 'document this', 'write analysis', 'new context file', 'capture findings', 'draft a plan', 'record decision'."
 ---
 
 # Context File
 
 Create a new `.context/` file with standard YAML frontmatter and appropriate sections.
 
+## Prerequisites
+
+- A clear understanding of the file type needed: plan (multi-step work), finding (research), or analysis (review)
+- Familiarity with the `.context/` directory structure: `plans/`, `findings/`, `analysis/`
+- The `context-index` skill available for index regeneration after creation
+
 ## Quick Start
 
 ```bash
-# Plan — implementation or migration plan
-.context/plans/<kebab-case-name>.md
+# Determine type and create the file
+.context/plans/<kebab-case-name>.md          # implementation or migration plan
+.context/findings/<topic>-YYYY-MM-DD.md      # research or investigation output
+.context/analysis/<topic>-YYYY-MM-DD.md      # duplication reports, audits, reviews
 
-# Finding — research, review, or investigation output
-.context/findings/<topic>-YYYY-MM-DD.md
-
-# Analysis — duplication reports, audits, reviews
-.context/analysis/<topic>-YYYY-MM-DD.md
+# After creating, regenerate the index
+.agents/skills/context-index/regenerate-context-index.sh
 ```
 
 ## When to Use
@@ -48,24 +53,23 @@ related:
 ```
 
 Field rules:
-
 - `title` — prose title matching the H1 heading; wrap in quotes
 - `type` — matches the subdirectory (`plans/` → `plan`, `findings/` → `finding`, `analysis/` → `analysis`)
-- `status` — `draft` until reviewed, `active` for in-progress work, `done` when complete, `superseded` when replaced by another file
+- `status` — `draft` until reviewed, `active` for in-progress work, `done` when complete, `superseded` when replaced
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
 
 ## Workflow
 
 1. Determine type: plan / finding / analysis
-2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval-2026-06-29.md`), `topic-YYYY-MM-DD.md` for timestamped reports
-3. Create the file using the template below for the chosen type
+2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval.md`), `topic-YYYY-MM-DD.md` for timestamped reports
+3. Create the file using the template matching the type below
 4. Set `status: draft` until the content is reviewed
-5. After creating, run `.agents/skills/context-index/regenerate-context-index.sh` to update `.context/index.yaml`
+5. Run the context index regeneration script to update the index after creation
 
 ## Templates
 
-### Plan
+**Plan** (`.context/plans/`):
 
 ```markdown
 ---
@@ -74,27 +78,17 @@ type: plan
 status: draft
 date: YYYY-MM-DD
 ---
-
-# Plan: <concise title>
-
-> **Status:** Draft
-> **Date:** YYYY-MM-DD
-
+# Plan: <title>
 ## Goal
-
 One paragraph describing the desired end state.
-
 ## Steps
-
 1. Step one
 2. Step two
-
 ## Open Questions
-
 - Question one
 ```
 
-### Finding
+**Finding** (`.context/findings/`):
 
 ```markdown
 ---
@@ -105,22 +99,14 @@ date: YYYY-MM-DD
 related:
   - ../plans/related-plan.md
 ---
-
 # Finding: <topic>
-
-Date: YYYY-MM-DD
-Status: DECISION-SUPPORT, not actioned
-
 > One-sentence summary.
-
 ## Summary
-
 ## Detail
-
 ## Recommended Action
 ```
 
-### Analysis
+**Analysis** (`.context/analysis/`):
 
 ```markdown
 ---
@@ -129,22 +115,24 @@ type: analysis
 status: done
 date: YYYY-MM-DD
 ---
-
 # <Topic> Analysis — YYYY-MM-DD
-
 ## Summary
-
 ## Findings
-
 ## Conclusion
 ```
 
 ## Mindset
 
-- Write for the next agent or human who reads this cold — assume no prior context.
-- `status: draft` is the safe default; promote to `active` only when reviewed.
-- Date is creation date, not last-modified — do not update it on subsequent edits.
-- After creating or updating a `.context/` file, always regenerate the index via `.agents/skills/context-index/regenerate-context-index.sh`.
+- Write for the next agent or human who reads this cold — assume no prior context
+- `status: draft` is the safe default; promote to `active` only when reviewed
+- Date is creation date, not last-modified — do not update it on subsequent edits
+- After creating or updating a `.context/` file, consider regenerating the index to keep it current
+
+## Troubleshooting
+
+- **Pre-commit hook blocks commit:** Run `check-context-frontmatter.sh` to find files missing YAML frontmatter — add the required block and re-run
+- **Missing from index after creation:** Run `regenerate-context-index.sh` — the index is generated from frontmatter, not file existence alone
+- **Wrong type directory:** Files must live under the matching subdirectory — plans in `plans/`, findings in `findings/`, analysis in `analysis/`
 
 ## Anti-Patterns
 
@@ -161,3 +149,11 @@ date: YYYY-MM-DD
 **NEVER** put findings or plans under `.context/audits/`.
 **WHY:** `.context/audits/` is owned by `skill-auditor --store`; writing there by hand conflicts with the tool's schema.
 **GOOD:** Use `.context/plans/`, `.context/findings/`, or `.context/analysis/` only.
+
+## References
+
+| Topic | Reference | When to Use |
+| --- | --- | --- |
+| Three file types, field conventions, and common mistakes | [Context File Types](references/context-file-types.md) | Choosing the correct type or debugging file placement |
+| Required and optional frontmatter fields with examples | [YAML Frontmatter Guide](references/yaml-frontmatter-guide.md) | Setting up frontmatter for a new file or fixing validation errors |
+

@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to create a .context/analysis file from audit or review results with summary, findings, and conclusion sections.",
+  "checklist": [
+    {"name": "Correct type", "description": "File created under .context/analysis/ with type: analysis in frontmatter", "max_score": 25},
+    {"name": "Valid frontmatter", "description": "Frontmatter has title, type, status, date; status is done for completed analysis", "max_score": 25},
+    {"name": "Findings section", "description": "Findings section with bullet points or structured observations", "max_score": 25},
+    {"name": "Conclusion section", "description": "Conclusion section summarising the outcome", "max_score": 25}
+  ]
+}

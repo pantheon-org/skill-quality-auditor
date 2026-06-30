@@ -1,0 +1,50 @@
+{
+  "skill": "context-index",
+  "date": "2026-06-30",
+  "dimensions": {
+    "antiPatternQuality": 11,
+    "evalValidation": 0,
+    "freedomCalibration": 6,
+    "knowledgeDelta": 17,
+    "mindsetProcedures": 10,
+    "patternRecognition": 10,
+    "practicalUsability": 12,
+    "progressiveDisclosure": 12,
+    "specificationCompliance": 10
+  },
+  "total": 88,
+  "maxTotal": 140,
+  "grade": "F",
+  "lines": 76,
+  "hasReferences": false,
+  "referenceCount": 0,
+  "referenceSectionCompliant": false,
+  "errors": 0,
+  "warnings": 6,
+  "warningDetails": [
+    {
+      "dimension": "D2",
+      "message": "no decision-point signals detected — add branching logic for error cases (e.g. ## Troubleshooting)"
+    },
+    {
+      "dimension": "D4",
+      "message": "harness-specific path found: .agents/"
+    },
+    {
+      "dimension": "D4",
+      "message": "absolute skill path outside code blocks: skills/context-index/check-context-frontmatter"
+    },
+    {
+      "dimension": "D4",
+      "message": ".context/ or .agents/ reference outside code blocks: .context/"
+    },
+    {
+      "dimension": "D9",
+      "message": "evals/ directory missing entirely"
+    },
+    {
+      "dimension": "D5",
+      "message": "no references/ directory (progressive disclosure missing)"
+    }
+  ]
+}
