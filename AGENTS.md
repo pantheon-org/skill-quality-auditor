@@ -104,6 +104,12 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
 | `remediate` | `.context/plans/<skill>-remediation-plan.md` |
 
+## Context Index
+
+Actionable plans, findings, and analyses live under `.context/`. The machine-readable index is at [`.context/index.yaml`](.context/index.yaml) — each entry carries `title`, `type`, `status`, `date`, and optional `related` links.
+
+Read the index before starting a new task to surface active work items, pending decisions, and historical findings relevant to your change.
+
 ## Suggested task workflows
 
 ### Improve a dimension scorer

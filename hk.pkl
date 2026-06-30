@@ -27,6 +27,15 @@ local preCommit = new Mapping<String, Step> {
         glob = List("scripts/**/*.sh")
         check = "shellcheck {{files}}"
     }
+    ["context-frontmatter"] {
+        glob = List(".context/**/*.md")
+        check = ".agents/skills/context-index/validate-context-frontmatter.sh {{files}}"
+    }
+    ["context-index"] {
+        glob = List(".context/**/*.md")
+        fix = ".agents/skills/context-index/regenerate-context-index.sh"
+        check = "test -f .context/index.yaml"
+    }
 }
 
 local prePush = new Mapping<String, Step> {
