@@ -40,14 +40,9 @@ jobs:
         run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
 
       - name: Install Tessl CLI
-        run: curl -fsSL https://get.tessl.io | sh
-
-      - name: Create or repair tessl project
         env:
-          TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
-        run: |
-          tessl project create skill-quality-auditor-ci --workspace pantheon-ai 2>/dev/null || \
-          tessl project repair --update-source -y
+          TESSL_VERSION: "0.88.2"
+        run: curl -fsSL https://get.tessl.io | sh
 
       - name: Tessl eval run
         env:
