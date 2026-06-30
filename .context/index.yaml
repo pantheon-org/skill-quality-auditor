@@ -57,6 +57,11 @@ entries:
     type: finding
     status: active
     date: 2026-06-30
+  - path: .context/findings/tessl-eval-criteria-schema-2026-06-30.md
+    title: "Finding: Tessl Eval Criteria JSON Schema — 2026-06-30"
+    type: finding
+    status: active
+    date: 2026-06-30
   - path: .context/plans/citation-verification-plan-2026-04-27.md
     title: "Citation Verification Plan"
     type: plan
