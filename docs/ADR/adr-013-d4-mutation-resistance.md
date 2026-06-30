@@ -3,7 +3,7 @@ title: "ADR-013: Add mutation resistance criterion to D4 specification complianc
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d4-specification-compliance.md
+  - path: .context/plans/dimension-improvements/d4-specification-compliance-2026-04-29.md
 ---
 
 **Status:** Accepted

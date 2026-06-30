@@ -3,7 +3,7 @@ title: "ADR-005: Restructure D6 scorer for contextual action weighting"
 status: proposed
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d6-freedom-calibration.md
+  - path: .context/plans/dimension-improvements/d6-freedom-calibration-2026-04-29.md
 ---
 
 **Status:** Proposed

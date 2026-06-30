@@ -94,7 +94,7 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 - For deep rubric questions, load `cmd/assets/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `cmd/assets/references/detailed-anti-patterns.md`.
 - **Edit assets directly under `cmd/assets/`** — there is no separate `skill/` directory to mirror.
-- Audit outputs: `.context/audits/`, `.context/analysis/`, `.context/plans/` — never commit those directories.
+- All `.context/` files (plans, findings, analyses, index) are tracked in git — they are part of the project's institutional knowledge.
 
 ## Output locations
 

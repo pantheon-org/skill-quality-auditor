@@ -3,7 +3,7 @@ title: "ADR-023: Keep CLI binary and tile.json versions in sync via release-plea
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/versioning-split.md
+  - path: .context/plans/versioning-split-2026-04-27.md
 ---
 
 **Status:** Accepted

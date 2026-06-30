@@ -58,7 +58,7 @@ Field rules:
 ## Workflow
 
 1. Determine type: plan / finding / analysis
-2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval.md`), `topic-YYYY-MM-DD.md` for timestamped reports
+2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval-2026-06-29.md`), `topic-YYYY-MM-DD.md` for timestamped reports
 3. Create the file using the template below for the chosen type
 4. Set `status: draft` until the content is reviewed
 5. After creating, run `.agents/skills/context-index/regenerate-context-index.sh` to update `.context/index.yaml`

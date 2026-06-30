@@ -3,7 +3,7 @@ title: "ADR-014: Add negative-condition scoring to D5 progressive disclosure"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d5-progressive-disclosure.md
+  - path: .context/plans/dimension-improvements/d5-progressive-disclosure-2026-04-29.md
 ---
 
 **Status:** Accepted

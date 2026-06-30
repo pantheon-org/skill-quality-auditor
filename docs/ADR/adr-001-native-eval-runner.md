@@ -3,7 +3,7 @@ title: "ADR-001: Native Go eval runner for skill evaluation"
 status: proposed
 date: 2026-06-30
 context:
-  - path: .context/plans/migrate-off-tessl-eval.md
+  - path: .context/plans/migrate-off-tessl-eval-2026-06-29.md
   - path: .context/findings/eval-gating-byok-2026-06-29.md
 ---
 

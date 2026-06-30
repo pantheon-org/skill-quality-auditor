@@ -3,7 +3,7 @@ title: "ADR-015: Add discriminativeness signal to D7 pattern recognition scorer"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d7-pattern-recognition.md
+  - path: .context/plans/dimension-improvements/d7-pattern-recognition-2026-04-29.md
 ---
 
 **Status:** Accepted

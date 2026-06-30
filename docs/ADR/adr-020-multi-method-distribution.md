@@ -3,7 +3,7 @@ title: "ADR-020: Multi-method distribution strategy"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/onboarding-improvements.md
+  - path: .context/plans/onboarding-improvements-2026-04-27.md
   - path: .context/findings/homebrew-tap-prerequisites.md
 ---
 

@@ -3,7 +3,7 @@ title: "ADR-012: Extend D3 anti-pattern format to include SYMPTOM and CONSEQUENC
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d3-anti-pattern-coverage.md
+  - path: .context/plans/dimension-improvements/d3-anti-pattern-coverage-2026-04-29.md
 ---
 
 **Status:** Accepted

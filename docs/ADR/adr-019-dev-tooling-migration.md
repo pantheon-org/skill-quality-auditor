@@ -3,7 +3,7 @@ title: "ADR-019: Migrate dev tooling to hk, markdownlint-cli2, and mise auto-boo
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/migrate-to-hk-and-markdownlint-cli2.md
+  - path: .context/plans/migrate-to-hk-and-markdownlint-cli2-2026-06-29.md
 ---
 
 **Status:** Accepted

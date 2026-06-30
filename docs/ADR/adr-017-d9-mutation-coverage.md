@@ -3,7 +3,7 @@ title: "ADR-017: Add mutation coverage scoring to D9 eval validation"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d9-eval-validation.md
+  - path: .context/plans/dimension-improvements/d9-eval-validation-2026-04-29.md
 ---
 
 **Status:** Accepted

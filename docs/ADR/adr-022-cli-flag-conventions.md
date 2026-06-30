@@ -3,7 +3,7 @@ title: "ADR-022: Standardize CLI flag naming and output format conventions"
 status: accepted
 date: 2026-04-29
 context:
-  - path: .context/plans/standardize-cli-flags.md
+  - path: .context/plans/standardize-cli-flags-2026-04-29.md
 ---
 
 **Status:** Accepted

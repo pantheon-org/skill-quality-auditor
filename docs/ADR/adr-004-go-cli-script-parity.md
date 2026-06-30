@@ -3,7 +3,7 @@ title: "ADR-004: Implement shell script functionality in Go CLI"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/go-cli-script-parity.md
+  - path: .context/plans/go-cli-script-parity-2026-04-27.md
 ---
 
 **Status:** Accepted

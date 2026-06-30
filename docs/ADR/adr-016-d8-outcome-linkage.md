@@ -3,7 +3,7 @@ title: "ADR-016: Add outcome linkage criterion to D8 practical usability scorer"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d8-practical-usability.md
+  - path: .context/plans/dimension-improvements/d8-practical-usability-2026-04-29.md
 ---
 
 **Status:** Accepted

@@ -4,7 +4,7 @@ status: accepted
 date: 2026-06-30
 context:
   - path: .context/analysis/code-review-se-principles.md
-  - path: .context/plans/se-principles-remediation-plan.md
+  - path: .context/plans/se-principles-remediation-plan-2026-04-29.md
 ---
 
 **Status:** Accepted

@@ -3,7 +3,7 @@ title: "ADR-011: Restructure D2 scorer around PKO structural model"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d2-mindset-procedures.md
+  - path: .context/plans/dimension-improvements/d2-mindset-procedures-2026-04-29.md
 ---
 
 **Status:** Accepted

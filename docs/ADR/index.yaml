@@ -7,7 +7,7 @@ entries:
     status: proposed
     date: 2026-06-30
     context:
-      - path: ".context/plans/migrate-off-tessl-eval.md"
+      - path: ".context/plans/migrate-off-tessl-eval-2026-06-29.md"
       - path: ".context/findings/eval-gating-byok-2026-06-29.md"
   - path: "ADR/adr-002-skilllens-mode-types.md"
     adr: "ADR-002"
@@ -23,21 +23,21 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/analysis/code-review-se-principles.md"
-      - path: ".context/plans/se-principles-remediation-plan.md"
+      - path: ".context/plans/se-principles-remediation-plan-2026-04-29.md"
   - path: "ADR/adr-004-go-cli-script-parity.md"
     adr: "ADR-004"
     title: "ADR-004: Implement shell script functionality in Go CLI"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/go-cli-script-parity.md"
+      - path: ".context/plans/go-cli-script-parity-2026-04-27.md"
   - path: "ADR/adr-005-freedom-calibration-remediation.md"
     adr: "ADR-005"
     title: "ADR-005: Restructure D6 scorer for contextual action weighting"
     status: proposed
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d6-freedom-calibration.md"
+      - path: ".context/plans/dimension-improvements/d6-freedom-calibration-2026-04-29.md"
   - path: "ADR/adr-006-dimension-registry.md"
     adr: "ADR-006"
     title: "ADR-006: Register dimension scorers in a registry slice for OCP compliance"
@@ -45,7 +45,7 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/analysis/code-review-se-principles.md"
-      - path: ".context/plans/se-principles-remediation-plan.md"
+      - path: ".context/plans/se-principles-remediation-plan-2026-04-29.md"
   - path: "ADR/adr-007-two-tier-eval-gate.md"
     adr: "ADR-007"
     title: "ADR-007: Two-tier eval gate with BYOK architecture for skill evaluation"
@@ -53,7 +53,7 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/findings/eval-gating-byok-2026-06-29.md"
-      - path: ".context/plans/migrate-off-tessl-eval.md"
+      - path: ".context/plans/migrate-off-tessl-eval-2026-06-29.md"
   - path: "ADR/adr-008-homebrew-distribution.md"
     adr: "ADR-008"
     title: "ADR-008: Distribute skill-auditor via Homebrew tap"
@@ -61,7 +61,7 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/findings/homebrew-tap-prerequisites.md"
-      - path: ".context/plans/onboarding-improvements.md"
+      - path: ".context/plans/onboarding-improvements-2026-04-27.md"
   - path: "ADR/adr-009-d10-empirical-validator.md"
     adr: "ADR-009"
     title: "ADR-009: Add D10 empirical validation dimension"
@@ -75,56 +75,56 @@ entries:
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d1-knowledge-delta.md"
+      - path: ".context/plans/dimension-improvements/d1-knowledge-delta-2026-04-29.md"
   - path: "ADR/adr-011-d2-pko-structural-model.md"
     adr: "ADR-011"
     title: "ADR-011: Restructure D2 scorer around PKO structural model"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d2-mindset-procedures.md"
+      - path: ".context/plans/dimension-improvements/d2-mindset-procedures-2026-04-29.md"
   - path: "ADR/adr-012-d3-extended-anti-pattern-format.md"
     adr: "ADR-012"
     title: "ADR-012: Extend D3 anti-pattern format to include SYMPTOM and CONSEQUENCE"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d3-anti-pattern-coverage.md"
+      - path: ".context/plans/dimension-improvements/d3-anti-pattern-coverage-2026-04-29.md"
   - path: "ADR/adr-013-d4-mutation-resistance.md"
     adr: "ADR-013"
     title: "ADR-013: Add mutation resistance criterion to D4 specification compliance scorer"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d4-specification-compliance.md"
+      - path: ".context/plans/dimension-improvements/d4-specification-compliance-2026-04-29.md"
   - path: "ADR/adr-014-d5-negative-condition-scoring.md"
     adr: "ADR-014"
     title: "ADR-014: Add negative-condition scoring to D5 progressive disclosure"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d5-progressive-disclosure.md"
+      - path: ".context/plans/dimension-improvements/d5-progressive-disclosure-2026-04-29.md"
   - path: "ADR/adr-015-d7-discriminativeness-signal.md"
     adr: "ADR-015"
     title: "ADR-015: Add discriminativeness signal to D7 pattern recognition scorer"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d7-pattern-recognition.md"
+      - path: ".context/plans/dimension-improvements/d7-pattern-recognition-2026-04-29.md"
   - path: "ADR/adr-016-d8-outcome-linkage.md"
     adr: "ADR-016"
     title: "ADR-016: Add outcome linkage criterion to D8 practical usability scorer"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d8-practical-usability.md"
+      - path: ".context/plans/dimension-improvements/d8-practical-usability-2026-04-29.md"
   - path: "ADR/adr-017-d9-mutation-coverage.md"
     adr: "ADR-017"
     title: "ADR-017: Add mutation coverage scoring to D9 eval validation"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/dimension-improvements/d9-eval-validation.md"
+      - path: ".context/plans/dimension-improvements/d9-eval-validation-2026-04-29.md"
   - path: "ADR/adr-018-ci-eval-guardrails.md"
     adr: "ADR-018"
     title: "ADR-018: CI gating guardrails for native eval runner"
@@ -132,21 +132,21 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/findings/eval-gating-byok-2026-06-29.md"
-      - path: ".context/plans/migrate-off-tessl-eval.md"
+      - path: ".context/plans/migrate-off-tessl-eval-2026-06-29.md"
   - path: "ADR/adr-019-dev-tooling-migration.md"
     adr: "ADR-019"
     title: "ADR-019: Migrate dev tooling to hk, markdownlint-cli2, and mise auto-bootstrap hooks"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/migrate-to-hk-and-markdownlint-cli2.md"
+      - path: ".context/plans/migrate-to-hk-and-markdownlint-cli2-2026-06-29.md"
   - path: "ADR/adr-020-multi-method-distribution.md"
     adr: "ADR-020"
     title: "ADR-020: Multi-method distribution strategy"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/onboarding-improvements.md"
+      - path: ".context/plans/onboarding-improvements-2026-04-27.md"
       - path: ".context/findings/homebrew-tap-prerequisites.md"
   - path: "ADR/adr-021-reporter-srp-split.md"
     adr: "ADR-021"
@@ -155,18 +155,18 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/analysis/code-review-se-principles.md"
-      - path: ".context/plans/se-principles-remediation-plan.md"
+      - path: ".context/plans/se-principles-remediation-plan-2026-04-29.md"
   - path: "ADR/adr-022-cli-flag-conventions.md"
     adr: "ADR-022"
     title: "ADR-022: Standardize CLI flag naming and output format conventions"
     status: accepted
     date: 2026-04-29
     context:
-      - path: ".context/plans/standardize-cli-flags.md"
+      - path: ".context/plans/standardize-cli-flags-2026-04-29.md"
   - path: "ADR/adr-023-version-sync-policy.md"
     adr: "ADR-023"
     title: "ADR-023: Keep CLI binary and tile.json versions in sync via release-please"
     status: accepted
     date: 2026-06-30
     context:
-      - path: ".context/plans/versioning-split.md"
+      - path: ".context/plans/versioning-split-2026-04-27.md"

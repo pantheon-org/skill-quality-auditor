@@ -3,7 +3,7 @@ title: "ADR-010: Add demonstration concreteness sub-criterion to D1 scorer"
 status: accepted
 date: 2026-06-30
 context:
-  - path: .context/plans/dimension-improvements/d1-knowledge-delta.md
+  - path: .context/plans/dimension-improvements/d1-knowledge-delta-2026-04-29.md
 ---
 
 **Status:** Accepted
