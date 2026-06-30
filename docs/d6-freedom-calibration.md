@@ -63,6 +63,36 @@ Too rigid — `let` has valid use cases in a tool skill.
 
 ## Academic References
 
-- [Zhang et al., 2025 — Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation](https://arxiv.org/abs/2509.14760)
-- [Sorensen, 2026 — Specification as the New Management](https://www.researchgate.net/publication/401626622)
-- [Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)
+```bibtex
+@article{zhang2025reasoning,
+  title         = {Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation},
+  author        = {Zhang and others},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2509.14760},
+  eprint        = {2509.14760},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2509.14760}>
+}
+
+```
+
+```bibtex
+@article{sorensen2026specification,
+  title         = {Specification as the New Management},
+  author        = {Sorensen},
+  year          = {2026},
+  journal       = {ResearchGate},
+  url           = {<https://www.researchgate.net/publication/401626622}>
+}
+
+```
+
+```bibtex
+@article{tao2025orchestration,
+  title         = {LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration},
+  author        = {R. Tao},
+  year          = {2025},
+  journal       = {Research Square},
+  url           = {<https://www.researchsquare.com/article/rs-9323974/latest}>
+}
+```

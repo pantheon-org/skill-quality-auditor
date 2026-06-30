@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -333,6 +334,78 @@ func TestD4_E2E_MutationResistantSkill_ScoresAtLeast13(t *testing.T) {
 	}
 }
 
+func TestD4_LooseScripts_Warning(t *testing.T) {
+	tmpDir := t.TempDir()
+	for _, name := range []string{"run.sh", "deploy.py", "build.ts", "helper.js"} {
+		if err := os.WriteFile(filepath.Join(tmpDir, name), []byte("content"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	_, diags := scoreD4(content, tmpDir, nilBridge())
+	warnCount := 0
+	for _, d := range diags {
+		if d.Dimension == "D4" && d.severity == "warning" && strings.Contains(d.Message, "should live in scripts/") {
+			warnCount++
+		}
+	}
+	if warnCount != 4 {
+		t.Errorf("expected 4 loose-script warnings, got %d", warnCount)
+	}
+}
+
+func TestD4_LooseScripts_SKILLmdNotFlagged(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(tmpDir, "SKILL.md"), []byte("# Skill"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	_, diags := scoreD4(content, tmpDir, nilBridge())
+	for _, d := range diags {
+		if d.Dimension == "D4" && strings.Contains(d.Message, "SKILL.md") {
+			t.Error("SKILL.md should not be flagged as a loose script")
+		}
+	}
+}
+
+func TestD4_LooseScripts_ScriptsDirNotFlagged(t *testing.T) {
+	tmpDir := t.TempDir()
+	scriptsDir := filepath.Join(tmpDir, "scripts")
+	if err := os.MkdirAll(scriptsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"run.sh", "deploy.py"} {
+		if err := os.WriteFile(filepath.Join(scriptsDir, name), []byte("content"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	_, diags := scoreD4(content, tmpDir, nilBridge())
+	for _, d := range diags {
+		if d.Dimension == "D4" && strings.Contains(d.Message, "should live in scripts/") {
+			t.Error("scripts inside scripts/ dir should not be flagged")
+			break
+		}
+	}
+}
+
+func TestD4_LooseScripts_NoFalsePositive(t *testing.T) {
+	tmpDir := t.TempDir()
+	for _, name := range []string{"README.md", "notes.txt", "config.yaml", "template.json"} {
+		if err := os.WriteFile(filepath.Join(tmpDir, name), []byte("content"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	_, diags := scoreD4(content, tmpDir, nilBridge())
+	for _, d := range diags {
+		if d.Dimension == "D4" && strings.Contains(d.Message, "should live in scripts/") {
+			t.Errorf("unexpected loose-script warning for non-script file: %s", d.Message)
+			break
+		}
+	}
+}
+
 func TestPenaltyFromDir_notADirectory(t *testing.T) {
 	import_re := regexp.MustCompile(`skills/[a-z]`)
 	// Path doesn't exist → should return 0
@@ -359,5 +432,182 @@ func TestPenaltyFromDir_cappedAtTwo(t *testing.T) {
 	}
 	if penaltyFromDir(tmp, import_re) != 2 {
 		t.Error("penalty should be capped at 2")
+	}
+}
+
+func TestD4_ArtifactTrio_FullBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	score, _ := scoreD4(content, tmpDir, nilBridge())
+	// baseline 8 + trio bonus 1 = 9
+	if score < 9 {
+		t.Errorf("expected >= 9 with artifact trio, got %d", score)
+	}
+}
+
+func TestD4_ArtifactTrio_NonShellScript(t *testing.T) {
+	for _, script := range []string{"validate.py", "validate.ts", "validate.js"} {
+		t.Run(script, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(tmpDir, "scripts", script), []byte("content"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+			s1, _ := scoreD4(content, t.TempDir(), nilBridge())
+			s2, _ := scoreD4(content, tmpDir, nilBridge())
+			if s2 <= s1 {
+				t.Errorf("expected bonus with %s: without=%d with=%d", script, s1, s2)
+			}
+		})
+	}
+}
+
+func TestD4_ArtifactTrio_MissingScript_NoBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	s1, _ := scoreD4(content, t.TempDir(), nilBridge())
+	s2, _ := scoreD4(content, tmpDir, nilBridge())
+	if s2 > s1 {
+		t.Errorf("expected no bonus without scripts/: without=%d with=%d", s1, s2)
+	}
+}
+
+func TestD4_ArtifactTrio_MissingSchemas_NoBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	s1, _ := scoreD4(content, t.TempDir(), nilBridge())
+	s2, _ := scoreD4(content, tmpDir, nilBridge())
+	if s2 > s1 {
+		t.Errorf("expected no bonus without schemas/: without=%d with=%d", s1, s2)
+	}
+}
+
+func TestD4_ArtifactTrio_MissingTemplates_NoBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	s1, _ := scoreD4(content, t.TempDir(), nilBridge())
+	s2, _ := scoreD4(content, tmpDir, nilBridge())
+	if s2 > s1 {
+		t.Errorf("expected no bonus without templates/: without=%d with=%d", s1, s2)
+	}
+}
+
+func TestD4_ArtifactTrio_EmptyDirs_NoBonus(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// directories exist but are empty
+	content := "---\ndescription: does something useful\n---\n# Skill\ncontent"
+	s1, _ := scoreD4(content, t.TempDir(), nilBridge())
+	s2, _ := scoreD4(content, tmpDir, nilBridge())
+	if s2 > s1 {
+		t.Errorf("expected no bonus with empty directories: without=%d with=%d", s1, s2)
+	}
+}
+
+func TestD4_E2E_FullArtifactTrioSkill_ScoresAboveBaseline(t *testing.T) {
+	// A skill with all three artifact directories should score >= a baseline skill
+	baseContent := "---\ndescription: Validates and sanitizes user inputs before processing to prevent injection attacks and data corruption in production systems\n---\n# Skill\nSee references/guide.md for details."
+	baseScore, _ := scoreD4(baseContent, t.TempDir(), nilBridge())
+
+	tmpDir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "schemas"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "assets", "templates"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "scripts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "schemas", "thing.schema.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "assets", "templates", "thing-template.yaml"), []byte("key: val"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "scripts", "validate.sh"), []byte("#!/bin/sh"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	trioScore, _ := scoreD4(baseContent, tmpDir, nilBridge())
+
+	if trioScore <= baseScore {
+		t.Errorf("expected trio artifact skill to score >= baseline: baseline=%d trio=%d", baseScore, trioScore)
 	}
 }

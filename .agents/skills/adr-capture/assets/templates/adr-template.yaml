@@ -1,0 +1,19 @@
+# ADR frontmatter template
+# Schema: ../schemas/adr-frontmatter.schema.json
+#
+# Copy the block below to the very first line of any new docs/ADR/adr-NNN-*.md file.
+# Remove the "superseded_by" and "context" fields if not applicable — do not leave them empty.
+#
+# status values    : proposed | accepted | deprecated | superseded
+# date format      : YYYY-MM-DD (creation date; do not update on edits)
+# superseded_by    : only when status is "superseded"; value is "adr-NNN"
+# context          : list of relative paths to .context/ files; omit entirely if none
+
+---
+title: "ADR-NNN: Human-readable decision title"
+status: proposed
+date: YYYY-MM-DD
+superseded_by: "adr-NNN"
+context:
+  - path: .context/path/to/source-file.md
+---

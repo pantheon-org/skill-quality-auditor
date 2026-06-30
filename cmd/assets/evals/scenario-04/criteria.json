@@ -1,8 +1,10 @@
 {
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to rewrite a basic anti-patterns section into the full NEVER/WHY/BAD/GOOD structure required for D3 scoring, expanding coverage while maintaining each entry's structural integrity.",
   "checklist": [
-    {"id": "c1", "criterion": "Each anti-pattern leads with NEVER: [action] phrasing", "max_score": 35},
-    {"id": "c2", "criterion": "WHY explanation provided for each anti-pattern", "max_score": 25},
-    {"id": "c3", "criterion": "Consequences of violating each anti-pattern described", "max_score": 25},
-    {"id": "c4", "criterion": "At least 3 distinct anti-patterns identified and documented", "max_score": 15}
+    {"name": "NEVER phrasing", "description": "Each anti-pattern leads with NEVER: [action] phrasing", "max_score": 35},
+    {"name": "WHY explanation", "description": "WHY explanation provided for each anti-pattern", "max_score": 25},
+    {"name": "Consequence description", "description": "Consequences of violating each anti-pattern described", "max_score": 25},
+    {"name": "Coverage breadth", "description": "At least 3 distinct anti-patterns identified and documented", "max_score": 15}
   ]
 }

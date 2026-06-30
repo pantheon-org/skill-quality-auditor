@@ -109,7 +109,46 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
 
 ## Academic References
 
-- [T Rehan, 2026 — Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications](https://arxiv.org/abs/2603.08806)
-- [C Paduraru, M Zavelca, A Stefanescu — Agentic AI for Behaviour-Driven Development Testing Using Large Language Models](https://www.researchgate.net/publication/390835646)
-- [R Tao, 2025 — LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration](https://www.researchsquare.com/article/rs-9323974/latest)
-- [J Kohl, O Kruse, Y Mostafa, A Luckow et al. — Automated Structural Testing of LLM-Based Agents](https://ieeexplore.ieee.org/abstract/document/11401679/)
+```bibtex
+@article{rehan2026tdad,
+  title         = {Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications},
+  author        = {T. Rehan},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2603.08806},
+  eprint        = {2603.08806},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2603.08806}>
+}
+
+```
+
+```bibtex
+@article{paduraruagenticbdd,
+  title         = {Agentic AI for Behaviour-Driven Development Testing Using Large Language Models},
+  author        = {C. Paduraru and M. Zavelca and A. Stefanescu},
+  journal       = {ResearchGate},
+  url           = {<https://www.researchgate.net/publication/390835646}>
+}
+
+```
+
+```bibtex
+@article{tao2025orchestration,
+  title         = {LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration},
+  author        = {R. Tao},
+  year          = {2025},
+  journal       = {Research Square},
+  url           = {<https://www.researchsquare.com/article/rs-9323974/latest}>
+}
+
+```
+
+```bibtex
+@article{kohlautomatedtesting,
+  title         = {Automated Structural Testing of LLM-Based Agents},
+  author        = {J. Kohl and O. Kruse and Y. Mostafa and A. Luckow and others},
+  journal       = {IEEE Access},
+  publisher     = {IEEE},
+  url           = {<https://ieeexplore.ieee.org/abstract/document/11401679/}>
+}
+```

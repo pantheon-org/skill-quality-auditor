@@ -1,0 +1,1 @@
+Validate ADR frontmatter against the schema and regenerate the ADR index.

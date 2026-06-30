@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to read and summarise the context index by type and status when asked what context files exist.",
+  "checklist": [
+    {"name": "Index consulted", "description": ".context/index.yaml read to answer the question", "max_score": 30},
+    {"name": "Summary by type", "description": "Context files summarised by type (plans, findings, analysis)", "max_score": 25},
+    {"name": "Status breakdown", "description": "Status breakdown (draft, active, done) included for each type", "max_score": 25},
+    {"name": "No manual edits", "description": "Correctly states not to edit index.yaml by hand", "max_score": 20}
+  ]
+}

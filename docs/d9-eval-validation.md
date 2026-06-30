@@ -93,8 +93,59 @@ skill-name/
 
 ## Academic References
 
-- [Rehan, 2026 — Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications](https://arxiv.org/abs/2603.08806)
-- [Alami, 2026 — Cognitive Camouflage: Specification Gaming in LLM-Generated Code Evades Holistic Evaluation but Not Adversarial Execution](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6512960)
-- [Wang, Chen, Deng, Lin, Harman et al. — A Comprehensive Study on Large Language Models for Mutation Testing](https://dl.acm.org/doi/abs/10.1145/3805038)
-- [Pan, Hu, Xia, Yang — Re-Evaluating Code LLM Benchmarks Under Semantic Mutation](https://arxiv.org/abs/2506.17369)
-- [Bouafif, Hamdaqa, Zulkoski — PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization](https://dl.acm.org/doi/abs/10.1145/3756681.3756991)
+```bibtex
+@article{rehan2026tdad,
+  title         = {Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications},
+  author        = {T. Rehan},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2603.08806},
+  eprint        = {2603.08806},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2603.08806}>
+}
+
+```
+
+```bibtex
+@article{alami2026camouflage,
+  title         = {Cognitive Camouflage: Specification Gaming in LLM-Generated Code Evades Holistic Evaluation but Not Adversarial Execution},
+  author        = {Alami},
+  year          = {2026},
+  journal       = {SSRN},
+  url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6512960}>
+}
+
+```
+
+```bibtex
+@article{wangmutationtesting,
+  title         = {A Comprehensive Study on Large Language Models for Mutation Testing},
+  author        = {Wang and Chen and Deng and Lin and Harman and others},
+  journal       = {ACM Transactions on Software Engineering and Methodology},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/abs/10.1145/3805038}>
+}
+
+```
+
+```bibtex
+@article{pan2026benchmarks,
+  title         = {Re-Evaluating Code LLM Benchmarks Under Semantic Mutation},
+  author        = {Pan and Hu and Xia and Yang},
+  journal       = {arXiv preprint arXiv:2506.17369},
+  eprint        = {2506.17369},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2506.17369}>
+}
+
+```
+
+```bibtex
+@article{bouafifprimg,
+  title         = {PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization},
+  author        = {Bouafif and Hamdaqa and Zulkoski},
+  journal       = {Proceedings of the 2025 ACM Conference on Automated Software Engineering},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/abs/10.1145/3756681.3756991}>
+}
+```

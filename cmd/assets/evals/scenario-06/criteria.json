@@ -1,8 +1,10 @@
 {
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to identify and fix agent-specific tool name references (portability violations), rewrite using agent-neutral phrasing, run an audit, and enforce audit artefact hygiene by excluding .context/ paths from git.",
   "checklist": [
-    {"id": "c1", "criterion": "No agent-specific tool names (e.g. amp, cursor, copilot) appear in generated skill content", "max_score": 35},
-    {"id": "c2", "criterion": "Agent-neutral phrasing used throughout (e.g. 'the agent', 'the assistant', not a named tool)", "max_score": 25},
-    {"id": "c3", "criterion": "Audit output paths (.context/audits/, .context/plans/, .context/analysis/) explicitly excluded from git commits", "max_score": 25},
-    {"id": "c4", "criterion": "User reminded that audit artefacts are ephemeral and should not be committed", "max_score": 15}
+    {"name": "No agent-specific names", "description": "No agent-specific tool names (e.g. amp, cursor, copilot) appear in generated skill content", "max_score": 35},
+    {"name": "Agent-neutral phrasing", "description": "Agent-neutral phrasing used throughout (e.g. 'the agent', 'the assistant', not a named tool)", "max_score": 25},
+    {"name": "Context path exclusion", "description": "Audit output paths (.context/audits/, .context/plans/, .context/analysis/) explicitly excluded from git commits", "max_score": 25},
+    {"name": "Ephemeral artefact warning", "description": "User reminded that audit artefacts are ephemeral and should not be committed", "max_score": 15}
   ]
 }

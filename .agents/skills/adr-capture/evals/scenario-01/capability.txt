@@ -1,0 +1,1 @@
+Extract a decision from a context file and create an ADR following the immutability rules.

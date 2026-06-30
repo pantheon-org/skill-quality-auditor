@@ -19,6 +19,7 @@ live exclusively under `cmd/assets/` — there is no separate `skill/` directory
 | `go.mod` / `main.go` | Go CLI root — build and run from repo root |
 | `agents/` | Agent registry — supported environments for the `init` command |
 | `docs/` | Per-dimension documentation — scoring criteria, examples, and academic references |
+| `docs/ADR/` | Architecture Decision Records — indexed at [`docs/ADR/index.yaml`](docs/ADR/index.yaml) |
 | `scorer/` | D1–D9 scorers; each file is one dimension |
 | `duplication/` | Word-level Jaccard similarity engine (inventory, pairwise detect) |
 | `reporter/` | Formats results as text or JSON; persists to `.context/audits/`; duplication, aggregation, and remediation plan formatters |
@@ -93,7 +94,7 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 - For deep rubric questions, load `cmd/assets/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `cmd/assets/references/detailed-anti-patterns.md`.
 - **Edit assets directly under `cmd/assets/`** — there is no separate `skill/` directory to mirror.
-- Audit outputs: `.context/audits/`, `.context/analysis/`, `.context/plans/` — never commit those directories.
+- All `.context/` files (plans, findings, analyses, index) are tracked in git — they are part of the project's institutional knowledge.
 
 ## Output locations
 
@@ -103,6 +104,18 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 | `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
 | `remediate` | `.context/plans/<skill>-remediation-plan.md` |
+
+## Context Index
+
+Actionable plans, findings, and analyses live under `.context/`. The machine-readable index is at [`.context/index.yaml`](.context/index.yaml) — each entry carries `title`, `type`, `status`, `date`, and optional `related` links.
+
+Read the index before starting a new task to surface active work items, pending decisions, and historical findings relevant to your change.
+
+## Architecture Decision Records (ADRs)
+
+Architectural and process decisions extracted from `.context/` analyses, findings, and plans are recorded as ADRs under `docs/ADR/`. The machine-readable index is at [`docs/ADR/index.yaml`](docs/ADR/index.yaml) — each entry carries `adr`, `title`, `status`, `date`, `context` (source `.context/` files), and optional `superseded_by`.
+
+Read the ADR index before making design decisions to avoid revisiting settled questions. When creating a `.context/` file that makes a binding decision, also create an ADR using the `adr-capture` skill.
 
 ## Suggested task workflows
 

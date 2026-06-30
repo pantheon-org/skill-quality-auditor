@@ -1,0 +1,62 @@
+{
+  "skill": "adr-capture",
+  "date": "2026-06-30",
+  "dimensions": {
+    "antiPatternQuality": 15,
+    "evalValidation": 0,
+    "freedomCalibration": 5,
+    "knowledgeDelta": 17,
+    "mindsetProcedures": 3,
+    "patternRecognition": 10,
+    "practicalUsability": 15,
+    "progressiveDisclosure": 10,
+    "specificationCompliance": 10
+  },
+  "total": 85,
+  "maxTotal": 140,
+  "grade": "F",
+  "lines": 174,
+  "hasReferences": false,
+  "referenceCount": 0,
+  "referenceSectionCompliant": false,
+  "errors": 0,
+  "warnings": 9,
+  "warningDetails": [
+    {
+      "dimension": "D2",
+      "message": "no precondition signals detected — add explicit entry conditions (e.g. ## Prerequisites)"
+    },
+    {
+      "dimension": "D2",
+      "message": "no postcondition signals detected — add external verification steps (e.g. run tests, confirm output)"
+    },
+    {
+      "dimension": "D2",
+      "message": "no decision-point signals detected — add branching logic for error cases (e.g. ## Troubleshooting)"
+    },
+    {
+      "dimension": "D4",
+      "message": "harness-specific path found: .agents/"
+    },
+    {
+      "dimension": "D4",
+      "message": "../ reference outside code blocks (self-containment violation)"
+    },
+    {
+      "dimension": "D4",
+      "message": ".context/ or .agents/ reference outside code blocks: .context/"
+    },
+    {
+      "dimension": "D7",
+      "message": "description lacks negative and workflow anchors — skill may over-trigger on adjacent topics"
+    },
+    {
+      "dimension": "D9",
+      "message": "evals/ directory missing entirely"
+    },
+    {
+      "dimension": "D5",
+      "message": "no references/ directory (progressive disclosure missing)"
+    }
+  ]
+}

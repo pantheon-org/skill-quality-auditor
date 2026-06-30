@@ -66,7 +66,51 @@ All three should be present for a full score.
 
 ## Academic References
 
-- [Bakal, 2026 — Knowledge Activation: AI Skills as the Institutional Knowledge Primitive for Agentic Software Development](https://arxiv.org/abs/2603.14805)
-- [Carriero, Scrocca et al. — Procedural Knowledge Ontology (PKO)](https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19)
-- [Bi, Hu, Nasir, 2025 — Real-Time Procedural Learning From Experience for AI Agents](https://arxiv.org/abs/2511.22074)
-- [Bi, Wu, Hao et al., 2026 — Automating Skill Acquisition through Large-Scale Mining of Agentic Repositories](https://arxiv.org/abs/2603.11808)
+```bibtex
+@article{bakal2026knowledge,
+  title         = {Knowledge Activation: AI Skills as the Institutional Knowledge Primitive for Agentic Software Development},
+  author        = {Bakal},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2603.14805},
+  eprint        = {2603.14805},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2603.14805}>
+}
+
+```
+
+```bibtex
+@inproceedings{carrieroPKO,
+  title         = {Procedural Knowledge Ontology (PKO)},
+  author        = {Carriero and Scrocca and others},
+  booktitle     = {Proceedings of the 2025 Conference on Advanced Information Systems Engineering},
+  publisher     = {Springer},
+  url           = {<https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19}>
+}
+
+```
+
+```bibtex
+@article{bi2025realtime,
+  title         = {Real-Time Procedural Learning From Experience for AI Agents},
+  author        = {Bi and Hu and Nasir},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2511.22074},
+  eprint        = {2511.22074},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2511.22074}>
+}
+
+```
+
+```bibtex
+@article{bi2026automating,
+  title         = {Automating Skill Acquisition through Large-Scale Mining of Agentic Repositories},
+  author        = {Bi and Wu and Hao and others},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2603.11808},
+  eprint        = {2603.11808},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2603.11808}>
+}
+```

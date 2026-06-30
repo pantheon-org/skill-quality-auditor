@@ -111,7 +111,52 @@ bdd-testing/
 
 ## Academic References
 
-- [Springer & Whittaker, 2018 — Progressive Disclosure: Designing for Effective Transparency](https://arxiv.org/abs/1811.02164)
-- [Anik & Bunt, 2021 — Designing Effective Training Dataset Explanations: The Impact of Information Depth and Progressive Disclosure](https://dl.acm.org/doi/10.1145/3411764.3445382)
-- [Timileyin, 2025 — The Role of Cognitive Load in Shaping Web Usability Requirements](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018)
-- [Pastrakis, Konstantakis, Caridakis, 2025 — AI-Enhanced Modular Information Architecture for Cognitive-Efficient User Experiences](https://www.mdpi.com/2078-2489/17/1/92)
+```bibtex
+@article{springer2018progressive,
+  title         = {Progressive Disclosure: Designing for Effective Transparency},
+  author        = {Springer and Whittaker},
+  year          = {2018},
+  journal       = {arXiv preprint arXiv:1811.02164},
+  eprint        = {1811.02164},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/1811.02164}>
+}
+
+```
+
+```bibtex
+@inproceedings{anik2021progressive,
+  title         = {Designing Effective Training Dataset Explanations: The Impact of Information Depth and Progressive Disclosure},
+  author        = {Anik and Bunt},
+  year          = {2021},
+  booktitle     = {Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/10.1145/3411764.3445382}>
+}
+
+```
+
+```bibtex
+@article{timileyin2025cognitiveload,
+  title         = {The Role of Cognitive Load in Shaping Web Usability Requirements},
+  author        = {Timileyin},
+  year          = {2025},
+  journal       = {SSRN},
+  url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018}>
+}
+
+```
+
+```bibtex
+@article{pastrakis2025aiarchitecture,
+  title         = {AI-Enhanced Modular Information Architecture for Cognitive-Efficient User Experiences},
+  author        = {Pastrakis and Konstantakis and Caridakis},
+  year          = {2025},
+  journal       = {Information},
+  volume        = {17},
+  number        = {1},
+  pages         = {92},
+  publisher     = {MDPI},
+  url           = {<https://www.mdpi.com/2078-2489/17/1/92}>
+}
+```

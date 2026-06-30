@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to regenerate the context index after adding new context files, verify all entries are present, and understand the index is a cache.",
+  "checklist": [
+    {"name": "Regeneration command", "description": "regenerate-context-index.sh run to update the index", "max_score": 30},
+    {"name": "New files indexed", "description": "Newly added context files appear in the regenerated index", "max_score": 30},
+    {"name": "No frontmatter warnings", "description": "No missing frontmatter warnings shown during regeneration", "max_score": 20},
+    {"name": "Index as cache", "description": "Correctly states the index is regenerated and source of truth is frontmatter", "max_score": 20}
+  ]
+}

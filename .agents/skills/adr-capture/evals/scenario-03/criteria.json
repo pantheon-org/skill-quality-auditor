@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to correctly supersede an existing ADR: update status to superseded on the old ADR, add superseded_by, create a new ADR with higher number, and regenerate the index.",
+  "checklist": [
+    {"name": "Old ADR updated", "description": "Old ADR status set to superseded with superseded_by field", "max_score": 30},
+    {"name": "New ADR created", "description": "New ADR created with incremented number and proper frontmatter", "max_score": 30},
+    {"name": "Immutability respected", "description": "Old ADR body not edited — only status/superseded_by changed", "max_score": 20},
+    {"name": "Index regenerated", "description": "Index regenerated after changes", "max_score": 20}
+  ]
+}

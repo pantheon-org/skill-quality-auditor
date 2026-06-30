@@ -39,10 +39,9 @@ jobs:
       - name: Batch quality gate
         run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
 
-      - name: Install Tessl CLI
-        run: curl -fsSL https://get.tessl.io | sh
+      - uses: tesslio/setup-tessl@v2
+        with:
+          token: ${{ secrets.TESSL_TOKEN }}
 
-      - name: Tessl eval run
-        env:
-          TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
-        run: tessl eval run cmd/assets/
+      - name: Tessl review run
+        run: tessl review run cmd/assets/ --workspace pantheon-ai --json --threshold 80

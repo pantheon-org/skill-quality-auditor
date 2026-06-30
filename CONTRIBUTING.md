@@ -36,6 +36,40 @@ tessl eval run cmd/assets/
 
 Evals must pass before bumping the tile version in `cmd/assets/tile.json`.
 
+## Git Hooks
+
+Pre-commit and pre-push hooks are managed via [hk](https://github.com/jdx/hk):
+
+```bash
+mise install   # installs go, node, golangci-lint, markdownlint-cli2, shellcheck, hk
+               # the postinstall hook runs `hk install` automatically
+               # (in an activated mise shell, the enter hook runs `mise install` for you)
+```
+
+```bash
+# Install hk manually (if not using mise)
+curl -fsSL https://hk.jdx.dev/install.sh | sh
+
+# Activate hooks in the repo
+hk install
+```
+
+Once installed, hooks trigger automatically:
+
+- **pre-commit** — Go fmt/vet/lint, markdownlint, shellcheck, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
+- **pre-push** — full test suite, binary build, artifact validation, duplication detection, and batch audit (fails below B grade).
+
+Useful hook commands:
+
+```bash
+hk run pre-commit   # run the pre-commit steps manually
+hk check            # lint without fixing (same steps as pre-commit)
+hk fix              # run fixers (e.g. markdownlint --fix) and restage
+HK=0 git commit ... # bypass hooks for a single commit
+```
+
+For alternative hook managers (pre-commit, lefthook), see `cmd/assets/references/git-hooks-setup.md`. Markdown is linted with [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2); its rules and ignore globs live in `.markdownlint-cli2.jsonc`. Temporarily bypass all hooks with `git commit --no-verify` or `git push --no-verify`.
+
 ## Adding a new `init` target agent
 
 1. Add the agent definition to `agents/registry.go`.

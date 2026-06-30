@@ -1,0 +1,1 @@
+Answer "what context files exist?" by reading the index and summarising by type and status.

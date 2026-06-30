@@ -1,9 +1,11 @@
 {
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to generate a structured remediation plan for a C+-grade skill with specific scoring targets, phase-based steps, effort sizing, and verifiable implementation commands.",
   "checklist": [
-    {"id": "c1", "criterion": "Plan opens with current score, target score, current and target grade", "max_score": 25},
-    {"id": "c2", "criterion": "Priority order and top focus areas identified", "max_score": 20},
-    {"id": "c3", "criterion": "Per-dimension action items listed", "max_score": 20},
-    {"id": "c4", "criterion": "Effort sizing (S/M/L) applied to each action item", "max_score": 20},
-    {"id": "c5", "criterion": "Phased implementation order specified", "max_score": 15}
+    {"name": "Plan header completeness", "description": "Plan opens with current score, target score, current and target grade", "max_score": 25},
+    {"name": "Priority identification", "description": "Priority order and top focus areas identified", "max_score": 20},
+    {"name": "Per-dimension actions", "description": "Per-dimension action items listed", "max_score": 20},
+    {"name": "Effort sizing", "description": "Effort sizing (S/M/L) applied to each action item", "max_score": 20},
+    {"name": "Phase structure", "description": "Phased implementation order specified", "max_score": 15}
   ]
 }

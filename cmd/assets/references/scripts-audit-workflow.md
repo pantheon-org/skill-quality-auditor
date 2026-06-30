@@ -227,7 +227,7 @@ reviewer: automated audit
 skill_location: `skills/<skill-name>/SKILL.md`
 ```
 
-Use `templates/review-report-template.yaml` as the canonical format source, then validate generated reports with:
+Use `assets/templates/review-report-template.yaml` as the canonical format source, then validate generated reports with:
 
 ```bash
 skill-auditor validate artifacts .context/audits/<skill>-YYYY-MM-DD.md

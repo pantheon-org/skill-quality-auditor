@@ -45,7 +45,7 @@ func scoreD7(b *validatorBridge) (int, []Diagnostic) {
 
 // negativeAnchorRe matches phrases indicating a skill explicitly states when NOT to trigger.
 var negativeAnchorRe = regexp.MustCompile(
-	`(?i)\b(does not apply|skip when|not for|exclude|do not trigger|not intended for)\b`,
+	`(?i)\b(does not apply|skip when|not for|exclude|do not (trigger|use)|not intended for)\b`,
 )
 
 // workflowAnchorRe matches artifact nouns that ground a trigger in a concrete workflow context.

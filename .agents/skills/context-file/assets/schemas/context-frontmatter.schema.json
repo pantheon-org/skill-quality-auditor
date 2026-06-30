@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "context-frontmatter",
+  "title": "Context file frontmatter",
+  "description": "YAML frontmatter required on every .context/**/*.md file.",
+  "type": "object",
+  "required": ["title", "type", "status", "date"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable title matching the H1 heading."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["plan", "finding", "analysis"],
+      "description": "File category — matches the subdirectory (plans/ → plan, findings/ → finding, analysis/ → analysis)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "done", "superseded"],
+      "description": "Lifecycle status. Use draft until reviewed, active for in-progress, done when complete, superseded when replaced."
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Creation date in ISO 8601 format (YYYY-MM-DD). Do not update on subsequent edits."
+    },
+    "related": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Relative paths to related .context files. Omit the field entirely if there are no related files."
+    }
+  }
+}

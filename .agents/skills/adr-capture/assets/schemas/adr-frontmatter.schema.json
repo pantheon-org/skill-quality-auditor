@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adr-frontmatter",
+  "title": "ADR file frontmatter",
+  "description": "YAML frontmatter required on every docs/ADR/adr-NNN-*.md file.",
+  "type": "object",
+  "required": ["title", "status", "date"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "pattern": "^ADR-\\d{3}: .+",
+      "minLength": 1,
+      "description": "Must start with ADR-NNN: prefix; wrap in quotes."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "deprecated", "superseded"],
+      "description": "proposed until reviewed, accepted for active decisions, deprecated or superseded when replaced."
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Creation date in ISO 8601 format (YYYY-MM-DD). Do not update on subsequent edits."
+    },
+    "superseded_by": {
+      "type": "string",
+      "pattern": "^adr-\\d{3}$",
+      "description": "Only when status is superseded; value is the replacement ADR name (e.g., adr-002)."
+    },
+    "context": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path to a .context/ file that motivated the decision."
+          }
+        }
+      },
+      "description": "List of relative paths to .context/ files that motivated the decision. Omit the field entirely if none."
+    }
+  }
+}

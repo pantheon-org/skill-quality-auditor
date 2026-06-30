@@ -1,8 +1,10 @@
 {
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to run pairwise duplication analysis across a skills portfolio, assign numeric similarity scores, apply threshold-based actions, recommend consolidation with the Navigation Hub pattern, and reject cross-domain merging.",
   "checklist": [
-    {"id": "c1", "criterion": "All relevant skill pairs analysed, not just a subset", "max_score": 35},
-    {"id": "c2", "criterion": "Similarity scores calculated for each pair", "max_score": 25},
-    {"id": "c3", "criterion": "Consolidation recommendation provided for each high-similarity pair", "max_score": 25},
-    {"id": "c4", "criterion": "Summary statistics included (total pairs, critical/warning counts)", "max_score": 15}
+    {"name": "Full pair analysis", "description": "All relevant skill pairs analysed, not just a subset", "max_score": 35},
+    {"name": "Numeric similarity scoring", "description": "Similarity scores calculated for each pair", "max_score": 25},
+    {"name": "Consolidation recommendations", "description": "Consolidation recommendation provided for each high-similarity pair", "max_score": 25},
+    {"name": "Summary statistics", "description": "Summary statistics included (total pairs, critical/warning counts)", "max_score": 15}
   ]
 }

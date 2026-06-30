@@ -22,7 +22,7 @@ const (
 	d4AndOrCountHigh = 3   // and/or conjunctions above this → -2 (over-stuffed)
 	d4AndOrCountMid  = 1   // and/or conjunctions above this → -1
 	d4Max            = 15
-	d4MaxWithBonus   = 17
+	d4MaxWithBonus   = 18
 	d4PenaltyCap     = 2 // max penalty per dir scan
 
 	// D5 — Progressive Disclosure (token path)
