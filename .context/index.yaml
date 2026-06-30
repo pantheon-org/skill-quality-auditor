@@ -47,6 +47,11 @@ entries:
     date: 2026-04-28
     related:
       - ../plans/onboarding-improvements-2026-04-27.md
+  - path: .context/findings/skilleval-analysis-2026-06-30.md
+    title: "Finding: SkillEval Analysis — 2026-06-30"
+    type: finding
+    status: active
+    date: 2026-06-30
   - path: .context/findings/skilllens-integration-2026-06-30.md
     title: "Finding: SkillLens Integration Assessment"
     type: finding

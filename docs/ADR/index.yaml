@@ -170,3 +170,10 @@ entries:
     date: 2026-06-30
     context:
       - path: ".context/plans/versioning-split-2026-04-27.md"
+  - path: "ADR/adr-024-ab-test-eval-mode.md"
+    adr: "ADR-024"
+    title: "ADR-024: Adopt A/B test evaluation mode from SkillEval"
+    status: proposed
+    date: 2026-06-30
+    context:
+      - path: ".context/findings/skilleval-analysis-2026-06-30.md"
