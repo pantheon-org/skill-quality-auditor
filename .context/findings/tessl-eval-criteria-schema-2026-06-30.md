@@ -75,3 +75,26 @@ All 6 scenarios under `cmd/assets/evals/scenario-*/criteria.json` were migrated 
 ### Prevention
 
 When adding new scenarios, ensure `criteria.json` uses the `weighted_checklist` format above. The tessl eval-setup skill auto-generates scenarios with the correct format — only manually created scenarios risk using the old schema.
+
+### Tessl CLI version pinning
+
+The CI quality-gate workflow pins tessl CLI to v0.88.2 (`skill-quality.yml:44`). This was required because v0.89.0 introduced a mandatory project link — `tessl eval run` fails with:
+
+```
+✘ No existing project safely matches this directory.
+  Run tessl project create ... if this should create a new project,
+  or run tessl project repair if this directory should link...
+```
+
+The project link is stored outside the repo (in `~/.tessl/`), so it can't be committed. Creating a project on every CI run is not viable. The version is pinned via:
+
+```yaml
+- name: Install Tessl CLI
+  env:
+    TESSL_VERSION: "0.88.2"
+  run: curl -fsSL https://get.tessl.io | sh
+```
+
+When upgrading beyond v0.89.0, either:
+1. Create a tessl project once and commit the link metadata (requires tessl to support in-repo config)
+2. Or reassess whether CI should create an ephemeral project per run
