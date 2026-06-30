@@ -125,38 +125,38 @@ bdd-testing/
 ```
 
 ```bibtex
-@inproceedings{anik2021progressive,
+@inproceedings{anik2026progressive,
   title         = {Designing Effective Training Dataset Explanations: The Impact of Information Depth and Progressive Disclosure},
-  author        = {Anik and Bunt},
-  year          = {2021},
-  booktitle     = {Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems},
+  author        = {A. I. Anik and A. Bunt},
+  year          = {2026},
+  booktitle     = {Proceedings of the 31st International Conference on Intelligent User Interfaces (IUI 2026)},
   publisher     = {ACM},
-  url           = {<https://dl.acm.org/doi/10.1145/3411764.3445382}>
+  url           = {<https://dl.acm.org/doi/10.1145/3742413.3789087>}
 }
 
 ```
 
 ```bibtex
-@article{timileyin2025cognitiveload,
+@article{timileyin2024cognitiveload,
   title         = {The Role of Cognitive Load in Shaping Web Usability Requirements},
-  author        = {Timileyin},
-  year          = {2025},
+  author        = {A. Timileyin},
+  year          = {2024},
   journal       = {SSRN},
-  url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018}>
+  url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018>}
 }
 
 ```
 
 ```bibtex
-@article{pastrakis2025aiarchitecture,
-  title         = {AI-Enhanced Modular Information Architecture for Cognitive-Efficient User Experiences},
-  author        = {Pastrakis and Konstantakis and Caridakis},
-  year          = {2025},
+@article{pastrakis2026aiarchitecture,
+  title         = {AI-Enhanced Modular Information Architecture for Cultural Heritage: Designing Cognitive-Efficient and User-Centered Experiences},
+  author        = {F. Pastrakis and M. Konstantakis and G. Caridakis},
+  year          = {2026},
   journal       = {Information},
   volume        = {17},
   number        = {1},
   pages         = {92},
   publisher     = {MDPI},
-  url           = {<https://www.mdpi.com/2078-2489/17/1/92}>
+  url           = {<https://www.mdpi.com/2078-2489/17/1/92>}
 }
 ```

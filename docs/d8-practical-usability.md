@@ -34,16 +34,55 @@
 ## Academic References
 
 ```bibtex
-@article{xu2024agentcompany,
-  title         = {TheAgentCompany: Benchmarking LLM Agents on Consequential Real-World Tasks},
-  author        = {Xu and others},
-  year          = {2024},
-  journal       = {arXiv preprint arXiv:2412.14161},
-  eprint        = {2412.14161},
+@article{jiang2026buildrix,
+  title         = {Buildrix: An Open Platform for Sharing and Benchmarking Agentic AI Skills in Building Engineering},
+  author        = {Z. Jiang and B. Dong},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2606.25139},
+  eprint        = {2606.25139},
   archivePrefix = {arXiv},
-  url           = {<https://arxiv.org/abs/2412.14161}>
+  url           = {<https://arxiv.org/abs/2606.25139>}
 }
 
+```
+
+```bibtex
+@inproceedings{stolee2025code,
+  title         = {10 Years Later: Revisiting How Developers Search for Code},
+  author        = {K. T. Stolee and T. Welp and C. Sadowski and S. Elbaum},
+  year          = {2025},
+  booktitle     = {Proceedings of the ACM on Software Engineering},
+  volume        = {2},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/10.1145/3715774>}
+}
+
+```
+
+```bibtex
+@article{he2025bugs,
+  title         = {A Survey of Bugs in AI-Generated Code},
+  author        = {R. Gao and A. Tahir and P. Liang and T. Susnjak and others},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2512.05239},
+  eprint        = {2512.05239},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2512.05239>}
+}
+
+```
+
+```bibtex
+@article{abufarha2026prompt,
+  title         = {Mitigating Prompt Dependency in Large Language Models: A Retrieval-Augmented Framework for Intelligent Code Assistance},
+  author        = {S. Abufarha and A. A. Marouf and J. G. Rokne and R. Alhajj},
+  year          = {2026},
+  journal       = {Software},
+  volume        = {5},
+  number        = {1},
+  publisher     = {MDPI},
+  url           = {<https://www.mdpi.com/2674-113X/5/1/4>}
+}
 ```
 
 ```bibtex

@@ -80,12 +80,13 @@ All three should be present for a full score.
 ```
 
 ```bibtex
-@inproceedings{carrieroPKO,
+@inproceedings{carriero2025pko,
   title         = {Procedural Knowledge Ontology (PKO)},
-  author        = {Carriero and Scrocca and others},
-  booktitle     = {Proceedings of the 2025 Conference on Advanced Information Systems Engineering},
+  author        = {V. A. Carriero and M. Scrocca and I. Baroni and A. Azzini and I. Celino},
+  year          = {2025},
+  booktitle     = {Proceedings of the European Semantic Web Conference (ESWC 2025)},
   publisher     = {Springer},
-  url           = {<https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19}>
+  url           = {<https://doi.org/10.1007/978-3-031-94578-6_19>}
 }
 
 ```

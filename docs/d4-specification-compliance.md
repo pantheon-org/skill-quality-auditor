@@ -123,11 +123,14 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
 ```
 
 ```bibtex
-@article{paduraruagenticbdd,
-  title         = {Agentic AI for Behaviour-Driven Development Testing Using Large Language Models},
-  author        = {C. Paduraru and M. Zavelca and A. Stefanescu},
-  journal       = {ResearchGate},
-  url           = {<https://www.researchgate.net/publication/390835646}>
+@article{zhang2025reasoning,
+  title         = {Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation},
+  author        = {H. Zhang and Y. Li and X. Hu and D. Liu and Z. Wang and B. Li and Y. Cheng},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2509.14760},
+  eprint        = {2509.14760},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2509.14760>}
 }
 
 ```
@@ -138,7 +141,17 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   author        = {R. Tao},
   year          = {2025},
   journal       = {Research Square},
-  url           = {<https://www.researchsquare.com/article/rs-9323974/latest}>
+  url           = {<https://www.researchsquare.com/article/rs-9323974/latest>}
+}
+
+```
+
+```bibtex
+@article{paduraruagenticbdd,
+  title         = {Agentic AI for Behaviour-Driven Development Testing Using Large Language Models},
+  author        = {C. Paduraru and M. Zavelca and A. Stefanescu},
+  journal       = {ResearchGate},
+  url           = {<https://www.researchgate.net/publication/390835646>}
 }
 
 ```
@@ -149,6 +162,6 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   author        = {J. Kohl and O. Kruse and Y. Mostafa and A. Luckow and others},
   journal       = {IEEE Access},
   publisher     = {IEEE},
-  url           = {<https://ieeexplore.ieee.org/abstract/document/11401679/}>
+  url           = {<https://ieeexplore.ieee.org/abstract/document/11401679/>}
 }
 ```

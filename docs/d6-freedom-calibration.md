@@ -64,16 +64,36 @@ Too rigid — `let` has valid use cases in a tool skill.
 ## Academic References
 
 ```bibtex
-@article{zhang2025reasoning,
-  title         = {Reasoning over Boundaries: Enhancing Specification Alignment via Test-time Deliberation},
-  author        = {Zhang and others},
-  year          = {2025},
-  journal       = {arXiv preprint arXiv:2509.14760},
-  eprint        = {2509.14760},
-  archivePrefix = {arXiv},
-  url           = {<https://arxiv.org/abs/2509.14760}>
+@inproceedings{staufer2026agentindex,
+  title         = {The 2025 AI Agent Index: Documenting Technical and Safety Features of Deployed Agentic AI Systems},
+  author        = {L. Staufer and K. Feng and K. Wei and L. Bailey and Y. Duan and M. Yang and A. P. Ozisik and S. Casper and N. Kolt},
+  year          = {2026},
+  booktitle     = {Proceedings of the ACM Conference on Fairness, Accountability, and Transparency (ACM FAccT 2026)},
+  publisher     = {ACM},
+  url           = {<https://arxiv.org/abs/2602.17753>}
 }
 
+```
+
+```bibtex
+@inproceedings{dibia2025mas,
+  title         = {Designing Multi-Agent Systems: Principles, Patterns and Implementation for AI Agents},
+  author        = {V. Dibia},
+  year          = {2025},
+  publisher     = {O'Reilly Media},
+  url           = {<https://www.oreilly.com/library/view/designing-multi-agent-systems/9781098194945/>}
+}
+
+```
+
+```bibtex
+@article{bednarbrandt2026autonomy,
+  title         = {From Autonomy to Agency: A 10-Level Framework for AI's Evolution and Organisational Readiness},
+  author        = {M. Bednar-Brandt},
+  year          = {2026},
+  journal       = {SSRN},
+  url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6226382>}
+}
 ```
 
 ```bibtex
