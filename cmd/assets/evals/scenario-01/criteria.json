@@ -1,10 +1,12 @@
 {
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to audit a SKILL.md using the 9-dimension framework (D1-D9), score dimensions with numerical values and justifications, identify redundant content, and produce actionable remediation plans with effort sizing.",
   "checklist": [
-    {"id": "c1", "criterion": "All 9 dimensions scored with numerical value and per-dimension justification", "max_score": 25},
-    {"id": "c2", "criterion": "D1 Knowledge Delta assigned <=10/20 for high redundant content", "max_score": 20},
-    {"id": "c3", "criterion": "SQL basics, installation steps, and generic best-practices flagged as low-delta", "max_score": 15},
-    {"id": "c4", "criterion": "A-grade threshold stated as >=126/140", "max_score": 15},
-    {"id": "c5", "criterion": "Remediation plan contains file-level changes with S/M/L effort sizing", "max_score": 15},
-    {"id": "c6", "criterion": "D4 and D5 weaknesses identified", "max_score": 10}
+    {"name": "Nine-dimension scoring", "description": "All 9 dimensions scored with numerical value and per-dimension justification", "max_score": 25},
+    {"name": "Knowledge Delta accuracy", "description": "D1 Knowledge Delta assigned <=10/20 for high redundant content", "max_score": 20},
+    {"name": "Redundancy detection", "description": "SQL basics, installation steps, and generic best-practices flagged as low-delta", "max_score": 15},
+    {"name": "Grade threshold", "description": "A-grade threshold stated as >=126/140", "max_score": 15},
+    {"name": "Remediation plan quality", "description": "Remediation plan contains file-level changes with S/M/L effort sizing", "max_score": 15},
+    {"name": "Specification and disclosure gaps", "description": "D4 and D5 weaknesses identified", "max_score": 10}
   ]
 }
