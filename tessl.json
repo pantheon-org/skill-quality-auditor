@@ -1,0 +1,26 @@
+{
+  "name": "pantheon-ai/skill-quality-auditor",
+  "mode": "vendored",
+  "dependencies": {
+    "pantheon-ai/software-design-principles": {
+      "version": "0.1.4"
+    },
+    "pantheon-ai/research": {
+      "version": "0.2.4",
+      "include": {
+        "skills": [
+          "google-scholar-search"
+        ]
+      }
+    },
+    "pantheon-ai/skill-quality-auditor": {
+      "version": "0.1.5"
+    },
+    "tessl-labs/eval-improve": {
+      "version": "0.5.0"
+    },
+    "tessl-labs/eval-setup": {
+      "version": "0.5.0"
+    }
+  }
+}
