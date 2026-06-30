@@ -120,6 +120,9 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   url           = {<https://arxiv.org/abs/2603.08806}>
 }
 
+```
+
+```bibtex
 @article{paduraruagenticbdd,
   title         = {Agentic AI for Behaviour-Driven Development Testing Using Large Language Models},
   author        = {C. Paduraru and M. Zavelca and A. Stefanescu},
@@ -127,6 +130,9 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   url           = {<https://www.researchgate.net/publication/390835646}>
 }
 
+```
+
+```bibtex
 @article{tao2025orchestration,
   title         = {LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration},
   author        = {R. Tao},
@@ -135,6 +141,9 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   url           = {<https://www.researchsquare.com/article/rs-9323974/latest}>
 }
 
+```
+
+```bibtex
 @article{kohlautomatedtesting,
   title         = {Automated Structural Testing of LLM-Based Agents},
   author        = {J. Kohl and O. Kruse and Y. Mostafa and A. Luckow and others},

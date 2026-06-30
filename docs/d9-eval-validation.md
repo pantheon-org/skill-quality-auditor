@@ -104,6 +104,9 @@ skill-name/
   url           = {<https://arxiv.org/abs/2603.08806}>
 }
 
+```
+
+```bibtex
 @article{alami2026camouflage,
   title         = {Cognitive Camouflage: Specification Gaming in LLM-Generated Code Evades Holistic Evaluation but Not Adversarial Execution},
   author        = {Alami},
@@ -112,6 +115,9 @@ skill-name/
   url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6512960}>
 }
 
+```
+
+```bibtex
 @article{wangmutationtesting,
   title         = {A Comprehensive Study on Large Language Models for Mutation Testing},
   author        = {Wang and Chen and Deng and Lin and Harman and others},
@@ -120,6 +126,9 @@ skill-name/
   url           = {<https://dl.acm.org/doi/abs/10.1145/3805038}>
 }
 
+```
+
+```bibtex
 @article{pan2026benchmarks,
   title         = {Re-Evaluating Code LLM Benchmarks Under Semantic Mutation},
   author        = {Pan and Hu and Xia and Yang},
@@ -129,6 +138,9 @@ skill-name/
   url           = {<https://arxiv.org/abs/2506.17369}>
 }
 
+```
+
+```bibtex
 @article{bouafifprimg,
   title         = {PrimG: Efficient LLM-Driven Test Generation Using Mutant Prioritization},
   author        = {Bouafif and Hamdaqa and Zulkoski},

@@ -74,6 +74,9 @@ Too rigid — `let` has valid use cases in a tool skill.
   url           = {<https://arxiv.org/abs/2509.14760}>
 }
 
+```
+
+```bibtex
 @article{sorensen2026specification,
   title         = {Specification as the New Management},
   author        = {Sorensen},
@@ -82,6 +85,9 @@ Too rigid — `let` has valid use cases in a tool skill.
   url           = {<https://www.researchgate.net/publication/401626622}>
 }
 
+```
+
+```bibtex
 @article{tao2025orchestration,
   title         = {LLM-Skill Orchestration: Achieving 202/202 Subtask Completion via Rule-Augmented Multi-Model Collaboration},
   author        = {R. Tao},

@@ -92,6 +92,9 @@ Expert pattern the model does not know by default.
   url           = {<https://arxiv.org/abs/2605.23899}>
 }
 
+```
+
+```bibtex
 @article{li2025instruction,
   title         = {Instruction Agent: Enhancing Agent with Expert Demonstration},
   author        = {Li and others},
@@ -102,6 +105,9 @@ Expert pattern the model does not know by default.
   url           = {<https://arxiv.org/abs/2509.07098}>
 }
 
+```
+
+```bibtex
 @article{deng2024novice,
   title         = {From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning},
   author        = {Deng and others},
@@ -112,6 +118,9 @@ Expert pattern the model does not know by default.
   url           = {<https://arxiv.org/abs/2411.03817}>
 }
 
+```
+
+```bibtex
 @inproceedings{yin2025grounding,
   title         = {Grounding Open-Domain Knowledge from LLMs to Real-World RL Tasks: A Survey},
   author        = {Yin and others},

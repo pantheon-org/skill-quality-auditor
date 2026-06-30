@@ -44,6 +44,9 @@
   url           = {<https://arxiv.org/abs/2412.14161}>
 }
 
+```
+
+```bibtex
 @article{mohammadi2025evalbench,
   title         = {Evaluation and Benchmarking of LLM Agents: A Survey},
   author        = {Mohammadi and others},
@@ -53,6 +56,9 @@
   url           = {<https://dl.acm.org/doi/abs/10.1145/3711896.3736570}>
 }
 
+```
+
+```bibtex
 @article{miller2025metrics,
   title         = {Evaluating LLM Metrics Through Real-World Capabilities},
   author        = {Miller and Tang},
@@ -63,6 +69,9 @@
   url           = {<https://arxiv.org/abs/2505.08253}>
 }
 
+```
+
+```bibtex
 @article{yehudai2025survey,
   title         = {Survey on Evaluation of LLM-Based Agents},
   author        = {Yehudai and others},

@@ -50,6 +50,9 @@ This is a diagnostic signal only — it does not affect the numeric score in the
   url           = {<https://arxiv.org/abs/2510.05445}>
 }
 
+```
+
+```bibtex
 @article{wang2026aco,
   title         = {Efficient and Interpretable Multi-Agent LLM Routing via Ant Colony Optimization},
   author        = {Wang and others},
@@ -60,6 +63,9 @@ This is a diagnostic signal only — it does not affect the numeric score in the
   url           = {<https://arxiv.org/abs/2603.12933}>
 }
 
+```
+
+```bibtex
 @inproceedings{chen2024agentpoison,
   title         = {AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases},
   author        = {Chen and others},

@@ -77,6 +77,9 @@ All three should be present for a full score.
   url           = {<https://arxiv.org/abs/2603.14805}>
 }
 
+```
+
+```bibtex
 @inproceedings{carrieroPKO,
   title         = {Procedural Knowledge Ontology (PKO)},
   author        = {Carriero and Scrocca and others},
@@ -85,6 +88,9 @@ All three should be present for a full score.
   url           = {<https://link.springer.com/chapter/10.1007/978-3-031-94578-6_19}>
 }
 
+```
+
+```bibtex
 @article{bi2025realtime,
   title         = {Real-Time Procedural Learning From Experience for AI Agents},
   author        = {Bi and Hu and Nasir},
@@ -95,6 +101,9 @@ All three should be present for a full score.
   url           = {<https://arxiv.org/abs/2511.22074}>
 }
 
+```
+
+```bibtex
 @article{bi2026automating,
   title         = {Automating Skill Acquisition through Large-Scale Mining of Agentic Repositories},
   author        = {Bi and Wu and Hao and others},

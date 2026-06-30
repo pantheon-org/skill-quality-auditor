@@ -122,6 +122,9 @@ bdd-testing/
   url           = {<https://arxiv.org/abs/1811.02164}>
 }
 
+```
+
+```bibtex
 @inproceedings{anik2021progressive,
   title         = {Designing Effective Training Dataset Explanations: The Impact of Information Depth and Progressive Disclosure},
   author        = {Anik and Bunt},
@@ -131,6 +134,9 @@ bdd-testing/
   url           = {<https://dl.acm.org/doi/10.1145/3411764.3445382}>
 }
 
+```
+
+```bibtex
 @article{timileyin2025cognitiveload,
   title         = {The Role of Cognitive Load in Shaping Web Usability Requirements},
   author        = {Timileyin},
@@ -139,6 +145,9 @@ bdd-testing/
   url           = {<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5247018}>
 }
 
+```
+
+```bibtex
 @article{pastrakis2025aiarchitecture,
   title         = {AI-Enhanced Modular Information Architecture for Cognitive-Efficient User Experiences},
   author        = {Pastrakis and Konstantakis and Caridakis},

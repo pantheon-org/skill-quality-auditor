@@ -64,6 +64,9 @@ WHY: False positives waste hours debugging phantom issues
   url           = {<https://dl.acm.org/doi/abs/10.1145/3361149.3361178}>
 }
 
+```
+
+```bibtex
 @inproceedings{picha2019detection,
   title         = {Software Process Anti-Pattern Detection in Project Data},
   author        = {Picha and Brada},
@@ -73,6 +76,9 @@ WHY: False positives waste hours debugging phantom issues
   url           = {<https://dl.acm.org/doi/abs/10.1145/3361149.3361169}>
 }
 
+```
+
+```bibtex
 @article{bhatia2024dataquality,
   title         = {Data Quality Anti-Patterns for Software Analytics},
   author        = {Bhatia and Lin and Rajbahadur and Adams and others},
@@ -83,6 +89,9 @@ WHY: False positives waste hours debugging phantom issues
   url           = {<https://arxiv.org/abs/2408.12560}>
 }
 
+```
+
+```bibtex
 @article{amarasinghe2024codequality,
   title         = {Code Quality Alarms: Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns},
   author        = {Amarasinghe and Asanka and others},
