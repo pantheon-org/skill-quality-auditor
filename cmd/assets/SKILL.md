@@ -9,14 +9,6 @@ Evaluate, maintain, and improve skill quality with 9-dimension framework scoring
 
 ## Quick Start
 
-Build once:
-
-```bash
-go build -o dist/skill-auditor .
-```
-
-Run audits:
-
 ```bash
 # Single skill
 skill-auditor evaluate <domain>/<skill-name> --json --store
