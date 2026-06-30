@@ -1,94 +1,96 @@
 # Git Hooks Setup
 
-This project uses [hk](https://github.com/jdx/hk) as its hook manager (`hk.pkl` in the repo root). This reference covers setup for hk and alternative managers.
+Configure git hooks to run `skill-auditor` checks automatically. Below are examples using different hook managers.
 
-## hk (recommended)
+## hk
 
 ```bash
-# Install hk (requires Rust or installer)
+# Install hk
 curl -fsSL https://hk.jdx.dev/install.sh | sh
-
-# Or via mise
-mise use -g hk
 
 # Activate hooks in the repo
 hk install
 ```
 
-### Available Hooks
+Example `hk.pkl`:
 
-| Hook | Trigger | What it checks |
-|------|---------|---------------|
-| `go-fmt` | pre-commit | Go files are gofmt-clean |
-| `go-vet` | pre-commit | `go vet ./...` passes |
-| `golangci-lint` | pre-commit | `golangci-lint run ./...` passes |
-| `markdownlint` | pre-commit | Markdown files comply with `.markdownlint.json` |
-| `shellcheck` | pre-commit | `scripts/**/*.sh` files pass shellcheck |
-| `context-frontmatter` | pre-commit | All `.context/*.md` files have valid YAML frontmatter |
-| `context-index` | pre-commit | `.context/index.yaml` exists (auto-fix regenerates it) |
-| `adr-frontmatter` | pre-commit | `docs/ADR/adr-*.md` files have valid frontmatter |
-| `adr-index` | pre-commit | `docs/ADR/index.yaml` exists (auto-fix regenerates it) |
-| `adr-undocumented` | pre-commit | No `.context/` files contain decisions without ADR coverage |
-| `go-test` | pre-push | Full test suite passes |
-| `go-build` | pre-push | Binary builds successfully |
-| `skill-validate` | pre-push | Artifact conventions are valid |
-| `skill-duplication` | pre-push | No critical duplication (≥35%) detected |
-| `skill-batch` | pre-push | `cmd/assets` scores ≥ B |
+```pkl
+amends "package://github.com/jdx/hk/releases/download/v1.48.0/hk@1.48.0#/Config.pkl"
 
-### Skipping Hooks
+local prePush = new Mapping<String, Step> {
+  ["validate-artifacts"] {
+    check = "skill-auditor validate artifacts"
+  }
+  ["check-duplication"] {
+    check = "skill-auditor duplication <path>"
+  }
+  ["batch-audit"] {
+    check = "skill-auditor batch <path> --fail-below B"
+  }
+}
 
-Temporarily bypass hooks (e.g. for WIP commits):
-
-```bash
-git commit --no-verify
-git push --no-verify
+hooks {
+  ["pre-push"] { steps = prePush }
+}
 ```
 
 ## pre-commit Framework
-
-If you use [pre-commit](https://pre-commit.com), adapt the hk checks:
 
 ```yaml
 # .pre-commit-config.yaml
 repos:
   - repo: local
     hooks:
-      - id: context-frontmatter
-        name: Context Frontmatter Validation
-        entry: .agents/skills/context-index/scripts/validate-context-frontmatter.sh
-        language: script
-        files: ^\.context/.*\.md$
-        exclude: ^\.context/(audits|plans)/
-      - id: adr-frontmatter
-        name: ADR Frontmatter Validation
-        entry: .agents/skills/adr-capture/scripts/validate-adr-frontmatter.sh
-        language: script
-        files: ^docs/ADR/adr-.*\.md$
+      - id: skill-validate
+        name: Validate Artifacts
+        entry: skill-auditor validate artifacts
+        language: system
+        pass_filenames: false
+      - id: skill-duplication
+        name: Check Duplication
+        entry: skill-auditor duplication <path>
+        language: system
+        pass_filenames: false
+      - id: skill-batch
+        name: Batch Audit
+        entry: skill-auditor batch <path> --fail-below B
+        language: system
+        pass_filenames: false
 ```
 
 ## Lefthook
 
-If you use [lefthook](https://github.com/evilmartians/lefthook), adapt the checks:
-
 ```yaml
 # lefthook.yml
-pre-commit:
+pre-push:
   commands:
-    context-frontmatter:
-      glob: ".context/**/*.md"
-      exclude: ".context/(audits|plans)/**"
-      run: .agents/skills/context-index/scripts/validate-context-frontmatter.sh {staged_files}
-    adr-frontmatter:
-      glob: "docs/ADR/adr-*.md"
-      run: .agents/skills/adr-capture/scripts/validate-adr-frontmatter.sh {staged_files}
-    adr-index:
-      glob: "docs/ADR/adr-*.md"
-      run: .agents/skills/adr-capture/scripts/regenerate-adr-index.sh
-    context-index:
-      glob: ".context/**/*.md"
-      run: .agents/skills/context-index/scripts/regenerate-context-index.sh && test -f .context/index.yaml
+    skill-validate:
+      run: skill-auditor validate artifacts
+    skill-duplication:
+      run: skill-auditor duplication <path>
+    skill-batch:
+      run: skill-auditor batch <path> --fail-below B
 ```
 
-## CI Integration
+## Husky
 
-These same checks run in CI via `hk check` and `hk fix`. See [Quality Thresholds](quality-thresholds-scoring.md) for CI gate configuration.
+```bash
+# Install husky
+npx husky init
+
+# Add a pre-push hook
+cat > .husky/pre-push << 'EOF'
+#!/usr/bin/env sh
+skill-auditor validate artifacts
+skill-auditor duplication <path>
+skill-auditor batch <path> --fail-below B
+EOF
+chmod +x .husky/pre-push
+```
+
+## Skipping Hooks
+
+```bash
+git commit --no-verify
+git push --no-verify
+```
