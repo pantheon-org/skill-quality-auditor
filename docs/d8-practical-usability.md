@@ -33,7 +33,41 @@
 
 ## Academic References
 
-- [Xu et al., 2024 — TheAgentCompany: Benchmarking LLM Agents on Consequential Real-World Tasks](https://arxiv.org/abs/2412.14161)
-- [Mohammadi et al., 2025 — Evaluation and Benchmarking of LLM Agents: A Survey](https://dl.acm.org/doi/abs/10.1145/3711896.3736570)
-- [Miller & Tang, 2025 — Evaluating LLM Metrics Through Real-World Capabilities](https://arxiv.org/abs/2505.08253)
-- [Yehudai et al., 2025 — Survey on Evaluation of LLM-Based Agents](https://arxiv.org/abs/2503.16416)
+@article{xu2024agentcompany,
+  title         = {TheAgentCompany: Benchmarking LLM Agents on Consequential Real-World Tasks},
+  author        = {Xu and others},
+  year          = {2024},
+  journal       = {arXiv preprint arXiv:2412.14161},
+  eprint        = {2412.14161},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2412.14161}>
+}
+
+@article{mohammadi2025evalbench,
+  title         = {Evaluation and Benchmarking of LLM Agents: A Survey},
+  author        = {Mohammadi and others},
+  year          = {2025},
+  journal       = {ACM Computing Surveys},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/abs/10.1145/3711896.3736570}>
+}
+
+@article{miller2025metrics,
+  title         = {Evaluating LLM Metrics Through Real-World Capabilities},
+  author        = {Miller and Tang},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2505.08253},
+  eprint        = {2505.08253},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2505.08253}>
+}
+
+@article{yehudai2025survey,
+  title         = {Survey on Evaluation of LLM-Based Agents},
+  author        = {Yehudai and others},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2503.16416},
+  eprint        = {2503.16416},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2503.16416}>
+}

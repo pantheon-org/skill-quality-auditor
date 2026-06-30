@@ -321,8 +321,8 @@ func writeAllAssets(destDir string) error {
 	dirs := []assetDir{
 		{embeddedRefs, "assets/references"},
 		{embeddedEvals, "assets/evals"},
-		{embeddedSchemas, "assets/schemas"},
-		{embeddedTemplates, "assets/templates"},
+		{embeddedSchemas, "assets/assets/schemas"},
+		{embeddedTemplates, "assets/assets/templates"},
 		{embeddedRequirements, "assets/requirements"},
 	}
 	for _, d := range dirs {

@@ -81,6 +81,40 @@ Expert pattern the model does not know by default.
 
 ## Academic References
 
-- [Li et al., 2025 — Instruction Agent: Enhancing Agent with Expert Demonstration](https://arxiv.org/abs/2509.07098)
-- [Deng et al., 2024 — From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning](https://arxiv.org/abs/2411.03817)
-- [Yin et al., 2025 — Grounding Open-Domain Knowledge from LLMs to Real-World RL Tasks: A Survey](https://www.ijcai.org/proceedings/2025/1198.pdf)
+@article{huang2026skilllens,
+  title         = {From Raw Experience to Skill Consumption: A Systematic Study of Model-Generated Agent Skills},
+  author        = {Zisu Huang and Jingwen Xu and Yifan Yang and Ziyang Gong and Qihao Yang and Muzhao Tian and Xiaohua Wang and Changze Lv and Xuemei Gao and Qi Dai and Bei Liu and Kai Qiu and Xue Yang and Dongdong Chen and Xiaoqing Zheng and Chong Luo},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2605.23899},
+  eprint        = {2605.23899},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2605.23899}>
+}
+
+@article{li2025instruction,
+  title         = {Instruction Agent: Enhancing Agent with Expert Demonstration},
+  author        = {Li and others},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2509.07098},
+  eprint        = {2509.07098},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2509.07098}>
+}
+
+@article{deng2024novice,
+  title         = {From Novice to Expert: LLM Agent Policy Optimization via Step-wise Reinforcement Learning},
+  author        = {Deng and others},
+  year          = {2024},
+  journal       = {arXiv preprint arXiv:2411.03817},
+  eprint        = {2411.03817},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2411.03817}>
+}
+
+@inproceedings{yin2025grounding,
+  title         = {Grounding Open-Domain Knowledge from LLMs to Real-World RL Tasks: A Survey},
+  author        = {Yin and others},
+  year          = {2025},
+  booktitle     = {Proceedings of the 34th International Joint Conference on Artificial Intelligence (IJCAI)},
+  url           = {<https://www.ijcai.org/proceedings/2025/1198.pdf}>
+}

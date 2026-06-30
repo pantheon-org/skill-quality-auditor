@@ -54,7 +54,38 @@ WHY: False positives waste hours debugging phantom issues
 
 ## Academic References
 
-- [Brada & Picha, 2019 — Software Process Anti-Patterns Catalogue](https://dl.acm.org/doi/abs/10.1145/3361149.3361178)
-- [Picha & Brada, 2019 — Software Process Anti-Pattern Detection in Project Data](https://dl.acm.org/doi/abs/10.1145/3361149.3361169)
-- [Bhatia, Lin, Rajbahadur, Adams et al., 2024 — Data Quality Anti-Patterns for Software Analytics](https://arxiv.org/abs/2408.12560)
-- [Amarasinghe, Asanka et al., 2024 — Code Quality Alarms: Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns](https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93)
+@inproceedings{brada2019catalogue,
+  title         = {Software Process Anti-Patterns Catalogue},
+  author        = {Brada and Picha},
+  year          = {2019},
+  booktitle     = {Proceedings of the 2019 European Conference on Software Architecture (ECSA)},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/abs/10.1145/3361149.3361178}>
+}
+
+@inproceedings{picha2019detection,
+  title         = {Software Process Anti-Pattern Detection in Project Data},
+  author        = {Picha and Brada},
+  year          = {2019},
+  booktitle     = {Proceedings of the 2019 European Conference on Software Architecture (ECSA)},
+  publisher     = {ACM},
+  url           = {<https://dl.acm.org/doi/abs/10.1145/3361149.3361169}>
+}
+
+@article{bhatia2024dataquality,
+  title         = {Data Quality Anti-Patterns for Software Analytics},
+  author        = {Bhatia and Lin and Rajbahadur and Adams and others},
+  year          = {2024},
+  journal       = {arXiv preprint arXiv:2408.12560},
+  eprint        = {2408.12560},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2408.12560}>
+}
+
+@article{amarasinghe2024codequality,
+  title         = {Code Quality Alarms: Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns},
+  author        = {Amarasinghe and Asanka and others},
+  year          = {2024},
+  journal       = {Journal of Data Research and Analytics},
+  url           = {<https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93}>
+}

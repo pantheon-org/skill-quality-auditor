@@ -39,6 +39,30 @@ This is a diagnostic signal only — it does not affect the numeric score in the
 
 ## Academic References
 
-- [Zhang et al., 2025 — AgentRouter: A Knowledge-Graph-Guided LLM Router for Collaborative Multi-Agent Question Answering](https://arxiv.org/abs/2510.05445)
-- [Wang et al., 2026 — Efficient and Interpretable Multi-Agent LLM Routing via Ant Colony Optimization](https://arxiv.org/abs/2603.12933)
-- [Chen et al., NeurIPS 2024 — AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases](https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html)
+@article{zhang2025agentrouter,
+  title         = {AgentRouter: A Knowledge-Graph-Guided LLM Router for Collaborative Multi-Agent Question Answering},
+  author        = {Zhang and others},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2510.05445},
+  eprint        = {2510.05445},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2510.05445}>
+}
+
+@article{wang2026aco,
+  title         = {Efficient and Interpretable Multi-Agent LLM Routing via Ant Colony Optimization},
+  author        = {Wang and others},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2603.12933},
+  eprint        = {2603.12933},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2603.12933}>
+}
+
+@inproceedings{chen2024agentpoison,
+  title         = {AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases},
+  author        = {Chen and others},
+  year          = {2024},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  url           = {<https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html}>
+}
