@@ -128,4 +128,3 @@ Audit all skills:
 | Deduplication workflow and aggregation guidance | [Duplication Detection](references/duplication-detection-algorithm.md) | Detecting skill overlap or planning aggregations |
 | `skill-auditor evaluate/batch` usage and output formats | [Scripts Workflow](references/scripts-audit-workflow.md) | Running audits from the command line |
 | Registry publication gates and tessl compliance checks | [Tessl Compliance](references/tessl-compliance-framework.md) | Preparing a skill for public registry submission |
-| BibTeX format and placement rules for academic references | [Citation Standard](references/citation-standard.md) | Adding or formatting citations in dimension docs |

@@ -62,6 +62,11 @@ entries:
     type: finding
     status: active
     date: 2026-06-30
+  - path: .context/instructions/citation-standard.md
+    title: "Citation Standard"
+    type: instruction
+    status: active
+    date: 2026-06-30
   - path: .context/plans/citation-verification-plan-2026-04-27.md
     title: "Citation Verification Plan"
     type: plan

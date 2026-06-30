@@ -1,4 +1,9 @@
-# Citation Standard
+---
+title: "Citation Standard"
+type: instruction
+status: active
+date: 2026-06-30
+---
 
 All academic references in dimension docs MUST use BibTeX format inside individually fenced code blocks.
 
