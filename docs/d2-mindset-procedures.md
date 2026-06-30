@@ -66,6 +66,7 @@ All three should be present for a full score.
 
 ## Academic References
 
+```bibtex
 @article{bakal2026knowledge,
   title         = {Knowledge Activation: AI Skills as the Institutional Knowledge Primitive for Agentic Software Development},
   author        = {Bakal},
@@ -103,3 +104,4 @@ All three should be present for a full score.
   archivePrefix = {arXiv},
   url           = {<https://arxiv.org/abs/2603.11808}>
 }
+```

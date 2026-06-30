@@ -81,6 +81,7 @@ Expert pattern the model does not know by default.
 
 ## Academic References
 
+```bibtex
 @article{huang2026skilllens,
   title         = {From Raw Experience to Skill Consumption: A Systematic Study of Model-Generated Agent Skills},
   author        = {Zisu Huang and Jingwen Xu and Yifan Yang and Ziyang Gong and Qihao Yang and Muzhao Tian and Xiaohua Wang and Changze Lv and Xuemei Gao and Qi Dai and Bei Liu and Kai Qiu and Xue Yang and Dongdong Chen and Xiaoqing Zheng and Chong Luo},
@@ -118,3 +119,4 @@ Expert pattern the model does not know by default.
   booktitle     = {Proceedings of the 34th International Joint Conference on Artificial Intelligence (IJCAI)},
   url           = {<https://www.ijcai.org/proceedings/2025/1198.pdf}>
 }
+```

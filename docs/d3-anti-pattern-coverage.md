@@ -54,6 +54,7 @@ WHY: False positives waste hours debugging phantom issues
 
 ## Academic References
 
+```bibtex
 @inproceedings{brada2019catalogue,
   title         = {Software Process Anti-Patterns Catalogue},
   author        = {Brada and Picha},
@@ -89,3 +90,4 @@ WHY: False positives waste hours debugging phantom issues
   journal       = {Journal of Data Research and Analytics},
   url           = {<https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93}>
 }
+```

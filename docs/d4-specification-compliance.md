@@ -109,6 +109,7 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
 
 ## Academic References
 
+```bibtex
 @article{rehan2026tdad,
   title         = {Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications},
   author        = {T. Rehan},
@@ -141,3 +142,4 @@ Instructions reference `.opencode/scripts/run-tests.sh` and `.claude/docs/file.m
   publisher     = {IEEE},
   url           = {<https://ieeexplore.ieee.org/abstract/document/11401679/}>
 }
+```

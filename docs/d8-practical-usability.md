@@ -33,6 +33,7 @@
 
 ## Academic References
 
+```bibtex
 @article{xu2024agentcompany,
   title         = {TheAgentCompany: Benchmarking LLM Agents on Consequential Real-World Tasks},
   author        = {Xu and others},
@@ -71,3 +72,4 @@
   archivePrefix = {arXiv},
   url           = {<https://arxiv.org/abs/2503.16416}>
 }
+```

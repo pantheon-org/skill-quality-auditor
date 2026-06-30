@@ -39,6 +39,7 @@ This is a diagnostic signal only — it does not affect the numeric score in the
 
 ## Academic References
 
+```bibtex
 @article{zhang2025agentrouter,
   title         = {AgentRouter: A Knowledge-Graph-Guided LLM Router for Collaborative Multi-Agent Question Answering},
   author        = {Zhang and others},
@@ -66,3 +67,4 @@ This is a diagnostic signal only — it does not affect the numeric score in the
   booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
   url           = {<https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html}>
 }
+```

@@ -93,6 +93,7 @@ skill-name/
 
 ## Academic References
 
+```bibtex
 @article{rehan2026tdad,
   title         = {Test-Driven AI Agent Definition (TDAD): Compiling Tool-Using Agents from Behavioral Specifications},
   author        = {T. Rehan},
@@ -135,3 +136,4 @@ skill-name/
   publisher     = {ACM},
   url           = {<https://dl.acm.org/doi/abs/10.1145/3756681.3756991}>
 }
+```

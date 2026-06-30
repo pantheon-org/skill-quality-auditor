@@ -111,6 +111,7 @@ bdd-testing/
 
 ## Academic References
 
+```bibtex
 @article{springer2018progressive,
   title         = {Progressive Disclosure: Designing for Effective Transparency},
   author        = {Springer and Whittaker},
@@ -149,3 +150,4 @@ bdd-testing/
   publisher     = {MDPI},
   url           = {<https://www.mdpi.com/2078-2489/17/1/92}>
 }
+```
