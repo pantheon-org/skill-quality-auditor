@@ -42,6 +42,13 @@ jobs:
       - name: Install Tessl CLI
         run: curl -fsSL https://get.tessl.io | sh
 
+      - name: Create or repair tessl project
+        env:
+          TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
+        run: |
+          tessl project create skill-quality-auditor-ci --workspace pantheon-ai 2>/dev/null || \
+          tessl project repair --update-source -y
+
       - name: Tessl eval run
         env:
           TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
