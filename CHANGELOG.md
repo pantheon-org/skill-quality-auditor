@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.13.1...v0.14.0) (2026-06-30)
+
+
+### Features
+
+* D4 loose-scripts check, artifact trio bonus, 3 skill remediations, docs overhaul ([#78](https://github.com/pantheon-org/skill-quality-auditor/issues/78)) ([3a54a67](https://github.com/pantheon-org/skill-quality-auditor/commit/3a54a670e2b729fcc0db657f1d5526db193cadca))
+
+
+### Bug Fixes
+
+* **assets:** replace hardcoded maintainer path in skill-taxonomy reference ([#74](https://github.com/pantheon-org/skill-quality-auditor/issues/74)) ([a727fea](https://github.com/pantheon-org/skill-quality-auditor/commit/a727feaf47d4e7087611e71994cd26400931e66c))
+
 ## [0.13.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.13.0...v0.13.1) (2026-04-29)
 
 
