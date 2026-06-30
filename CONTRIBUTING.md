@@ -36,6 +36,32 @@ tessl eval run cmd/assets/
 
 Evals must pass before bumping the tile version in `cmd/assets/tile.json`.
 
+## Git Hooks
+
+This project ships with `hk.pkl` — a configuration for the [hk](https://github.com/jdx/hk) hook manager:
+
+```bash
+# Install hk (or use mise: mise use -g hk)
+curl -fsSL https://hk.jdx.dev/install.sh | sh
+
+# Activate hooks in the repo
+hk install
+```
+
+Once installed, hooks trigger automatically:
+
+- **pre-commit** — Go fmt/vet/lint, markdownlint, shellcheck, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
+- **pre-push** — full test suite, binary build, artifact validation, duplication detection, and batch audit (fails below B grade).
+
+Run manually:
+
+```bash
+hk check        # run pre-commit checks
+hk fix          # run checks and apply auto-fixes
+```
+
+For alternative hook managers (pre-commit, lefthook), see `cmd/assets/references/git-hooks-setup.md`. Temporarily bypass with `git commit --no-verify` or `git push --no-verify`.
+
 ## Adding a new `init` target agent
 
 1. Add the agent definition to `agents/registry.go`.

@@ -40,37 +40,6 @@ skill-auditor batch <skill1> <skill2> --fail-below B --store
 3. Generate a remediation plan with T-shirt sizing and score delta estimates
 4. Re-run the auditor to verify improvement; if below target, focus on the lowest-scoring dimension
 
-## Git Hooks
-
-This project ships with `hk.pkl` — a configuration for the [hk](https://github.com/jdx/hk) hook manager. Install hk and run `hk install` from the repo root to activate:
-
-```bash
-hk install
-```
-
-Once installed, hook triggers automatically:
-
-- **pre-commit** — `go-fmt`, `go-vet`, `golangci-lint`, `markdownlint`, `shellcheck`, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
-- **pre-push** — full test suite (`go test ./...`), binary build, artifact validation, duplication detection, and batch audit (`--fail-below B`).
-
-To run manually without a commit:
-
-```bash
-hk check        # run pre-commit checks
-hk fix          # run checks and apply auto-fixes
-```
-
-For alternative hook managers (pre-commit, lefthook), see [Git Hooks Setup](references/git-hooks-setup.md).
-
-## Mindset
-
-- Use scores as directional signals, not verdicts; consider them a compass.
-- Apply deterministic, reproducible checks over manual review — you may supplement with peer review but must not replace it.
-- PREFER threshold-based evaluation — thresholds are automatable; relative rankings are not.
-- Keep rules strict for safety and consistency; stay flexible elsewhere.
-- AVOID running consecutive audits without `--store` — score trends require at least one persisted baseline.
-- UNLESS a skill is in active development, treat a B grade or below as a PR merge blocker.
-
 ## Anti-Patterns
 
 **NEVER** skip baseline comparison in recurring audits.
@@ -158,5 +127,4 @@ Audit all skills:
 | T-shirt sizing and remediation roadmaps | [Remediation Planning](references/remediation-planning.md) | Writing a remediation plan for a C/D-grade skill |
 | Deduplication workflow and aggregation guidance | [Duplication Detection](references/duplication-detection-algorithm.md) | Detecting skill overlap or planning aggregations |
 | `skill-auditor evaluate/batch` usage and output formats | [Scripts Workflow](references/scripts-audit-workflow.md) | Running audits from the command line |
-| Git hook setup for hk, pre-commit, and lefthook integration | [Git Hooks Setup](references/git-hooks-setup.md) | Setting up pre-commit or pre-push hooks in this repository |
 | Registry publication gates and tessl compliance checks | [Tessl Compliance](references/tessl-compliance-framework.md) | Preparing a skill for public registry submission |
