@@ -33,7 +33,7 @@ docs/ADR/
 
 ### ADR Frontmatter Schema
 
-Every ADR MUST start with:
+Every ADR MUST start with frontmatter following [`cmd/assets/schemas/adr-frontmatter.schema.json`](../../cmd/assets/schemas/adr-frontmatter.schema.json). Use the template at [`cmd/assets/templates/adr-template.yaml`](../../cmd/assets/templates/adr-template.yaml) to bootstrap new files.
 
 ```yaml
 ---
@@ -96,7 +96,20 @@ Create an ADR whenever a `.context/` file (plan, finding, analysis) or a review 
 4. Set `status: proposed` initially; promote to `accepted` after implementation starts
 5. When a decision is superseded: set `status: superseded` and `superseded_by` on the old ADR (never edit its body); create a new ADR with higher number referencing the old one via `context:`
 
+## Assets
+
+- **Template:** `cmd/assets/templates/adr-template.yaml` — YAML frontmatter template for new ADRs
+- **Schema:** `cmd/assets/schemas/adr-frontmatter.schema.json` — JSON Schema validating ADR frontmatter fields
+
 ## Scripts
+
+### `validate-adr-frontmatter.sh`
+
+Validates ADR frontmatter against `cmd/assets/schemas/adr-frontmatter.schema.json`. Run before committing new or modified ADRs.
+
+```bash
+.agents/skills/adr-capture/validate-adr-frontmatter.sh docs/ADR/adr-*.md
+```
 
 ### `regenerate-adr-index.sh`
 
