@@ -36,6 +36,19 @@ local preCommit = new Mapping<String, Step> {
         fix = ".agents/skills/context-index/regenerate-context-index.sh"
         check = "test -f .context/index.yaml"
     }
+    ["adr-frontmatter"] {
+        glob = List("docs/ADR/adr-*.md")
+        check = ".agents/skills/context-index/check-context-frontmatter.sh {{files}}"
+    }
+    ["adr-index"] {
+        glob = List("docs/ADR/adr-*.md")
+        fix = ".agents/skills/adr-capture/regenerate-adr-index.sh"
+        check = "test -f docs/ADR/index.yaml"
+    }
+    ["adr-undocumented"] {
+        glob = List(".context/**/*.md")
+        check = ".agents/skills/adr-capture/check-undocumented-decisions.sh"
+    }
 }
 
 local prePush = new Mapping<String, Step> {

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "providers": [
+    "claude-code",
+    "gemini-cli",
+    "openai-codex",
+    "opencode"
+  ],
+  "servers": {
+    "tessl": {
+      "transport": "stdio",
+      "command": "tessl",
+      "args": [
+        "mcp",
+        "start"
+      ]
+    }
+  }
+}
