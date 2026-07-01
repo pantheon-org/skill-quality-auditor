@@ -13,18 +13,6 @@ Create a new `.context/` file with standard YAML frontmatter and appropriate sec
 - Familiarity with the `.context/` directory structure: `plans/`, `findings/`, `analysis/`
 - The `context-index` skill available for index regeneration after creation
 
-## Quick Start
-
-```bash
-# Determine type and create the file
-.context/plans/<kebab-case-name>.md          # implementation or migration plan
-.context/findings/<topic>-YYYY-MM-DD.md      # research or investigation output
-.context/analysis/<topic>-YYYY-MM-DD.md      # duplication reports, audits, reviews
-
-# After creating, regenerate the index
-.agents/skills/context-index/regenerate-context-index.sh
-```
-
 ## When to Use
 
 - **plan**: Multi-step implementation, migration, or remediation work with open tasks
@@ -127,6 +115,7 @@ date: YYYY-MM-DD
 - `status: draft` is the safe default; promote to `active` only when reviewed
 - Date is creation date, not last-modified — do not update it on subsequent edits
 - After creating or updating a `.context/` file, consider regenerating the index to keep it current
+- Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern
 
 ## Troubleshooting
 

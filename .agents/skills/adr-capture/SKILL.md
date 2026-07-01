@@ -27,14 +27,7 @@ scripts/check-undocumented-decisions.sh
 
 ## ADR Location and Structure
 
-ADRs live at `docs/ADR/adr-NNN-kebab-case-title.md`:
-
-```text
-docs/ADR/
-  adr-001-use-yaml-frontmatter-for-context-files.md
-  adr-002-nine-dimension-scoring-framework.md
-  index.yaml
-```
+ADRs live at `docs/ADR/adr-NNN-kebab-case-title.md`. See `docs/ADR/index.yaml` for the full list.
 
 ### ADR Frontmatter Schema
 
@@ -77,9 +70,9 @@ What is the change being proposed or implemented?
 What becomes easier or more difficult because of this change?
 ```
 
-## When to Create an ADR
+## When to Use
 
-Create an ADR whenever a `.context/` file or a review makes a **binding decision** — a choice that affects future direction, architecture, conventions, or processes.
+Create an ADR whenever a `.context/` file or a review makes a **binding decision** — a choice that affects future direction, architecture, conventions, or processes. ALWAYS link the ADR to its source context file.
 
 | Context file section | Decision example | ADR warranted? |
 |---------------------|-----------------|----------------|
@@ -87,6 +80,12 @@ Create an ADR whenever a `.context/` file or a review makes a **binding decision
 | Plan > Steps | "Phase 1: split reporter into sub-packages" | Yes |
 | Plan > Open Questions | "Use sqllite vs postgres" — after resolved | Yes |
 | Finding > Summary | "Observational research with no action" | No |
+
+## When NOT to Use
+
+- Observational findings without decisions — record as findings, not ADRs
+- Retroactive documentation of long-settled decisions — ADRs capture forward-looking choices
+- Inline comments or ephemeral notes — not every observation needs a decision record
 
 ## Workflow
 
@@ -104,18 +103,6 @@ scripts/regenerate-adr-index.sh            # Scan docs/ADR/ and regenerate index
 scripts/check-undocumented-decisions.sh    # Find decisions without ADR coverage
 ```
 
-## Integration with Context Workflow
-
-ADR capture is the final step in the context file lifecycle:
-
-```text
-Create context file (context-file skill)
-  → Regenerate context index (context-index skill)
-  → Check for extractable decisions (adr-capture skill)
-  → Create ADR if warranted (this skill)
-  → Regenerate ADR index (this skill)
-```
-
 ## Mindset
 
 - Not every finding needs an ADR — only decisions that shape future work
@@ -123,6 +110,7 @@ Create context file (context-file skill)
 - `status: proposed` is the safe default; promote after implementation review
 - ADRs are immutable — only `status` and `superseded_by` may be updated; superseding is the only way to replace a decision
 - Consider marking `status: superseded` rather than deleting old ADRs; the historical record preserves context even for reversed decisions
+- Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern
 
 ## Troubleshooting
 
@@ -159,4 +147,3 @@ Decision not found in ADR index         | Check the ADR has context: and valid f
 | --- | --- | --- |
 | ADR frontmatter field rules, status lifecycle, and validation | [ADR Frontmatter Schema](references/adr-frontmatter-schema.md) | Validating or debugging ADR frontmatter errors |
 | Step-by-step supersession workflow with examples | [ADR Supersession](references/adr-supersession.md) | Reversing or replacing an existing decision via supersession |
-

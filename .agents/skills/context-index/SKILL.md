@@ -30,6 +30,21 @@ scripts/check-context-frontmatter.sh .context/**/*.md
 3. Writes `.context/index.yaml` — one entry per file, sorted by path
 4. Prints any files missing required frontmatter to stderr (excluded from the index)
 
+The generated `index.yaml` looks like:
+
+```yaml
+plans:
+  - path: ".context/plans/example-plan.md"
+    title: "Example Plan"
+    status: active
+    date: 2026-07-01
+findings:
+  - path: ".context/findings/topic-2026-07-01.md"
+    title: "Finding: Topic"
+    status: active
+    date: 2026-07-01
+```
+
 ## When to Use
 
 - After creating, renaming, or deleting a `.context/` file
@@ -49,9 +64,16 @@ scripts/check-context-frontmatter.sh .context/**/*.md
 3. Run the regenerate index script to rebuild the index
 4. If committing context files, also stage the index
 
+```bash
+# Full session example
+./scripts/check-context-frontmatter.sh .context/**/*.md
+./scripts/regenerate-context-index.sh
+git add .context/index.yaml
+```
+
 ## Frontmatter Schema
 
-Every `.context/*.md` file requires this frontmatter block:
+Every `.context/*.md` file requires this frontmatter block (template at `assets/templates/context-index-template.yaml`):
 
 ```yaml
 ---
@@ -69,13 +91,22 @@ related:
 - The index is a cache — the source of truth is always the frontmatter in each `.md` file
 - Regeneration is idempotent; when in doubt, regenerate
 - Files with missing or malformed frontmatter are listed on stderr and excluded from the index — fix them first
-- Consider running the check script before regenerating to avoid surprises
+- Optionally run the check script before regenerating to surface issues early
+- Balance prescriptive rules (NEVER, ALWAYS) with permissive guidance: consider, optionally, may
+- Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern
 
 ## Troubleshooting
 
 - **Index shows stale or missing entries:** Re-run `regenerate-context-index.sh` — the index is a generated cache, not the source of truth
 - **Pre-commit hook blocks after creating a file:** Run `check-context-frontmatter.sh` to identify files without frontmatter, add the block, then regenerate
 - **Script warnings on stderr:** Files with warnings are excluded from the index — fix the frontmatter issues first, then regenerate
+
+```bash
+# Check for frontmatter issues before regenerating
+./scripts/check-context-frontmatter.sh .context/**/*.md
+# Fix any files reported, then regenerate
+./scripts/regenerate-context-index.sh
+```
 
 ## Anti-Patterns
 
@@ -99,4 +130,17 @@ related:
 | Topic | Reference | When to Use |
 | --- | --- | --- |
 | Technical details, exit codes, and best practices for index regeneration | [Regeneration Reference](references/regeneration-reference.md) | Debugging index regeneration issues or setting up CI checks |
+
+## Example Output
+
+When all frontmatter is valid, regeneration produces output like:
+
+```text
+Scanned: 12 files
+Indexed: 12 entries
+Errors:  0
+Warnings: 0
+```
+
+On errors, the script lists problematic files on stderr — fix those and re-run.
 
