@@ -100,7 +100,6 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 
 - **Never commit to `main` directly.** Branch → PR → merge.
 - **Run `go test ./...` before reporting any Go change as done.**
-- **Tessl eval changes require `tessl eval run cmd/assets/` to pass.**
 - **Eval changes require `./dist/skill-auditor eval ./cmd/assets` to pass** (native eval runner; the structural gate runs every PR and every pre-push via `hk run pre-push`). The Tessl review step in CI is advisory during the proving period and will be removed once the native runner has 2 weeks of green CI runs.
 - For deep rubric questions, load `cmd/assets/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `cmd/assets/references/detailed-anti-patterns.md`.

@@ -754,4 +754,4 @@ skill-name/
 
 - `framework-scoring-rubric.md` - Detailed scoring methodology
 - `framework-quality-standards.md` - A-grade requirements
-- `creating-eval-scenarios` skill - Tessl eval scenario generation
+- `creating-eval-scenarios` skill - Eval scenario generation
