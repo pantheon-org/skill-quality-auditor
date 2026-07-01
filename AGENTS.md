@@ -28,6 +28,16 @@ live exclusively under `cmd/assets/` — there is no separate `skill/` directory
 | `internal/` | Shared utilities (tokenizer) |
 | `testdata/` | Fixture skills for unit tests — do not modify without updating tests |
 
+## Ways of working
+
+Before making any change, read `.context/instructions/ways-of-working.md` for the branch workflow, commit conventions, and plan-status sync rules. The short version:
+
+1. **Create a branch from `main` first** — use `feat/`, `fix/`, `chore/` prefixes.
+2. Commit atomically with conventional messages.
+3. Rebase on `main` if it diverges.
+4. Run `hk check && go test ./...` before pushing.
+5. **Update plan frontmatter** (`active → done`) when you implement what a plan describes.
+
 ## How to evaluate a skill
 
 ```bash
@@ -103,7 +113,7 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 | `evaluate --store` / `batch --store` | `.context/audits/<skill>/<date>/` |
 | `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
 | `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
-| `remediate` | `.context/plans/<skill>-remediation-plan.md` |
+| `remediate` | `.context/plans/<skill>-remediation-plan-<date>.md` |
 
 ## Context Index
 

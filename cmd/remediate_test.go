@@ -69,7 +69,7 @@ func TestRunGenerate_valid(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	planPath := filepath.Join(root, ".context", "plans", "my-skill-remediation-plan.md")
+	planPath := filepath.Join(root, ".context", "plans", "my-skill-remediation-plan-2026-04-29.md")
 	if _, err := os.Stat(planPath); err != nil {
 		t.Errorf("plan file not written to %s: %v", planPath, err)
 	}
@@ -111,7 +111,7 @@ func TestRunGenerate_dryRun(t *testing.T) {
 	}
 
 	// With --dry-run, no plan file should be written.
-	planPath := filepath.Join(root, ".context", "plans", "dry-skill-remediation-plan.md")
+	planPath := filepath.Join(root, ".context", "plans", "dry-skill-remediation-plan-2026-04-29.md")
 	if _, err := os.Stat(planPath); err == nil {
 		t.Error("plan file should not be written in dry-run mode")
 	}
@@ -164,7 +164,7 @@ func TestRunGenerate_jsonOutput(t *testing.T) {
 	}
 
 	// Plan file should be written as .json.
-	planPath := filepath.Join(root, ".context", "plans", "json-skill-remediation-plan.json")
+	planPath := filepath.Join(root, ".context", "plans", "json-skill-remediation-plan-2026-04-29.json")
 	if _, err := os.Stat(planPath); err != nil {
 		t.Errorf("expected JSON plan file at %s: %v", planPath, err)
 	}
@@ -264,7 +264,7 @@ func TestRunValidate_bySkillName(t *testing.T) {
 	if err := os.MkdirAll(planDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	planPath := filepath.Join(planDir, "my-skill-remediation-plan.md")
+	planPath := filepath.Join(planDir, "my-skill-remediation-plan-2026-04-29.md")
 	if err := os.WriteFile(planPath, []byte("# plan"), 0o644); err != nil {
 		t.Fatal(err)
 	}

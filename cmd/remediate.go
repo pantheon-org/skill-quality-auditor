@@ -88,7 +88,7 @@ func runGenerate(cmd *cobra.Command, skillArg, repoRoot string, targetScore int)
 	}
 
 	skillBase := filepath.Base(skillArg)
-	outFile := filepath.Join(outDir, skillBase+"-remediation-plan"+ext)
+	outFile := filepath.Join(outDir, skillBase+"-remediation-plan-"+auditDate+ext)
 	if err := os.WriteFile(outFile, []byte(content), 0o644); err != nil {
 		return fmt.Errorf("write plan: %w", err)
 	}
@@ -104,11 +104,16 @@ func runValidate(cmd *cobra.Command, planArg, repoRoot string) error {
 	planPath := planArg
 	if !filepath.IsAbs(planArg) && !pathExists(planArg) {
 		skillBase := filepath.Base(planArg)
-		planPath = filepath.Join(repoRoot, ".context", "plans", skillBase+"-remediation-plan.md")
-	}
-
-	if !pathExists(planPath) {
-		return fmt.Errorf("plan file not found: %s", planPath)
+		pattern := filepath.Join(repoRoot, ".context", "plans", skillBase+"-remediation-plan-*.md")
+		matches, err := filepath.Glob(pattern)
+		if err != nil {
+			return fmt.Errorf("search for plan files: %w", err)
+		}
+		if len(matches) == 0 {
+			return fmt.Errorf("no plan file found for %q in .context/plans/", planArg)
+		}
+		// Pick the most recent by filename (YYYY-MM-DD is lexicographically sortable).
+		planPath = matches[len(matches)-1]
 	}
 
 	errs := reporter.ValidateRemediationPlan(planPath)
