@@ -33,6 +33,7 @@ date: 2026-07-01
    hk check          # pre-commit checks (lint, validate, index freshness)
    go test ./...     # full test suite
    ```
+   Pre-push includes a plan-status drift check that warns about plans marked `active` for more than 60 days. If you see these warnings, update the plan's frontmatter `status: active → done` if the work is complete.
 
 5. Push and open a PR:
    ```
