@@ -298,7 +298,7 @@ Flags:
 ```
 
 Fetches the latest release from GitHub and replaces the running binary in-place. Only applicable
-when installed via `install.sh` — Homebrew and mise users should use their own update commands.
+when installed via `install.sh` — mise users should use `mise upgrade skill-auditor`.
 
 ### `prune`
 
@@ -334,6 +334,7 @@ All flags are available via long form and a one-letter shorthand:
 | `--validate` | `-v` | remediate |
 | `--keep` | `-k` | prune |
 | `--limit` | `-l` | analyze |
+| `--version-target` | | update |
 | `--strict-recommended` | `-S` | validate review |
 | `--global` | `-g` | init |
 | `--agent` | `-a` | init |
@@ -344,13 +345,16 @@ All flags are available via long form and a one-letter shorthand:
 their natural format (JSON for `evaluate`, `analyze`, `batch`, `remediate`, `aggregate`;
 Markdown for `duplication`, `trend`).
 
+`-m` maps to `--markdown` on evaluate / analyze / batch / duplication / trend commands,
+and to `--method` on the `init` command — never on the same command.
+
 ---
 
 ## Output Formats
 
 All commands that produce structured data support `--json` / `-j` and `--markdown` / `-m`.
 The two flags are mutually exclusive — pass at most one. When neither is given, each command
-uses its own default format (noted in the per-command flag tables above).
+uses its own default format (see the Flag Shorthands section for per-command defaults).
 
 **JSON output** — pass `--json` to any command:
 
