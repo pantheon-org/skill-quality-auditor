@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.0...v0.16.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **release:** merge release-please and goreleaser into single workflow, add windows builds ([#93](https://github.com/pantheon-org/skill-quality-auditor/issues/93)) ([2c0c45d](https://github.com/pantheon-org/skill-quality-auditor/commit/2c0c45d2b9073deab50efe4a10d4718160bc6e92))
+
 ## [0.16.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.15.0...v0.16.0) (2026-07-01)
 
 
