@@ -1,7 +1,7 @@
 ---
 title: "Onboarding Improvements Plan"
 type: plan
-status: active
+status: done
 date: 2026-04-27
 ---
 # Onboarding Improvements Plan
