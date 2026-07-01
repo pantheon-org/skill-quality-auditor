@@ -1,26 +1,97 @@
 # skill-quality-auditor
 
 [![CI](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pantheon-org/skill-quality-auditor)](https://goreportcard.com/report/github.com/pantheon-org/skill-quality-auditor)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/pantheon-org/skill-quality-auditor)](https://github.com/pantheon-org/skill-quality-auditor)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A 9-dimension scoring framework for auditing and improving AI skill quality. Combines structural
-validation with custom scoring across Knowledge Delta, Mindset, Anti-Patterns, Specification
-Compliance, Progressive Disclosure, Freedom Calibration, Pattern Recognition, Practical Usability,
-and Eval Validation.
+AI agent skills promise expert guidance — but how do you know they're any good? `skill-auditor` scores SKILL.md files against a 9-dimension quality framework and produces concrete diagnostics to make them better. Think of it as a linter with opinions: it catches structural issues, gaps in guidance, missing evals, and anti-patterns before your users do.
 
-- [What it scores \& why](#what-it-scores--why)
-- [Dimension docs](#dimension-docs)
-- [Install](#install)
-- [Command Usage](#command-usage)
-- [Flag Shorthands](#flag-shorthands)
-- [Output Formats](#output-formats)
-- [CI Integration](#ci-integration)
-- [Repository layout](#repository-layout)
-- [Development](#development)
+## Quick Start
 
----
+```bash
+# Install (one line)
+curl -fsSL https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/scripts/install.sh | sh
 
-## What it scores & why
+# Evaluate a skill
+skill-auditor evaluate path/to/skill
+```
+
+```text
+Skill: skill-full
+Grade: B+ (123/140)
+
+Dimensions:
+  Knowledge Delta              20/20
+  Mindset + Procedures          7/15
+  Anti-Pattern Quality          9/15
+  Specification Compliance     16/15
+  Progressive Disclosure       15/15
+  Freedom Calibration          13/15
+  Pattern Recognition          10/10
+  Practical Usability          15/15
+  Eval Validation              18/20
+
+Warnings:
+  [D2]  no precondition signals detected
+  [D2]  no postcondition signals detected
+  [D7]  no negative anchors in description — skill may over-trigger
+```
+
+Each warning links to a dimension doc with scoring criteria and targeted remediation advice.
+
+## Install
+
+| Method | Command |
+| --- | --- |
+| **install.sh** (Linux / macOS) | [one-liner in Quick Start](#quick-start) |
+| **mise** | `mise use github:pantheon-org/skill-quality-auditor` |
+| **Go** | `go install github.com/pantheon-org/skill-quality-auditor@latest` |
+
+Set `INSTALL_DIR=~/.local/bin` or `VERSION=v1.2.3` to customise the install.sh download.
+
+Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to get the latest release.
+
+**Prerequisites:** Pre-built binaries need no runtime. To build from source you need Go 1.25+.
+
+## Usage
+
+`skill-auditor <command> [<args>] [flags]`
+
+| Command | What it does |
+| --- | --- |
+| `evaluate <skill>` | Score one skill |
+| `batch <skill1> [skill2 ...]` | Score several skills (`--fail-below` for CI gating) |
+| `duplication [dir]` | Detect overlapping skills via Jaccard similarity |
+| `aggregate --family <prefix>` | Plan consolidation for a skill family |
+| `remediate <skill>` | Generate step-by-step fix recommendations |
+| `trend` | Compare score deltas across stored audits |
+| `validate` | Check file conventions (`artifacts` subcommand) and review reports (`review`) |
+| `analyze <skill>` | Extract TF-IDF keywords and structural patterns |
+| `init` | Install the auditor skill into your agent environment |
+| `update` | Self-update the binary (install.sh installs only) |
+| `prune` | Remove old audit snapshots, keeping N per skill |
+
+### Common flags
+
+| Flag | Available on |
+| --- | --- |
+| `-j / --json` | analyze, batch, duplication, trend, remediate, aggregate |
+| `-m / --markdown` | evaluate, analyze, batch, duplication, trend |
+| `-s / --store` | evaluate, analyze, batch, duplication, trend |
+| `-r / --repo-root` | most commands |
+| `-n / --dry-run` | aggregate, remediate, prune, init |
+
+`--json` and `--markdown` are mutually exclusive. Default format: JSON for evaluate/analyze/batch/remediate/aggregate, Markdown for duplication/trend. Run any command with `--help` for the full flag reference.
+
+```bash
+skill-auditor evaluate path/to/skill              # JSON (default)
+skill-auditor evaluate path/to/skill -m            # Markdown
+skill-auditor batch skills/skill-a skills/skill-b --json
+skill-auditor duplication --store                  # persist for trend
+```
+
+## Scoring Dimensions
 
 | ID | Dimension | Max | What a low score signals |
 | -- | --------- | --- | ------------------------ |
@@ -30,352 +101,13 @@ and Eval Validation.
 | D4 | Specification Compliance | 15 | Frontmatter, structure, or naming deviates from the tile spec |
 | D5 | Progressive Disclosure | 15 | Detail is front-loaded; references not used for depth |
 | D6 | Freedom Calibration | 15 | Skill is either too prescriptive or too vague for the task |
-| D7 | Pattern Recognition | 10 | No trigger conditions — agent won't know when to activate the skill |
+| D7 | Pattern Recognition | 10 | No trigger conditions — agent won't know when to activate |
 | D8 | Practical Usability | 15 | Examples absent or unrealistic; hard to apply in practice |
 | D9 | Eval Validation | 20 | No evals — quality claims are unverifiable |
 
-**Total: 140 pts.** Grade bands:
+**Total: 140 pts.** Grade bands: A+ ≥133, A ≥126, B+ ≥119, B ≥112, C+ ≥105, C ≥98, D ≥91, F <91.
 
-| Grade | Score |
-| ----- | ----- |
-| A+ | ≥ 133 |
-| A | ≥ 126 |
-| B+ | ≥ 119 |
-| B | ≥ 112 |
-| C+ | ≥ 105 |
-| C | ≥ 98 |
-| D | ≥ 91 |
-| F | < 91 |
-
-See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric and per-dimension
-scoring criteria.
-
----
-
-## Dimension docs
-
-Each dimension has a dedicated doc with scoring criteria, examples, and academic references:
-
-| Dimension | Doc |
-| --------- | --- |
-| D1 Knowledge Delta | [docs/d1-knowledge-delta.md](docs/d1-knowledge-delta.md) |
-| D2 Mindset & Procedures | [docs/d2-mindset-procedures.md](docs/d2-mindset-procedures.md) |
-| D3 Anti-Pattern Coverage | [docs/d3-anti-pattern-coverage.md](docs/d3-anti-pattern-coverage.md) |
-| D4 Specification Compliance | [docs/d4-specification-compliance.md](docs/d4-specification-compliance.md) |
-| D5 Progressive Disclosure | [docs/d5-progressive-disclosure.md](docs/d5-progressive-disclosure.md) |
-| D6 Freedom Calibration | [docs/d6-freedom-calibration.md](docs/d6-freedom-calibration.md) |
-| D7 Pattern Recognition | [docs/d7-pattern-recognition.md](docs/d7-pattern-recognition.md) |
-| D8 Practical Usability | [docs/d8-practical-usability.md](docs/d8-practical-usability.md) |
-| D9 Eval Validation | [docs/d9-eval-validation.md](docs/d9-eval-validation.md) |
-
----
-
-## Install
-
-### install.sh (Linux / macOS)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/scripts/install.sh | sh
-```
-
-Override install directory or pin a version:
-
-```bash
-INSTALL_DIR=~/.local/bin curl -fsSL ... | sh
-VERSION=v1.2.3 curl -fsSL ... | sh
-```
-
-### mise
-
-```bash
-mise use github:pantheon-org/skill-quality-auditor
-```
-
-Or in `mise.toml`:
-
-```toml
-[tools]
-"github:pantheon-org/skill-quality-auditor" = "latest"
-```
-
-### Go install
-
-```bash
-go install github.com/pantheon-org/skill-quality-auditor@latest
-```
-
-### Updating
-
-| Method | Command |
-| --- | --- |
-| install.sh | `skill-auditor update` |
-| mise | `mise upgrade skill-auditor` |
-| Go install | `go install github.com/pantheon-org/skill-quality-auditor@latest` |
-
-> `skill-auditor update` also accepts `--check` (report without installing) and `--version-target vX.Y.Z`.
-
----
-
-## Command Usage
-
-| Stage | Command | What it answers |
-| --- | --- | --- |
-| Score a skill | [`evaluate`](#evaluate) | What is the overall quality grade and per-dimension breakdown? |
-| Score many skills | [`batch`](#batch) | How do multiple skills compare, and does any fall below a CI threshold? |
-| Find overlap | [`duplication`](#duplication) | Are any skills too similar to each other? |
-| Plan consolidation | [`aggregate`](#aggregate) | How should a family of similar skills be merged? |
-| Fix a skill | [`remediate`](#remediate) | What specific changes would raise this skill's score? |
-| Track progress | [`trend`](#trend) | Are scores improving or regressing over time? |
-| Validate format | [`validate`](#validate) | Do artifacts conform to conventions? Does a review report meet spec? |
-| Deep analysis | [`analyze`](#analyze) | What are the keyword signals and structural patterns in this skill? |
-| Install skill | [`init`](#init) | How do I install this auditor skill into my agent environment? |
-| Self-update | [`update`](#update) | Is a newer release available, and can I install it in place? |
-| Housekeeping | [`prune`](#prune) | Which old audit snapshots can be removed? |
-
-### `evaluate`
-
-```text
-skill-auditor evaluate <skill> [flags]
-
-Flags:
-  -m, --markdown    emit Markdown output (default: JSON)
-  -s, --store       persist result to .context/audits/
-  -r, --repo-root   repo root directory (auto-detected from .git / go.mod if omitted)
-```
-
-`<skill>` accepts a `domain/skill-name` key (resolved under `<repo-root>/skills/`), a directory
-containing `SKILL.md`, or a direct path to `SKILL.md`.
-
-### `batch`
-
-```text
-skill-auditor batch <skill1> [skill2 ...] [flags]
-
-Flags:
-  -j, --json        emit JSON array output
-  -m, --markdown    emit Markdown table output
-  -s, --store       persist each result to .context/audits/
-  -F, --fail-below  exit 1 if any skill scores below this grade (e.g. B+)
-  -r, --repo-root   repo root directory (auto-detected if omitted)
-```
-
-### `duplication`
-
-```text
-skill-auditor duplication [skills-dir] [flags]
-
-Flags:
-  -j, --json        emit JSON array of pairs
-  -m, --markdown    emit Markdown output (default)
-  -s, --store       persist report to .context/analysis/
-  -d, --skills-dir  skills directory (default: <repo-root>/skills)
-  -r, --repo-root   repo root directory (auto-detected if omitted)
-```
-
-Pairwise word-level Jaccard similarity across all `SKILL.md` files. Writes
-`duplication-report-YYYY-MM-DD.md` to `.context/analysis/`. Exits with code 2 on any
-Critical (>35%) pair — suitable as a CI gate.
-
-### `aggregate`
-
-```text
-skill-auditor aggregate --family <prefix> [skills-dir] [flags]
-
-Flags:
-  -j, --json        emit JSON output instead of Markdown
-  -n, --dry-run     print plan to stdout without writing to disk
-  -f, --family      skill family prefix to analyse (required, e.g. bdd, typescript)
-  -d, --skills-dir  skills directory (default: <repo-root>/skills)
-  -r, --repo-root   repo root directory (auto-detected if omitted)
-```
-
-Produces a 6-step consolidation plan at `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md`.
-
-### `remediate`
-
-```text
-skill-auditor remediate <skill> [flags]
-
-Flags:
-  -j, --json          emit the plan as JSON instead of Markdown
-  -n, --dry-run       print plan to stdout without writing to .context/plans/
-  -t, --target-score  desired total score (default: current + 20, max 140)
-  -v, --validate      validate an existing plan file instead of generating one
-  -r, --repo-root     repo root directory (auto-detected if omitted)
-```
-
-Reads the most recent stored audit for `<skill>` and generates a schema-compliant remediation
-plan at `.context/plans/<skill>-remediation-plan.md`. Use `--validate` to check an existing plan
-against `remediation-plan.schema.json`.
-
-### `trend`
-
-```text
-skill-auditor trend [flags]
-
-Flags:
-  -j, --json       emit JSON array output
-  -m, --markdown   emit Markdown table output (default)
-  -s, --store      persist report to .context/audits/
-  -r, --repo-root  repo root directory (auto-detected if omitted)
-```
-
-Reads the two most recent stored audits per skill from `.context/audits/` and prints a score-delta
-table with ↑ / ↓ / — indicators.
-
-### `validate`
-
-```text
-skill-auditor validate artifacts [paths...] [flags]
-skill-auditor validate review <file> [flags]
-
-Flags (artifacts):
-  -r, --repo-root              repo root directory (auto-detected if omitted)
-
-Flags (review):
-  -S, --strict-recommended     treat recommended fields as errors
-  -r, --repo-root              repo root directory (auto-detected if omitted)
-```
-
-`validate artifacts` checks `SKILL.md` line limits, frontmatter name match, asset subdirectory
-conventions, script shebangs, and schema file validity. `validate review` checks a review report
-against the embedded requirements spec. Exit code 1 on any error.
-
-### `analyze`
-
-```text
-skill-auditor analyze <skill> [flags]
-
-Flags:
-  -e, --semantic    run TF-IDF keyword extraction only
-  -p, --patterns    run rule-based pattern detection only
-  -P, --pipeline    run full pipeline — semantic + patterns + combined report (default)
-  -j, --json        emit JSON output (default)
-  -m, --markdown    emit Markdown output instead of JSON
-  -s, --store       write report to .context/analysis/
-  -l, --limit int   max keywords to include (default 20)
-  -r, --repo-root   repo root directory (auto-detected if omitted)
-```
-
-`--semantic` extracts TF-IDF top keywords scored against the full skill corpus. `--patterns` runs
-rule-based detectors for required sections, trigger-word frequency, structural conformance, and
-anti-pattern signals. Default `--pipeline` runs both and writes a combined report.
-
-### `init`
-
-```text
-skill-auditor init [flags]
-
-Flags:
-  -n, --dry-run      preview what would be created without touching disk
-  -a, --agent        agent(s) to install into (default: auto-detect from current directory)
-  -g, --global       install to global skill directory (~/<agent-path>/) instead of CWD
-  -I, --interactive  choose agents interactively from the full registry list
-  -m, --method       installation method: symlink or copy (default: symlink)
-```
-
-Installs the embedded `skill-quality-auditor` skill — `SKILL.md` plus all asset subdirectories
-(`references/`, `evals/`, `schemas/`, `templates/`, `requirements/`) — into one or more agent skill
-directories.
-
-**Detection behaviour:**
-
-- **Default (no flags)** — targets the current working directory; auto-detects any agent whose
-  harness root directory (e.g. `.claude/`, `.cursor/`) already exists under CWD.
-- **`--global` / `-g`** — targets the home directory instead; auto-detects against `~`.
-- **`--agent` / `-a`** — skips auto-detection and installs into the specified agent(s) explicitly.
-- **`--interactive` / `-I`** — shows a numbered list of all supported agents (`*` marks detected
-  ones) and lets you choose by number or type `all`.
-
-### `update`
-
-```text
-skill-auditor update [flags]
-
-Flags:
-  --check           report the latest version without installing
-  --version-target  install a specific version (e.g. v1.2.3)
-```
-
-Fetches the latest release from GitHub and replaces the running binary in-place. Only applicable
-when installed via `install.sh` — mise users should use `mise upgrade skill-auditor`.
-
-### `prune`
-
-```text
-skill-auditor prune [flags]
-
-Flags:
-  -n, --dry-run    list audit runs that would be removed without deleting anything
-  -k, --keep       number of audit date-dirs to retain per skill (default 5)
-  -r, --repo-root  repo root directory (auto-detected if omitted)
-```
-
-Removes old date-stamped audit directories from `.context/audits/`, keeping the N most recent per
-skill.
-
----
-
-## Flag Shorthands
-
-All flags are available via long form and a one-letter shorthand:
-
-| Flag | Short | Commands |
-| ---- | ----- | -------- |
-| `--json` | `-j` | analyze, batch, duplication, trend, remediate, aggregate |
-| `--markdown` | `-m` | evaluate, analyze, batch, duplication, trend |
-| `--store` | `-s` | evaluate, analyze, batch, duplication, trend |
-| `--repo-root` | `-r` | evaluate, analyze, batch, duplication, trend, remediate, aggregate, prune, validate |
-| `--dry-run` | `-n` | aggregate, remediate, prune, init |
-| `--skills-dir` | `-d` | aggregate, duplication |
-| `--family` | `-f` | aggregate |
-| `--fail-below` | `-F` | batch |
-| `--target-score` | `-t` | remediate |
-| `--validate` | `-v` | remediate |
-| `--keep` | `-k` | prune |
-| `--limit` | `-l` | analyze |
-| `--version-target` | | update |
-| `--strict-recommended` | `-S` | validate review |
-| `--global` | `-g` | init |
-| `--agent` | `-a` | init |
-| `--interactive` | `-I` | init |
-| `--method` | `-m` | init |
-
-`--json` and `--markdown` are mutually exclusive. When neither is passed, commands default to
-their natural format (JSON for `evaluate`, `analyze`, `batch`, `remediate`, `aggregate`;
-Markdown for `duplication`, `trend`).
-
-`-m` maps to `--markdown` on evaluate / analyze / batch / duplication / trend commands,
-and to `--method` on the `init` command — never on the same command.
-
----
-
-## Output Formats
-
-All commands that produce structured data support `--json` / `-j` and `--markdown` / `-m`.
-The two flags are mutually exclusive — pass at most one. When neither is given, each command
-uses its own default format (see the Flag Shorthands section for per-command defaults).
-
-**JSON output** — pass `--json` to any command:
-
-```bash
-skill-auditor evaluate skills/my-skill         # JSON (default)
-skill-auditor evaluate skills/my-skill -m      # Markdown
-skill-auditor batch skills/skill-a skills/skill-b --json
-skill-auditor trend --json
-```
-
-**Stored output** — pass `--store` to persist results for later use by `remediate` and `trend`:
-
-| Command | Output path |
-| --- | --- |
-| `evaluate --store` / `batch --store` | `.context/audits/<skill>/<date>/` |
-| `duplication` | `.context/analysis/duplication-report-YYYY-MM-DD.md` |
-| `aggregate` | `.context/analysis/aggregation-plan-<family>-YYYY-MM-DD.md` |
-| `remediate` | `.context/plans/<skill>-remediation-plan.md` |
-| `analyze --store` | `.context/analysis/pattern-report-<skill>-YYYY-MM-DD.md` |
-
----
+See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric. Each dimension has a dedicated doc: [D1](docs/d1-knowledge-delta.md) · [D2](docs/d2-mindset-procedures.md) · [D3](docs/d3-anti-pattern-coverage.md) · [D4](docs/d4-specification-compliance.md) · [D5](docs/d5-progressive-disclosure.md) · [D6](docs/d6-freedom-calibration.md) · [D7](docs/d7-pattern-recognition.md) · [D8](docs/d8-practical-usability.md) · [D9](docs/d9-eval-validation.md)
 
 ## CI Integration
 
@@ -387,10 +119,7 @@ skill-auditor trend --json
     skill-auditor validate artifacts
 ```
 
-`--fail-below` accepts any grade: `A+`, `A`, `B+`, `B`, `C+`, `C`, `D`, `F`.
-
-`duplication` exits with code 2 (not 1) on Critical pairs so it can be distinguished from a
-command error in pipeline logic.
+`--fail-below` accepts any grade (A+ through F). `duplication` exits with code 2 (not 1) on Critical (>35%) pairs so it can be distinguished from a command error in pipeline logic.
 
 Full workflow example:
 
@@ -400,40 +129,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install skill-auditor
+      - name: Install
         run: curl -fsSL https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/scripts/install.sh | sh
-
-      - name: Batch audit (fail below B)
+      - name: Batch audit
         run: skill-auditor batch skills/ --fail-below B --store
-
       - name: Duplication check
         run: skill-auditor duplication
-        continue-on-error: false   # exits 2 on Critical pairs
-
       - name: Artifact validation
         run: skill-auditor validate artifacts
 ```
 
----
-
 ## Repository layout
 
 ```text
-go.mod / main.go      Go CLI root — build and run from here
-cmd/                  cobra commands: evaluate, batch, duplication, aggregate,
-                      remediate, trend, validate, prune, analyze, init, update
-cmd/assets/           Tessl tile — SKILL.md, tile.json, evals, references,
-                      schemas, templates (single source of truth)
-agents/               agent registry (supported environments for init)
-docs/                 per-dimension documentation with scoring criteria and references
-scorer/               D1–D9 dimension scorers
-analysis/             TF-IDF keyword extractor + rule-based pattern detectors
-duplication/          word-level Jaccard similarity engine
-internal/             shared utilities (tokenizer)
-reporter/             text/JSON formatters, audit store, report generators
-scripts/              install.sh
-testdata/             fixture skills for unit tests
+.
+├── main.go               CLI entrypoint
+├── cmd/                  Cobra command implementations
+├── cmd/assets/           Tessl tile — SKILL.md, tile.json, evals, schemas
+├── agents/               Agent registry (supported init targets)
+├── scorer/               D1–D9 dimension scorers
+├── analysis/             TF-IDF extraction + pattern detectors
+├── duplication/          Jaccard similarity engine
+├── reporter/             Output formatters and audit persistence
+├── docs/                 Per-dimension scoring docs and ADRs
+├── internal/             Shared utilities (tokenizer)
+├── scripts/              install.sh
+└── testdata/             Fixture skills for unit tests
 ```
 
----
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, commit conventions, and pre-commit hook setup. All tests must pass (`go test ./...`) before pushing.
+
+## License
+
+MIT — see [LICENSE](LICENSE) for the full text.
