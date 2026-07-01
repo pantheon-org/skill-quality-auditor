@@ -4,7 +4,7 @@
 
 # ── Plans (20) ──
 plans:
-  - path: ".context/plans/adr-capture-remediation-plan.md"
+  - path: ".context/plans/adr-capture-remediation-plan-2026-06-30.md"
     title: "Remediation Plan: adr-capture"
     status: active
     date: 2026-06-30
@@ -12,11 +12,11 @@ plans:
     title: "Citation Verification Plan"
     status: done
     date: 2026-04-27
-  - path: ".context/plans/context-file-remediation-plan.md"
+  - path: ".context/plans/context-file-remediation-plan-2026-06-30.md"
     title: "Remediation Plan: context-file"
     status: active
     date: 2026-06-30
-  - path: ".context/plans/context-index-remediation-plan.md"
+  - path: ".context/plans/context-index-remediation-plan-2026-06-30.md"
     title: "Remediation Plan: context-index"
     status: active
     date: 2026-06-30
