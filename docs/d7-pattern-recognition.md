@@ -66,11 +66,24 @@ This is a diagnostic signal only — it does not affect the numeric score in the
 ```
 
 ```bibtex
+@article{yehudai2025survey,
+  title         = {Survey on Evaluation of LLM-Based Agents},
+  author        = {A. Yehudai and L. Eden and A. Li and G. Uziel and Y. Zhao and R. Bar-Haim and A. Cohan and M. Shmueli-Scheuer},
+  year          = {2025},
+  journal       = {arXiv preprint arXiv:2503.16416},
+  eprint        = {2503.16416},
+  archivePrefix = {arXiv},
+  url           = {<https://arxiv.org/abs/2503.16416>}
+}
+
+```
+
+```bibtex
 @inproceedings{chen2024agentpoison,
   title         = {AgentPoison: Red-teaming LLM Agents via Poisoning Memory or Knowledge Bases},
-  author        = {Chen and others},
+  author        = {Z. Chen and Z. Xiang and C. Xiao and D. Song and B. Li},
   year          = {2024},
-  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
-  url           = {<https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html}>
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS 2024)},
+  url           = {<https://proceedings.neurips.cc/paper_files/paper/2024/hash/eb113910e9c3f6242541c1652e30dfd6-Abstract-Conference.html>}
 }
 ```

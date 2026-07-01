@@ -92,11 +92,13 @@ WHY: False positives waste hours debugging phantom issues
 ```
 
 ```bibtex
-@article{amarasinghe2024codequality,
-  title         = {Code Quality Alarms: Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns},
-  author        = {Amarasinghe and Asanka and others},
-  year          = {2024},
-  journal       = {Journal of Data Research and Analytics},
-  url           = {<https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93}>
+@article{amarasinghe2025codequality,
+  title         = {Code Quality Alarms: A Review of Techniques, Datasets, and Emerging Trends in Detecting Smells and Anti-Patterns},
+  author        = {Y. V. A. Amarasinghe and P. Asanka and others},
+  year          = {2025},
+  journal       = {Journal of Desk Research Reviews and Analysis},
+  volume        = {3},
+  number        = {2},
+  url           = {<https://jdrra.sljol.info/articles/10.4038/jdrra.v3i2.93>}
 }
 ```
