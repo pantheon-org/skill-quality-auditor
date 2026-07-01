@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+CHECK_MODE=false
+if [ "${1:-}" = "--check" ]; then
+  CHECK_MODE=true
+fi
+
 ROOT="$(git rev-parse --show-toplevel)"
 INDEX="$ROOT/.context/index.yaml"
 
-python3 - "$ROOT" "$INDEX" <<'PYEOF'
+python3 - "$ROOT" "$INDEX" "$CHECK_MODE" <<'PYEOF'
 import sys
 import re
 from pathlib import Path
@@ -12,6 +17,7 @@ from datetime import date
 
 root = Path(sys.argv[1])
 index_path = Path(sys.argv[2])
+check_mode = sys.argv[3] == "true"
 context_dir = root / ".context"
 
 
@@ -37,8 +43,8 @@ missing = []
 
 for md in sorted(context_dir.rglob("*.md")):
     rel = str(md.relative_to(root))
-    if rel.startswith(".context/audits/"):
-        continue  # skip machine-generated audit artifacts
+    if rel.startswith(".context/audits/") and not content.startswith("---\n"):
+        continue  # skip legacy audits without frontmatter
     content = md.read_text()
     fm = parse_frontmatter(content)
     if fm is None:
@@ -116,6 +122,14 @@ for t in type_order:
                 lines.append(f"      - {r}")
     lines.append("")
 
-index_path.write_text("\n".join(lines) + "\n")
-print(f"Generated {len(entries)} entries -> {index_path}")
+output = "\n".join(lines) + "\n"
+if check_mode:
+    current = index_path.read_text() if index_path.exists() else ""
+    if output != current:
+        print("ERROR: .context/index.yaml is stale — run 'hk fix' to regenerate", file=sys.stderr)
+        sys.exit(1)
+    print("context index is fresh")
+else:
+    index_path.write_text(output)
+    print(f"Generated {len(entries)} entries -> {index_path}")
 PYEOF

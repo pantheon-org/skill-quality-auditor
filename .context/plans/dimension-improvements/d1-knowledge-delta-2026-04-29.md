@@ -1,7 +1,7 @@
 ---
 title: "Improvement Plan: D1 — Knowledge Delta"
 type: plan
-status: active
+status: done
 date: 2026-04-29
 ---
 # Improvement Plan: D1 — Knowledge Delta

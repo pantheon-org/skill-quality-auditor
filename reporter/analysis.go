@@ -13,6 +13,7 @@ import (
 func Analysis(r *scorer.Result) string {
 	var sb strings.Builder
 
+	fmt.Fprintf(&sb, "---\ntitle: \"Skill Audit — %s\"\ntype: audit\nstatus: done\ndate: %s\n---\n\n", r.Skill, r.Date)
 	fmt.Fprintf(&sb, "# Skill Audit — %s\n\n", r.Skill)
 	fmt.Fprintf(&sb, "**Grade:** %s (%d/%d)\n\n", r.Grade, r.Total, r.MaxTotal)
 

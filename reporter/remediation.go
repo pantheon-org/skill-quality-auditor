@@ -35,6 +35,7 @@ type gap struct {
 func Remediation(r *scorer.Result) string {
 	var sb strings.Builder
 
+	fmt.Fprintf(&sb, "---\ntitle: \"Remediation Plan — %s\"\ntype: audit\nstatus: done\ndate: %s\n---\n\n", r.Skill, r.Date)
 	fmt.Fprintf(&sb, "# Remediation Plan — %s\n\n", r.Skill)
 	fmt.Fprintf(&sb, "**Current Grade:** %s (%d/%d)\n\n", r.Grade, r.Total, r.MaxTotal)
 
