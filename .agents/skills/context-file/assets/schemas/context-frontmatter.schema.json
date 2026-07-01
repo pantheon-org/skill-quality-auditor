@@ -14,7 +14,7 @@
     },
     "type": {
       "type": "string",
-      "enum": ["plan", "finding", "analysis"],
+      "enum": ["plan", "finding", "analysis", "instruction", "audit"],
       "description": "File category — matches the subdirectory (plans/ → plan, findings/ → finding, analysis/ → analysis)."
     },
     "status": {

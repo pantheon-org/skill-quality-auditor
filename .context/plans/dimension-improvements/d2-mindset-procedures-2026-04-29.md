@@ -1,7 +1,7 @@
 ---
 title: "Improvement Plan: D2 — Mindset and Procedures"
 type: plan
-status: active
+status: done
 date: 2026-04-29
 ---
 # Improvement Plan: D2 — Mindset + Procedures
