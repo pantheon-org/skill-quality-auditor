@@ -49,20 +49,6 @@ local preCommit = new Mapping<String, Step> {
     }
     ["adr-undocumented"] {
         glob = List(".context/**/*.md")
-        exclude = List(".context/audits/**", ".context/plans/**")
-        check = ".agents/skills/adr-capture/scripts/check-undocumented-decisions.sh"
-    }
-    ["adr-frontmatter"] {
-        glob = List("docs/ADR/adr-*.md")
-        check = ".agents/skills/context-index/scripts/check-context-frontmatter.sh {{files}}"
-    }
-    ["adr-index"] {
-        glob = List("docs/ADR/adr-*.md")
-        fix = ".agents/skills/adr-capture/scripts/regenerate-adr-index.sh"
-        check = "test -f docs/ADR/index.yaml"
-    }
-    ["adr-undocumented"] {
-        glob = List(".context/**/*.md")
         check = ".agents/skills/adr-capture/scripts/check-undocumented-decisions.sh"
     }
 }

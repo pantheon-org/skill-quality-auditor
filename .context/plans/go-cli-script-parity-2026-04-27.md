@@ -1,13 +1,13 @@
 ---
 title: "Plan: Implement Shell Script Functionality in the Go CLI"
 type: plan
-status: active
+status: done
 date: 2026-04-27
 ---
 # Plan: Implement Shell Script Functionality in the Go CLI
 
 **Date:** 2026-04-27  
-**Status:** Phase 5 in progress — 2026-04-28
+**Status:** All phases complete — 2026-06-30
 
 ## Context
 
