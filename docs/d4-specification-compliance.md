@@ -53,7 +53,7 @@
 - No absolute repo paths in references (capped at −2 total)
 - No repo-root directory references in references (capped at −2 total)
 
-**WHY:** Skills must be fully self-contained. When installed via `tessl install`, they land in arbitrary directories — any reference to files outside the skill's own directory tree will break.
+**WHY:** Skills must be fully self-contained. When installed via a package manager or tile system, they land in arbitrary directories — any reference to files outside the skill's own directory tree will break.
 
 ### 5. Script Language Portability (bonus: +1 point)
 

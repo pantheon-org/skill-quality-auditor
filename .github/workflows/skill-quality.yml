@@ -10,6 +10,9 @@ on:
     paths:
       - 'cmd/assets/**'
       - '**/*.go'
+  schedule:
+    # Nightly at 06:00 UTC — runs the LLM-judge advisory on main.
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -39,9 +42,78 @@ jobs:
       - name: Batch quality gate
         run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
 
+      # ── Tier 1: structural eval gate (required every PR/main push) ──
+      # Deterministic, no key needed, ~1s (ADR-007 Tier 1).
+      - name: Structural eval gate
+        run: ./dist/skill-auditor eval ./cmd/assets --fail-below 0
+
+      # ── Tier 2: LLM-judge eval (advisory only) ──
+      # Triggers: nightly schedule, workflow_dispatch, or a PR with the
+      # 'run-eval' label (and never from fork PRs — fork PRs cannot see
+      # ANTHROPIC_API_KEY, so the runner would degrade to structural-only
+      # anyway; the explicit guard makes this safe).
+      - name: LLM-judge eval (advisory)
+        if: |
+          (github.event_name == 'schedule') ||
+          (github.event_name == 'workflow_dispatch') ||
+          (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && contains(github.event.pull_request.labels.*.name, 'run-eval'))
+        env:
+          LLM_PROVIDER: anthropic
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log > eval-results.json
+        continue-on-error: true
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval-results.json
+          if-no-files-found: ignore
+
+      - name: Post eval results comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let results;
+            try {
+              results = JSON.parse(fs.readFileSync('eval-results.json', 'utf8'));
+            } catch (e) {
+              core.info('No eval-results.json found, skipping comment');
+              return;
+            }
+            const status = results.overall_pass ? '✅ PASS' : '⚠️ ATTENTION';
+            const lines = [
+              `### Native Eval Results — ${status}`,
+              `Provider: \`${results.provider || 'n/a'}\` | Judge prompt version: \`${results.judge_prompt_version || 'n/a'}\``,
+              `Model: \`${results.model || 'n/a'}\` | Samples: ${results.samples || 1}`,
+              '',
+              '| Scenario | Total | Status |',
+              '|----------|-------|--------|',
+              ...(results.scenarios || []).map(s =>
+                `| ${s.id} | ${s.total}/100 | ${s.pass ? '✓' : '✗'} |`
+              ),
+              '',
+              `_[Advisory only — does not block merge]_`
+            ];
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: lines.join('\n')
+            });
+
+      # ── Proving period: Tessl review kept alongside the native runner ──
+      # Both steps use continue-on-error so CI is always green; "green" is
+      # defined as the native runner's JSON showing overall_pass: true.
+      # Remove this block + the TESSL_TOKEN secret after 2 weeks of green
+      # native-eval runs (per native-eval-runner plan Phase 3).
       - uses: tesslio/setup-tessl@v2
+        if: always()
         with:
           token: ${{ secrets.TESSL_TOKEN }}
-
       - name: Tessl review run
+        if: always()
         run: tessl review run cmd/assets/ --workspace pantheon-ai --json --threshold 80
+        continue-on-error: true

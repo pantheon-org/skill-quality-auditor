@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to run a batch audit of multiple skills with the --store flag, compare results against a previous baseline, distinguish new skills from regressions, and produce reproducible command scripts.",
   "checklist": [
     {"name": "Batch command usage", "description": "skill-auditor batch used with --store flag", "max_score": 30},

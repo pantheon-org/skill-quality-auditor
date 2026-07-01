@@ -12,7 +12,7 @@ Canonical source reference: `framework-dimensions.md`
 
 ## Overview
 
-The 9-dimension quality framework evaluates skills across 9 dimensions totaling 140 points. **Dimension 1 (Knowledge Delta)** and **Dimension 9 (Eval Validation)** carry the highest weight at 20 points each - skills must contain expert-only knowledge AND be validated at runtime via tessl eval scenarios.
+The 9-dimension quality framework evaluates skills across 9 dimensions totaling 140 points. **Dimension 1 (Knowledge Delta)** and **Dimension 9 (Eval Validation)** carry the highest weight at 20 points each - skills must contain expert-only knowledge AND be validated at runtime via eval scenarios.
 
 **Target Score:** ≥126 points (90%) = A-grade
 
@@ -647,7 +647,7 @@ demonstrates triggers are an active attack surface for adversarial skill hijacki
 
 ## Dimension 9: Eval Validation (20 points) -- HIGHEST PRIORITY
 
-**Purpose:** Verify the skill has been validated at runtime through tessl eval scenarios, proving agents actually follow its instructions.
+**Purpose:** Verify the skill has been validated at runtime through eval scenarios, proving agents actually follow its instructions.
 
 **Scoring:**
 
@@ -663,7 +663,7 @@ demonstrates triggers are an active attack surface for adversarial skill hijacki
 
 1. **Eval Directory Structure (4 points)**
    - `evals/` directory exists with proper layout
-   - Follows tessl eval harness conventions
+   - Follows the skill eval harness conventions (scenario-N/{task.md,criteria.json,capability.txt}; criteria sum to 100)
 
 2. **Instruction Inventory (3 points)**
    - `instructions.json` present and non-empty
@@ -692,12 +692,16 @@ When `instructions.json` exists, its data enriches other dimensions:
 
 ### Creating Evals
 
-Use the `creating-eval-scenarios` skill to generate evaluation scenarios:
+Author scenarios in `cmd/assets/evals/scenario-N/` (one directory per
+scenario; each contains `task.md`, `criteria.json`, `capability.txt`).
+Run the native eval runner:
 
 ```bash
-# Ensure skill is packaged as a tessl tile first
-tessl eval run <tile-path>
-tessl eval view-status <status_id> --json
+# Structural gate — deterministic, no key needed, required every PR.
+./dist/skill-auditor eval ./cmd/assets --fail-below 0
+
+# LLM-judge advisory — bring your own key. See .env.example for variables.
+ANTHROPIC_API_KEY=... ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log
 ```
 
 ### D9 Examples
@@ -743,11 +747,11 @@ skill-name/
 | D6: Freedom Calibration | 15 | MEDIUM | Appropriate rigidity |
 | D7: Pattern Recognition | 10 | LOW | Activation keywords |
 | D8: Practical Usability | 15 | HIGH | Concrete examples |
-| D9: Eval Validation | 20 | HIGHEST | Runtime validation via tessl evals |
+| D9: Eval Validation | 20 | HIGHEST | Runtime validation via eval scenarios |
 | **TOTAL** | **140** | | **A-grade = 126+** |
 
 ## See Also
 
 - `framework-scoring-rubric.md` - Detailed scoring methodology
 - `framework-quality-standards.md` - A-grade requirements
-- `creating-eval-scenarios` skill - Tessl eval scenario generation
+- `creating-eval-scenarios` skill - Eval scenario generation

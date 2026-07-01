@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to generate a structured remediation plan for a C+-grade skill with specific scoring targets, phase-based steps, effort sizing, and verifiable implementation commands.",
   "checklist": [
     {"name": "Plan header completeness", "description": "Plan opens with current score, target score, current and target grade", "max_score": 25},
