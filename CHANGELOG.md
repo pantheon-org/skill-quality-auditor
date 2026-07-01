@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.16.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.15.0...v0.16.0) (2026-07-01)
+
+
+### Features
+
+* **scorer:** implement D8 outcome-linkage sub-criterion ([#90](https://github.com/pantheon-org/skill-quality-auditor/issues/90)) ([0b6b8f2](https://github.com/pantheon-org/skill-quality-auditor/commit/0b6b8f28b9c036f2c9afc91c79d04b83273e5253))
+* **skills:** finalise adr-capture, context-file, and context-index remediation phases ([#86](https://github.com/pantheon-org/skill-quality-auditor/issues/86)) ([da3059e](https://github.com/pantheon-org/skill-quality-auditor/commit/da3059e5307aaf833e01a5b4549dac34f4d26345))
+
+
+### Bug Fixes
+
+* **remediate:** include date in remediation plan filenames ([#85](https://github.com/pantheon-org/skill-quality-auditor/issues/85)) ([c756250](https://github.com/pantheon-org/skill-quality-auditor/commit/c756250bbf4b9e4953ec290e374195b40e4f6b0b))
+* sync plan statuses with implementation, fix hook stale-index detection, add ways-of-working ([#83](https://github.com/pantheon-org/skill-quality-auditor/issues/83)) ([c1e70ba](https://github.com/pantheon-org/skill-quality-auditor/commit/c1e70ba12fd16588dc5bf979140d9372d224b63d))
+
 ## [0.15.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.14.0...v0.15.0) (2026-07-01)
 
 
