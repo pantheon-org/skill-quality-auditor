@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.15.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.14.0...v0.15.0) (2026-07-01)
+
+
+### Features
+
+* **context:** group index.yaml entries by type and fix remediation plan frontmatter ([#80](https://github.com/pantheon-org/skill-quality-auditor/issues/80)) ([d08aeb5](https://github.com/pantheon-org/skill-quality-auditor/commit/d08aeb50609a598b79468b218a86e631a50100a7))
+* **docs:** verify all 28 academic citations, fix metadata, and add attribution refs ([#79](https://github.com/pantheon-org/skill-quality-auditor/issues/79)) ([92f2603](https://github.com/pantheon-org/skill-quality-auditor/commit/92f26036c1c7667517f2a306b4c6d267bc891352))
+
 ## [0.14.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.13.1...v0.14.0) (2026-06-30)
 
 
