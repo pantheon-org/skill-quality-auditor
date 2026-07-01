@@ -53,7 +53,7 @@ When you implement what a plan describes, update its frontmatter `status: active
 
 ## After merge
 
-Delete the branch locally and remotely:
+Delete the branch locally (GitHub auto-deletes remote branches after PR merge):
 ```
 git checkout main && git pull && git branch -d <branch-name>
 ```
