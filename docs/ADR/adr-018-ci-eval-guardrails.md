@@ -1,13 +1,14 @@
 ---
 title: "ADR-018: CI gating guardrails for native eval runner"
-status: proposed
+status: accepted
 date: 2026-06-30
 context:
   - path: .context/findings/eval-gating-byok-2026-06-29.md
   - path: .context/plans/migrate-off-tessl-eval-2026-06-29.md
+  - path: .context/plans/native-eval-runner-2026-07-01.md
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-06-30
 
 ## Context

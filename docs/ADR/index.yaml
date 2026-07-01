@@ -128,11 +128,12 @@ entries:
   - path: "ADR/adr-018-ci-eval-guardrails.md"
     adr: "ADR-018"
     title: "ADR-018: CI gating guardrails for native eval runner"
-    status: proposed
+    status: accepted
     date: 2026-06-30
     context:
       - path: ".context/findings/eval-gating-byok-2026-06-29.md"
       - path: ".context/plans/migrate-off-tessl-eval-2026-06-29.md"
+      - path: ".context/plans/native-eval-runner-2026-07-01.md"
   - path: "ADR/adr-019-dev-tooling-migration.md"
     adr: "ADR-019"
     title: "ADR-019: Migrate dev tooling to hk, markdownlint-cli2, and mise auto-bootstrap hooks"
@@ -180,7 +181,7 @@ entries:
   - path: "ADR/adr-025-provider-agnostic-llm-client.md"
     adr: "ADR-025"
     title: "ADR-025: Provider-agnostic LLM client for the native eval runner"
-    status: proposed
+    status: accepted
     date: 2026-07-01
     context:
       - path: ".context/plans/native-eval-runner-2026-07-01.md"

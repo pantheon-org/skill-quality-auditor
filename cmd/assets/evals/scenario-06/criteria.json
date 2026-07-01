@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to identify and fix agent-specific tool name references (portability violations), rewrite using agent-neutral phrasing, run an audit, and enforce audit artefact hygiene by excluding .context/ paths from git.",
   "checklist": [
     {"name": "No agent-specific names", "description": "No agent-specific tool names (e.g. amp, cursor, copilot) appear in generated skill content", "max_score": 35},

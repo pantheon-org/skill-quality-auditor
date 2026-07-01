@@ -1,6 +1,6 @@
 # D9: Eval Validation (20 points)
 
-**Purpose:** Verify the skill has been validated at runtime through tessl eval scenarios, proving agents actually follow its instructions.
+**Purpose:** Verify the skill has been validated at runtime through eval scenarios, proving agents actually follow its instructions.
 
 **Scoring:**
 
@@ -19,7 +19,7 @@
 ### 1. Eval Directory Structure (4 points)
 
 - `evals/` directory exists with proper layout
-- Follows tessl eval harness conventions
+- Follows the skill eval harness conventions (scenario-N/{task.md,criteria.json,capability.txt}; criteria sum to 100)
 
 ### 2. Instruction Inventory (3 points)
 
@@ -52,12 +52,16 @@ When `instructions.json` exists, its data enriches other dimensions:
 
 ## Creating Evals
 
-Use the `creating-eval-scenarios` skill to generate evaluation scenarios:
+Author scenarios in `cmd/assets/evals/scenario-N/` (one directory per
+scenario; each contains `task.md`, `criteria.json`, `capability.txt`).
+Run the native eval runner:
 
 ```bash
-# Ensure the skill is packaged as a tessl tile first
-tessl eval run <tile-path>
-tessl eval view-status <status_id> --json
+# Structural gate — deterministic, no key needed, required every PR.
+./dist/skill-auditor eval ./cmd/assets --fail-below 0
+
+# LLM-judge advisory — bring your own key. See .env.example for variables.
+ANTHROPIC_API_KEY=... ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log
 ```
 
 ## Examples

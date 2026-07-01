@@ -1,6 +1,6 @@
 ---
 title: "ADR-025: Provider-agnostic LLM client for the native eval runner"
-status: proposed
+status: accepted
 date: 2026-07-01
 context:
   - path: .context/plans/native-eval-runner-2026-07-01.md
@@ -8,7 +8,7 @@ context:
   - path: docs/ADR/adr-007-two-tier-eval-gate.md
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-01
 
 ## Context

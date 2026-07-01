@@ -81,6 +81,13 @@ local prePush = new Mapping<String, Step> {
         depends = List("go-build")
         check = "./dist/skill-auditor batch ./cmd/assets --fail-below B"
     }
+    // Structural eval gate — required every push (ADR-007 Tier 1).
+    // No LLM key needed; validates scenario dirs + criteria sum-to-100.
+    ["skill-eval-structural"] {
+        glob = List("cmd/assets/**")
+        depends = List("go-build")
+        check = "./dist/skill-auditor eval ./cmd/assets --fail-below 0"
+    }
 }
 
 hooks {

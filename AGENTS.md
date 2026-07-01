@@ -101,6 +101,7 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 - **Never commit to `main` directly.** Branch → PR → merge.
 - **Run `go test ./...` before reporting any Go change as done.**
 - **Tessl eval changes require `tessl eval run cmd/assets/` to pass.**
+- **Eval changes require `./dist/skill-auditor eval ./cmd/assets` to pass** (native eval runner; the structural gate runs every PR and every pre-push via `hk run pre-push`). The Tessl review step in CI is advisory during the proving period and will be removed once the native runner has 2 weeks of green CI runs.
 - For deep rubric questions, load `cmd/assets/references/framework-dimensions.md` first.
 - For anti-pattern analysis, load `cmd/assets/references/detailed-anti-patterns.md`.
 - **Edit assets directly under `cmd/assets/`** — there is no separate `skill/` directory to mirror.
@@ -157,6 +158,7 @@ Read the ADR index before making design decisions to avoid revisiting settled qu
 ### Update the Tessl tile
 
 1. Edit files under `cmd/assets/`.
-2. Run `tessl eval run cmd/assets/`.
+2. Run `./dist/skill-auditor eval ./cmd/assets` (native eval runner; structural gate, no key needed).
+   For the LLM-judge advisory, run with `ANTHROPIC_API_KEY=... ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log`.
 3. Do **not** bump `version` in `cmd/assets/tile.json` manually — release-please auto-bumps it
    alongside the binary version on every release PR.

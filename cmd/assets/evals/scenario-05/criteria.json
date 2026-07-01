@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to run pairwise duplication analysis across a skills portfolio, assign numeric similarity scores, apply threshold-based actions, recommend consolidation with the Navigation Hub pattern, and reject cross-domain merging.",
   "checklist": [
     {"name": "Full pair analysis", "description": "All relevant skill pairs analysed, not just a subset", "max_score": 35},

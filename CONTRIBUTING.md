@@ -28,12 +28,18 @@ Run a quick smoke test against the fixture skills:
 ./dist/skill-auditor batch testdata/fixtures/skill-minimal testdata/fixtures/skill-full
 ```
 
-### Tessl skill (`cmd/assets/`)
+### Skill evals (`cmd/assets/`)
 
 ```bash
-tessl eval run cmd/assets/
+# Structural gate — deterministic, no key, runs every PR + pre-push.
+./dist/skill-auditor eval ./cmd/assets --fail-below 0
+
+# LLM-judge advisory — bring your own key (BYOK). See .env.example for variables.
+ANTHROPIC_API_KEY=... ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log > eval-results.json
 ```
 
+The structural gate is the required CI gate (ADR-007 Tier 1).
+The LLM-judge step is advisory only (ADR-018 #2/#4); it never blocks merge.
 Evals must pass before bumping the tile version in `cmd/assets/tile.json`.
 
 ## Git Hooks

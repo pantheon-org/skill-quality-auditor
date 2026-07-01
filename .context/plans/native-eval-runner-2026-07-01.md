@@ -1,7 +1,7 @@
 ---
 title: "Plan: Native Eval Runner with LLM-as-Judge"
 type: plan
-status: active
+status: done
 date: 2026-07-01
 related:
   - ../findings/skilleval-analysis-2026-06-30.md

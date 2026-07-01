@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to audit a SKILL.md using the 9-dimension framework (D1-D9), score dimensions with numerical values and justifications, identify redundant content, and produce actionable remediation plans with effort sizing.",
   "checklist": [
     {"name": "Nine-dimension scoring", "description": "All 9 dimensions scored with numerical value and per-dimension justification", "max_score": 25},

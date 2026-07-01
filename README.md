@@ -145,7 +145,7 @@ jobs:
 .
 ├── main.go               CLI entrypoint
 ├── cmd/                  Cobra command implementations
-├── cmd/assets/           Tessl tile — SKILL.md, tile.json, evals, schemas
+├── cmd/assets/           Skill source — SKILL.md, tile.json, evals, schemas
 ├── agents/               Agent registry (supported init targets)
 ├── scorer/               D1–D9 dimension scorers
 ├── analysis/             TF-IDF extraction + pattern detectors

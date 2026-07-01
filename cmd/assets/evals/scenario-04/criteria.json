@@ -1,5 +1,6 @@
 {
   "type": "weighted_checklist",
+  "max_output_tokens": 4096,
   "context": "Evaluates the agent's ability to rewrite a basic anti-patterns section into the full NEVER/WHY/BAD/GOOD structure required for D3 scoring, expanding coverage while maintaining each entry's structural integrity.",
   "checklist": [
     {"name": "NEVER phrasing", "description": "Each anti-pattern leads with NEVER: [action] phrasing", "max_score": 35},
