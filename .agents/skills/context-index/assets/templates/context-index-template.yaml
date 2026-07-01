@@ -1,0 +1,18 @@
+# Context index frontmatter template
+# Schema: ../schemas/context-frontmatter.schema.json
+#
+# Copy the block below into any new .context/**/*.md file.
+# Remove the "related" field if there are no related files — do not leave it empty.
+#
+# type values   : plan | finding | analysis
+# status values : draft | active | done | superseded
+# date format   : YYYY-MM-DD (creation date; do not update on edits)
+
+---
+title: ""
+type: plan
+status: draft
+date: YYYY-MM-DD
+related:
+  - ../relative/path/to/related.md
+---
