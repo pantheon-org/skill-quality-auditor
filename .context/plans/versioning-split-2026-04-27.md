@@ -1,7 +1,7 @@
 ---
 title: "Plan: Fix release-please tile.json Path"
 type: plan
-status: active
+status: done
 date: 2026-04-27
 ---
 # Plan: Fix release-please tile.json path (wrong path bug)
