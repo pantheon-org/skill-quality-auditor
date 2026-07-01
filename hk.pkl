@@ -58,6 +58,9 @@ local prePush = new Mapping<String, Step> {
         glob = List("**/*.go")
         check = "go test ./..."
     }
+    ["plan-drift"] {
+        check = "scripts/check-plan-drift.sh"
+    }
     // Build always runs (no glob) so the skill-* steps below have a fresh binary,
     // even on a push that touches only cmd/assets/** and no .go files.
     ["go-build"] {

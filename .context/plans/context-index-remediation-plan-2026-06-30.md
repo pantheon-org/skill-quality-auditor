@@ -1,7 +1,7 @@
 ---
 title: "Remediation Plan: context-index"
 type: plan
-status: active
+status: done
 date: 2026-06-30
 plan_date: "2026-06-30"
 skill_name: context-index
