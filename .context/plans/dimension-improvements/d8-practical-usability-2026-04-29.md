@@ -1,7 +1,7 @@
 ---
 title: "Improvement Plan: D8 — Practical Usability"
 type: plan
-status: active
+status: done
 date: 2026-04-29
 ---
 # Improvement Plan: D8 — Practical Usability

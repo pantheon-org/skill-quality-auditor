@@ -610,31 +610,40 @@ demonstrates triggers are an active attack surface for adversarial skill hijacki
 
 ## Dimension 8: Practical Usability (15 points)
 
-**Purpose:** Ensure skill is immediately useful with clear examples.
+**Purpose:** Ensure skill is immediately useful with clear, outcome-linked examples.
 
 **Scoring:**
 
-- **13-15 points:** Concrete + runnable + clear
-- **10-12 points:** Most examples good
-- **7-9 points:** Some weak examples
+- **13-15 points:** Concrete + runnable + clear + outcome-linked
+- **10-12 points:** Most examples good, some outcome indicators
+- **7-9 points:** Examples present but missing outcome verification
 - **0-6 points:** Abstract or missing
 
 ### D8 Components
 
-1. **Concrete Examples (5 points)**
+1. **Concrete Examples (3 points)**
    - Real code, not pseudocode
    - Realistic scenarios
    - Actual file paths, commands
 
-2. **Runnable Code (5 points)**
+2. **Runnable Code (3 points)**
    - Can copy/paste and execute
    - Complete, not fragments
    - Correct syntax
 
-3. **Clear Structure (5 points)**
+3. **Clear Structure (3 points)**
    - Logical organization
    - Scannable headings
    - Code blocks properly formatted
+
+4. **Example Specificity & Non-Trivial Use (3 points)**
+   - Non-trivial, domain-specific use cases
+   - Goes beyond trivial "hello world" examples
+
+5. **Outcome Linkage (3 points) — additive bonus**
+   - Each example specifies a verifiable outcome (file path, assertion, expected state)
+   - Agent or reviewer can confirm the example succeeded
+   - Based on research: TheAgentCompany (Xu et al. 2024, arXiv:2412.14161), Miller & Tang (arXiv:2505.08253), and Mohammadi et al. surveys showing proxy metrics (code blocks, language tags) correlate poorly with actual task completion
 
 ## Dimension 9: Eval Validation (20 points) -- HIGHEST PRIORITY
 

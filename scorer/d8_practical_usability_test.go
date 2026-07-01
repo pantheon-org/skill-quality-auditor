@@ -83,6 +83,69 @@ func TestD8_ScoreCappedAt15(t *testing.T) {
 	}
 }
 
+func TestD8_OutcomeLinkage_AllLinked(t *testing.T) {
+	content := "---\ndescription: x\n---\n" +
+		"Run the migration:\n" +
+		"```bash\n" +
+		"go run ./cmd/migrate up\n" +
+		"```\n" +
+		"# verify: migration table should show 3 rows\n"
+	if score := scoreOutcomeLinkage(content); score != 3 {
+		t.Errorf("want 3, got %d", score)
+	}
+}
+
+func TestD8_OutcomeLinkage_NoneLinked(t *testing.T) {
+	content := "---\ndescription: x\n---\n" +
+		"```bash\n" +
+		"echo hello\n" +
+		"```\n" +
+		"```python\n" +
+		"print(42)\n" +
+		"```\n"
+	if score := scoreOutcomeLinkage(content); score != 0 {
+		t.Errorf("want 0, got %d", score)
+	}
+}
+
+func TestD8_OutcomeLinkage_FalsePositive_ProsePhrases(t *testing.T) {
+	content := "---\ndescription: x\n---\n" +
+		"This command creates a new project. The tool produces a scaffold that writes to disk.\n" +
+		"Run `init` to get started.\n"
+	if score := scoreOutcomeLinkage(content); score != 0 {
+		t.Errorf("want 0 (no fenced code blocks), got %d", score)
+	}
+}
+
+func TestD8_OutcomeLinkage_FalsePositive_DistantProse(t *testing.T) {
+	content := "---\ndescription: x\n---\n" +
+		"## Background\n" +
+		"The deploy pipeline confirms that all checks pass before merging.\n" +
+		"You should see green indicators in the dashboard.\n" +
+		"\n" +
+		"```bash\n" +
+		"git push origin main\n" +
+		"```\n"
+	if score := scoreOutcomeLinkage(content); score != 0 {
+		t.Errorf("want 0 (outcome language before block, not after), got %d", score)
+	}
+}
+
+func TestD8_OutcomeLinkage_Partial(t *testing.T) {
+	content := "---\ndescription: x\n---\n" +
+		"```bash\n" +
+		"go run ./cmd/migrate up\n" +
+		"```\n" +
+		"# verify: migration table has 3 rows\n" +
+		"\n" +
+		"```python\n" +
+		"print(42)\n" +
+		"```\n"
+	if score := scoreOutcomeLinkage(content); score != 2 {
+		t.Errorf("want 2 (1/2 linked), got %d", score)
+	}
+}
+
 func TestD8_RunCommands(t *testing.T) {
 	cases := []struct {
 		name    string
