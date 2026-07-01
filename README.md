@@ -85,15 +85,6 @@ INSTALL_DIR=~/.local/bin curl -fsSL ... | sh
 VERSION=v1.2.3 curl -fsSL ... | sh
 ```
 
-### Homebrew (Linux / macOS)
-
-```bash
-brew tap pantheon-org/tap
-brew install skill-auditor
-```
-
-> Homebrew tap repo pending — tracked in [`.context/plans/onboarding-improvements`](.context/plans/onboarding-improvements-2026-04-27.md) Phase 2.
-
 ### mise
 
 ```bash
@@ -118,7 +109,6 @@ go install github.com/pantheon-org/skill-quality-auditor@latest
 | Method | Command |
 | --- | --- |
 | install.sh | `skill-auditor update` |
-| Homebrew | `brew upgrade skill-auditor` |
 | mise | `mise upgrade skill-auditor` |
 | Go install | `go install github.com/pantheon-org/skill-quality-auditor@latest` |
 
