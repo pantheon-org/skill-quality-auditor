@@ -36,7 +36,18 @@ Look for cues like:
 - User hasn't sent a message for a while (potential silence = conclusion)
 - All identified tasks are marked complete
 
-### 2. Initiate the reflection
+### 2. Choose the reflection mode
+
+Two approaches — pick based on session depth and model cost sensitivity:
+
+| Mode | How | Best for |
+|------|-----|----------|
+| **Inline** (default) | Main model generates reflection directly in conversation | Short sessions, quick check, user is already saying goodbye |
+| **Sub-agent spawn** (preferred for deep sessions) | Main model summarizes the session, spawns an `explore` sub-agent to produce the reflection, presents results | Deep sessions with significant work; offloads introspection to a potentially cheaper model |
+
+The sub-agent pattern is detailed in [Advanced: Sub-agent spawn pattern](#advanced-sub-agent-spawn-pattern).
+
+### 3. Initiate the reflection
 
 Use a natural opening, for example:
 
@@ -44,7 +55,7 @@ Use a natural opening, for example:
 
 Do NOT ask both questions at once. Ask sequentially, wait for the user's response to each.
 
-### 3. Question 1: Confidence audit
+### 4. Question 1: Confidence audit
 
 Ask: **"What am I least confident about right now?"**
 
@@ -58,7 +69,7 @@ Generate 3–7 specific items. For each item:
 
 Present this as a structured list. Be precise about what was under-investigated and why.
 
-### 4. Question 2: Blind-spot check
+### 5. Question 2: Blind-spot check
 
 Ask: **"What's the biggest thing I'm missing about this situation? What don't I realize?"**
 
@@ -68,7 +79,7 @@ This targets the user's blind spots rather than the agent's. Identify:
 - Signals in the conversation that were noted but not followed up
 - Constraints or requirements that were stated once but may have changed
 
-### 5. Follow up
+### 6. Follow up
 
 After the user responds to both questions:
 
@@ -77,7 +88,7 @@ After the user responds to both questions:
 - If an item is a false alarm, explain why and move on
 - If a finding warrants preservation, create a `.context/findings/` entry using the `context-file` skill
 
-### 6. Conclude
+### 7. Conclude
 
 Only after the investigation loop is resolved should the session end. If new work was spawned, note it clearly.
 
@@ -137,6 +148,7 @@ Only after the investigation loop is resolved should the session end. If new wor
 - If a reflection reveals a critical issue, the session was not actually over — treat it as continuation, not wrap-up
 - Persist important findings to `.context/findings/` so future sessions benefit from the discovery
 - This technique works because the questions are complementary: internal audit (confidence) + external audit (blind spot)
+- **Sub-agent spawn is preferred for deep sessions.** The act of summarizing the session for a sub-agent forces the main agent to be explicit about what was done vs. assumed — itself a valuable metacognitive exercise. The fresh perspective from an independent agent often catches things the main agent normalized
 
 ## Troubleshooting
 
@@ -146,6 +158,51 @@ Only after the investigation loop is resolved should the session end. If new wor
 | User asks you to skip on a future session | Honour the preference. Consider noting it in `.context/` if project-level. |
 | Reflection reveals a huge issue | Do not panic. Investigate calmly, present findings, offer remediation options. This is a win — you caught it before sign-off. |
 | User has no response to either question | Accept that the reflection ran. The act of surfacing items is valuable even without follow-up. |
+
+## Advanced: Sub-agent spawn pattern
+
+For deep sessions with significant work, offload the reflection to a sub-agent. This keeps the main model focused on delivery and surfaces a fresh perspective on the work. If the environment routes `explore` sub-agents to a cheaper or faster model, this also reduces cost.
+
+### Workflow
+
+1. **Main agent** detects session-end signals and composes a **session summary** capturing:
+   - What work was done (files touched, commands run, decisions made)
+   - What was assumed without verification (dependency versions, code paths, configurations)
+   - What was explicitly skipped or deferred
+   - What alternatives were considered but not explored
+   - Any open questions or unresolved threads from the conversation
+2. **Main agent** spawns an `explore` sub-agent with this prompt:
+
+   ```
+   Review this session summary and answer two questions with specific, actionable items:
+
+   1. CONFIDENCE AUDIT: What 3–7 things are you least confident about in this work?
+      For each: state what was done, what was not verified, and why confidence is low.
+      Be precise — file paths, function names, specific assumptions.
+
+   2. BLIND-SPOT CHECK: What's the biggest thing the user might be missing?
+      Consider unexamined assumptions, alternative approaches not explored,
+      constraints that may have shifted, or signals that were dropped.
+
+   Session summary:
+   <summarize the session here>
+   ```
+
+3. **Sub-agent** returns its reflection as structured text
+4. **Main agent** presents the results to the user with a preamble like: "I asked a second agent to review the session for blind spots. Here's what it surfaced:"
+5. Optionally let the sub-agent do the investigation too (if the user flags an item), by spawning another task with the investigation context
+
+### Anti-patterns
+
+**NEVER** spawn the sub-agent without providing a good session summary. A vague prompt ("review this session") produces vague output. The summary quality determines the reflection quality.
+
+**NEVER** present sub-agent output as your own. Attribute clearly — the user should know this is an independent review.
+
+**PREFER** the inline mode for short sessions. The sub-agent spawn overhead (~10s + context for the summary) is only justified when there's substantial work to review.
+
+### When the sub-agent disagrees with the main agent
+
+If the sub-agent flags something the main agent is confident about, investigate anyway. The whole point of the reflection is catching blind spots — defensive disagreement is a feature, not a bug.
 
 ## Integration with Other Skills
 
