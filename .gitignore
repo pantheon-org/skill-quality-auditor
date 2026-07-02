@@ -1,4 +1,5 @@
 dist/
+site/
 coverage.out
 coverage.html
 .aislop/

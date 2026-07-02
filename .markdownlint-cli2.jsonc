@@ -20,9 +20,15 @@
     // MD055 table-pipe-style — pipe characters inside backtick spans are not
     // table delimiters; disabled to avoid false positives.
     "MD055": false,
+    // MD056 table-column-count — same rationale as MD055: pipes inside
+    // backtick code spans are misinterpreted as column delimiters.
+    "MD056": false,
     // MD058 blanks-around-tables — disabled to match the prior linter and
     // avoid churn on docs that embed tables in tight layouts.
-    "MD058": false
+    "MD058": false,
+    // MD060 table-column-style — disabled because docmd-generated tables use
+    // compact spacing that triggers the rule, and authored tables are readable.
+    "MD060": false
   },
   "globs": ["**/*.md"],
   "ignores": [
@@ -41,6 +47,7 @@
     ".codex/**",
     ".tessl/**",
     ".aislop/**",
-    "dist/**"
+    "dist/**",
+    "site/**"
   ]
 }

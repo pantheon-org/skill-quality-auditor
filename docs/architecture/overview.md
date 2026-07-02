@@ -1,0 +1,117 @@
+# Architecture overview
+
+## High-level package dependency graph
+
+```text
+main.go
+  └── cmd/ (cobra commands)
+        ├── scorer/        (scoring engine)
+        │     ├── scorer.go           (Score, ScoreFromContent)
+        │     ├── dimensions.go       (Dimension, Diagnostic, Result, AllDimensions)
+        │     ├── grades.go           (GradeRank, Grade)
+        │     ├── thresholds.go       (rubric cut-points)
+        │     ├── validator_bridge.go (skill-validator integration)
+        │     ├── d1_knowledge_delta.go
+        │     ├── d2_mindset_procedures.go
+        │     ├── d3_anti_pattern_coverage.go
+        │     ├── d4_specification.go
+        │     ├── d5_progressive_disclosure.go
+        │     ├── d6_freedom_calibration.go
+        │     ├── d7_pattern_recognition.go
+        │     ├── d8_practical_usability.go
+        │     └── d9_eval_validation.go
+        │
+        ├── reporter/      (formatting, storage, plans)
+        │     ├── reporter.go          (Format — human-readable text)
+        │     ├── store.go             (Store — persist to .context/audits/)
+        │     ├── analysis.go          (Analysis — markdown audit report)
+        │     ├── duplication.go       (DuplicationReport)
+        │     ├── aggregation.go       (AggregationPlan)
+        │     ├── remediation.go       (Remediation — simple plan)
+        │     ├── remediation_plan_generate.go (schema-compliant plan)
+        │     └── remediation_plan_validate.go (schema validation)
+        │
+        ├── duplication/   (pairwise similarity)
+        │     ├── inventory.go (SkillEntry, Inventory)
+        │     ├── detect.go    (Pair, Detect, thresholds)
+        │     └── similarity.go (Jaccard, TokenSet, SectionHeaders)
+        │
+        ├── agents/        (agent registry)
+        │     └── registry.go
+        │
+        ├── analysis/      (static analysis)
+        │     ├── patterns.go (rule-based detection)
+        │     └── tfidf.go    (keyword extraction)
+        │
+        └── internal/
+              ├── llmclient/ (provider-agnostic LLM client)
+              │     ├── types.go      (Client, Provider, Message, etc.)
+              │     ├── client.go     (NewFromEnv, providers registry)
+              │     ├── anthropic.go  (Anthropic provider)
+              │     ├── openai.go     (OpenAI provider)
+              │     ├── gemini.go     (Gemini provider)
+              │     └── prompt.go     (JudgePrompt, ActorMessages, JudgeMessages)
+              │
+              └── tokenize/   (text normalization)
+                    └── tokenize.go (Normalize, Set, Counts)
+```
+
+## Data flow
+
+```text
+User CLI input
+    │
+    ▼
+cobra.Command
+    │
+    ├── evaluate ──► scorer.Score()
+    │                    │
+    │                    ├── validatorBridge (external skill-validator library)
+    │                    ├── scoreD1 ··· scoreD9
+    │                    │
+    │                    ▼
+    │                scorer.Result     ──► reporter.Format()  → stdout
+    │                    │                 reporter.Store()   → .context/audits/
+    │                    ▼
+    │                reporter.Remediation() → .context/audits/*/Remediation.md
+    │
+    ├── batch     ──► loop scorer.Score()   ──► sorted table / JSON
+    │
+    ├── duplication─► duplication.Inventory() → Detect() → reporter.DuplicationReport()
+    │
+    ├── aggregate ──► Inventory() → filter family → Detect() → reporter.AggregationPlan()
+    │
+    ├── remediate ──► load audit.json → reporter.RemediationPlan() / ValidateRemediationPlan()
+    │
+    ├── trend     ──► group audits by skill → compute deltas → table / JSON
+    │
+    ├── eval      ──► load scenarios → llmclient (actor + judge) → PASS/FAIL
+    │
+    ├── analyze   ──► read SKILL.md → ExtractKeywords() + Detect*() → CombinedAnalysis
+    │
+    ├── validate  ──► walk skills dir → check schemas/templates/scripts/SKILL.md conventions
+    │
+    ├── init      ──► resolve agents → write embedded assets → symlink/copy to harness dirs
+    │
+    ├── update    ──► GitHub API → download tarball → verify checksum → replace binary
+    │
+    └── prune     ──► read audit dirs → keep N newest per skill → remove rest
+```
+
+## Output layout
+
+```text
+.context/
+  audits/
+    <domain/skill-name>/
+      <YYYY-MM-DD>/
+        audit.json        (scorer.Result — JSON)
+        Analysis.md       (human-readable markdown)
+        Remediation.md    (simple remediation markdown)
+  analysis/
+    duplication-report-YYYY-MM-DD.md
+    aggregation-plan-<family>-YYYY-MM-DD.md
+    pattern-report-<skill>-YYYY-MM-DD.md
+  plans/
+    <skill-name>-remediation-plan-<date>.md
+```

@@ -1,0 +1,133 @@
+# Development setup
+
+## Prerequisites
+
+- Go 1.25.5+
+- [hk](https://github.com/jdx/hk) (hook manager)
+- [mise](https://mise.jdx.dev) (recommended for tool version management)
+- Node.js 18+ (for docmd documentation preview)
+
+## Quick start
+
+```bash
+# Clone the repo
+git clone https://github.com/pantheon-org/skill-quality-auditor.git
+cd skill-quality-auditor
+
+# Install tools (via mise)
+mise install
+
+# Install git hooks
+hk install
+
+# Build the CLI
+go build -o dist/skill-auditor .
+
+# Run a smoke test
+./dist/skill-auditor evaluate testdata/fixtures/skill-full
+```
+
+## Git hooks
+
+Pre-commit and pre-push hooks are managed via hk:
+
+```bash
+hk run pre-commit   # run the pre-commit steps manually
+hk check            # lint without fixing
+hk fix              # run fixers and restage
+HK=0 git commit ... # bypass hooks for a single commit
+```
+
+### Pre-commit checks
+
+- Go fmt, vet, lint (golangci-lint)
+- markdownlint (markdownlint-cli2)
+- shellcheck on shell scripts
+- Context frontmatter validation
+- ADR index freshness check
+- Undocumented decision detection
+
+### Pre-push checks
+
+- Full test suite (`go test ./...`)
+- Binary build
+- Artifact validation
+- Duplication detection
+- Batch audit (fails below B grade)
+
+## Common workflows
+
+### Run tests
+
+```bash
+go test ./...
+```
+
+### Test a specific package
+
+```bash
+go test ./scorer/...
+go test ./reporter/...
+```
+
+### Run a specific test
+
+```bash
+go test -run TestGrade ./scorer/
+```
+
+### Lint
+
+```bash
+go vet ./...
+golangci-lint run
+```
+
+### Preview documentation
+
+```bash
+npx @docmd/core dev    # starts dev server at localhost:3000
+```
+
+### Build documentation
+
+```bash
+npx @docmd/core build  # outputs static site to ./site/
+```
+
+## Project layout
+
+```text
+.
+├── main.go               # Entry point
+├── cmd/                  # Cobra CLI commands + embedded assets
+├── scorer/               # D1–D9 scoring engine
+├── reporter/             # Formatting, persistence, plans
+├── duplication/          # Pairwise similarity detection
+├── agents/               # Agent registry
+├── analysis/             # TF-IDF + pattern detection
+├── internal/
+│   ├── llmclient/        # Provider-agnostic LLM client
+│   └── tokenize/         # Text normalization
+├── docs/                 # Documentation (this site)
+│   ├── architecture/     # Code flow documentation
+│   ├── reference/        # Dimension reference
+│   └── development/      # Development guides
+├── docs/ADR/             # Architecture Decision Records
+├── cmd/assets/           # Embedded skill assets
+│   ├── references/       # Scoring rubrics, anti-patterns, thresholds
+│   ├── evals/            # Evaluation scenarios
+│   ├── schemas/          # JSON schemas
+│   ├── templates/        # Templates
+│   └── requirements/     # Requirements
+└── testdata/             # Fixture skills for tests
+```
+
+## Release workflow
+
+Releases are automated via release-please:
+
+1. Conventional commits trigger release PRs
+2. CI builds cross-platform binaries
+3. Homebrew tap is updated automatically
+4. Tile version is synced with binary version (ADR-023)
