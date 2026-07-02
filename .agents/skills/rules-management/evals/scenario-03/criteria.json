@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to take a vague user instruction and reformulate it into a concrete, properly structured rule with precise ALWAYS/NEVER directives and a rationale.",
+  "checklist": [
+    {"name": "Rule reformulation", "description": "Vague instruction reformulated into concrete, actionable rule (not copied verbatim)", "max_score": 30},
+    {"name": "ALWAYS/NEVER phrasing", "description": "Directive uses ALWAYS and/or NEVER phrasing for precision", "max_score": 25},
+    {"name": "Rationale provided", "description": "Rationale explains why the rule exists in 1-2 sentences", "max_score": 25},
+    {"name": "Existing rules preserved", "description": "Existing rules are not modified or deleted", "max_score": 20}
+  ]
+}

@@ -1,0 +1,2 @@
+Detect and reject duplicate or overlapping rule requests by reading existing rules before adding.
+

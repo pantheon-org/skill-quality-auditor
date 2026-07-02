@@ -1,0 +1,2 @@
+Create a new agent behavioural rule from a user prompt, following the required format.
+

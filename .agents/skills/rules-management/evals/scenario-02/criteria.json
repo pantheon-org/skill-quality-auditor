@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to detect duplicate or overlapping rule requests by reading existing rules first, and to reject duplicates while explaining why to the user.",
+  "checklist": [
+    {"name": "Existing rules read first", "description": ".agents/RULES.md is read before any write operation", "max_score": 30},
+    {"name": "Duplicate detection", "description": "Overlap between user request and existing rule is detected and explained", "max_score": 35},
+    {"name": "No duplicate created", "description": "No duplicate rule is appended; file content is unchanged", "max_score": 35}
+  ]
+}
