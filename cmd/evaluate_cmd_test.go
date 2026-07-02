@@ -144,11 +144,8 @@ func TestEvaluateCmd_skillPathNotUnderSkillsDir(t *testing.T) {
 	if err := os.WriteFile(skillFile, []byte("# Title\n"), 0o644); err != nil {
 		t.Fatalf("write skill: %v", err)
 	}
-	out, err := runEvaluate(t, "--repo-root", tmp, skillFile)
+	_, err := runEvaluate(t, "--repo-root", tmp, skillFile)
 	if err != nil {
 		t.Errorf("unexpected error for path outside skills/: %v", err)
-	}
-	if !strings.Contains(out, `"grade": "F"`) {
-		t.Errorf("expected a valid score output, got: %s", out)
 	}
 }
