@@ -1,0 +1,24 @@
+{
+  "instructions": [
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER add a rule without first reading existing .agents/RULES.md — blind appending creates duplicates and violates the single-source-of-truth contract."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER accept a rule without a clear Directive (ALWAYS/NEVER phrasing) and Rationale — vague rules fail the precision requirement and confuse future readers."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Load .agents/RULES.md before adding any new rule. Check the entire file — rules are entries under '### Rule:' headings."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "When the user says 'Remember this', do NOT create a rule — route to vault-capture instead. Rules management is for behavioural directives only, not ephemeral notes or memory."
+    }
+  ]
+}

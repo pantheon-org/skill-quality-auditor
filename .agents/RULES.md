@@ -31,3 +31,27 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 **Rationale:** A SKILL.md that fails structural validation or scores poorly defeats the purpose of the quality framework. Validating early catches issues when they're cheapest to fix.
 
+---
+
+### Rule: Allow skills to evolve with experience
+
+**Directive:** NEVER treat a skill as final after its initial creation. ALWAYS revisit and improve skills when experience reveals better patterns, edge cases, or anti-patterns. Update the SKILL.md, references, evals, and scripts as knowledge grows.
+
+**Rationale:** Skills are living documentation. Freezing them at creation time means they ossify and lose relevance. Iteration based on real usage is what keeps them high-signal.
+
+---
+
+### Rule: Formalise ad hoc scripts after repeated use
+
+**Directive:** ALWAYS use `.tmp/` for one-off or experimental scripts. When a script has been used more than twice from `.tmp/`, ALWAYS formalise it — move it to an appropriate permanent location (`scripts/`, `tools/`, or the relevant package), add documentation, and update references so agents can discover it. NEVER let `.tmp/` scripts become de facto permanent tools.
+
+**Rationale:** Scripts that are run repeatedly from `.tmp/` become invisible to other agents and accumulate silently. Formalising after the second use ensures discoverability, maintainability, and prevents `.tmp/` from becoming a dumping ground.
+
+---
+
+### Rule: Never write temporary scripts outside .tmp
+
+**Directive:** NEVER write ad hoc, experimental, or one-off scripts anywhere other than `.tmp/`. When you need a script for a quick task, create it under `.tmp/`. If the script proves useful and is used more than twice, formalise it to a permanent location.
+
+**Rationale:** Scattering temporary scripts across the repository creates cleanup debt, confuses other agents, and pollutes permanent directories with throwaway code. A single `.tmp/` convention makes it obvious what is ephemeral and what is permanent.
+

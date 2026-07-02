@@ -1,0 +1,2 @@
+Reformat a vague user instruction into a properly structured rule with Directive and Rationale.
+

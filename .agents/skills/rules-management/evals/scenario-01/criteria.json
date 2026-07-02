@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to create a new behavioural rule from a natural language user request, following the required three-part format (title, directive, rationale) while preserving existing rules.",
+  "checklist": [
+    {"name": "Existing rules preserved", "description": "Existing .agents/RULES.md content is preserved without modification or deletion", "max_score": 30},
+    {"name": "Format compliance", "description": "New rule follows ### Rule: / **Directive:** / **Rationale:** format", "max_score": 30},
+    {"name": "Directive phrasing", "description": "Directive uses NEVER or ALWAYS phrasing", "max_score": 20},
+    {"name": "User notification", "description": "User is informed that the rule was added", "max_score": 20}
+  ]
+}
