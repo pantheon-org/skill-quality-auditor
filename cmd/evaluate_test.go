@@ -39,10 +39,13 @@ func TestCanonicalSkillKey_standard(t *testing.T) {
 }
 
 func TestCanonicalSkillKey_notUnderSkillsDir(t *testing.T) {
-	// Path outside skills/ must return an error.
-	_, err := canonicalSkillKey("/other/path/SKILL.md", "/repo")
-	if err == nil {
-		t.Error("expected error for path outside skills/")
+	// Path outside skills/ falls back to inferSkillKey (no error).
+	got, err := canonicalSkillKey("/other/path/SKILL.md", "/repo")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "path" {
+		t.Errorf("got %q, want %q", got, "path")
 	}
 }
 

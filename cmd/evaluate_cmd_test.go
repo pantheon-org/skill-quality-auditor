@@ -135,7 +135,7 @@ func TestEvaluateCmd_storeFlagShorthand(t *testing.T) {
 }
 
 func TestEvaluateCmd_skillPathNotUnderSkillsDir(t *testing.T) {
-	// A path that exists but is not under <repoRoot>/skills/ should error at canonicalSkillKey
+	// A path that is not under <repoRoot>/skills/ is allowed — falls back to inferSkillKey.
 	tmp := t.TempDir()
 	if err := os.WriteFile(filepath.Join(tmp, "go.mod"), []byte("module test"), 0o644); err != nil {
 		t.Fatalf("write go.mod: %v", err)
@@ -145,10 +145,7 @@ func TestEvaluateCmd_skillPathNotUnderSkillsDir(t *testing.T) {
 		t.Fatalf("write skill: %v", err)
 	}
 	_, err := runEvaluate(t, "--repo-root", tmp, skillFile)
-	if err == nil {
-		t.Error("expected error when skill path is not under skills/")
-	}
-	if err != nil && !strings.Contains(err.Error(), "not under") {
-		t.Errorf("expected 'not under' in error, got: %v", err)
+	if err != nil {
+		t.Errorf("unexpected error for path outside skills/: %v", err)
 	}
 }

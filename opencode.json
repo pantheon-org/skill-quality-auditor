@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    ".agents/RULES.md"
+  ],
+  "mcp": {
+    "tessl": {
+      "type": "local",
+      "command": [
+        "tessl",
+        "mcp",
+        "start"
+      ],
+      "enabled": true
+    }
+  }
+}
