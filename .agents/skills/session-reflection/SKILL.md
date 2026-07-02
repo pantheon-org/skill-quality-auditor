@@ -163,6 +163,8 @@ Only after the investigation loop is resolved should the session end. If new wor
 
 For deep sessions with significant work, offload the reflection to a sub-agent. This keeps the main model focused on delivery and surfaces a fresh perspective on the work. If the environment routes `explore` sub-agents to a cheaper or faster model, this also reduces cost.
 
+The reflection task needs instruction following, reasoning, tool-call support, and ≥256K context — but does NOT need frontier reasoning. Many cheap or free models suffice. See [Recommended Sub-Agent Models](references/recommended-subagent-models.md) for current options and pricing caveats.
+
 ### Workflow
 
 1. **Main agent** detects session-end signals and composes a **session summary** capturing:
@@ -200,6 +202,8 @@ For deep sessions with significant work, offload the reflection to a sub-agent. 
 
 **PREFER** the inline mode for short sessions. The sub-agent spawn overhead (~10s + context for the summary) is only justified when there's substantial work to review.
 
+**NEVER** choose a sub-agent model based on price alone. A model that costs $0.00/M tok but misses blind spots is more expensive than one that costs $0.15/M tok and catches them. Always test your chosen model on real session summaries before relying on it. The [recommended sub-agent models reference](references/recommended-subagent-models.md) has detailed selection guidance and pricing caveats.
+
 ### When the sub-agent disagrees with the main agent
 
 If the sub-agent flags something the main agent is confident about, investigate anyway. The whole point of the reflection is catching blind spots — defensive disagreement is a feature, not a bug.
@@ -217,3 +221,4 @@ If the sub-agent flags something the main agent is confident about, investigate 
 | Topic | Reference | When to Use |
 | --- | --- | --- |
 | Technique origins and rationale | [Session-End Reflection Reference](references/session-reflection-reference.md) | Understanding why these two questions work and how they complement each other |
+| Sub-agent model selection | [Recommended Sub-Agent Models](references/recommended-subagent-models.md) | Choosing a cheap model for the sub-agent spawn pattern |
