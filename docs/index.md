@@ -87,6 +87,7 @@ Warnings:
 - **[Development setup](development/setup.md)** — prerequisites and workflow
 - **[Adding a scorer](development/adding-a-scorer.md)** — how to extend the framework
 - **[Adding an agent](development/adding-an-agent.md)** — how to support a new harness
+- **[Skills and rules](development/skills-and-rules.md)** — local agent rules and skills
 
 ## Key packages
 
