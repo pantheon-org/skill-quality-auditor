@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.2...v0.17.0) (2026-07-02)
+
+
+### Features
+
+* add docs-check skill and document local skills and rules on GH Pages ([#102](https://github.com/pantheon-org/skill-quality-auditor/issues/102)) ([cfe6be0](https://github.com/pantheon-org/skill-quality-auditor/commit/cfe6be0efedaf4d874e5397782ce354cc30a38ad))
+* add rules-management infrastructure ([#98](https://github.com/pantheon-org/skill-quality-auditor/issues/98)) ([de4fcd4](https://github.com/pantheon-org/skill-quality-auditor/commit/de4fcd46481efe3afd966326f2a025ec6125d4a5))
+* **rules-management:** add evals, audit improvements, and reference docs ([#101](https://github.com/pantheon-org/skill-quality-auditor/issues/101)) ([d2d979f](https://github.com/pantheon-org/skill-quality-auditor/commit/d2d979fa5e8012d86aee0e6ad480580be59bf977))
+
+
+### Bug Fixes
+
+* disable goreleaser release management for release immutability compatibility ([#100](https://github.com/pantheon-org/skill-quality-auditor/issues/100)) ([c79a9c4](https://github.com/pantheon-org/skill-quality-auditor/commit/c79a9c40fcf5cdc1200849fb76a031d7b58ebdb0))
+
 ## [0.16.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.1...v0.16.2) (2026-07-02)
 
 
