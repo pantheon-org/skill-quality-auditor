@@ -1,0 +1,1 @@
+Use sub-agent spawn mode for deep-session reflection when the user asks for a thorough review.

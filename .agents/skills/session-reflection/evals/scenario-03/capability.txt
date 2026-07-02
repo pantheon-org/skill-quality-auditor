@@ -1,0 +1,1 @@
+Skip session-end reflection for brief single-answer queries that are clearly complete.

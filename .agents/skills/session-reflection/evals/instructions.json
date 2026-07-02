@@ -1,0 +1,29 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Ask the confidence audit question first, wait for response, then ask the blind-spot check — NEVER ask both in one message."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER skip the reflection because the session feels complete — the agent is a poor judge of its own blind spots."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER give vague confidence items like 'I'm not confident about the approach' — be specific about files, functions, or assumptions."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "For deep sessions, prefer sub-agent spawn mode: summarize the session, spawn an explore sub-agent, and present its findings as an independent review."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "preference",
+      "content": "Skip the reflection for brief single-answer queries where the overhead is not justified."
+    }
+  ]
+}

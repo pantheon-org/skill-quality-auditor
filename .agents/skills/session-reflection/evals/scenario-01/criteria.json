@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to initiate session-end reflection when the user signals completion, ask both questions sequentially, and offer investigation.",
+  "checklist": [
+    {"name": "Initiate reflection", "description": "Agent initiates a reflection when user signals session is done (e.g., 'we're done', 'wrap it up')", "max_score": 20},
+    {"name": "Confidence audit", "description": "Agent asks 'What am I least confident about' and lists 3-7 specific under-investigated items", "max_score": 25},
+    {"name": "Blind-spot check", "description": "Agent asks 'What's the biggest thing I'm missing' about the situation", "max_score": 20},
+    {"name": "Sequential questions", "description": "Agent asks one question at a time, waiting for response before the next", "max_score": 15},
+    {"name": "Offer investigation", "description": "Agent does NOT skip the reflection and offers to investigate flagged items", "max_score": 20}
+  ]
+}

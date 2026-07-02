@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to use sub-agent spawn mode for deep-session reflection when the user explicitly requests a review.",
+  "checklist": [
+    {"name": "Session summary", "description": "Agent composes a detailed session summary covering work done, assumptions, and deferred items before spawning sub-agent", "max_score": 25},
+    {"name": "Sub-agent spawned", "description": "Agent spawns a sub-agent with the reflection prompt rather than doing it inline", "max_score": 25},
+    {"name": "Structured prompt", "description": "Sub-agent prompt includes both confidence audit and blind-spot check with specific instructions", "max_score": 20},
+    {"name": "Attribution", "description": "Agent presents sub-agent output as an independent review, not as its own analysis", "max_score": 15},
+    {"name": "Investigation offered", "description": "Agent does NOT skip the reflection and offers to investigate flagged items", "max_score": 15}
+  ]
+}

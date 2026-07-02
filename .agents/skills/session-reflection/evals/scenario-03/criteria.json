@@ -1,0 +1,9 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to recognize when a reflection is NOT warranted — brief queries that are complete should not trigger the overhead.",
+  "checklist": [
+    {"name": "No reflection triggered", "description": "Agent does NOT initiate session-end reflection for a brief single-answer query", "max_score": 40},
+    {"name": "Direct answer", "description": "Agent answers the query directly and concisely without adding reflection overhead", "max_score": 30},
+    {"name": "Quick sign-off", "description": "Agent wraps up cleanly with no unnecessary follow-up questions", "max_score": 30}
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: session-reflection
-description: "Conduct a two-question session-end reflection to catch blind spots and under-investigated areas before concluding. The agent surfaces its lowest-confidence work items and identifies what the user might be missing, then offers to investigate. Based on a Reddit-post technique combining an LLM-suggested confidence audit with Sam Altman's blind-spot question. Triggers: 'wrap up', 'we're done', 'conclude', 'session end', 'final review', 'before we go', 'sign off', 'that's all', 'anything else', 'finished', 'reflection', 'confidence check', 'blind spot', 'what are you missing', 'rate your confidence', 'review the session'."
+description: "Conduct a two-question session-end reflection to catch blind spots and under-investigated areas before concluding. The agent surfaces its lowest-confidence work items and identifies what the user might be missing, then offers to investigate. Based on a Reddit-post technique combining an LLM-suggested confidence audit with Sam Altman's blind-spot question. Do NOT trigger for brief single-answer queries, CI contexts, or in the middle of active work — only when a session appears to be concluding. Triggers: 'wrap up', 'we're done', 'conclude', 'session end', 'final review', 'before we go', 'sign off', 'that's all', 'anything else', 'finished', 'reflection', 'confidence check', 'blind spot', 'what are you missing', 'rate your confidence', 'review the session'."
 ---
 
 # Session-End Reflection
@@ -15,14 +15,14 @@ Catch blind spots and under-investigated areas before concluding a session by as
 ## Prerequisites
 
 - A session that appears to be concluding (user signals completion, asks for summary, or starts wrap-up language)
-- The `.agents/RULES.md` rule "Always conduct session-end reflection" should already be active (it references this skill)
+- The `RULES.md` rule "Always conduct session-end reflection" should already be active (it references this skill) — the rule lives in the agents directory under the repo root
 - For persisting uncovered findings: the `context-file` skill, and optionally the `adr-capture` skill if a binding decision emerges
 
 ## Quick Start
 
 ```bash
 # No commands needed — this is a behavioural skill.
-# The rule in .agents/RULES.md triggers the reflection automatically.
+# The rule in RULES.md triggers the reflection automatically.
 # Read this skill for detailed guidance on execution.
 ```
 
@@ -86,11 +86,19 @@ After the user responds to both questions:
 - If the user flags an item for investigation, do deep root-cause investigation before concluding — search code, check docs, trace dependencies, test assumptions
 - If an item reveals a genuine issue, offer to fix it before signing off
 - If an item is a false alarm, explain why and move on
-- If a finding warrants preservation, create a `.context/findings/` entry using the `context-file` skill
+- If a finding warrants preservation, create a new finding entry using the `context-file` skill
 
 ### 7. Conclude
 
 Only after the investigation loop is resolved should the session end. If new work was spawned, note it clearly.
+
+### 8. Verify outcome
+
+Before marking the session as fully complete:
+- Confirm with the user that the reflection addressed their concerns
+- If items were investigated, summarize what was found and whether action was taken
+- If a finding was preserved, confirm the file was created
+- Explicitly ask: "Does this wrap things up, or is there anything else from the reflection to address?"
 
 ## When NOT to Use
 
@@ -146,7 +154,7 @@ Only after the investigation loop is resolved should the session end. If new wor
 - Precision over quantity for confidence items. Better 3 specific items than 7 vague ones
 - The blind-spot check is the harder question — it requires synthesizing across the entire session
 - If a reflection reveals a critical issue, the session was not actually over — treat it as continuation, not wrap-up
-- Persist important findings to `.context/findings/` so future sessions benefit from the discovery
+- Persist important findings as context entries so future sessions benefit from the discovery
 - This technique works because the questions are complementary: internal audit (confidence) + external audit (blind spot)
 - **Sub-agent spawn is preferred for deep sessions.** The act of summarizing the session for a sub-agent forces the main agent to be explicit about what was done vs. assumed — itself a valuable metacognitive exercise. The fresh perspective from an independent agent often catches things the main agent normalized
 
@@ -155,7 +163,7 @@ Only after the investigation loop is resolved should the session end. If new wor
 | Situation | Response |
 |-----------|----------|
 | User says "no need" to reflection | Accept gracefully. Do not insist. |
-| User asks you to skip on a future session | Honour the preference. Consider noting it in `.context/` if project-level. |
+| User asks you to skip on a future session | Honour the preference. Consider noting it as a project-level finding. |
 | Reflection reveals a huge issue | Do not panic. Investigate calmly, present findings, offer remediation options. This is a win — you caught it before sign-off. |
 | User has no response to either question | Accept that the reflection ran. The act of surfacing items is valuable even without follow-up. |
 
@@ -212,13 +220,11 @@ If the sub-agent flags something the main agent is confident about, investigate 
 
 | Skill | How it connects |
 |-------|----------------|
-| `context-file` | Persist reflection findings as `.context/findings/` entries when they reveal actionable gaps |
+| `context-file` | Persist reflection findings as context entries when they reveal actionable gaps |
 | `adr-capture` | If a reflection reveals a decision-level blind spot, capture it as an ADR |
 | `rules-management` | If reflection reveals a pattern worth codifying as a behavioural rule, create one |
 
 ## References
 
-| Topic | Reference | When to Use |
-| --- | --- | --- |
-| Technique origins and rationale | [Session-End Reflection Reference](references/session-reflection-reference.md) | Understanding why these two questions work and how they complement each other |
-| Sub-agent model selection | [Recommended Sub-Agent Models](references/recommended-subagent-models.md) | Choosing a cheap model for the sub-agent spawn pattern |
+- [Session-End Reflection Reference](references/session-reflection-reference.md) — technique origins and rationale, understanding why these two questions work
+- [Recommended Sub-Agent Models](references/recommended-subagent-models.md) — choosing a cheap model for the sub-agent spawn pattern
