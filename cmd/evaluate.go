@@ -86,15 +86,14 @@ func inferSkillKey(skillPath string) string {
 
 // canonicalSkillKey derives the domain/skill-name storage key from an absolute
 // SKILL.md path by stripping <repoRoot>/skills/ and the trailing /SKILL.md.
-// Returns an error when skillPath is not under <repoRoot>/skills/.
+// Falls back to inferSkillKey when the path is not under <repoRoot>/skills/.
 func canonicalSkillKey(skillPath, repoRoot string) (string, error) {
 	prefix := filepath.Join(repoRoot, "skills") + string(filepath.Separator)
-	if !strings.HasPrefix(skillPath, prefix) {
-		return "", fmt.Errorf("skill path %q is not under %q — use --repo-root to set the correct root", skillPath, prefix)
+	if strings.HasPrefix(skillPath, prefix) {
+		key := strings.TrimPrefix(skillPath, prefix)
+		return strings.TrimSuffix(key, string(filepath.Separator)+"SKILL.md"), nil
 	}
-	key := strings.TrimPrefix(skillPath, prefix)
-	key = strings.TrimSuffix(key, string(filepath.Separator)+"SKILL.md")
-	return key, nil
+	return inferSkillKey(skillPath), nil
 }
 
 // resolveSkillPath converts a skill arg to an absolute filesystem path to SKILL.md.
