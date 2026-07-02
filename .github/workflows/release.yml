@@ -40,3 +40,8 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts to existing release
+        run: |
+          gh release upload "${{ needs.release-please.outputs.tag_name }}" dist/*.tar.gz dist/*.zip dist/checksums.txt --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
