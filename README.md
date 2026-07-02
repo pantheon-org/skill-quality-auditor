@@ -1,7 +1,7 @@
 # skill-quality-auditor
 
 [![CI](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/pantheon-org/skill-quality-auditor)](https://goreportcard.com/report/github.com/pantheon-org/skill-quality-auditor)
+[![golangci-lint](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml/badge.svg?job=lint)](https://github.com/pantheon-org/skill-quality-auditor/actions/workflows/ci.yml)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/pantheon-org/skill-quality-auditor)](https://github.com/pantheon-org/skill-quality-auditor)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
