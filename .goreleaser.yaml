@@ -25,6 +25,9 @@ archives:
       - goos: windows
         formats: [zip]
 
+release:
+  disable: true
+
 # brews:
 #   - name: skill-auditor
 #     repository:
