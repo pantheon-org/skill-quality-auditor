@@ -1,0 +1,34 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Before running any check, verify that Node.js 18+ is available and that the working directory is the repo root."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Run checks in order: build first (fastest failure), then orphan detection, then ADR index freshness, then LLM audit."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER skip the build check — a broken build blocks the deployment CI job and wastes a commit cycle."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER commit an orphan page — pages not linked from any index are invisible to site visitors and search."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER add an ADR without updating docs/ADR/index.yaml — the index entry is the canonical discovery mechanism."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "When reporting results, always state whether each check passed or failed, and if failed, provide the remediation command."
+    }
+  ]
+}

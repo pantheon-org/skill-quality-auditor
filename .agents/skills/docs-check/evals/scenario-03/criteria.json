@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to cross-reference ADR files on disk against the index.yaml registry and report discrepancies.",
+  "checklist": [
+    {"name": "ADR files enumerated", "description": "Agent lists all adr-NNN-*.md files under docs/ADR/", "max_score": 20},
+    {"name": "Index entries parsed", "description": "Agent reads docs/ADR/index.yaml and extracts registered ADR filenames", "max_score": 20},
+    {"name": "Unregistered ADRs detected", "description": "Agent identifies ADR files not listed in index.yaml", "max_score": 25},
+    {"name": "Stale index entries detected", "description": "Agent identifies index.yaml entries referencing files that no longer exist", "max_score": 25},
+    {"name": "Remediation provided", "description": "Agent suggests adding missing entries or removing stale entries from index.yaml", "max_score": 10}
+  ]
+}

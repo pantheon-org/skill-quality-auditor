@@ -1,0 +1,1 @@
+Detect orphaned documentation pages by cross-referencing files in docs/ against links in docs/index.md.
