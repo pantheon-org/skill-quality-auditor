@@ -121,6 +121,10 @@ Actionable plans, findings, and analyses live under `.context/`. The machine-rea
 
 Read the index before starting a new task to surface active work items, pending decisions, and historical findings relevant to your change.
 
+## Agent Rules
+
+Behavioural rules for agents live in `.agents/RULES.md` — read it before any task. To add a new rule, load the `rules-management` skill.
+
 ## Architecture Decision Records (ADRs)
 
 Architectural and process decisions extracted from `.context/` analyses, findings, and plans are recorded as ADRs under `docs/ADR/`. The machine-readable index is at [`docs/ADR/index.yaml`](docs/ADR/index.yaml) — each entry carries `adr`, `title`, `status`, `date`, `context` (source `.context/` files), and optional `superseded_by`.
