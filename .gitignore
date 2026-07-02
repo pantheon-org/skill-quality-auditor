@@ -25,3 +25,4 @@ coverage.html
 !.agents/skills/context-index/
 !.context/
 !.context/**/
+!opencode.json

@@ -55,3 +55,11 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 **Rationale:** Scattering temporary scripts across the repository creates cleanup debt, confuses other agents, and pollutes permanent directories with throwaway code. A single `.tmp/` convention makes it obvious what is ephemeral and what is permanent.
 
+---
+
+### Rule: Follow the finding-to-plan workflow
+
+**Directive:** ALWAYS use this sequence when creating a draft plan from a `.context/findings/` file: (1) read the findings file thoroughly, (2) check related plans and source code referenced in the findings, (3) create the plan in `.context/plans/` following the `context-file` skill template with `status: draft`, (4) regenerate `.context/index.yaml`, (5) branch off `main` using `feat/` prefix, (6) stage plan + related findings + index.yaml, (7) commit with a conventional message (`feat(scope): ...`). If the finding contains a `## Recommendation` or other decision indicator, assess whether an ADR is needed.
+
+**Rationale:** This sequence ensures the plan is grounded in existing research, properly indexed, and committed on a clean branch — avoiding stale context, broken index entries, and undocumented decisions.
+
