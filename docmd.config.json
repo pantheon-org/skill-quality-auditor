@@ -1,0 +1,20 @@
+{
+  "title": "skill-quality-auditor",
+  "url": "https://pantheon-org.github.io/skill-quality-auditor",
+  "src": "./docs",
+  "out": "./site",
+  "theme": {
+    "primaryColor": "#CB3837",
+    "favicon": "https://raw.githubusercontent.com/pantheon-org/skill-quality-auditor/main/assets/favicon.ico"
+  },
+  "git": {
+    "enabled": true
+  },
+  "llms": {
+    "enabled": true
+  },
+  "seo": {
+    "enabled": true,
+    "description": "A Go CLI that scores AI skill definitions against a 9-dimension quality framework"
+  }
+}

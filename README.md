@@ -5,6 +5,8 @@
 [![Go Version](https://img.shields.io/github/go-mod/go-version/pantheon-org/skill-quality-auditor)](https://github.com/pantheon-org/skill-quality-auditor)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![skill-quality-auditor](docs/assets/logo.png)
+
 AI agent skills promise expert guidance — but how do you know they're any good? `skill-auditor` scores SKILL.md files against a 9-dimension quality framework and produces concrete diagnostics to make them better. Think of it as a linter with opinions: it catches structural issues, gaps in guidance, missing evals, and anti-patterns before your users do.
 
 ## Quick Start
@@ -107,7 +109,7 @@ skill-auditor duplication --store                  # persist for trend
 
 **Total: 140 pts.** Grade bands: A+ ≥133, A ≥126, B+ ≥119, B ≥112, C+ ≥105, C ≥98, D ≥91, F <91.
 
-See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric. Each dimension has a dedicated doc: [D1](docs/d1-knowledge-delta.md) · [D2](docs/d2-mindset-procedures.md) · [D3](docs/d3-anti-pattern-coverage.md) · [D4](docs/d4-specification-compliance.md) · [D5](docs/d5-progressive-disclosure.md) · [D6](docs/d6-freedom-calibration.md) · [D7](docs/d7-pattern-recognition.md) · [D8](docs/d8-practical-usability.md) · [D9](docs/d9-eval-validation.md)
+See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric. Each dimension has a dedicated doc: [D1](docs/reference/d1-knowledge-delta.md) · [D2](docs/reference/d2-mindset-procedures.md) · [D3](docs/reference/d3-anti-pattern-coverage.md) · [D4](docs/reference/d4-specification-compliance.md) · [D5](docs/reference/d5-progressive-disclosure.md) · [D6](docs/reference/d6-freedom-calibration.md) · [D7](docs/reference/d7-pattern-recognition.md) · [D8](docs/reference/d8-practical-usability.md) · [D9](docs/reference/d9-eval-validation.md)
 
 ## CI Integration
 
