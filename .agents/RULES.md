@@ -63,3 +63,16 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 **Rationale:** This sequence ensures the plan is grounded in existing research, properly indexed, and committed on a clean branch — avoiding stale context, broken index entries, and undocumented decisions.
 
+---
+
+### Rule: Always conduct session-end reflection
+
+**Directive:** BEFORE concluding any session, ALWAYS initiate a two-question reflection. Say something like "Before we wrap up, let me reflect on what I'm unsure about and what I might be missing." Then:
+
+1. **Confidence audit** — "What am I least confident about right now?" List 3–7 specific items that were under-investigated, assumed, or skipped. For each, state why confidence is low (e.g., shallow search, unverified assumption, skipped edge case).
+2. **Blind-spot check** (Sam Altman) — "What's the biggest thing I'm missing about this situation? What don't I realize?" Identify potential assumptions, unexamined alternatives, or overlooked evidence from the user's perspective.
+
+After both questions, offer to investigate any item the user flags. If they accept, do deep root-cause investigation — search for contradicting evidence, trace assumptions, update conclusions — before concluding.
+
+**Rationale:** ~1 in 4 sessions surfaces a critical gap that would silently invalidate delivered work. Catching it before sign-off is the lowest-cost intervention point. The `session-reflection` skill has detailed guidance.
+
