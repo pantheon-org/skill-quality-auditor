@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to run the docmd build and verify the output is correct.",
+  "checklist": [
+    {"name": "Build command used", "description": "Agent runs npx @docmd/core build (or equivalent)", "max_score": 20},
+    {"name": "Exit code verified", "description": "Agent checks that the build exited with code 0", "max_score": 20},
+    {"name": "Page count reported", "description": "Agent reports the number of generated pages from the build output", "max_score": 20},
+    {"name": "Output directory exists", "description": "Agent verifies site/ directory was created", "max_score": 20},
+    {"name": "Failure remediation", "description": "On build failure, agent never omits actionable remediation based on error output", "max_score": 20}
+  ]
+}

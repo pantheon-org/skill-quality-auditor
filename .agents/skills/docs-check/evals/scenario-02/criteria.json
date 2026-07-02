@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "max_output_tokens": 4096,
+  "context": "Evaluates the agent's ability to find .md files under docs/ that are not linked from docs/index.md and report them to the user.",
+  "checklist": [
+    {"name": "File discovery", "description": "Agent enumerates all .md files under docs/ (excluding ADR index.yaml)", "max_score": 25},
+    {"name": "Link extraction", "description": "Agent extracts linked paths from docs/index.md", "max_score": 25},
+    {"name": "Orphan identification", "description": "Agent correctly identifies unlinked files by comparing the two sets", "max_score": 30},
+    {"name": "Remediation suggested", "description": "Agent suggests adding a link to docs/index.md for each orphan, or explains intentional exclusion", "max_score": 20}
+  ]
+}

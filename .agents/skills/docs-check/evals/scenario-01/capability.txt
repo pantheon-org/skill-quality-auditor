@@ -1,0 +1,1 @@
+Run the docmd build and verify it succeeds, checking output includes expected page count.

@@ -1,0 +1,1 @@
+Verify ADR index freshness — check that all ADR files in docs/ADR/ are registered in docs/ADR/index.yaml and vice versa.
