@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.2](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.1...v0.16.2) (2026-07-02)
+
+
+### Bug Fixes
+
+* **release:** comment out homebrew brews stanza blocking binary uploads ([#95](https://github.com/pantheon-org/skill-quality-auditor/issues/95)) ([6d28914](https://github.com/pantheon-org/skill-quality-auditor/commit/6d289149e83b449a0b92ddc6dee04400f5492733))
+
 ## [0.16.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.0...v0.16.1) (2026-07-01)
 
 
