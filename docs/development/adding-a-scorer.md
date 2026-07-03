@@ -108,5 +108,8 @@ go test ./scorer/...
   D6 read their beginner/expert signal words and "when not to use" phrases from
   `cmd/assets/assets/config/scoring-patterns.yaml` via `internal/patternconfig`, rather than
   from Go string slices. If your new dimension needs a similar word/phrase list, add a
-  section to that YAML file (validated against `scoring-patterns.schema.json`) instead of
-  inlining it in the scorer — this keeps pattern tuning out of Go release cycles.
+  section to that YAML file (validated against `scoring-patterns.schema.json`) and to
+  `internal/patternconfig.Patterns` instead of inlining it in the scorer, then read it via
+  `patternconfig.Get()` at scoring time — this keeps pattern tuning out of Go release cycles
+  and stays user-overridable through the `-c/--config` chain (see
+  [Configuring scoring patterns](setup.md#configuring-scoring-patterns))

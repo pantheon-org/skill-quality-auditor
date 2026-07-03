@@ -1,7 +1,7 @@
 ---
 title: "Plan: User-Configurable Scoring Pattern Overrides"
 type: plan
-status: draft
+status: done
 date: 2026-07-03
 related:
   - ../../internal/patternconfig/patternconfig.go

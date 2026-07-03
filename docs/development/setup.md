@@ -98,6 +98,25 @@ npx @docmd/core dev    # starts dev server at localhost:3000
 npx @docmd/core build  # outputs static site to ./site/
 ```
 
+## Configuring scoring patterns
+
+The D1 (knowledge delta), D6 (freedom calibration), and analysis-quality word/phrase lists live in `scoring-patterns.yaml`, embedded in the binary at `cmd/assets/assets/config/scoring-patterns.yaml`. Every scoring command (`evaluate`, `batch`, `analyze`, `duplication`) resolves the active pattern config through a 5-tier precedence chain, highest wins:
+
+1. **`-c/--config <path>`** — an explicit path, persistent across all subcommands. Missing or invalid is a **hard error**.
+2. **`./scoring-patterns.yaml`** — an opportunistic file in the current working directory. Missing is silently skipped; malformed warns to stderr and falls through. Never auto-created.
+3. **The default per-OS config directory**, auto-generated on first run if nothing else resolves:
+   - Linux: `$XDG_CONFIG_HOME/skill-quality-auditor/scoring-patterns.yaml` (or `~/.config/skill-quality-auditor/scoring-patterns.yaml` if `$XDG_CONFIG_HOME` is unset)
+   - macOS: `~/Library/Application Support/skill-quality-auditor/scoring-patterns.yaml`
+   - Windows: `%AppData%\skill-quality-auditor\scoring-patterns.yaml`
+4. **The embedded config** shipped with the binary.
+5. **Hardcoded Go defaults**, used only if even the embedded config fails to parse.
+
+Pass `--no-user-config` to skip tiers 1–3 entirely and score with the embedded/hardcoded patterns only (also suppresses auto-generation) — useful on CI runners where a stray config file shouldn't silently change scores.
+
+`skill-auditor eval` is exempt from this chain: it always scores against the embedded config, so `evals/summary.json` and the CI structural eval gate stay reproducible across machines regardless of any local override.
+
+A user config must define every pattern group — partial overrides of a single group are not supported; the file replaces the whole set.
+
 ## Project layout
 
 ```text
