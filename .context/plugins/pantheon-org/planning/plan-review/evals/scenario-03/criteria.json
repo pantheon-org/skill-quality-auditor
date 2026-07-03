@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to validate plan structure against the standard trio and report issues.",
+  "checklist": [
+    {"name": "Run validation script", "description": "Agent runs validate-context-frontmatter.sh on the plan file", "max_score": 20},
+    {"name": "Infer body convention", "description": "Agent scans H2 headings across existing plans to infer local standards", "max_score": 20},
+    {"name": "Report structural findings", "description": "Structural issues are included in the plan brief for all reviewers", "max_score": 20},
+    {"name": "Implementation architecture", "description": "Agent checks for Phases, Tasks, and Waves decomposition", "max_score": 20},
+    {"name": "Report includes findings", "description": "Final report's Structural Validation and Implementation Architecture sections are populated", "max_score": 20}
+  ]
+}

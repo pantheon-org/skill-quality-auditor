@@ -1,0 +1,1 @@
+Validate plan structure against the standard trio and report frontmatter violations and missing body sections.

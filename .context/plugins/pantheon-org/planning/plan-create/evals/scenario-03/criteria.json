@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to split oversized phases and annotate parallel waves.",
+  "checklist": [
+    {"name": "Identify oversized", "description": "Agent recognises when a phase has too many tasks", "max_score": 20},
+    {"name": "Propose split", "description": "Agent proposes splitting into 2+ phases with 3-5 tasks each", "max_score": 25},
+    {"name": "Wave annotation", "description": "Agent annotates which tasks can run in parallel as waves", "max_score": 25},
+    {"name": "Exit criteria", "description": "Each proposed phase has a concrete exit criterion", "max_score": 20},
+    {"name": "Ask before splitting", "description": "Agent asks the user before splitting rather than doing it unilaterally", "max_score": 10}
+  ]
+}

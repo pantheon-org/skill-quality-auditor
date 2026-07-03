@@ -1,0 +1,1 @@
+Infer local plan conventions from existing .context/plans/ files and match the naming and section style.

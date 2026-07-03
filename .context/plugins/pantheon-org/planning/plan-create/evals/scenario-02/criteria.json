@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to infer and match local plan conventions from existing plans.",
+  "checklist": [
+    {"name": "Scan headings", "description": "Agent runs grep to collect H2 headings from existing plans", "max_score": 25},
+    {"name": "Classify sections", "description": "Agent identifies core (>=40%), common (20-39%), and rare (<20%) sections", "max_score": 25},
+    {"name": "Match naming", "description": "Agent follows the naming convention of existing plans (timestamped or topic-only)", "max_score": 25},
+    {"name": "No hardcoded template", "description": "Agent does NOT use a hardcoded template without scanning first", "max_score": 25}
+  ]
+}

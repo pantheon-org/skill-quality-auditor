@@ -1,0 +1,38 @@
+{
+  "skill": "plan-create",
+  "date": "2026-07-03",
+  "dimensions": {
+    "antiPatternQuality": 15,
+    "evalValidation": 18,
+    "freedomCalibration": 10,
+    "knowledgeDelta": 19,
+    "mindsetProcedures": 12,
+    "patternRecognition": 10,
+    "practicalUsability": 9,
+    "progressiveDisclosure": 10,
+    "specificationCompliance": 14
+  },
+  "total": 117,
+  "maxTotal": 140,
+  "grade": "B",
+  "lines": 211,
+  "hasReferences": true,
+  "referenceCount": 1,
+  "referenceSectionCompliant": true,
+  "errors": 0,
+  "warnings": 3,
+  "warningDetails": [
+    {
+      "dimension": "D4",
+      "message": ".context/ or .agents/ reference outside code blocks: .context/"
+    },
+    {
+      "dimension": "D9",
+      "message": "adversarial bonus: +3 pts — not applied to score"
+    },
+    {
+      "dimension": "D9",
+      "message": "independent authoring bonus: +2 pts — not applied to score"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Detect existing model routing in opencode.json and skip model selection when already configured.
