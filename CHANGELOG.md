@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.19.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.18.0...v0.19.0) (2026-07-03)
+
+
+### Features
+
+* **scripts:** add related-path heuristic to plan-drift check ([#112](https://github.com/pantheon-org/skill-quality-auditor/issues/112)) ([cfb26eb](https://github.com/pantheon-org/skill-quality-auditor/commit/cfb26eb12aa592d2a49e105033176c8a22846adc))
+* **skills:** add plan-review and plan-create skills, restructure plugins into domains ([#113](https://github.com/pantheon-org/skill-quality-auditor/issues/113)) ([8c4fb1d](https://github.com/pantheon-org/skill-quality-auditor/commit/8c4fb1d5b04589305308ce12bd571a1001c381e5))
+* **skills:** add pr-author helper skill (A grade) ([#111](https://github.com/pantheon-org/skill-quality-auditor/issues/111)) ([6cdea37](https://github.com/pantheon-org/skill-quality-auditor/commit/6cdea373df6d087ee24fca2609dff581bc16bb72))
+* **skills:** migrate local skills to .context/plugins/ and improve socratic-method to A-grade ([#108](https://github.com/pantheon-org/skill-quality-auditor/issues/108)) ([3e3b4c8](https://github.com/pantheon-org/skill-quality-auditor/commit/3e3b4c8b12039cfcca0082cb7f442e8e333f3fa6))
+
 ## [0.18.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.17.0...v0.18.0) (2026-07-03)
 
 
