@@ -84,3 +84,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** System `/tmp/` is not shared across agent sessions and is cleared on reboot, making temp files invisible to other agents and unrecoverable after a restart. The repo-local `.tmp/` is gitignored, discoverable by agents working in this repo, and persists across sessions for the lifetime of the worktree.
 
+---
+
+### Rule: Never leak sensitive information
+
+**Directive:** NEVER include, expose, or reference sensitive information about any company, individual, or internal process — including proprietary code, internal URLs, unreleased features, employee details, organisational structure, internal tooling, process documentation, or any non-public business logic. When in doubt, treat information as sensitive.
+
+**Rationale:** Leaked sensitive information creates legal, security, and reputational risk for the company and individuals involved. The agent must default to nondisclosure and sanitise any output that could expose non-public data.
+
