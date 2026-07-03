@@ -76,3 +76,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** ~1 in 4 sessions surfaces a critical gap that would silently invalidate delivered work. Catching it before sign-off is the lowest-cost intervention point. The `session-reflection` skill has detailed guidance.
 
+---
+
+### Rule: Never use /tmp or /temp — use .tmp
+
+**Directive:** NEVER write temporary files to `/tmp/` or `/temp/`. ALWAYS use `.tmp/` (the repo-local `.tmp` directory) for all temporary, experimental, or one-off artifacts.
+
+**Rationale:** System `/tmp/` is not shared across agent sessions and is cleared on reboot, making temp files invisible to other agents and unrecoverable after a restart. The repo-local `.tmp/` is gitignored, discoverable by agents working in this repo, and persists across sessions for the lifetime of the worktree.
+
