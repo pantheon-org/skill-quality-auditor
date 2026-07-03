@@ -37,6 +37,9 @@
     "pantheon-org/docs-check": {
       "source": "file:.context/plugins/pantheon-org/docs-check"
     },
+    "pantheon-org/pr-author": {
+      "source": "file:.context/plugins/pantheon-org/pr-author"
+    },
     "pantheon-org/rules-management": {
       "source": "file:.context/plugins/pantheon-org/rules-management"
     },

@@ -1,0 +1,1 @@
+Create a GitHub PR from a branch, discovering the repo's template, filling it from diff and commits, and opening via `gh pr create`.

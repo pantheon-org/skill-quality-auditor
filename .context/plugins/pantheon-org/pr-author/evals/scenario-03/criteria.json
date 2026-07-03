@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to update the PR body to reflect the current state after feedback, use PR comments for conversational responses, and re-request review via the GitHub API.",
+  "checklist": [
+    {"name": "Body reflects current state", "description": "PR description updated to show what was added/removed/fixed since the last review", "max_score": 25},
+    {"name": "Comment used for dialogue", "description": "Conversational responses to reviewers posted as PR comments, not in the body", "max_score": 25},
+    {"name": "Re-request triggered", "description": "Review re-requested via `gh api repos/{owner}/{repo}/pulls/{number}/requested_reviewers`", "max_score": 25},
+    {"name": "No reviewer comments overwritten", "description": "Existing reviewer comments are preserved untouched", "max_score": 25}
+  ]
+}

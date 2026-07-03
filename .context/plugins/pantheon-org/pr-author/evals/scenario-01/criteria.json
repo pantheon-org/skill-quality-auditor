@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to discover the repo's PR template, fill all sections with accurate content from diff and commits, and open the PR via `gh pr create` with correct title and body.",
+  "checklist": [
+    {"name": "Template discovery", "description": "Template found using correct precedence order (directory → flat → docs → root → fallback)", "max_score": 20},
+    {"name": "Template filling", "description": "All template sections filled with accurate content from diff summary and commit messages", "max_score": 25},
+    {"name": "No stale placeholders", "description": "No unfilled placeholder text or HTML comments remain in the submitted body", "max_score": 15},
+    {"name": "PR title quality", "description": "Title follows conventional-commit style, under 72 chars, summarises the change not the task", "max_score": 20},
+    {"name": "Correct gh invocation", "description": "Uses `--template` for directory templates or `--body` for flat templates; no silent-ignore bug", "max_score": 20}
+  ]
+}

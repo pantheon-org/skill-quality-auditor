@@ -1,0 +1,34 @@
+{
+  "skill": "pr-author",
+  "date": "2026-07-03",
+  "dimensions": {
+    "antiPatternQuality": 10,
+    "evalValidation": 18,
+    "freedomCalibration": 8,
+    "knowledgeDelta": 19,
+    "mindsetProcedures": 13,
+    "patternRecognition": 10,
+    "practicalUsability": 12,
+    "progressiveDisclosure": 10,
+    "specificationCompliance": 14
+  },
+  "total": 114,
+  "maxTotal": 140,
+  "grade": "B",
+  "lines": 213,
+  "hasReferences": true,
+  "referenceCount": 2,
+  "referenceSectionCompliant": false,
+  "errors": 0,
+  "warnings": 2,
+  "warningDetails": [
+    {
+      "dimension": "D9",
+      "message": "adversarial bonus: +3 pts — not applied to score"
+    },
+    {
+      "dimension": "D9",
+      "message": "independent authoring bonus: +1 pts — not applied to score"
+    }
+  ]
+}
