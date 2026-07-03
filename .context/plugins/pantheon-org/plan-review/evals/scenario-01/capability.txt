@@ -1,0 +1,1 @@
+Review a plan by spawning 3 independent subagent reviewers (Technical, Strategic, Risk) and producing a consolidated report.

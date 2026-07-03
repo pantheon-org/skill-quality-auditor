@@ -1,0 +1,44 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Before spawning any reviewers, check opencode.json for subAgents config. If configured with at least two distinct models, skip model selection and use the configured routing."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "If subAgents is not configured, ask the user which environment they are running (OpenCode Zen, OpenCode Go, Claude Code, or BYOK) and present capability-vs-cost model options before spawning reviewers."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Spawn all 3 subagent reviewers in parallel — Technical (general), Strategic (general), and Risk (explore) — using the same plan brief with role-specific prompts."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "After spawning all 3 reviewers, collate results into a Consolidated Review Report following the structure in assets/templates/review-report.yaml. Validate the report against assets/schemas/review-report.schema.json."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Validate the plan's YAML frontmatter against the context-file schema by running context-index/scripts/validate-context-frontmatter.sh on the plan file."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Infer the local plan body convention by scanning H2 headings across all .context/plans/*.md files with: grep -r '^## ' .context/plans/*.md | sort | uniq -c | sort -rn"
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "When the plan has a ## Steps section, check for proper Phases/Tasks/Waves decomposition — sequential phases, single-session tasks, and parallel waves."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER proceed without asking about models first — model diversity is the main lever for catching different blind spots."
+    }
+  ]
+}

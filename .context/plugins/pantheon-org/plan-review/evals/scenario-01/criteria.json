@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to perform a full plan review: read the plan, ask about models, spawn 3 reviewers in parallel, and produce a consolidated report.",
+  "checklist": [
+    {"name": "Read plan and compose brief", "description": "Agent reads the plan file and composes a self-contained brief", "max_score": 15},
+    {"name": "Model selection check", "description": "Agent checks opencode.json first, then asks user for model preferences", "max_score": 15},
+    {"name": "Parallel spawn", "description": "All 3 reviewers are spawned in parallel (single message, 3 task calls)", "max_score": 20},
+    {"name": "Collated report", "description": "Report includes all 8 required sections with per-reviewer attribution", "max_score": 25},
+    {"name": "Follow-up offered", "description": "Agent offers to investigate flagged items after presenting the report", "max_score": 15},
+    {"name": "Not sequential", "description": "Agent does NOT spawn reviewers one at a time", "max_score": 10}
+  ]
+}

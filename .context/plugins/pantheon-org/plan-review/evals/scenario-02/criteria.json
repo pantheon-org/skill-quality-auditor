@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to detect existing model routing in opencode.json and skip unnecessary user prompts.",
+  "checklist": [
+    {"name": "Detect existing config", "description": "Agent reads opencode.json and detects subAgents config", "max_score": 30},
+    {"name": "Skip model question", "description": "Agent does NOT ask the user about models", "max_score": 30},
+    {"name": "Use configured models", "description": "Agent reports model assignments from config", "max_score": 20},
+    {"name": "Parallel spawn", "description": "All reviewers are spawned in parallel", "max_score": 20}
+  ]
+}
