@@ -227,3 +227,10 @@ entries:
     context:
       - path: ".context/plans/pr-author-skill.md"
       - path: ".context/plugins/pantheon-org/pr-author/SKILL.md"
+  - path: "ADR/adr-031-analysis-quality-outside-dimension-model.md"
+    adr: "ADR-031"
+    title: "ADR-031: analysis_quality patterns stay outside the D1-D9 dimension model"
+    status: accepted
+    date: 2026-07-03
+    context:
+      - path: ".context/findings/scoring-pattern-config-review-2026-07-03.md"
