@@ -100,3 +100,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** LLMs are poor judges of their own outputs — self-reflection by the main agent suffers from the same blind spots it is trying to catch. An independent subagent brings a fresh perspective, catches normalised errors, and can be routed to a cheaper model. Skills like `session-reflection` already demonstrate this pattern with measurable quality improvements.
 
+---
+
+### Rule: Never embed templates in markdown — use YAML template files
+
+**Directive:** NEVER embed artifact templates (YAML frontmatter, file structures, code scaffolds) directly in skill markdown files. ALWAYS create a separate YAML file under the skill's `assets/templates/` directory that describes the structure of the artifact. Each template MUST have a corresponding JSON Schema under `assets/schemas/` and a validation script under `scripts/` that validates artifacts against the schema.
+
+**Rationale:** Templates embedded in markdown are invisible to machine validation, rot silently when their schema changes, and cannot be consumed programmatically. A YAML template + JSON Schema + validation script "trio" makes the contract explicit, testable, and discoverable by other tools and agents.
+

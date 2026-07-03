@@ -48,6 +48,9 @@
     },
     "pantheon-org/socratic-method": {
       "source": "file:.context/plugins/pantheon-org/socratic-method"
+    },
+    "pantheon-org/plan-review": {
+      "source": "file:.context/plugins/pantheon-org/plan-review"
     }
   }
 }
