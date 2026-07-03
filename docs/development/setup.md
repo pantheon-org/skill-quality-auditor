@@ -50,10 +50,13 @@ HK=0 git commit ... # bypass hooks for a single commit
 ### Pre-push checks
 
 - Full test suite (`go test ./...`)
+- Plan-drift check (`scripts/check-plan-drift.sh`) — flags active plans whose related files changed after the plan was written
+- Docs-drift check (`scripts/check-docs-drift.sh`) — flags docs whose mapped source paths changed after the doc was last updated; both drift checks are informational only (exit 0)
 - Binary build
 - Artifact validation
-- Duplication detection
+- Duplication detection (exits 2 on Critical pairs)
 - Batch audit (fails below B grade)
+- Structural eval gate (`eval ./cmd/assets --fail-below 0`) — schema/scenario consistency, no LLM key needed
 
 ## Common workflows
 
