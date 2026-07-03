@@ -1,35 +1,37 @@
 # D8: Practical Usability (15 points)
 
-**Purpose:** Ensure the skill is immediately useful with clear, runnable examples.
+**Purpose:** Ensure the skill is immediately useful with clear, outcome-linked examples.
 
 **Scoring:**
 
 | Points | Signal |
 | ------ | ------ |
-| 13–15 | Concrete + runnable + clear |
-| 10–12 | Most examples good |
-| 7–9 | Some weak examples |
+| 13–15 | Concrete + runnable + clear + outcome-linked |
+| 10–12 | Most examples good, some outcome indicators |
+| 7–9 | Examples present but missing outcome verification |
 | 0–6 | Abstract or missing |
 
 ## Components
 
-### 1. Concrete Examples (5 points)
+Implemented in `scorer/d8_practical_usability.go` (`scoreD8`). A base score of 5 points is
+always awarded; the components below add up to 13 more, capped at 15.
 
-- Real code, not pseudocode
-- Realistic scenarios
-- Actual file paths, commands
+### 1. Code Blocks (up to 6 points)
 
-### 2. Runnable Code (5 points)
+- More than 5 code blocks → +4; more than 2 → +2; any at all → +1
+- At least one language-tagged code fence → +2
 
-- Can copy/paste and execute
-- Complete, not fragments
-- Correct syntax
+### 2. Runnable Command (4 points)
 
-### 3. Clear Structure (5 points)
+- Content contains an invocable command signal (`./`, `npm run`, `go run`, `make`, etc.)
 
-- Logical organisation
-- Scannable headings
-- Code blocks properly formatted
+### 3. Outcome Linkage (up to 3 points)
+
+- Each fenced code block plus its immediately following prose is checked for a
+  verifiable-outcome phrase (`# output:`, `expected:`, `should return`, `→`, `assert`, etc.)
+- All segments linked → 3 points; at least half → 2 points; any → 1 point; none → 0
+- Rationale: proxy metrics like code-block count correlate poorly with actual task
+  completion — see Miller & Tang (arXiv:2505.08253) and the Mohammadi et al. survey below
 
 ## Academic References
 

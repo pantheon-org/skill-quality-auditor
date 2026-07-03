@@ -52,9 +52,18 @@ main.go
               │     ├── gemini.go     (Gemini provider)
               │     └── prompt.go     (JudgePrompt, ActorMessages, JudgeMessages)
               │
+              ├── patternconfig/ (externalised D1/D6/analysis-quality pattern words)
+              │     └── loads & validates cmd/assets/assets/config/scoring-patterns.yaml
+              │         against scoring-patterns.schema.json (ADR-028)
+              │
               └── tokenize/   (text normalization)
                     └── tokenize.go (Normalize, Set, Counts)
 ```
+
+`internal/patternconfig.Get()` is initialised once in `cmd/root.go` and consumed by
+`scoreD1`, `scoreD6`, and `analysis/patterns.go` — so the beginner/expert signal words,
+"when not to use" phrases, and hedge/vague/passive word lists are maintainer-editable YAML,
+not Go constants. See ADR-028 and [Adding a scorer](../development/adding-a-scorer.md).
 
 ## Data flow
 

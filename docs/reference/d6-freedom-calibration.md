@@ -2,6 +2,11 @@
 
 **Purpose:** Balance prescription (rigid rules) vs flexibility (guidelines) for the skill type.
 
+**Signal word configuration:** the "when not to use" phrase list used to detect scoping
+signals is not hardcoded in `scorer/d6_freedom_calibration.go` — it lives in
+`cmd/assets/assets/config/scoring-patterns.yaml` under `patterns.d6_freedom_calibration`,
+loaded via `internal/patternconfig`. Edit that YAML file (see ADR-028) to tune the phrases.
+
 **Scoring:**
 
 | Points | Signal |

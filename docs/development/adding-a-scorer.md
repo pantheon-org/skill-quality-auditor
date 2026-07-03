@@ -104,3 +104,9 @@ go test ./scorer/...
   - `codeBlockCount(content)` — code fence count
 - Use `errDiag(dim, msg)`, `warnDiag(dim, msg)`, `hintDiag(dim, msg)` for diagnostics
 - Return 0–max integer, never negative or exceeding max
+- **Pattern/signal word lists should be externalised, not hardcoded.** Per ADR-028, D1 and
+  D6 read their beginner/expert signal words and "when not to use" phrases from
+  `cmd/assets/assets/config/scoring-patterns.yaml` via `internal/patternconfig`, rather than
+  from Go string slices. If your new dimension needs a similar word/phrase list, add a
+  section to that YAML file (validated against `scoring-patterns.schema.json`) instead of
+  inlining it in the scorer — this keeps pattern tuning out of Go release cycles.

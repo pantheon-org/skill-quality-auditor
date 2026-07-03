@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -10,6 +11,12 @@ import (
 
 	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
+
+// exitCoder is implemented by errors that require a specific process exit
+// code instead of the default 1 (e.g. duplication's Critical-pair gate).
+type exitCoder interface {
+	ExitCode() int
+}
 
 // buildVersion is injected by GoReleaser via ldflags at release time.
 // It takes precedence over the version embedded in tile.json.
@@ -63,8 +70,18 @@ var versionCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
+		os.Exit(exitCodeFor(err))
 	}
+}
+
+// exitCodeFor returns the process exit code for a command error: 1 by
+// default, or whatever an exitCoder-implementing error specifies.
+func exitCodeFor(err error) int {
+	var ec exitCoder
+	if errors.As(err, &ec) {
+		return ec.ExitCode()
+	}
+	return 1
 }
 
 func init() {

@@ -18,51 +18,61 @@ To add a new rule, load the [`rules-management`](#rules-management) skill — it
 
 ## Local skills
 
-Local helper skills are installed under `.context/plugins/pantheon-org/` (managed via `tessl.json`). Registry plugins live under `.tessl/plugins/`. The following skills are available:
+Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/` (managed via
+`tessl.json`, `source: file:.context/plugins/...`), grouped into four domains:
 
-### adr-capture
+### context-mgmt
 
-Capture Architecture Decision Records (ADRs) from `.context/` plans, findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the machine-readable index.
+- **context-file** — create `.context/` files (plans, findings, analysis) with standard YAML
+  frontmatter, appropriate sections, and correct placement in `plans/`, `findings/`, or `analysis/`.
+- **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
+  from all `.context/**/*.md` frontmatter and validate that all files carry the required
+  frontmatter block.
 
-### context-file
+### governance
 
-Create `.context/` files (plans, findings, analysis) with standard YAML frontmatter, appropriate sections, and correct placement in `plans/`, `findings/`, or `analysis/`.
+- **adr-capture** — capture Architecture Decision Records (ADRs) from `.context/` plans,
+  findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the
+  machine-readable index.
+- **rules-management** — manage the agent behavioural rules in `.agents/RULES.md` — load
+  existing rules, check for duplicates, and append new rules in the standard format with
+  directive and rationale.
 
-### context-index
+### planning
 
-Regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml) from all `.context/**/*.md` frontmatter and validate that all files carry the required frontmatter block.
+- **plan-create** — create `.context/plans/*.md` files with standard frontmatter and
+  phases/tasks/waves decomposition, inferring section conventions from existing plans.
+- **plan-review** — review a plan using three independent subagent reviewers (Technical,
+  Strategic, Risk) and consolidate their feedback.
 
-### docs-check
+### workshop
 
-Validate the GitHub Pages documentation site built by docmd — orphan detection, ADR index freshness, build verification, and LLM output audit.
+- **docs-check** — validate the GitHub Pages documentation site built by docmd — orphan
+  detection, ADR index freshness, build verification, and LLM output audit.
+- **pr-author** — create and maintain GitHub PRs with live descriptions — template
+  discovery, intelligent filling, and lifecycle updates.
+- **session-reflection** — conduct a two-question session-end reflection to catch blind
+  spots and under-investigated areas before concluding.
+- **socratic-method** — refine vague, complex, or high-stakes prompts through Socratic
+  dialogue before committing to an implementation.
 
-### rules-management
+## Registry plugins
 
-Manage the agent behavioural rules in `.agents/RULES.md` — load existing rules, check for duplicates, and append new rules in the standard format with directive and rationale.
+Skills installed from the Tessl registry (not authored in this repo) live under
+`.tessl/plugins/<org>/<skill>/`:
 
-### tessl__eval-improve
-
-Analyse eval results, diagnose failures, apply targeted fixes, and re-run to verify improvements. Used when debugging evaluation scores or iterating on skill content.
-
-### tessl__eval-setup
-
-Generate eval scenarios from repo commits, configure multi-agent runs, execute baseline and with-context evals, and compare results.
-
-### tessl__google-scholar-search
-
-Search Google Scholar for academic papers and author profiles. Returns titles, authors, abstracts, and links.
-
-### tessl__markdown-authoring
-
-Author high-quality Markdown documentation with deterministic structure, lint compliance, and CI integration.
-
-### tessl__skill-quality-auditor
-
-Evaluate, score, and remediate agent skill collections using the 9-dimension quality framework. Performs duplication detection, generates remediation plans, enforces CI quality gates, and tracks score trends.
-
-### tessl__software-design-principles
-
-Apply SOLID principles, detect design anti-patterns, and evaluate architectural trade-offs for code reviews, design decisions, and refactoring.
+- **pantheon-ai/markdown-authoring** — author high-quality Markdown with deterministic
+  structure, lint compliance, and CI integration.
+- **pantheon-ai/skill-quality-auditor** — the registry-distributed copy of this repo's own
+  tile (evaluate, score, and remediate skill collections against the 9-dimension framework).
+- **pantheon-ai/software-design-principles** — apply SOLID principles, detect design
+  anti-patterns, and evaluate architectural trade-offs.
+- **pantheon-ai/research/google-scholar-search** — search Google Scholar for academic
+  papers and author profiles.
+- **tessl-labs/eval-setup** — generate eval scenarios from repo commits, configure
+  multi-agent runs, execute baseline and with-context evals, and compare results.
+- **tessl-labs/eval-improve** — analyse eval results, diagnose failures, apply targeted
+  fixes, and re-run to verify improvements.
 
 ## How skills are installed
 
