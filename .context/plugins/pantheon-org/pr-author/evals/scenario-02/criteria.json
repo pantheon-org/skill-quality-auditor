@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to detect a force-push on an existing PR, refresh the description to reflect the new state, and preserve reviewer comments.",
+  "checklist": [
+    {"name": "Force-push detection", "description": "Detects force-push via `gh api` PR timeline events or `git rev-list --count` comparison", "max_score": 25},
+    {"name": "Stale content removal", "description": "Removes outdated scope or claims from the previous description", "max_score": 25},
+    {"name": "New scope reflected", "description": "Body accurately describes the current post-force-push state of the change", "max_score": 25},
+    {"name": "Reviewer comments preserved", "description": "Does not overwrite or modify any existing PR comments", "max_score": 25}
+  ]
+}

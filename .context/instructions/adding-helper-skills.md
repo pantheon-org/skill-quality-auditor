@@ -53,10 +53,9 @@ Optionally include a `references/` directory for supporting docs linked from SKI
 Add the plugin to `tessl.json` dependencies using a `file:` source:
 
 ```json
-"pantheon-org/<skill-name>": {
-  "version": "0.1.0",
-  "source": "file:.context/plugins/pantheon-org/<skill-name>"
-}
+    "pantheon-org/<skill-name>": {
+      "source": "file:.context/plugins/pantheon-org/<skill-name>"
+    }
 ```
 
 ### 4. Install

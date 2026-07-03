@@ -219,3 +219,11 @@ entries:
     context:
       - path: ".context/instructions/adding-helper-skills.md"
       - path: ".context/plugins/pantheon-org"
+  - path: "ADR/adr-030-pr-author-github-only.md"
+    adr: "ADR-030"
+    title: "ADR-030: pr-author skill is GitHub-only for v0.1.0; GitLab deferred to v0.2.0"
+    status: accepted
+    date: 2026-07-03
+    context:
+      - path: ".context/plans/pr-author-skill.md"
+      - path: ".context/plugins/pantheon-org/pr-author/SKILL.md"

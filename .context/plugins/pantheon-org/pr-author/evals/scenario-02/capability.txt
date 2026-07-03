@@ -1,0 +1,1 @@
+Update a PR description after a force-push, detecting the force-push via GitHub API and refreshing the body without overwriting reviewer comments.

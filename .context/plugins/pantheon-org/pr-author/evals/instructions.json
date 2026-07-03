@@ -1,0 +1,39 @@
+{
+  "instructions": [
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER leave a stale PR description after a force-push — force-push rewrites history so the existing description is guaranteed stale."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER use the PR body for back-and-forth review conversation — the body describes the change, not the discussion. Use comments for dialogue."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "For flat PR templates (`.github/pull_request_template.md`), read the file and pass it to `--body`. The `--template` flag is silently ignored for flat files."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER exceed GitHub's 65536-character PR body limit — the API silently truncates. Summarise large diffs instead of dumping full logs."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Strip HTML comments (`<!-- -->`) from templates when filling — they are guidance noise for human authors, not needed once the agent has populated the template."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER convert a draft PR to ready without explicit user request — draft status communicates intent; overriding it disrupts the user's workflow."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER use `gh pr review --request-changes` to re-request review — that command requests changes from the author, not re-review from reviewers. Use `gh api` to re-request review instead."
+    }
+  ]
+}
