@@ -41,7 +41,7 @@ All embedded assets are copied alongside SKILL.md:
 
 ### Agent registry
 
-The `agents/registry.go` file maintains a registry of 44 supported agents
+The `agents/registry.go` file maintains a registry of 45 supported agents
 with their harness directory paths. Key types:
 
 ```go

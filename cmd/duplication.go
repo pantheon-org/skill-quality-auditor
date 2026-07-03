@@ -91,10 +91,18 @@ var duplicationCmd = &cobra.Command{
 	},
 }
 
+// criticalDuplicationError signals that a Critical-severity duplication pair
+// was found; Execute() checks ExitCode() to distinguish this from a generic
+// command error in CI pipeline logic.
+type criticalDuplicationError struct{}
+
+func (criticalDuplicationError) Error() string { return "critical duplication detected" }
+func (criticalDuplicationError) ExitCode() int { return 2 }
+
 func exitCodeForPairs(pairs []duplication.Pair) error {
 	for _, p := range pairs {
 		if p.Severity == "Critical" {
-			return fmt.Errorf("critical duplication detected (exit 2)")
+			return criticalDuplicationError{}
 		}
 	}
 	return nil
