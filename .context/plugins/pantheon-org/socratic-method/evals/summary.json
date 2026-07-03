@@ -1,0 +1,6 @@
+{
+  "summary": "3 scenarios covering standard protocol, override handling, and negative case (concrete task).",
+  "instructions_coverage": {
+    "coverage_percentage": 100
+  }
+}

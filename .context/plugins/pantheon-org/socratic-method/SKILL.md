@@ -1,6 +1,6 @@
 ---
 name: socratic-method
-description: Refine vague, complex, or high-stakes prompts through Socratic dialogue — surfaces hidden assumptions, probes reasoning, and iterates toward clarity before committing to an implementation.
+description: Refine vague, complex, or high-stakes prompts through Socratic dialogue — surfaces hidden assumptions, probes reasoning, and iterates toward clarity before committing to an implementation. NOT for simple concrete tasks, debugging, or well-defined procedures.
 ---
 
 # Socratic Method — Prompt Refinement Through Questioning
@@ -19,7 +19,23 @@ Consider that the most valuable outcome is not your question being answered — 
 arriving at insight through their own reasoning. You may find that the user's original framing was
 correct. You will more often find that the questioning reveals a more precise problem worth solving.
 
+## Prerequisites
+
+This skill is applicable only when ALL of the following are true:
+
+- The user's request contains ambiguity (unclear scope, competing priorities, or unstated context)
+- The user has NOT explicitly requested a direct implementation or answer
+- The task is not purely factual or mechanical ("what is the capital of France?", "run git status")
+- You have enough domain context to ask meaningful questions
+
+If any prerequisite is absent, skip this skill entirely and proceed with a direct response.
+
 ## When to use
+
+BY DEFAULT, activate this skill whenever you detect significant ambiguity. However,
+PREFER direct execution over questioning when the task is mechanical or the user
+is clearly time-constrained. TYPICALLY, one clarifying question is enough to
+distinguish between the two cases.
 
 Activate this skill when:
 
@@ -33,6 +49,13 @@ Activate this skill when:
 
 NEVER activate for simple, concrete, well-specified tasks ("fix this typo", "rename this variable",
 "change this value to X"). The protocol is for ambiguity, not ceremony.
+
+The skill is also NOT for:
+
+- Debugging sessions where the user has a clear error and expected behaviour
+- Factual queries answered by documentation
+- "Just do it" override commands
+- Tasks with unambiguous acceptance criteria and no trade-offs
 
 ## The Socratic Protocol
 
@@ -70,28 +93,77 @@ Only after confirmation: execute on the refined, well-understood request.
 
 ## Rules of engagement
 
-- **NEVER ask more than three questions per turn.**
-  WHY: Multiple questions create overwhelm and collapse depth of inquiry into breadth. Ask the
-  most important question; the answer will sharpen the next one.
+**NEVER**
 
-- **NEVER generate solutions while in questioning mode** — not even partial ones.
-  WHY: Partial solutions anchor the user to an approach before the problem is fully understood.
+Ask more than three questions per turn.
 
-- **NEVER lead the witness** — questions must be genuinely open, not rhetorical.
-  WHY: Leading questions push users toward predetermined answers and bypass their own reasoning.
+WHY: Multiple questions create overwhelm and collapse depth of inquiry into breadth. Ask the
+most important question; the answer will sharpen the next one.
 
-- **NEVER moralize or editorialize** — stay curious, patient, genuinely interested.
-  WHY: Evaluative framing triggers defensiveness; the user defends their position instead of
-  examining it.
+BAD: "What are your requirements? What's the deadline? Who are the stakeholders? What tech stack? Any constraints?"
+GOOD: "What's the one thing you need to decide today?"
 
-- **NEVER continue questioning after the user says "just do it"** — respect the override, note
-  what was skipped.
-  WHY: Continuing after an explicit override is Socratic harassment. Acknowledge briefly and
-  proceed.
+**NEVER**
 
-- **NEVER skip Phase 5 before acting** — always confirm the synthesized understanding.
-  WHY: An unchecked synthesis may still be wrong. Confirmation costs one message; a wrong
-  implementation costs much more.
+Generate solutions while in questioning mode — not even partial ones.
+
+WHY: Partial solutions anchor the user to an approach before the problem is fully understood.
+
+BAD: "Maybe we could use X, but first tell me about Y."
+GOOD: Ask clarifying questions without hinting at any particular solution.
+
+**NEVER**
+
+Lead the witness — questions must be genuinely open, not rhetorical.
+
+WHY: Leading questions push users toward predetermined answers and bypass their own reasoning.
+
+BAD: "Don't you think we should use serverless?"
+GOOD: "What deployment model have you considered?"
+
+**NEVER**
+
+Moralize or editorialize — stay curious, patient, genuinely interested.
+
+WHY: Evaluative framing triggers defensiveness; the user defends their position instead of
+examining it.
+
+BAD: "That approach is risky. Are you sure you want to do that?"
+GOOD: "What risks do you see with that approach?"
+
+**NEVER**
+
+Persist with questioning after the user says "just do it" — respect the override, note
+what was skipped.
+
+WHY: Persisting after an explicit override is Socratic harassment. Acknowledge briefly and
+proceed.
+
+BAD: "But before we do that, have you considered the long-term implications?"
+GOOD: "Understood — proceeding on the original request."
+
+**NEVER**
+
+Skip Phase 5 before acting — always confirm the synthesized understanding.
+
+WHY: An unchecked synthesis may still be wrong. Confirmation costs one message; a wrong
+implementation costs much more.
+
+BAD: "Based on all that, I'll use X. Here's the code."
+GOOD: "So the real problem is X, and you want to solve it with Y — is that right?"
+
+## Troubleshooting
+
+| Situation | Response |
+|-----------|----------|
+| User gives one-word answers | Reflect back: "I want to make sure I understand — can you expand on that a bit?" |
+| User gets frustrated with questioning | Offer to proceed: "I can stop asking questions and proceed if you prefer." |
+| User keeps changing the scope | Escalate to Phase 3: "It sounds like the scope is shifting — can we agree on a boundary?" |
+| You don't understand the domain | Admit it: "I'm not familiar enough with [domain] to ask good questions. Can you give me a quick primer?" |
+| User says "I don't know" to every question | Switch strategy: "Let me suggest two approaches and you can tell me which resonates." |
+| Multiple users with conflicting views | Acknowledge the conflict: "It sounds like there are competing priorities here — can we rank them?" |
+| Task is well-specified and concrete | Skip the protocol entirely — respond directly without questioning |
+| User asks for a specific implementation | Only when the requirements are clear should you proceed directly |
 
 ## Example opening
 
@@ -102,6 +174,33 @@ When this skill is active, begin with:
 > [Phase 1 question]
 
 Then follow the protocol through subsequent turns.
+
+## Quick diagnostic
+
+Run this check to test if the Socratic Protocol is warranted:
+
+```bash
+# Returns "ambiguous" or "concrete" based on prompt specificity
+# skip if the prompt contains code, error logs, or explicit file paths
+echo "$USER_PROMPT" | head -c 200
+```
+
+If the prompt is ambiguous, activate the protocol. If it contains concrete steps,
+file paths, or error messages, respond directly.
+
+→ Expected output: a summary of whether the prompt is ambiguous or concrete.
+The diagnostic confirms the right choice before committing to the 5-phase flow.
+
+## Verification
+
+After completing the protocol and executing on the refined request, verify the outcome:
+
+- Run any tests or lint checks relevant to the implementation to confirm correctness.
+- Ask the user to confirm the output matches their refined understanding.
+- If the response was a plan rather than code, ensure the user validates the steps.
+- Did the user confirm the synthesis in Phase 5? (If no, return to Phase 3.)
+- Was the user's original vagueness resolved into actionable, specific next steps?
+- If the user invoked the "just do it" override, was the skipped context acknowledged?
 
 ## References
 

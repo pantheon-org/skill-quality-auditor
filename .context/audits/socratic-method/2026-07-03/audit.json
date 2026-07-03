@@ -1,0 +1,30 @@
+{
+  "skill": "socratic-method",
+  "date": "2026-07-03",
+  "dimensions": {
+    "antiPatternQuality": 15,
+    "evalValidation": 18,
+    "freedomCalibration": 13,
+    "knowledgeDelta": 19,
+    "mindsetProcedures": 12,
+    "patternRecognition": 10,
+    "practicalUsability": 12,
+    "progressiveDisclosure": 12,
+    "specificationCompliance": 15
+  },
+  "total": 126,
+  "maxTotal": 140,
+  "grade": "A",
+  "lines": 213,
+  "hasReferences": true,
+  "referenceCount": 4,
+  "referenceSectionCompliant": true,
+  "errors": 0,
+  "warnings": 1,
+  "warningDetails": [
+    {
+      "dimension": "D9",
+      "message": "independent authoring bonus: +1 pts — not applied to score"
+    }
+  ]
+}

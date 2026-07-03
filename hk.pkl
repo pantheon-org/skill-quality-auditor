@@ -28,11 +28,14 @@ local preCommit = new Mapping<String, Step> {
         check = "shellcheck {{files}}"
     }
     ["context-frontmatter"] {
+        // Exclude plugins/ — plugin .md files use Tessl frontmatter (name, description) not context schema.
         glob = List(".context/**/*.md")
+        exclude = List(".context/plugins/**")
         check = ".context/plugins/pantheon-org/context-index/scripts/validate-context-frontmatter.sh {{files}}"
     }
     ["context-index"] {
         glob = List(".context/**/*.md")
+        exclude = List(".context/plugins/**")
         fix = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh"
         check = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh --check"
     }
