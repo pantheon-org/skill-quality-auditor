@@ -1,3 +1,10 @@
+---
+title: "Skill Audit — context-file"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Skill Audit — context-file
 
 **Grade:** D (91/140)

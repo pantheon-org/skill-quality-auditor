@@ -1,3 +1,10 @@
+---
+title: "Skill Audit — context-index"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Skill Audit — context-index
 
 **Grade:** F (88/140)

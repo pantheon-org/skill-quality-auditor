@@ -43,8 +43,6 @@ missing = []
 
 for md in sorted(context_dir.rglob("*.md")):
     rel = str(md.relative_to(root))
-    if rel.startswith(".context/audits/") and not content.startswith("---\n"):
-        continue  # skip legacy audits without frontmatter
     content = md.read_text()
     fm = parse_frontmatter(content)
     if fm is None:
@@ -74,9 +72,9 @@ if missing:
     for f in missing:
         print(f"  {f}", file=sys.stderr)
 
-type_group_key = {"plan": "plans", "finding": "findings", "analysis": "analysis", "instruction": "instructions"}
-type_order = ["plans", "findings", "analysis", "instructions"]
-type_label = {"plans": "Plans", "findings": "Findings", "analysis": "Analysis", "instructions": "Instructions"}
+type_group_key = {"plan": "plans", "finding": "findings", "analysis": "analysis", "instruction": "instructions", "audit": "audits"}
+type_order = ["plans", "findings", "analysis", "audits", "instructions"]
+type_label = {"plans": "Plans", "findings": "Findings", "analysis": "Analysis", "audits": "Audits", "instructions": "Instructions"}
 
 grouped = {}
 for e in entries:
