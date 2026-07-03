@@ -29,6 +29,11 @@
       "type": "anti-pattern",
       "why_given": "new knowledge",
       "content": "NEVER convert a draft PR to ready without explicit user request — draft status communicates intent; overriding it disrupts the user's workflow."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER use `gh pr review --request-changes` to re-request review — that command requests changes from the author, not re-review from reviewers. Use `gh api` to re-request review instead."
     }
   ]
 }

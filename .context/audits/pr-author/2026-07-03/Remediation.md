@@ -7,29 +7,21 @@ date: 2026-07-03
 
 # Remediation Plan — pr-author
 
-**Current Grade:** B (114/140)
+**Current Grade:** A (126/140)
 
 ## Priority Actions
 
-### Freedom Calibration (8/15) — 7 pts available
+### Freedom Calibration (11/15) — 4 pts available
 
 Balance prescriptive language (NEVER/ALWAYS) with permissive alternatives (consider, optionally, may).
 
-### Anti-Pattern Quality (10/15) — 5 pts available
-
-Add NEVER statements paired with `WHY:` explanations. Include BAD/GOOD contrast examples.
-
-### Progressive Disclosure (10/15) — 5 pts available
-
-Add a `references/` directory with focused deep-dive `.md` files. Keep `SKILL.md` under 150 lines to maximise the score.
-
-### Practical Usability (12/15) — 3 pts available
-
-Add more fenced code blocks (aim for >5 pairs). Include `./` or `bun run` commands. Use language-tagged fences (```bash, ```typescript).
-
-### Mindset + Procedures (13/15) — 2 pts available
+### Mindset + Procedures (12/15) — 3 pts available
 
 Add a `## Mindset` or `## Philosophy` section. Use numbered procedure lists. Add `## When to Use` and `## When NOT to Use` sections.
+
+### Progressive Disclosure (12/15) — 3 pts available
+
+Add a `references/` directory with focused deep-dive `.md` files. Keep `SKILL.md` under 150 lines to maximise the score.
 
 ### Eval Validation (18/20) — 2 pts available
 
