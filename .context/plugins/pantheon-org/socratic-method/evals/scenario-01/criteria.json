@@ -1,0 +1,9 @@
+{
+  "checklist": [
+    {"description": "Starts with Phase 1 clarification questions", "max_score": 25},
+    {"description": "Probes assumptions before exploring solutions", "max_score": 20},
+    {"description": "Explores second-order effects before concluding", "max_score": 20},
+    {"description": "Synthesizes and confirms before acting", "max_score": 20},
+    {"description": "Never exceeds 3 questions per turn", "max_score": 15}
+  ]
+}

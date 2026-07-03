@@ -1,0 +1,11 @@
+{
+  "name": "pantheon-org/context-file",
+  "version": "0.1.0",
+  "summary": "Create new .context/ files (plan, finding, or analysis) with standard YAML frontmatter",
+  "private": false,
+  "skills": {
+    "context-file": {
+      "path": "SKILL.md"
+    }
+  }
+}

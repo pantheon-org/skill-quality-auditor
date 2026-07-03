@@ -1,0 +1,7 @@
+{
+  "checklist": [
+    {"description": "Does not activate the protocol for concrete tasks", "max_score": 40},
+    {"description": "Responds directly without questioning", "max_score": 35},
+    {"description": "Performs the requested change correctly", "max_score": 25}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "checklist": [
+    {"description": "Stops questioning immediately on override", "max_score": 30},
+    {"description": "Acknowledges override without judgement", "max_score": 25},
+    {"description": "Proceeds with implementation rather than persisting", "max_score": 25},
+    {"description": "Notes skipped context briefly", "max_score": 20}
+  ]
+}

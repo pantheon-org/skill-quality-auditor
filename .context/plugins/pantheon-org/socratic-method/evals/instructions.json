@@ -1,0 +1,22 @@
+{
+  "instructions": [
+    {
+      "why_given": "new knowledge",
+      "type": "procedure",
+      "content": "Apply the 5-phase Socratic Protocol to vague or ambiguous requests: clarify, probe assumptions, explore implications, challenge through hypotheticals, synthesize before acting.",
+      "original_snippets": ""
+    },
+    {
+      "why_given": "preference",
+      "type": "anti-pattern",
+      "content": "Respect the 'just do it' override — stop questioning immediately and note what was skipped.",
+      "original_snippets": ""
+    },
+    {
+      "why_given": "preference",
+      "type": "anti-pattern",
+      "content": "Skip the Socratic Protocol entirely for concrete, well-specified tasks.",
+      "original_snippets": ""
+    }
+  ]
+}

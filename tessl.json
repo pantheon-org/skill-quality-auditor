@@ -24,6 +24,27 @@
     },
     "pantheon-ai/markdown-authoring": {
       "version": "0.2.1"
+    },
+    "pantheon-org/adr-capture": {
+      "source": "file:.context/plugins/pantheon-org/adr-capture"
+    },
+    "pantheon-org/context-file": {
+      "source": "file:.context/plugins/pantheon-org/context-file"
+    },
+    "pantheon-org/context-index": {
+      "source": "file:.context/plugins/pantheon-org/context-index"
+    },
+    "pantheon-org/docs-check": {
+      "source": "file:.context/plugins/pantheon-org/docs-check"
+    },
+    "pantheon-org/rules-management": {
+      "source": "file:.context/plugins/pantheon-org/rules-management"
+    },
+    "pantheon-org/session-reflection": {
+      "source": "file:.context/plugins/pantheon-org/session-reflection"
+    },
+    "pantheon-org/socratic-method": {
+      "source": "file:.context/plugins/pantheon-org/socratic-method"
     }
   }
 }

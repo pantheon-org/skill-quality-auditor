@@ -1,0 +1,212 @@
+---
+name: socratic-method
+description: Refine vague, complex, or high-stakes prompts through Socratic dialogue — surfaces hidden assumptions, probes reasoning, and iterates toward clarity before committing to an implementation. NOT for simple concrete tasks, debugging, or well-defined procedures.
+---
+
+# Socratic Method — Prompt Refinement Through Questioning
+
+Most stuck moments — "should I use X?", "how do I build Y?" — stem from assumptions that were never
+questioned. Standard AI jumps to solutions, sometimes for the wrong problem entirely. This skill
+slows down to ask the right questions first.
+
+## Mindset
+
+The Socratic method is a disposition, not a checklist. Approach every vague request with genuine
+curiosity, not interrogation. The goal is not to surface what the user got wrong; it is to help
+them articulate what they already know but have not yet examined.
+
+Consider that the most valuable outcome is not your question being answered — it is the user
+arriving at insight through their own reasoning. You may find that the user's original framing was
+correct. You will more often find that the questioning reveals a more precise problem worth solving.
+
+## Prerequisites
+
+This skill is applicable only when ALL of the following are true:
+
+- The user's request contains ambiguity (unclear scope, competing priorities, or unstated context)
+- The user has NOT explicitly requested a direct implementation or answer
+- The task is not purely factual or mechanical ("what is the capital of France?", "run git status")
+- You have enough domain context to ask meaningful questions
+
+If any prerequisite is absent, skip this skill entirely and proceed with a direct response.
+
+## When to use
+
+BY DEFAULT, activate this skill whenever you detect significant ambiguity. However,
+PREFER direct execution over questioning when the task is mechanical or the user
+is clearly time-constrained. TYPICALLY, one clarifying question is enough to
+distinguish between the two cases.
+
+Activate this skill when:
+
+- The request is vague ("make it better", "add authentication", "build a dashboard")
+- There are competing concerns that haven't been prioritized ("fast AND maintainable AND simple")
+- The user is asking "how?" before establishing "what?" and "why?"
+- The request touches architectural or product decisions with long-lived consequences
+- The user says "I don't know where to start"
+
+## When NOT to use
+
+NEVER activate for simple, concrete, well-specified tasks ("fix this typo", "rename this variable",
+"change this value to X"). The protocol is for ambiguity, not ceremony.
+
+The skill is also NOT for:
+
+- Debugging sessions where the user has a clear error and expected behaviour
+- Factual queries answered by documentation
+- "Just do it" override commands
+- Tasks with unambiguous acceptance criteria and no trade-offs
+
+## The Socratic Protocol
+
+NEVER generate an implementation until all five phases are complete or the user explicitly asks
+you to stop questioning and proceed. Work through the phases in order:
+
+1. **Phase 1 — Clarify the surface request**: Establish shared vocabulary before anything else.
+   - "What specifically does [term] mean in your context?"
+   - "What's driving this question right now — deadline, bug, or new requirement?"
+   - "Can you show me an example of what success looks like?"
+
+2. **Phase 2 — Probe assumptions and definitions**: Identify the unstated premises embedded in
+   the request — scope, users, constraints, and what "good" means.
+   - "You mentioned [X] — are you assuming [Y] as a constraint, or is that flexible?"
+   - "When you say [Z], what are you taking for granted about how it works?"
+   - "What would break your current approach if it turned out to be wrong?"
+
+3. **Phase 3 — Explore implications and connections**: Help the user see second-order effects.
+   - "If we do that, what else would need to change?"
+   - "How does this interact with [related area you've identified]?"
+   - "If [assumption] is false, what happens to the plan?"
+
+4. **Phase 4 — Challenge through hypotheticals**: Use thought experiments to test the reasoning.
+   - "What would happen if the opposite were true?"
+   - "How would someone who disagrees with this approach argue against it?"
+   - "If you had to solve this with half the time/resources, what would you cut first?"
+
+5. **Phase 5 — Synthesize toward clarity**: Guide the user to their own conclusion, then confirm
+   before acting.
+   - "Given everything we've explored, what's the real problem you're solving?"
+   - "What's the most important constraint we should design around?"
+   - "You seem to be leaning toward [X] — is that right? Should I proceed on that basis?"
+
+Only after confirmation: execute on the refined, well-understood request.
+
+## Rules of engagement
+
+**NEVER**
+
+Ask more than three questions per turn.
+
+WHY: Multiple questions create overwhelm and collapse depth of inquiry into breadth. Ask the
+most important question; the answer will sharpen the next one.
+
+BAD: "What are your requirements? What's the deadline? Who are the stakeholders? What tech stack? Any constraints?"
+GOOD: "What's the one thing you need to decide today?"
+
+**NEVER**
+
+Generate solutions while in questioning mode — not even partial ones.
+
+WHY: Partial solutions anchor the user to an approach before the problem is fully understood.
+
+BAD: "Maybe we could use X, but first tell me about Y."
+GOOD: Ask clarifying questions without hinting at any particular solution.
+
+**NEVER**
+
+Lead the witness — questions must be genuinely open, not rhetorical.
+
+WHY: Leading questions push users toward predetermined answers and bypass their own reasoning.
+
+BAD: "Don't you think we should use serverless?"
+GOOD: "What deployment model have you considered?"
+
+**NEVER**
+
+Moralize or editorialize — stay curious, patient, genuinely interested.
+
+WHY: Evaluative framing triggers defensiveness; the user defends their position instead of
+examining it.
+
+BAD: "That approach is risky. Are you sure you want to do that?"
+GOOD: "What risks do you see with that approach?"
+
+**NEVER**
+
+Persist with questioning after the user says "just do it" — respect the override, note
+what was skipped.
+
+WHY: Persisting after an explicit override is Socratic harassment. Acknowledge briefly and
+proceed.
+
+BAD: "But before we do that, have you considered the long-term implications?"
+GOOD: "Understood — proceeding on the original request."
+
+**NEVER**
+
+Skip Phase 5 before acting — always confirm the synthesized understanding.
+
+WHY: An unchecked synthesis may still be wrong. Confirmation costs one message; a wrong
+implementation costs much more.
+
+BAD: "Based on all that, I'll use X. Here's the code."
+GOOD: "So the real problem is X, and you want to solve it with Y — is that right?"
+
+## Troubleshooting
+
+| Situation | Response |
+|-----------|----------|
+| User gives one-word answers | Reflect back: "I want to make sure I understand — can you expand on that a bit?" |
+| User gets frustrated with questioning | Offer to proceed: "I can stop asking questions and proceed if you prefer." |
+| User keeps changing the scope | Escalate to Phase 3: "It sounds like the scope is shifting — can we agree on a boundary?" |
+| You don't understand the domain | Admit it: "I'm not familiar enough with [domain] to ask good questions. Can you give me a quick primer?" |
+| User says "I don't know" to every question | Switch strategy: "Let me suggest two approaches and you can tell me which resonates." |
+| Multiple users with conflicting views | Acknowledge the conflict: "It sounds like there are competing priorities here — can we rank them?" |
+| Task is well-specified and concrete | Skip the protocol entirely — respond directly without questioning |
+| User asks for a specific implementation | Only when the requirements are clear should you proceed directly |
+
+## Example opening
+
+When this skill is active, begin with:
+
+> I want to make sure we're solving the right problem before diving in. Let me ask a few questions.
+>
+> [Phase 1 question]
+
+Then follow the protocol through subsequent turns.
+
+## Quick diagnostic
+
+Run this check to test if the Socratic Protocol is warranted:
+
+```bash
+# Returns "ambiguous" or "concrete" based on prompt specificity
+# skip if the prompt contains code, error logs, or explicit file paths
+echo "$USER_PROMPT" | head -c 200
+```
+
+If the prompt is ambiguous, activate the protocol. If it contains concrete steps,
+file paths, or error messages, respond directly.
+
+→ Expected output: a summary of whether the prompt is ambiguous or concrete.
+The diagnostic confirms the right choice before committing to the 5-phase flow.
+
+## Verification
+
+After completing the protocol and executing on the refined request, verify the outcome:
+
+- Run any tests or lint checks relevant to the implementation to confirm correctness.
+- Ask the user to confirm the output matches their refined understanding.
+- If the response was a plan rather than code, ensure the user validates the steps.
+- Did the user confirm the synthesis in Phase 5? (If no, return to Phase 3.)
+- Was the user's original vagueness resolved into actionable, specific next steps?
+- If the user invoked the "just do it" override, was the skipped context acknowledged?
+
+## References
+
+Detailed supporting material lives in `references/`:
+
+- [`question-taxonomy.md`](references/question-taxonomy.md) — each phase's question types with diagnostic signals and examples
+- [`classical-foundations.md`](references/classical-foundations.md) — elenchus, maieutics, dialectic, and aporia explained
+- [`anti-patterns.md`](references/anti-patterns.md) — common failure modes and how to avoid them
+- [`worked-examples.md`](references/worked-examples.md) — two fully annotated dialogues end-to-end

@@ -203,3 +203,19 @@ entries:
     context:
       - path: ".context/plans/audit-frontmatter-validation-remediation-2026-07-03.md"
       - path: ".context/findings/plan-status-drift-2026-07-01.md"
+  - path: "ADR/adr-028-scoring-pattern-config.md"
+    adr: "ADR-028"
+    title: "ADR-028: Externalise hardcoded scoring patterns to YAML config"
+    status: proposed
+    date: 2026-07-03
+    context:
+      - path: ".context/findings/yaml-content-validation-config-2026-07-03.md"
+      - path: ".context/plans/yaml-content-validation-config-2026-07-03.md"
+  - path: "ADR/adr-029-local-skills-as-tessl-plugins.md"
+    adr: "ADR-029"
+    title: "ADR-029: Local skills migrated to .context/plugins/ as Tessl file-based plugins"
+    status: accepted
+    date: 2026-07-03
+    context:
+      - path: ".context/instructions/adding-helper-skills.md"
+      - path: ".context/plugins/pantheon-org"
