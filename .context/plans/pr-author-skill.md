@@ -1,7 +1,7 @@
 ---
 title: "Plan: PR Author — formatted PR creation and update skill"
 type: plan
-status: active
+status: done
 date: 2026-07-03
 ---
 
