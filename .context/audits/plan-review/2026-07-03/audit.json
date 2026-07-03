@@ -6,30 +6,22 @@
     "evalValidation": 18,
     "freedomCalibration": 10,
     "knowledgeDelta": 19,
-    "mindsetProcedures": 7,
+    "mindsetProcedures": 9,
     "patternRecognition": 10,
     "practicalUsability": 15,
     "progressiveDisclosure": 10,
-    "specificationCompliance": 12
+    "specificationCompliance": 13
   },
-  "total": 110,
+  "total": 113,
   "maxTotal": 140,
-  "grade": "C+",
-  "lines": 574,
+  "grade": "B",
+  "lines": 614,
   "hasReferences": true,
   "referenceCount": 1,
   "referenceSectionCompliant": true,
   "errors": 0,
-  "warnings": 6,
+  "warnings": 4,
   "warningDetails": [
-    {
-      "dimension": "D2",
-      "message": "no postcondition signals detected — add external verification steps (e.g. run tests, confirm output)"
-    },
-    {
-      "dimension": "D4",
-      "message": "harness-specific path found: .claude/"
-    },
     {
       "dimension": "D4",
       "message": "agent-specific reference found: claude code"

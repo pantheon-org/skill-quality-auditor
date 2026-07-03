@@ -15,7 +15,7 @@ description: >
 
 # Plan Review — 3-Agent Multi-Perspective Audit
 
-Review `.context/plans/*.md` files through 3 independent lenses: **Technical**,
+Review `.context/plans/` files through 3 independent lenses: **Technical**,
 **Strategic**, and **Risk**. Each reviewer is a separate subagent with a unique
 prompt and perspective. The main agent collates results into a consolidated report.
 
@@ -263,8 +263,8 @@ If **not configured**, proceed to step 5 and advise the user.
 
 Do NOT proceed without asking. The agent should proactively advise based on
 what it detects. First check if this is Claude Code or OpenCode by looking
-for environment cues (e.g., `CLAUDE_CODE=1` env var, or the presence of
-`.claude/settings.json`). If you cannot determine the environment, ask:
+for environment cues (e.g., `CLAUDE_CODE` env var, or `ANTHROPIC_API_KEY`
+is set). If you cannot determine the environment, ask:
 
 > "Are you using **OpenCode** or **Claude Code**? This determines which models are available for the subagent reviewers."
 
@@ -554,10 +554,50 @@ If your opencode setup does not support per-type model routing:
   tool access and system prompts.
 - Make sure to note this limitation when presenting the report.
 
+## Verification
+
+After presenting the consolidated review report, run these checks before
+signing off:
+
+1. **Schema compliance** — validate the generated report against the schema:
+   ```bash
+   scripts/validate-review-report.sh <path-to-report>
+   ```
+   This verifies the report conforms to the required structure and all sections
+   are present.
+
+2. **Model attribution check** — confirm the report states which models were
+   used for Technical/Strategic and for Risk, and whether routing was
+   pre-configured or user-selected.
+
+3. **Structural validation captured** — confirm the plan's frontmatter validation
+   results and body structure inference are included in the report. The structural
+   validation must pass before the review is considered complete.
+
+4. **Actionability review** — verify the report ends with specific Recommended
+   Next Actions that reference specific reviewer findings. Each action must be
+   concrete and directly address a finding.
+
+5. **Investigation offered** — ask the user if they want to dig deeper on any
+   finding. If they accept, run the investigation before concluding.
+
+If any of these checks fail, correct the issue before presenting the report as
+final.
+
+## Troubleshooting
+
+| Situation | Response |
+|-----------|----------|
+| Report validation fails | Check the report against `assets/schemas/review-report.schema.json` for missing or malformed sections |
+| A reviewer does not return results | Re-spawn that reviewer individually with the same brief; merge manually |
+| User has no preference on models | Recommend the best-value pair for their detected environment |
+| Plan is trivially small | Skip the 3-reviewer process and do a single pass instead |
+| Review reveals a critical issue | Stop, present the finding immediately, ask if the user wants to fix the plan before continuing |
+
 ## Templates
 
 This skill follows the repository convention of YAML template + JSON Schema + validation script
-for all structured artifacts. See `.agents/RULES.md` rule "Never embed templates in markdown".
+for all structured artifacts. See the project rules for the convention.
 
 | Artifact | Template | Schema | Validation Script |
 |----------|----------|--------|-------------------|

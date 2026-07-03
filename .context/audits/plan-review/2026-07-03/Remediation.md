@@ -7,13 +7,11 @@ date: 2026-07-03
 
 # Remediation Plan — plan-review
 
-**Current Grade:** C+ (110/140)
+**Current Grade:** B (113/140)
 
 ## Priority Actions
 
-### Mindset + Procedures (7/15) — 8 pts available
-
-⚠️ no postcondition signals detected — add external verification steps (e.g. run tests, confirm output)
+### Mindset + Procedures (9/15) — 6 pts available
 
 Add a `## Mindset` or `## Philosophy` section. Use numbered procedure lists. Add `## When to Use` and `## When NOT to Use` sections.
 
@@ -29,9 +27,7 @@ Add a `references/` directory with focused deep-dive `.md` files. Keep `SKILL.md
 
 Balance prescriptive language (NEVER/ALWAYS) with permissive alternatives (consider, optionally, may).
 
-### Specification Compliance (12/15) — 3 pts available
-
-⚠️ harness-specific path found: .claude/
+### Specification Compliance (13/15) — 2 pts available
 
 ⚠️ agent-specific reference found: claude code
 
