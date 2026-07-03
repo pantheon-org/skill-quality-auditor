@@ -235,3 +235,11 @@ entries:
     date: 2026-07-03
     context:
       - path: ".context/findings/scoring-pattern-config-review-2026-07-03.md"
+  - path: "ADR/adr-032-user-configurable-scoring-patterns.md"
+    adr: "ADR-032"
+    title: "ADR-032: User-configurable scoring pattern overrides"
+    status: proposed
+    date: 2026-07-03
+    context:
+      - path: ".context/plans/user-configurable-scoring-patterns-2026-07-03.md"
+      - path: "docs/ADR/adr-028-scoring-pattern-config.md"
