@@ -35,6 +35,29 @@ set of assumptions and focus areas.
 # Load the skill, then say: "review the plan at .context/plans/<name>.md"
 ```
 
+## When to Use
+
+- A `.context/plans/*.md` file needs an independent multi-perspective review before implementation
+- A draft plan needs validation before marking it `active`
+- Multiple plans exist in the same domain and need prioritisation
+- A stale plan needs a freshness check against current project state
+- The user explicitly asks for a plan audit
+
+## When NOT to Use
+
+- For one-off notes, scratch files, or non-plan documents — use `session-reflection` instead
+- For plans outside `.context/plans/` — the reviewer prompts assume `.context/` frontmatter conventions
+- When the plan is trivially small (1 paragraph, no steps) — the overhead of 3 subagents is not justified
+- When the user explicitly asks for a quick opinion, not a full audit
+
+## Mindset
+
+- Three independent reviewers catch what a single reviewer normalises. The value is in the divergence between their findings, not in consensus.
+- Model diversity is the strongest lever for perspective diversity. Different models trained on different data notice different failure modes.
+- A plan review is a service to the plan author, not a judgement. Findings should be actionable, not critical.
+- Structural validation is a prerequisite, not the goal. The frontmatter check exists to keep the plan visible in the index, but the real value is the implementation architecture and risk analysis from the 3 reviewers.
+- If a review reveals a critical issue, the right outcome is to improve the plan, not to reject it.
+
 ## Workflow
 
 ### 1. Identify the plan to review
@@ -474,21 +497,33 @@ use the `adr-capture` skill.
 
 ## Anti-Patterns
 
-### NEVER: Skip the plan brief and just pass the file path
+**NEVER** — Skip the plan brief and just pass the file path
+
+**SYMPTOM:** Reviewer produces shallow, generic analysis because they lack the full plan context. Each reviewer may interpret the plan differently, leading to inconsistent feedback.
+
+**CONSEQUENCE:** The review misses critical issues because no reviewer had the complete picture. The final report contradicts itself across reviewer sections.
 
 **WHY:** Subagents cannot read files unless they have the `general` type with file access. The plan brief ensures every reviewer works from the same complete information regardless of subagent capability.
 
 **BAD:** Sending "review .context/plans/foo.md" as the prompt.
 **GOOD:** Extracting the plan content into a self-contained brief first.
 
-### NEVER: Spawn reviewers sequentially
+**NEVER** — Spawn reviewers sequentially
+
+**SYMPTOM:** The review takes 3× longer than necessary. The user waits while each subagent initialises and runs in turn.
+
+**CONSEQUENCE:** Context builds up between sequential calls, increasing cost and delay. The user may interrupt before all reviews complete.
 
 **WHY:** They are fully independent — sequential spawning wastes time and context. Always use parallel tool calls.
 
 **BAD:** Spawn Technical, wait for result, spawn Strategic, wait, spawn Risk.
 **GOOD:** Spawn all 3 in one message with 3 parallel `task` tool calls.
 
-### NEVER: Proceed without asking about models first
+**NEVER** — Proceed without asking about models first
+
+**SYMPTOM:** The review uses the same model for all 3 reviewers, producing three reports with the same blind spots. The user never knew they had a choice.
+
+**CONSEQUENCE:** The cost of model diversity awareness was zero, but the cost of missing a critical blind spot is unbounded. The user loses trust when they discover routing was available but unused.
 
 **WHY:** Model diversity is the main lever for catching different blind spots.
 Asking first gives the user control over cost vs. depth and lets them
@@ -498,21 +533,33 @@ model for all reviewers.
 **BAD:** "Reviewing the plan now with 3 reviewers..."
 **GOOD:** "Before I start, which models should I use for the reviewers?"
 
-### NEVER: Present raw subagent output without attribution
+**NEVER** — Present raw subagent output without attribution
+
+**SYMPTOM:** The user receives three blocks of undifferentiated text and must guess which reviewer produced which finding. Conflicting opinions cannot be traced to their source.
+
+**CONSEQUENCE:** Actionable findings get mixed with noise because the user cannot weigh each reviewer's credibility. The strategic reviewer's insight carries the same weight as the risk reviewer's false alarm.
 
 **WHY:** The user needs to know which perspective each finding comes from. Raw output without labels loses the multi-reviewer value.
 
 **BAD:** Paste three blocks of text with no headers.
 **GOOD:** Organise by reviewer with clear headings and attribution.
 
-### NEVER: Modify the plan brief differently per reviewer
+**NEVER** — Modify the plan brief differently per reviewer
+
+**SYMPTOM:** Two reviewers disagree on a key question, but the disagreement is caused by different input, not different analysis. The conflict is an artefact, not a signal.
+
+**CONSEQUENCE:** False conflicts waste time in resolution meetings. Real consensus is hidden because each reviewer had different assumptions.
 
 **WHY:** The whole point is that different reviewers reach different conclusions from the same information. Giving each a different brief invalidates the comparison.
 
 **BAD:** Giving the Strategic reviewer extra context about project history.
 **GOOD:** Identical brief to all 3; the differences in output come from their lenses.
 
-### NEVER: Use the same subagent type for all 3 reviewers
+**NEVER** — Use the same subagent type for all 3 reviewers
+
+**SYMPTOM:** All 3 reviewers converge on the same set of concerns. The "multi-perspective" review effectively becomes a single-perspective review with 3× the cost.
+
+**CONSEQUENCE:** The review provides no more value than a single pass, yet costs 3× in both time and tokens. The user pays for diversity but receives uniformity.
 
 **WHY:** Model diversity is the main lever for catching different blind spots. If all 3 use the same model via the same subagent type, you lose the independent-perspective benefit — they'll converge on similar blind spots.
 
@@ -559,12 +606,12 @@ If your opencode setup does not support per-type model routing:
 After presenting the consolidated review report, run these checks before
 signing off:
 
-1. **Schema compliance** — validate the generated report against the schema:
+1. **Schema compliance** — run the validation script to verify the report output:
    ```bash
    scripts/validate-review-report.sh <path-to-report>
    ```
-   This verifies the report conforms to the required structure and all sections
-   are present.
+   This checks the report conforms to the required structure and all sections
+   are present. Re-run if validation fails.
 
 2. **Model attribution check** — confirm the report states which models were
    used for Technical/Strategic and for Risk, and whether routing was
@@ -584,15 +631,23 @@ signing off:
 If any of these checks fail, correct the issue before presenting the report as
 final.
 
-## Troubleshooting
+## Error Handling
 
 | Situation | Response |
 |-----------|----------|
-| Report validation fails | Check the report against `assets/schemas/review-report.schema.json` for missing or malformed sections |
-| A reviewer does not return results | Re-spawn that reviewer individually with the same brief; merge manually |
-| User has no preference on models | Recommend the best-value pair for their detected environment |
-| Plan is trivially small | Skip the 3-reviewer process and do a single pass instead |
-| Review reveals a critical issue | Stop, present the finding immediately, ask if the user wants to fix the plan before continuing |
+| Report validation fails | Check the report against `assets/schemas/review-report.schema.json` for missing or malformed sections; otherwise regenerate |
+| A reviewer does not return results | Re-spawn that reviewer individually with the same brief; if a reviewer fails twice, fall back to the other two |
+| User has no preference on models | Recommend the best-value pair for their detected environment; stop if they confirm |
+| Plan is trivially small | Skip if fewer than 2 H2 sections — do a single pass instead |
+| Review reveals a critical issue | Stop if critical and present immediately; ask if the user wants to fix before continuing |
+
+## When a Reviewer Fails
+
+If a subagent reviewer returns an error or times out, do not block the entire
+review. Spawn a replacement using the same subagent type and brief. If the
+replacement also fails, omit that perspective and proceed with the remaining
+reviews. Note the failure in the final report so the user knows a perspective
+is missing.
 
 ## Templates
 

@@ -7,25 +7,21 @@ date: 2026-07-03
 
 # Remediation Plan — plan-review
 
-**Current Grade:** B (113/140)
+**Current Grade:** B+ (124/140)
 
 ## Priority Actions
-
-### Mindset + Procedures (9/15) — 6 pts available
-
-Add a `## Mindset` or `## Philosophy` section. Use numbered procedure lists. Add `## When to Use` and `## When NOT to Use` sections.
-
-### Anti-Pattern Quality (9/15) — 6 pts available
-
-Add NEVER statements paired with `WHY:` explanations. Include BAD/GOOD contrast examples.
-
-### Progressive Disclosure (10/15) — 5 pts available
-
-Add a `references/` directory with focused deep-dive `.md` files. Keep `SKILL.md` under 150 lines to maximise the score.
 
 ### Freedom Calibration (10/15) — 5 pts available
 
 Balance prescriptive language (NEVER/ALWAYS) with permissive alternatives (consider, optionally, may).
+
+### Mindset + Procedures (12/15) — 3 pts available
+
+Add a `## Mindset` or `## Philosophy` section. Use numbered procedure lists. Add `## When to Use` and `## When NOT to Use` sections.
+
+### Progressive Disclosure (12/15) — 3 pts available
+
+Add a `references/` directory with focused deep-dive `.md` files. Keep `SKILL.md` under 150 lines to maximise the score.
 
 ### Specification Compliance (13/15) — 2 pts available
 
