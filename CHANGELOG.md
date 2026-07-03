@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.18.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.17.0...v0.18.0) (2026-07-03)
+
+
+### Features
+
+* add session-end reflection mechanism (rule + skill + evals) ([#103](https://github.com/pantheon-org/skill-quality-auditor/issues/103)) ([c4e95d3](https://github.com/pantheon-org/skill-quality-auditor/commit/c4e95d32e5eeded4f9000a1a9b9d72b9304d713d))
+* **context:** add ai-native-eval assessment and .tmp gitignore rule ([#106](https://github.com/pantheon-org/skill-quality-auditor/issues/106)) ([7499c9b](https://github.com/pantheon-org/skill-quality-auditor/commit/7499c9b884574c2e6162819dea0f0e3ed2c3827c))
+* **context:** add arxiv self-evolution research survey findings ([#105](https://github.com/pantheon-org/skill-quality-auditor/issues/105)) ([c83b8f2](https://github.com/pantheon-org/skill-quality-auditor/commit/c83b8f20df211c87af4c12f9e4c2cd4ef5c16931))
+
+
+### Bug Fixes
+
+* validate and index .context/audits/ files as first-class context ([#107](https://github.com/pantheon-org/skill-quality-auditor/issues/107)) ([b315827](https://github.com/pantheon-org/skill-quality-auditor/commit/b3158274e73d8d7990176ba8491f67ddb36942b3))
+
 ## [0.17.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.16.2...v0.17.0) (2026-07-02)
 
 
