@@ -211,3 +211,11 @@ entries:
     context:
       - path: ".context/findings/yaml-content-validation-config-2026-07-03.md"
       - path: ".context/plans/yaml-content-validation-config-2026-07-03.md"
+  - path: "ADR/adr-029-local-skills-as-tessl-plugins.md"
+    adr: "ADR-029"
+    title: "ADR-029: Local skills migrated to .context/plugins/ as Tessl file-based plugins"
+    status: accepted
+    date: 2026-07-03
+    context:
+      - path: ".context/instructions/adding-helper-skills.md"
+      - path: ".context/plugins/pantheon-org"
