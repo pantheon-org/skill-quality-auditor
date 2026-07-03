@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
 
 // Dimension is the canonical descriptor for one scoring rubric dimension.
@@ -182,18 +184,5 @@ func codeBlockCount(content string) int {
 
 // removeCodeBlocks strips fenced code blocks from content (replicates awk '/^```/{skip=!skip;next} !skip').
 func removeCodeBlocks(content string) string {
-	var result strings.Builder
-	skip := false
-	for _, line := range strings.Split(content, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "```") {
-			skip = !skip
-			continue
-		}
-		if !skip {
-			result.WriteString(line)
-			result.WriteString("\n")
-		}
-	}
-	return result.String()
+	return patternconfig.StripCodeBlocks(content)
 }

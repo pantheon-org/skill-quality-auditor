@@ -23,5 +23,8 @@ var embeddedSchemas embed.FS //nolint:unused // reserved for schema validation
 //go:embed assets/assets/templates
 var embeddedTemplates embed.FS //nolint:unused // reserved for plan generation
 
+//go:embed assets/assets/config
+var embeddedConfig embed.FS
+
 //go:embed assets/requirements
 var embeddedRequirements embed.FS

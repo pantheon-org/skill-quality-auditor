@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
 
 // buildVersion is injected by GoReleaser via ldflags at release time.
@@ -66,6 +68,7 @@ func Execute() {
 }
 
 func init() {
+	patternconfig.Init(embeddedConfig, "assets/assets/config/scoring-patterns.yaml")
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.Version = version
 }
