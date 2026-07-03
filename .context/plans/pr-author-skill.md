@@ -46,7 +46,8 @@ Following [ADR-029](docs/ADR/adr-029-local-skills-as-tessl-plugins.md) and the [
 │   └── scenario-03/
 │       └── (scenario files — respond to change requests)
 └── references/
-    └── template-paths.md
+    ├── template-paths.md
+    └── pr-template-design.md
 ```
 
 **Note:** The original plan included a `scripts/discover-pr-template.sh` for template discovery. This was removed during review — template discovery is a simple file-existence check (5 paths) that the agent can perform inline. A shell script adds maintenance burden without value, unlike the complex Python-in-bash cross-referencing in `adr-capture/scripts/`. The discovery logic belongs in the SKILL.md workflow itself.
@@ -106,6 +107,7 @@ Following [ADR-029](docs/ADR/adr-029-local-skills-as-tessl-plugins.md) and the [
   | Topic | Reference | When to Use |
   | --- | --- | --- |
   | Template lookup locations and precedence | `references/template-paths.md` | Debugging discovery failures in a new repo |
+  | What makes a good PR template | `references/pr-template-design.md` | Designing or evaluating a repo's PR template |
   | Repo-specific PR template | `.github/pull_request_template.md` | The active template in the current repo |
   | Commit message formatting | `commit-style` skill | When the agent needs to format commits for the PR |
 
@@ -128,6 +130,30 @@ Document all known PR template paths, the precedence order, and fallback behavio
 3. `docs/PULL_REQUEST_TEMPLATE.md`
 4. `PULL_REQUEST_TEMPLATE.md` (repo root)
 5. Fallback: built-in sections (Summary, Type of change, Checklist, Related issues)
+
+#### references/pr-template-design.md
+
+Document what a good PR template looks like, so the skill can recommend or evaluate templates. This repo's template (`.github/pull_request_template.md`) serves as the reference implementation. Key principles:
+
+**Structure:**
+- **Summary** — One-paragraph "what and why", focused and scannable
+- **Type of change** — Checklist with conventional-commit prefixes (`feat/`, `fix/`, `refactor/`, `docs/`, `chore/`)
+- **Checklist** — Grouped by concern (code quality, skill/tile changes, documentation, commit conventions)
+- **Merge strategy** — Explicit preference (squash/rebase/merge) with guidance on when to use each
+- **Related issues** — Auto-close syntax (`Closes #NNN`), links to related PRs/ADRs/context files
+
+**Quality signals:**
+- Uses HTML comments (`<!-- -->`) for invisible guidance to human authors — these should be **stripped** by the agent when filling (see Open Question resolution #4)
+- Checklist items are concrete and verifiable (not "code looks good" but "`go test ./...` passes")
+- Groups related checks (e.g., all skill/tile checks together) so agents can skip irrelevant groups
+- Includes repo-specific conventions (e.g., `./dist/skill-auditor eval`, `tessl status`, ADR requirements)
+- Notes character limits (GitHub body: 65536 chars; title: 72 chars for list views)
+
+**Anti-patterns to avoid in template design:**
+- Vague checkboxes ("tests pass" → "`go test ./...` passes")
+- Missing merge strategy guidance (creates ambiguity at merge time)
+- No distinction between code changes and asset changes (different checks apply)
+- Overly long default sections that encourage dumping rather than summarising
 
 ### Step 2: Register in tessl.json
 
