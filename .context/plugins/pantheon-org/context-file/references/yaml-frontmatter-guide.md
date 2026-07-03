@@ -73,5 +73,5 @@ date: 2026-06-30
 
 ## Validation
 
-Run `plugins/pantheon-org/context-index/scripts/check-context-frontmatter.sh .context/**/*.md` to validate all files.
+Run `.context/plugins/pantheon-org/context-index/scripts/check-context-frontmatter.sh .context/**/*.md` to validate all files.
 

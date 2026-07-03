@@ -13,7 +13,7 @@
     {
       "type": "procedure",
       "why_given": "new knowledge",
-      "content": "Always regenerate .context/index.yaml after creating or updating a .context/ file using plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh."
+      "content": "Always regenerate .context/index.yaml after creating or updating a .context/ file using .context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh."
     },
     {
       "type": "anti-pattern",

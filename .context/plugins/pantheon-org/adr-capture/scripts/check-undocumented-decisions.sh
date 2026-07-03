@@ -57,6 +57,10 @@ for md_file in sorted(context_dir.rglob("*.md")):
     if resolved in referenced:
         continue  # already tracked by an ADR
 
+    # skip plugin skill files — they contain decision keywords in evals/docs
+    if "/plugins/" in str(md_file):
+        continue
+
     content = md_file.read_text()
     # skip index.yaml reference files
     if "index.yaml" in content:
@@ -87,6 +91,6 @@ for path, keyword in undocumented:
     print()
 
 print(f"Total: {len(undocumented)} undocumented decision(s)")
-print("Run plugins/pantheon-org/adr-capture/scripts/regenerate-adr-index.sh after creating ADRs.")
+print("Run .context/plugins/pantheon-org/adr-capture/scripts/regenerate-adr-index.sh after creating ADRs.")
 sys.exit(2)
 PYEOF

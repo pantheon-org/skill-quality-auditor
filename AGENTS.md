@@ -26,8 +26,7 @@ live exclusively under `cmd/assets/` — there is no separate `skill/` directory
 | `cmd/` | `evaluate`, `batch`, `duplication`, `aggregate`, `remediate`, `trend`, `validate`, `analyze`, `prune`, `init`, `update` cobra commands; `init` installs into CWD by default, `~` with `--global` |
 | `cmd/assets/` | Embedded SKILL.md, tile.json, references, evals, schemas, templates, requirements — single source of truth |
 | `internal/` | Shared utilities (tokenizer) |
-| `plugins/` | Tessl helper skill plugins (socratic-method, etc.) — available to AI agents; not part of the Go CLI |
-| `plugins/` | Tessl helper skill plugins (socratic-method, etc.) — available to AI agents; not part of the Go CLI |
+| `.context/plugins/` | Tessl helper skill plugins (socratic-method, etc.) — available to AI agents; not part of the Go CLI |
 | `testdata/` | Fixture skills for unit tests — do not modify without updating tests |
 
 ## Ways of working
@@ -170,9 +169,9 @@ Read the ADR index before making design decisions to avoid revisiting settled qu
 
 ### Add a helper skill (non-Go Tessl plugin)
 
-Helper skills live under `plugins/` and provide agent workflows independent of the Go CLI.
+Helper skills live under `.context/plugins/` and provide agent workflows independent of the Go CLI.
 
-1. Create the plugin files under `plugins/<workspace>/<skill>/` (SKILL.md, tile.json, tessl-package.json).
-2. Register in `tessl.json` with `"source": "file:plugins/..."`.
+1. Create the plugin files under `.context/plugins/<workspace>/<skill>/` (SKILL.md, tile.json, tessl-package.json).
+2. Register in `tessl.json` with `"source": "file:.context/plugins/..."`.
 3. Run `tessl install` to sync.
 4. See `.context/instructions/adding-helper-skills.md` for full details.

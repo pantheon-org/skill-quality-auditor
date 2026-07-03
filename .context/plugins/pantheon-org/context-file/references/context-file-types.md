@@ -57,5 +57,5 @@ Analyses document duplication reports, benchmark results, comparative reviews, a
 | Using wrong type for the content | Match type to subdirectory: plan↔plans/, finding↔findings/, analysis↔analysis/ |
 | Putting plans in `.context/audits/` | Use `.context/plans/` instead — audits/ is owned by skill-auditor |
 | Missing frontmatter that blocks commits | Always start with `---\ntitle:\ntype:\nstatus:\ndate:\n---` |
-| Not regenerating the index | Run `plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh` after creation |
+| Not regenerating the index | Run `.context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh` after creation |
 

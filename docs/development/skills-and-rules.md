@@ -18,7 +18,7 @@ To add a new rule, load the [`rules-management`](#rules-management) skill — it
 
 ## Local skills
 
-Ten skills are installed under [`.agents/skills/`](https://github.com/pantheon-org/skill-quality-auditor/tree/main/.agents/skills):
+Local helper skills are installed under `.context/plugins/pantheon-org/` (managed via `tessl.json`). Registry plugins live under `.tessl/plugins/`. The following skills are available:
 
 ### adr-capture
 
@@ -69,7 +69,7 @@ Apply SOLID principles, detect design anti-patterns, and evaluate architectural 
 The `init` command installs the canonical skill from `cmd/assets/SKILL.md` into agent harness directories. The agent registry in `agents/registry.go` maps each supported agent to its skill install path:
 
 ```text
-.agents/skills/    → opencode, cline, cursor, copilot, and 9 others
+.context/plugins/  → local skills (tessl-managed, file: source)
 .claude/skills/    → claude-code
 ```
 

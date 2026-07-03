@@ -29,25 +29,25 @@ local preCommit = new Mapping<String, Step> {
     }
     ["context-frontmatter"] {
         glob = List(".context/**/*.md")
-        check = "plugins/pantheon-org/context-index/scripts/validate-context-frontmatter.sh {{files}}"
+        check = ".context/plugins/pantheon-org/context-index/scripts/validate-context-frontmatter.sh {{files}}"
     }
     ["context-index"] {
         glob = List(".context/**/*.md")
-        fix = "plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh"
-        check = "plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh --check"
+        fix = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh"
+        check = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh --check"
     }
     ["adr-frontmatter"] {
         glob = List("docs/ADR/adr-*.md")
-        check = "plugins/pantheon-org/context-index/scripts/check-context-frontmatter.sh {{files}}"
+        check = ".context/plugins/pantheon-org/context-index/scripts/check-context-frontmatter.sh {{files}}"
     }
     ["adr-index"] {
         glob = List("docs/ADR/adr-*.md")
-        fix = "plugins/pantheon-org/adr-capture/scripts/regenerate-adr-index.sh"
+        fix = ".context/plugins/pantheon-org/adr-capture/scripts/regenerate-adr-index.sh"
         check = "test -f docs/ADR/index.yaml"
     }
     ["adr-undocumented"] {
         glob = List(".context/**/*.md")
-        check = "plugins/pantheon-org/adr-capture/scripts/check-undocumented-decisions.sh"
+        check = ".context/plugins/pantheon-org/adr-capture/scripts/check-undocumented-decisions.sh"
     }
 }
 
