@@ -3,13 +3,11 @@ package analysis
 import (
 	"regexp"
 	"strings"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
 
 var headerLine = regexp.MustCompile(`(?m)^(#{1,6})\s+(.+)$`)
-
-var hedgeWords = []string{"maybe", "perhaps", "might want to", "could be", "feel free", "you might", "possibly"}
-var vagueWords = []string{"do something", "handle appropriately", "as needed", "when necessary", "if applicable"}
-var passivePatterns = []string{"is done", "was created", "can be used", "is used", "are used", "is called", "was called"}
 
 // RuleMatch is the result of a single pattern detection rule.
 type RuleMatch struct {
@@ -45,20 +43,7 @@ func countSubstring(content, pattern string) int {
 }
 
 func stripCodeBlocks(content string) string {
-	var result strings.Builder
-	skip := false
-	for _, line := range strings.Split(content, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "```") {
-			skip = !skip
-			continue
-		}
-		if !skip {
-			result.WriteString(line)
-			result.WriteString("\n")
-		}
-	}
-	return result.String()
+	return patternconfig.StripCodeBlocks(content)
 }
 
 // DetectRequiredSections checks whether all required section headers are present.
@@ -163,12 +148,13 @@ func DetectStructuralConformance(content string, canonical []string) RuleMatch {
 // DetectAntiPatternSignals looks for common anti-pattern indicators.
 func DetectAntiPatternSignals(content string) []RuleMatch {
 	clean := stripCodeBlocks(content)
+	cfg := patternconfig.Get().Patterns.AnalysisQuality
 
 	var results []RuleMatch
 
 	hedgeCount := 0
 	hedgeEvidence := []string{}
-	for _, w := range hedgeWords {
+	for _, w := range cfg.HedgeWords {
 		c := countSubstring(clean, w)
 		if c > 0 {
 			hedgeCount += c
@@ -184,7 +170,7 @@ func DetectAntiPatternSignals(content string) []RuleMatch {
 
 	vagueCount := 0
 	vagueEvidence := []string{}
-	for _, w := range vagueWords {
+	for _, w := range cfg.VagueWords {
 		c := countSubstring(clean, w)
 		if c > 0 {
 			vagueCount += c
@@ -200,7 +186,7 @@ func DetectAntiPatternSignals(content string) []RuleMatch {
 
 	passiveCount := 0
 	passiveEvidence := []string{}
-	for _, w := range passivePatterns {
+	for _, w := range cfg.PassivePatterns {
 		c := countSubstring(clean, w)
 		if c > 0 {
 			passiveCount += c

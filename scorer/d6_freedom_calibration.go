@@ -3,6 +3,8 @@ package scorer
 import (
 	"regexp"
 	"strings"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
 
 // hard constraint marker patterns (uppercase, word-boundary matched)
@@ -10,15 +12,6 @@ var (
 	reHardMarkers = regexp.MustCompile(`\b(MUST|NEVER|ALWAYS|REQUIRED|PROHIBITED)\b`)
 	reSoftMarkers = regexp.MustCompile(`\b(PREFER|AVOID|BY DEFAULT|UNLESS|TYPICALLY|RECOMMENDED)\b`)
 )
-
-// whenNotToUsePatterns are case-insensitive substrings that indicate negative-scope guidance.
-var whenNotToUsePatterns = []string{
-	"when not to use",
-	"do not use",
-	"not intended for",
-	"outside the scope",
-	"avoid using",
-}
 
 // scoreCalibrationBalance scores whether the ratio of strong-to-weak markers
 // falls in a balanced range (neither all-imperative nor all-permissive). (max: 5)
@@ -48,7 +41,7 @@ func scoreCalibrationBalance(b *validatorBridge) int {
 // Returns 3 pts if any "when not to use" signal is found, 0 otherwise.
 func scoreWhenNotToUse(content string) int {
 	lower := strings.ToLower(content)
-	for _, p := range whenNotToUsePatterns {
+	for _, p := range patternconfig.Get().Patterns.D6FreedomCalibration.WhenNotToUse {
 		if strings.Contains(lower, p) {
 			return 3
 		}

@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/pantheon-org/skill-quality-auditor/internal/patternconfig"
 )
 
 const (
@@ -41,7 +43,7 @@ func scoreDemonstrationConcreteness(content string) int {
 		return 2
 	}
 	// 1 pt: expert-register language present even without a worked example
-	for _, pat := range []string{"anti-pattern", "NEVER", "ALWAYS", "production", "gotcha", "pitfall"} {
+	for _, pat := range patternconfig.Get().Patterns.D1KnowledgeDelta.ExpertSignals {
 		if countPattern(content, pat) > 0 {
 			return 1
 		}
@@ -53,14 +55,15 @@ func scoreDemonstrationConcreteness(content string) int {
 func scoreD1(content, skillDir string) (int, []Diagnostic) {
 	score := d1BaseScore
 	var diags []Diagnostic
+	cfg := patternconfig.Get().Patterns.D1KnowledgeDelta
 
-	for _, pat := range []string{"npm install", "yarn add", "pip install", "getting started", "introduction", "basic syntax", "hello world"} {
+	for _, pat := range cfg.BeginnerSignals {
 		if countPattern(content, pat) > 0 {
 			score -= d1PenaltyPerPat
 		}
 	}
 
-	for _, pat := range []string{"anti-pattern", "NEVER", "ALWAYS", "production", "gotcha", "pitfall"} {
+	for _, pat := range cfg.ExpertSignals {
 		if countPattern(content, pat) > 0 {
 			score += d1BonusPerPat
 		}

@@ -1,0 +1,48 @@
+version: 1
+patterns:
+  d1_knowledge_delta:
+    beginner_signals:
+      - "npm install"
+      - "yarn add"
+      - "pip install"
+      - "getting started"
+      - "introduction"
+      - "basic syntax"
+      - "hello world"
+    expert_signals:
+      - "anti-pattern"
+      - "NEVER"
+      - "ALWAYS"
+      - "production"
+      - "gotcha"
+      - "pitfall"
+  analysis_quality:
+    hedge_words:
+      - "maybe"
+      - "perhaps"
+      - "might want to"
+      - "could be"
+      - "feel free"
+      - "you might"
+      - "possibly"
+    vague_words:
+      - "do something"
+      - "handle appropriately"
+      - "as needed"
+      - "when necessary"
+      - "if applicable"
+    passive_patterns:
+      - "is done"
+      - "was created"
+      - "can be used"
+      - "is used"
+      - "are used"
+      - "is called"
+      - "was called"
+  d6_freedom_calibration:
+    when_not_to_use:
+      - "when not to use"
+      - "do not use"
+      - "not intended for"
+      - "outside the scope"
+      - "avoid using"
