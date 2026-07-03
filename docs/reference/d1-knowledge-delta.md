@@ -14,6 +14,11 @@
 
 **Core principle:** Skill = Expert Knowledge − What AI Assistants Already Know
 
+**Signal word configuration:** the beginner-signal and expert-signal phrase lists used to
+detect redundancy are not hardcoded in `scorer/d1_knowledge_delta.go` — they live in
+`cmd/assets/assets/config/scoring-patterns.yaml` under `patterns.d1_knowledge_delta`, loaded
+via `internal/patternconfig`. Edit that YAML file (see ADR-028) to tune the signal words.
+
 ## Three Knowledge Types
 
 1. **Expert (KEEP):**

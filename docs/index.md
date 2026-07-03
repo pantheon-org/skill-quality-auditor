@@ -100,4 +100,5 @@ Warnings:
 | `analysis` | `analysis/` | TF-IDF keywords, rule-based pattern detection |
 | `agents` | `agents/` | Agent registry for the `init` command |
 | `internal/llmclient` | `internal/llmclient/` | Provider-agnostic LLM client |
+| `internal/patternconfig` | `internal/patternconfig/` | Loads externalised D1/D6/analysis-quality pattern words from YAML |
 | `internal/tokenize` | `internal/tokenize/` | Text normalization and tokenization |

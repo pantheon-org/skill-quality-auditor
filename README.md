@@ -70,6 +70,7 @@ Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to 
 | `trend` | Compare score deltas across stored audits |
 | `validate` | Check file conventions (`artifacts` subcommand) and review reports (`review`) |
 | `analyze <skill>` | Extract TF-IDF keywords and structural patterns |
+| `eval <skill>` | Run `evals/` scenarios (structural gate by default; LLM-judged with a provider key) |
 | `init` | Install the auditor skill into your agent environment |
 | `update` | Self-update the binary (install.sh installs only) |
 | `prune` | Remove old audit snapshots, keeping N per skill |
@@ -119,11 +120,16 @@ See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric. E
     skill-auditor batch skills/ --fail-below B --store
     skill-auditor duplication   # exits 2 on Critical pairs
     skill-auditor validate artifacts
+    skill-auditor eval skills/my-skill --fail-below 0   # structural gate, no LLM key needed
 ```
 
-`--fail-below` accepts any grade (A+ through F). `duplication` exits with code 2 (not 1) on Critical (>35%) pairs so it can be distinguished from a command error in pipeline logic.
+`--fail-below` accepts any grade (A+ through F) for `batch`, or a percentage score for `eval`.
+`duplication` exits with code 2 (not 1) on Critical (>35%) pairs so it can be distinguished from
+a command error in pipeline logic. `eval` runs in structural-only mode (schema consistency, no
+semantic grading) unless an LLM provider key is set in the environment — see
+[docs/architecture/eval-runner.md](docs/architecture/eval-runner.md).
 
-Full workflow example:
+Full workflow example, mirroring this repo's own [`skill-quality.yml`](.github/workflows/skill-quality.yml):
 
 ```yaml
 jobs:
@@ -139,6 +145,8 @@ jobs:
         run: skill-auditor duplication
       - name: Artifact validation
         run: skill-auditor validate artifacts
+      - name: Structural eval gate
+        run: skill-auditor eval skills/my-skill --fail-below 0
 ```
 
 ## Repository layout
