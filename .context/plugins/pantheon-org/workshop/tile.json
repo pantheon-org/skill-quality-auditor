@@ -1,0 +1,12 @@
+{
+  "name": "pantheon-org/workshop",
+  "version": "0.1.0",
+  "summary": "Agent workflow and quality skills",
+  "private": false,
+  "skills": {
+    "session-reflection": { "path": "session-reflection/SKILL.md" },
+    "socratic-method": { "path": "socratic-method/SKILL.md" },
+    "docs-check": { "path": "docs-check/SKILL.md" },
+    "pr-author": { "path": "pr-author/SKILL.md" }
+  }
+}

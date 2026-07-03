@@ -1,0 +1,10 @@
+{
+  "name": "pantheon-org/governance",
+  "version": "0.1.0",
+  "summary": "Architecture decisions and rule management",
+  "private": false,
+  "skills": {
+    "adr-capture": { "path": "adr-capture/SKILL.md" },
+    "rules-management": { "path": "rules-management/SKILL.md" }
+  }
+}

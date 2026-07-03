@@ -1,0 +1,11 @@
+{
+  "name": "pantheon-org/plan-create",
+  "version": "0.1.0",
+  "summary": "Create .context/plans/ files with structured YAML frontmatter, phases/tasks/waves decomposition, and post-creation validation via plan-review",
+  "private": false,
+  "skills": {
+    "plan-create": {
+      "path": "SKILL.md"
+    }
+  }
+}
