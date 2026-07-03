@@ -1,7 +1,7 @@
 ---
 title: "Plan: Remediate Audit Frontmatter & Validation Gaps"
 type: plan
-status: draft
+status: done
 date: 2026-07-03
 related:
   - ../../hk.pkl
