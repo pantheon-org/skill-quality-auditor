@@ -1,0 +1,11 @@
+{
+  "name": "pantheon-org/session-reflection",
+  "version": "0.1.0",
+  "summary": "Conduct a two-question session-end reflection to catch blind spots before concluding",
+  "private": false,
+  "skills": {
+    "session-reflection": {
+      "path": "SKILL.md"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pantheon-org/socratic-method",
+  "version": "0.1.0",
+  "summary": "Refine vague or high-stakes prompts through Socratic questioning — surfaces hidden assumptions, probes reasoning, and iterates toward clarity before committing to a response",
+  "private": false,
+  "skills": {
+    "socratic-method": {
+      "path": "SKILL.md"
+    }
+  }
+}

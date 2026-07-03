@@ -48,6 +48,8 @@
     ".tessl/**",
     ".aislop/**",
     "dist/**",
-    "site/**"
+    "site/**",
+    // Plugin skills — authored as agent workflows, lint-fixed in follow-up
+    "plugins/**"
   ]
 }

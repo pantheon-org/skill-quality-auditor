@@ -1,0 +1,11 @@
+{
+  "name": "pantheon-org/adr-capture",
+  "version": "0.1.0",
+  "summary": "Capture Architecture Decision Records (ADRs) from .context/ plans, findings, and analyses",
+  "private": false,
+  "skills": {
+    "adr-capture": {
+      "path": "SKILL.md"
+    }
+  }
+}

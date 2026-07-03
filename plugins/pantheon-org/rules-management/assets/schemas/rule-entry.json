@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/pantheon-org/skill-quality-auditor/.agents/skills/rules-management/assets/schemas/rule-entry.json",
+  "$id": "https://github.com/pantheon-org/skill-quality-auditor/plugins/pantheon-org/rules-management/assets/schemas/rule-entry.json",
   "title": "Rule Entry",
   "description": "A single behavioural rule entry in .agents/RULES.md",
   "type": "object",

@@ -87,6 +87,6 @@ for path, keyword in undocumented:
     print()
 
 print(f"Total: {len(undocumented)} undocumented decision(s)")
-print("Run .agents/skills/adr-capture/regenerate-adr-index.sh after creating ADRs.")
+print("Run plugins/pantheon-org/adr-capture/scripts/regenerate-adr-index.sh after creating ADRs.")
 sys.exit(2)
 PYEOF

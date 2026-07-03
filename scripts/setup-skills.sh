@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
+# Links pantheon-org helper skills from plugins/ to .claude/skills/ for
+# Claude Code discovery. Tessl-managed registry skills are handled by tessl install.
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-AGENTS_SKILLS="$REPO_ROOT/.agents/skills"
+PLUGINS_DIR="$REPO_ROOT/plugins/pantheon-org"
 CLAUDE_SKILLS="$REPO_ROOT/.claude/skills"
 
 mkdir -p "$CLAUDE_SKILLS"
 
 linked=0
-for skill_dir in "$AGENTS_SKILLS"/*/; do
+for skill_dir in "$PLUGINS_DIR"/*/; do
     [[ -d "$skill_dir" ]] || continue
-    [[ -L "$skill_dir" ]] && continue  # skip tessl-managed symlinks
     skill_name="$(basename "$skill_dir")"
     target="$CLAUDE_SKILLS/$skill_name"
     if [[ ! -e "$target" ]]; then
-        ln -sf "../../.agents/skills/$skill_name" "$target"
+        ln -sf "../../plugins/pantheon-org/$skill_name" "$target"
         echo "  linked .claude/skills/$skill_name"
         linked=$((linked + 1))
     fi
