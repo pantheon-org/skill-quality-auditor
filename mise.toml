@@ -9,7 +9,7 @@ hk = "1.48.0"                        # replaces lefthook — git hook runner
 node = "latest"                     # required: the npm: backend below needs Node
 "npm:markdownlint-cli2" = "0.22.1"  # replaces github:swanysimon/mdlint
 shellcheck = "latest"
-# tessl is not available as a mise backend — install via: curl -fsSL https://get.tessl.io | sh
+"npm:tessl" = "latest"              # tessl CLI — installs local skills from tessl.json
 
 [env]
 # HK_MISE deep integration: hk wraps each step with `mise x` so tools resolve
@@ -22,7 +22,7 @@ HK_MISE = "1"
 enter = "mise install"
 # postinstall: runs after `mise install` (so it also runs as a result of the
 # enter hook above); does NOT itself require activation. Installs the hk git hooks.
-postinstall = "hk install && scripts/setup-skills.sh"
+postinstall = "hk install && tessl install"
 
 [tasks]
 [tasks.build]
