@@ -11,6 +11,7 @@ import (
 
 func runEvaluate(t *testing.T, args ...string) (string, error) {
 	t.Helper()
+	resetConfigFlags(t)
 	buf := &bytes.Buffer{}
 	rootCmd.SetOut(buf)
 	rootCmd.SetErr(buf)

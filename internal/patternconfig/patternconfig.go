@@ -8,6 +8,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -80,13 +81,9 @@ func Init(fs embed.FS, path string) {
 		warnf("cannot read pattern config %s: %v (using built-in defaults)", path, err)
 		return
 	}
-	var cfg Config
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		warnf("cannot parse pattern config %s: %v (using built-in defaults)", path, err)
-		return
-	}
-	if err := validate(cfg); err != nil {
-		warnf("invalid pattern config %s: %v (using built-in defaults)", path, err)
+	cfg, err := parseAndValidate(data)
+	if err != nil {
+		warnf("pattern config %s: %v (using built-in defaults)", path, err)
 		return
 	}
 	mu.Lock()
@@ -94,8 +91,83 @@ func Init(fs embed.FS, path string) {
 	mu.Unlock()
 }
 
+// LoadFromPath reads, parses, and validates a scoring-patterns.yaml from an
+// arbitrary OS path, installing it as the active config on success. It
+// distinguishes a genuinely absent file (ok=false, err=nil — not configured)
+// from a path that exists but is unusable: a directory, a permission error, a
+// symlink to a missing target, malformed YAML, or a config missing one or
+// more required pattern groups (each ok=false, err=<detail>). The prior
+// active config is left untouched unless loading succeeds (ok=true, err=nil).
+func LoadFromPath(path string) (Config, bool, error) {
+	lstatInfo, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return Config{}, false, nil
+		}
+		return Config{}, false, fmt.Errorf("cannot stat pattern config %s: %w", path, err)
+	}
+	if lstatInfo.Mode()&os.ModeSymlink != 0 {
+		if _, err := os.Stat(path); err != nil {
+			return Config{}, false, fmt.Errorf("pattern config %s is a symlink to a missing or unreadable target: %w", path, err)
+		}
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		return Config{}, false, fmt.Errorf("cannot stat pattern config %s: %w", path, err)
+	}
+	if info.IsDir() {
+		return Config{}, false, fmt.Errorf("pattern config %s is a directory, not a file", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return Config{}, false, fmt.Errorf("cannot read pattern config %s: %w", path, err)
+	}
+	cfg, err := parseAndValidate(data)
+	if err != nil {
+		return Config{}, false, fmt.Errorf("pattern config %s: %w", path, err)
+	}
+	mu.Lock()
+	active = cfg
+	mu.Unlock()
+	return cfg, true, nil
+}
+
+// WriteDefault marshals cfg back to YAML, matching the embedded file's
+// structure so the written file round-trips through LoadFromPath, and writes
+// it to path (creating parent directories as needed). It is the first-run
+// auto-generation primitive: callers must treat a returned error as
+// non-fatal (log and continue with the in-memory config), never panic.
+func WriteDefault(path string, cfg Config) error {
+	data, err := yaml.Marshal(cfg)
+	if err != nil {
+		return fmt.Errorf("marshal pattern config: %w", err)
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return fmt.Errorf("create pattern config directory for %s: %w", path, err)
+	}
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return fmt.Errorf("write pattern config %s: %w", path, err)
+	}
+	return nil
+}
+
 func warnf(format string, a ...any) {
 	fmt.Fprintf(os.Stderr, "warning: "+format+"\n", a...)
+}
+
+// parseAndValidate unmarshals raw YAML bytes and validates that every
+// required pattern group is present and non-empty. It is the single code
+// path shared by the embedded loader (Init) and the disk loader
+// (LoadFromPath) so both apply identical rules.
+func parseAndValidate(data []byte) (Config, error) {
+	var cfg Config
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return Config{}, fmt.Errorf("parse YAML: %w", err)
+	}
+	if err := validate(cfg); err != nil {
+		return Config{}, err
+	}
+	return cfg, nil
 }
 
 func validate(cfg Config) error {
@@ -110,10 +182,14 @@ func validate(cfg Config) error {
 		{"analysis_quality.passive_patterns", cfg.Patterns.AnalysisQuality.PassivePatterns},
 		{"d6_freedom_calibration.when_not_to_use", cfg.Patterns.D6FreedomCalibration.WhenNotToUse},
 	}
+	var missing []string
 	for _, g := range groups {
 		if len(g.vals) == 0 {
-			return fmt.Errorf("%s must not be empty", g.name)
+			missing = append(missing, g.name)
 		}
+	}
+	if len(missing) > 0 {
+		return fmt.Errorf("missing groups: %s", strings.Join(missing, ", "))
 	}
 	return nil
 }

@@ -1,0 +1,14 @@
+version: 1
+patterns:
+  d1_knowledge_delta:
+    beginner_signals:
+      - "custom beginner"
+    expert_signals:
+      - "custom expert"
+  analysis_quality:
+    hedge_words:
+      - "custom hedge"
+    vague_words:
+      - "custom vague"
+    passive_patterns:
+      - "custom passive"
