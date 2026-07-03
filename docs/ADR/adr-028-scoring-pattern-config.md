@@ -1,13 +1,14 @@
 ---
 title: "ADR-028: Externalise hardcoded scoring patterns to YAML config"
-status: proposed
+status: accepted
 date: 2026-07-03
 context:
   - path: .context/findings/yaml-content-validation-config-2026-07-03.md
   - path: .context/plans/yaml-content-validation-config-2026-07-03.md
+  - path: .context/findings/scoring-pattern-config-review-2026-07-03.md
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-03
 
 ## Context
@@ -18,11 +19,11 @@ A proposed content-safety scanning layer (SEC_DISABLE, SEC_PERMISSIVE, CRED_EXFI
 
 ## Decision
 
-1. **Phase 1 — Externalise existing patterns.** Move the 6 real hardcoded lists into `cmd/assets/assets/config/scoring-patterns.yaml`, loaded at init via `//go:embed` through a new `internal/patternconfig/` package. This covers `analysis/patterns.go`, `scorer/d1_knowledge_delta.go`, and `scorer/d6_freedom_calibration.go`.
+1. **Phase 1 — Externalise existing patterns.** Move the 6 real hardcoded lists into `cmd/assets/assets/config/scoring-patterns.yaml`, loaded at init via `//go:embed` through a new `internal/patternconfig/` package. This covers `analysis/patterns.go`, `scorer/d1_knowledge_delta.go`, and `scorer/d6_freedom_calibration.go`. **Implemented and merged** (PR #114).
 
 2. **Config format is YAML only.** No TOML fallback. YAML v3 is already available as an indirect dependency. JSON Schema validation lives at `cmd/assets/assets/schemas/scoring-patterns.schema.json`.
 
-3. **Phase 2 — Content-safety patterns.** The 8 regex categories are adopted as a follow-up, wired into D3 (SEC_DISABLE, CRED_EXFIL, OBFUSC_*) and D6 (SEC_PERMISSIVE, TOOL_BROAD) with the `strip_code_blocks: true` flag using `scorer/dimensions.go`'s existing `removeCodeBlocks` utility.
+3. **Phase 2 — Content-safety patterns.** The 8 regex categories are adopted as a follow-up, wired into D3 (SEC_DISABLE, CRED_EXFIL, OBFUSC_*) and D6 (SEC_PERMISSIVE, TOOL_BROAD) with the `strip_code_blocks: true` flag using `scorer/dimensions.go`'s existing `removeCodeBlocks` utility. **Not yet scoped or implemented** — remains an open follow-up.
 
 4. **Config path convention.** Config files go to `cmd/assets/assets/config/`, schemas to `cmd/assets/assets/schemas/` — consistent with existing patterns.
 
