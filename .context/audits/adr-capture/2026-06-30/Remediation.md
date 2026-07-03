@@ -1,3 +1,10 @@
+---
+title: "Remediation Plan — adr-capture"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Remediation Plan — adr-capture
 
 **Current Grade:** F (85/140)

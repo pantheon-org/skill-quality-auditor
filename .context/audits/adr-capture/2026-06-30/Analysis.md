@@ -1,3 +1,10 @@
+---
+title: "Skill Audit — adr-capture"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Skill Audit — adr-capture
 
 **Grade:** F (85/140)

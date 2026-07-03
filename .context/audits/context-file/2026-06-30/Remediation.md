@@ -1,3 +1,10 @@
+---
+title: "Remediation Plan — context-file"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Remediation Plan — context-file
 
 **Current Grade:** D (91/140)

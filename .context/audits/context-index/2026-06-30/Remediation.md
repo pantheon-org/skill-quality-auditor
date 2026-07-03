@@ -1,3 +1,10 @@
+---
+title: "Remediation Plan — context-index"
+type: audit
+status: done
+date: 2026-06-30
+---
+
 # Remediation Plan — context-index
 
 **Current Grade:** F (88/140)

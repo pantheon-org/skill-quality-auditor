@@ -29,12 +29,10 @@ local preCommit = new Mapping<String, Step> {
     }
     ["context-frontmatter"] {
         glob = List(".context/**/*.md")
-        exclude = List(".context/audits/**")
         check = ".agents/skills/context-index/scripts/validate-context-frontmatter.sh {{files}}"
     }
     ["context-index"] {
         glob = List(".context/**/*.md")
-        exclude = List(".context/audits/**")
         fix = ".agents/skills/context-index/scripts/regenerate-context-index.sh"
         check = ".agents/skills/context-index/scripts/regenerate-context-index.sh --check"
     }
