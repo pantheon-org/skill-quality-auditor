@@ -92,3 +92,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** Leaked sensitive information creates legal, security, and reputational risk for the company and individuals involved. The agent must default to nondisclosure and sanitise any output that could expose non-public data.
 
+---
+
+### Rule: Always consider subagent delegation when authoring skills
+
+**Directive:** When creating or revising a SKILL.md, ALWAYS assess whether any phase of the workflow benefits from subagent delegation. If the skill requires self-reflection, meta-cognitive auditing, or adversarial review, PREFER spawning an independent subagent rather than having the main agent perform the introspection itself. Document the subagent recommendation as a note in the relevant workflow section or as an "Advanced" subsection.
+
+**Rationale:** LLMs are poor judges of their own outputs — self-reflection by the main agent suffers from the same blind spots it is trying to catch. An independent subagent brings a fresh perspective, catches normalised errors, and can be routed to a cheaper model. Skills like `session-reflection` already demonstrate this pattern with measurable quality improvements.
+
