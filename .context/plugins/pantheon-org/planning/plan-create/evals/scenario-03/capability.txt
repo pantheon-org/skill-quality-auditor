@@ -1,0 +1,1 @@
+Reject oversized phases and split them into smaller, independently shippable units.

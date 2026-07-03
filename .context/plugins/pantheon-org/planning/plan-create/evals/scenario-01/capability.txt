@@ -1,0 +1,1 @@
+Create a plan with valid YAML frontmatter, phases/tasks/waves decomposition, and post-creation validation.

@@ -1,0 +1,39 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Before drafting the plan, scan existing plans with grep -r '^## ' .context/plans/*.md to infer local section conventions."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Always include YAML frontmatter with title, type: plan, status: draft, and date in YYYY-MM-DD format."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Structure the plan body with phases (sequential stages), tasks (single-session units), and waves (parallel task groups)."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Run validate-context-frontmatter.sh on the created plan file before declaring done."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Offer to run the plan-review skill on the newly created plan to complete the create-review-iterate loop."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER create a plan without YAML frontmatter — the file will be invisible to .context/index.yaml."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER create a phase with more than 8 tasks — split oversized phases into smaller ones."
+    }
+  ]
+}

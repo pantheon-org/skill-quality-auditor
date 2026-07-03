@@ -31,17 +31,17 @@ local preCommit = new Mapping<String, Step> {
         // Exclude plugins/ — plugin .md files use Tessl frontmatter (name, description) not context schema.
         glob = List(".context/**/*.md")
         exclude = List(".context/plugins/**")
-        check = ".context/plugins/pantheon-org/context-index/scripts/validate-context-frontmatter.sh {{files}}"
+        check = ".context/plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh {{files}}"
     }
     ["context-index"] {
         glob = List(".context/**/*.md")
         exclude = List(".context/plugins/**")
-        fix = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh"
-        check = ".context/plugins/pantheon-org/context-index/scripts/regenerate-context-index.sh --check"
+        fix = ".context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh"
+        check = ".context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh --check"
     }
     ["adr-frontmatter"] {
         glob = List("docs/ADR/adr-*.md")
-        check = ".context/plugins/pantheon-org/context-index/scripts/check-context-frontmatter.sh {{files}}"
+        check = ".context/plugins/pantheon-org/context-mgmt/context-index/scripts/check-context-frontmatter.sh {{files}}"
     }
     ["adr-index"] {
         glob = List("docs/ADR/adr-*.md")

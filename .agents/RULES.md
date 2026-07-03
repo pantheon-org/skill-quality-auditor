@@ -108,3 +108,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** Templates embedded in markdown are invisible to machine validation, rot silently when their schema changes, and cannot be consumed programmatically. A YAML template + JSON Schema + validation script "trio" makes the contract explicit, testable, and discoverable by other tools and agents.
 
+---
+
+### Rule: Always check skill overlap before creating new skills
+
+**Directive:** BEFORE creating or proposing a new skill, ALWAYS scan existing skills in the repository to identify overlap in purpose, triggers, or workflow. Use `grep -r 'triggers\|description' .context/plugins/**/SKILL.md` and review the Tessl manifest (`tessl.json`) to map current capabilities. If overlap is found, propose a path forward: merge, specialise, deprecate, or proceed as-is with documented rationale.
+
+**Rationale:** Skills with overlapping triggers fragment agent attention and confuse discovery. A 30-second overlap check prevents duplicate work and surfaces consolidation opportunities before they become maintenance debt.
+

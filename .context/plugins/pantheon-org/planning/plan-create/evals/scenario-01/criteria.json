@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to create a plan with frontmatter, phases/tasks/waves, and validation.",
+  "checklist": [
+    {"name": "Gather specification", "description": "Agent asks about goal, scope, phases, tasks, dependencies, risks", "max_score": 15},
+    {"name": "Infer conventions", "description": "Agent scans existing plans with grep to infer local section conventions", "max_score": 15},
+    {"name": "Valid frontmatter", "description": "Created plan has YAML frontmatter with title, type: plan, status: draft, date", "max_score": 20},
+    {"name": "Phases and tasks", "description": "Plan body has ## Phases with concrete tasks and wave annotations", "max_score": 20},
+    {"name": "Validation run", "description": "Agent runs validate-context-frontmatter.sh on the created file", "max_score": 15},
+    {"name": "Offer plan-review", "description": "Agent offers to run the plan-review skill on the new plan", "max_score": 15}
+  ]
+}
