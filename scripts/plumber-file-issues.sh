@@ -10,8 +10,13 @@
 # and skips Critical findings (those block the pipeline via plumber-gate.sh
 # instead of being filed here).
 #
-# Dedup key: sha256(resultKey|code|canonicalized issue JSON). Stable across
-# reruns of the same finding; requires no per-control field knowledge.
+# Dedup key: sha256(resultKey|code|canonicalized issue JSON, with the
+# commit-ref segment of any blob URL normalized out). Plumber's `url` field
+# is a live GitHub blob link (`.../blob/<commit-sha>/path#Lline`) that
+# embeds the *current* commit — hashing it verbatim means every single run
+# produces a fresh fingerprint for the same underlying finding, since the
+# SHA changes on every commit. Stripping that segment keeps the key stable
+# across reruns while the display body still links to the real commit.
 set -euo pipefail
 
 RESULTS_PATH="${1:?usage: plumber-file-issues.sh <results.json>}"
@@ -30,7 +35,14 @@ jq -c '
     | select(.key | endswith("Result"))
     | .key as $rk
     | (.value.issues // [])[]
-    | {resultKey: $rk, code: (.code // "UNKNOWN"), severity: ($sevmap[.code] // "unknown"), issue: .}
+    | . as $iss
+    | {
+        resultKey: $rk,
+        code: ($iss.code // "UNKNOWN"),
+        severity: ($sevmap[$iss.code] // "unknown"),
+        issue: $iss,
+        dedupIssue: (if ($iss | has("url")) then ($iss | .url |= sub("/blob/[^/]+/"; "/blob/_/")) else $iss end)
+      }
     | select(.severity == "high" or .severity == "medium" or .severity == "low")
 ' "$RESULTS_PATH" |
     while IFS= read -r entry; do
@@ -38,11 +50,12 @@ jq -c '
         code="$(jq -r '.code' <<<"$entry")"
         severity="$(jq -r '.severity' <<<"$entry")"
         issue_json="$(jq -cS '.issue' <<<"$entry")"
+        dedup_json="$(jq -cS '.dedupIssue' <<<"$entry")"
         location="$(jq -r '.issue.jobName // .issue.job // .issue.branchName // "unknown"' <<<"$entry")"
         doc_url="$(jq -r '.issue.docUrl // ""' <<<"$entry")"
         source_url="$(jq -r '.issue.url // ""' <<<"$entry")"
 
-        fingerprint="$(printf '%s|%s|%s' "$result_key" "$code" "$issue_json" | shasum -a 256 | cut -c1-16)"
+        fingerprint="$(printf '%s|%s|%s' "$result_key" "$code" "$dedup_json" | shasum -a 256 | cut -c1-16)"
         marker="<!-- plumber-dedup:${fingerprint} -->"
 
         existing="$(gh issue list --repo "$REPO" --search "\"${marker}\" in:body" --state all --json number --jq '.[0].number' 2>/dev/null || true)"
