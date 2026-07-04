@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.21.0...v0.21.1) (2026-07-04)
+
+
+### Bug Fixes
+
+* **ci:** pin third-party actions by SHA, declare workflow permissions ([#171](https://github.com/pantheon-org/skill-quality-auditor/issues/171)) ([6c9fda4](https://github.com/pantheon-org/skill-quality-auditor/commit/6c9fda4921452d0960bf314a4c7ee3b98b0b84a9))
+
 ## [0.21.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.20.0...v0.21.0) (2026-07-04)
 
 
