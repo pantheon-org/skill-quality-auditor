@@ -15,6 +15,10 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   quality-gate:
     runs-on: ubuntu-latest
@@ -109,7 +113,7 @@ jobs:
       # defined as the native runner's JSON showing overall_pass: true.
       # Remove this block + the TESSL_TOKEN secret after 2 weeks of green
       # native-eval runs (per native-eval-runner plan Phase 3).
-      - uses: tesslio/setup-tessl@v2
+      - uses: tesslio/setup-tessl@25ec223fc0da33b41b8044ff5ab2b85235f4f91e # v2
         if: always()
         with:
           token: ${{ secrets.TESSL_TOKEN }}

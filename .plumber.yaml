@@ -88,6 +88,13 @@ github:
         # .github/workflows/plumber.yml, so it needs an explicit authorized-
         # sources entry (it is neither same-org nor actions/github-owned).
         - getplumber/plumber
+        # Third-party actions this repo's own workflows use, pinned by
+        # commit SHA in ci.yml / release.yml / skill-quality.yml.
+        - golangci/golangci-lint-action
+        - jdx/mise-action
+        - goreleaser/goreleaser-action
+        - googleapis/release-please-action
+        - tesslio/setup-tessl
         - docker/setup-qemu-action
         - docker/setup-buildx-action
         - docker/login-action
