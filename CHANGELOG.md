@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.19.0...v0.20.0) (2026-07-04)
+
+
+### Features
+
+* **scorer:** externalise D1/D6/analysis scoring patterns to YAML config ([#114](https://github.com/pantheon-org/skill-quality-auditor/issues/114)) ([cb9c654](https://github.com/pantheon-org/skill-quality-auditor/commit/cb9c6543289dbce60fbb375be66e24358441eb4d))
+* user-configurable scoring pattern overrides ([#118](https://github.com/pantheon-org/skill-quality-auditor/issues/118)) ([673bef9](https://github.com/pantheon-org/skill-quality-auditor/commit/673bef95adb3e3e9b7045d1518f170d98d4eea7d))
+
 ## [0.19.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.18.0...v0.19.0) (2026-07-03)
 
 
