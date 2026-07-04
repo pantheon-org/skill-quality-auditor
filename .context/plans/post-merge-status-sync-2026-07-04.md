@@ -38,15 +38,18 @@ Close the gap where a PR ships the feature an ADR or plan describes, but the ADR
 6. **Single script, `--dry-run`/`-n` flag** — not a separate `check-*`/`apply-*` pair. This matches the existing convention in `skill-auditor aggregate`/`remediate` (`--dry-run`/`-n` prints what would change; omitting it applies). `merge-status-sync.sh --dry-run <n>` reports drift and proposed actions without writing; `merge-status-sync.sh <n>` applies safe flips (Decision 1/3) and always prints the ADR-flag summary for confirmation.
 7. **The script is idempotent.** Re-running `merge-status-sync.sh <n>` against a PR that's already fully synced is a no-op (exit 0, "nothing to do"). Failures from `gh` (PR not found, not yet merged, unauthenticated, rate-limited) are reported and exit non-zero; a partial failure between flipping a plan's frontmatter and regenerating `.context/index.yaml` is safe to recover from by re-running the script, since index regeneration always re-derives from current file state regardless of whether a flip happened this invocation.
 8. **Lives as an extension to `adr-capture`, not a new top-level skill.** `adr-capture` already owns `regenerate-adr-index.sh` and `check-undocumented-decisions.sh` — this is the same family of "keep the ADR index honest" work, just triggered by merge state instead of by new-decision detection. The plan-status half (`.context/index.yaml` regeneration) calls into `context-index`'s existing `regenerate-context-index.sh` rather than duplicating it. A new script (`merge-status-sync.sh`) plus a new workflow section in `adr-capture/SKILL.md` is smaller than standing up a separate skill with its own eval suite.
+9. **Phase 3's eventual CI integration posts a PR comment, not a follow-up issue.** A comment lands where a reviewer's attention already is (on the just-merged PR) and requires no separate triage/close lifecycle. This is a decision for when Phase 3 is actually built, not a change to Phase 3's current "evaluate, don't build" scope.
+10. **The file-touch heuristic also parses squash-merge commit messages, not just `gh pr view --json files`.** `gh pr view --json files` is confirmed sufficient for this repo's own merge convention (standard merge commits), but a squash-merged PR elsewhere could summarise multiple original commits' files into a message body rather than the API's file list reflecting them individually. The detection script treats `--json files` as the primary source and falls back to parsing `git log --format=%B -n 1 <merge-sha>` for individual commit references only when `files` comes back empty or suspiciously small relative to the PR's commit count — this keeps the common path simple while covering the edge case defensively.
 
 ## Phases
 
 ### Phase 1 — Detection script
 
 - Write `merge-status-sync.sh --dry-run <n>` under `adr-capture/scripts/`: given a PR number, resolve `gh pr view <n> --json mergedAt,files`, resolve `related:`/`context:` paths using `check-plan-drift.sh`'s existing `realpath -m` logic, cross-reference against `.context/index.yaml` and `docs/ADR/index.yaml`, and print any linked plan/ADR whose status is still `active`/`draft` (plans) or `proposed` (ADRs), plus whether a flagged plan is single-phase (auto-flip candidate) or multi-phase (always flagged, per Decision 1).
-- Unit-test the cross-reference logic against **two** fixtures, not one: (a) PR #118 checked out at its pre-acceptance commit (before `d06d7b6`), so the test actually simulates the "PR merged, ADR/plan still open" state ADR-032 was caught in, rather than testing against today's already-fixed repo; (b) a synthetic PR whose file list overlaps only via file-touch (not frontmatter) with an unrelated plan/ADR's `related:` paths, to prove the file-touch-only case is flagged, never auto-applied.
+- Implement the squash-merge fallback from Decision 10: when `files` is empty or its count looks inconsistent with the PR's commit count, parse `git log --format=%B -n 1 <merge-sha>` for individual commit references before giving up on file-touch matching.
+- Unit-test the cross-reference logic against **three** fixtures: (a) PR #118 checked out at its pre-acceptance commit (before `d06d7b6`), so the test actually simulates the "PR merged, ADR/plan still open" state ADR-032 was caught in, rather than testing against today's already-fixed repo; (b) a synthetic PR whose file list overlaps only via file-touch (not frontmatter) with an unrelated plan/ADR's `related:` paths, to prove the file-touch-only case is flagged, never auto-applied; (c) a synthetic squash-merged PR with an empty/undersized `files` response, to prove the commit-message fallback from Decision 10 fires and still finds the match.
 - Cross-check output against `check-plan-drift.sh`'s existing pre-push report for the same repo state to confirm the two heuristics don't produce contradictory signals.
-- Exit criterion: fixture (a) reports the ADR-032 drift that actually existed at merge time; fixture (b) reports a flag, not an auto-flip; running against PR #118 today (fully synced) reports "nothing to do."
+- Exit criterion: fixture (a) reports the ADR-032 drift that actually existed at merge time; fixture (b) reports a flag, not an auto-flip; fixture (c) reports the match via the fallback path; running against PR #118 today (fully synced) reports "nothing to do."
 
 ### Phase 2 — Auto-flip single-phase plans, flag everything else
 
@@ -59,7 +62,7 @@ Close the gap where a PR ships the feature an ADR or plan describes, but the ADR
 ### Phase 3 — Wire into the merge workflow
 
 - Add a step to `ways-of-working.md`'s "After merge" section (currently empty per source-plan review) pointing at `merge-status-sync.sh` as the replacement for the manual reminder — run from any branch, not from `main`, since the script itself opens its own branch/PR when it needs to write.
-- Evaluate (don't yet build) whether this becomes a required step in a GitHub Actions post-merge workflow — capture the tradeoffs as an Open Question below rather than deciding here.
+- Evaluate (don't yet build) whether this becomes a required step in a GitHub Actions post-merge workflow. Per Decision 9, if and when that workflow is built, it posts a PR comment on the merged PR listing any drifted ADRs/plans — not a follow-up issue.
 - Exit criterion: `ways-of-working.md` reflects the new tool-assisted step; the manual "did I forget to flip the ADR" failure mode has a documented, repeatable command to run instead of relying on memory.
 
 ## Risks
@@ -86,8 +89,3 @@ Close the gap where a PR ships the feature an ADR or plan describes, but the ADR
 .context/plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh .context/plans/*.md
 .context/plugins/pantheon-org/governance/adr-capture/scripts/validate-adr-frontmatter.sh docs/ADR/adr-*.md
 ```
-
-## Open Questions
-
-- Should Phase 3's GitHub Actions integration post a PR comment listing drifted ADRs/plans, or open a follow-up issue? Left for whoever picks up Phase 3.
-- Does the file-touch heuristic need to look at squash-merge commit messages too (for PRs merged without preserving individual commits), or is the `gh pr view --json files` list sufficient in all repos this might spread to? Untested against a squash-merged PR.
