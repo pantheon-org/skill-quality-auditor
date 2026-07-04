@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -26,11 +29,11 @@ jobs:
       - name: go vet
         run: go vet ./...
 
-      - uses: golangci/golangci-lint-action@v7
+      - uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7
         with:
           version: v2.11.4
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
 
       - name: markdownlint
         run: markdownlint-cli2 "**/*.md"
