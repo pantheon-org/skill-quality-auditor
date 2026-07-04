@@ -19,7 +19,7 @@ const (
 
 // Default models per provider (recorded in ADR-025). Override via LLM_MODEL.
 const (
-	DefaultModelAnthropic = "claude-sonnet-4-20250514"
+	DefaultModelAnthropic = "claude-sonnet-4-6"
 	DefaultModelOpenAI    = "gpt-4o"
 	DefaultModelGemini    = "gemini-2.0-flash"
 )

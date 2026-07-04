@@ -11,7 +11,7 @@ import (
 )
 
 // AnthropicClient implements Client against the Anthropic Messages API
-// (default model claude-sonnet-4-20250514, key ANTHROPIC_API_KEY).
+// (default model claude-sonnet-4-6, key ANTHROPIC_API_KEY).
 type AnthropicClient struct {
 	cfg  Config
 	http *http.Client
