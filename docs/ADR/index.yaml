@@ -266,3 +266,21 @@ entries:
     date: 2026-07-04
     context:
       - path: ".context/findings/github-action-packaging-2026-07-04.md"
+  - path: "ADR/adr-036-plumber-cicd-security-advisory-workflow.md"
+    adr: "ADR-036"
+    title: "ADR-036: Advisory-only Plumber CI/CD security workflow"
+    status: superseded
+    date: 2026-07-04
+    superseded_by: "adr-037"
+    context:
+      - path: ".context/findings/plumber-cicd-security-2026-07-04.md"
+      - path: ".context/plans/plumber-advisory-workflow-2026-07-04.md"
+  - path: "ADR/adr-037-plumber-critical-fail-issue-tracking.md"
+    adr: "ADR-037"
+    title: "ADR-037: Plumber CI/CD gate — fail on Critical, track lower severities as issues"
+    status: proposed
+    date: 2026-07-04
+    context:
+      - path: "docs/ADR/adr-036-plumber-cicd-security-advisory-workflow.md"
+      - path: ".context/findings/plumber-cicd-security-2026-07-04.md"
+      - path: ".context/plans/plumber-advisory-workflow-2026-07-04.md"
