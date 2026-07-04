@@ -40,8 +40,11 @@ def parse_frontmatter(text):
 
 entries = []
 missing = []
+plugins_dir = context_dir / "plugins"
 
 for md in sorted(context_dir.rglob("*.md")):
+    if plugins_dir in md.parents:
+        continue
     rel = str(md.relative_to(root))
     content = md.read_text()
     fm = parse_frontmatter(content)
