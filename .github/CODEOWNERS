@@ -1,0 +1,4 @@
+# Default owner for the whole repository.
+# Required for the main branch ruleset's "require code owner review" rule
+# (ISSUE-505 in the Plumber compliance backlog, see issue #169).
+* @thoroc
