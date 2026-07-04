@@ -1,6 +1,10 @@
 [config]
-model = "gemini/gemini-1.5-flash"
-fallback_models = ["gemini/gemini-1.5-flash"]
+# gemini-1.5-flash was retired by Google; keep this in sync with the
+# model/fallback_models set in .github/workflows/pr-agent.yml's env block
+# (the workflow env is what actually takes effect — this file is the
+# documented default / local-CLI fallback).
+model = "gemini/gemini-3.5-flash"
+fallback_models = ["mistral/mistral-small-2603", "cerebras/gpt-oss-120b"]
 
 [pr_description]
 extra_instructions = "This is a Go CLI (skill-auditor) and Tessl tile. Note when a change affects cmd/assets/ (the embedded SKILL.md, tile.json, evals, or references) versus the Go implementation, since those have different review/eval paths."

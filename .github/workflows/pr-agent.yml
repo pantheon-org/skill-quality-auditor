@@ -45,9 +45,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Gemini via Google AI Studio's free tier — no Anthropic/OpenAI/
           # Bedrock credential is available for this integration (ADR-041 #3).
-          config.model: "gemini/gemini-1.5-flash"
-          config.fallback_models: '["gemini/gemini-1.5-flash"]'
+          # gemini-1.5-flash was retired by Google; gemini-3.5-flash is the
+          # current stable flash-tier model (confirmed against
+          # ai.google.dev/gemini-api/docs/models 2026-07-05). Model IDs on
+          # every provider here are point-in-time — expect to need to bump
+          # these again as providers retire models (see the skill-quality.yml
+          # finding: the same class of bug hit claude-sonnet-4-20250514).
+          config.model: "gemini/gemini-3.5-flash"
+          # Mistral then Cerebras as fallbacks — Gemini's free tier was the
+          # primary rate-limit/single-point-of-failure risk this plan's
+          # review flagged; these give litellm somewhere to retry instead of
+          # just failing the (already continue-on-error) step.
+          config.fallback_models: '["mistral/mistral-small-2603", "cerebras/gpt-oss-120b"]'
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # PR-Agent has explicit MISTRAL.KEY handling (maps to MISTRAL_API_KEY).
+          MISTRAL.KEY: ${{ secrets.MISTRAL_API_KEY }}
+          # Cerebras has no PR-Agent-specific config key — litellm reads
+          # CEREBRAS_API_KEY directly from the environment.
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           # Only describe + review for this initial rollout; improve/ask are
           # deferred pending a trial-period read on signal-to-noise.
           github_action_config.auto_describe: "true"
