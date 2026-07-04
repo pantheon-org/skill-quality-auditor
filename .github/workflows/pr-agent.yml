@@ -64,6 +64,11 @@ jobs:
           # CEREBRAS_API_KEY directly from the environment.
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           # Only describe + review for this initial rollout; improve/ask are
-          # deferred pending a trial-period read on signal-to-noise.
+          # deferred pending a trial-period read on signal-to-noise (plan
+          # Decision 2). auto_improve must be explicitly "false", not left
+          # unset — smoke test #2 showed PR-Agent runs /improve anyway when
+          # this key is absent (internally: auto_improve=None still passes
+          # whatever check gates it, only an explicit "false" string disables it).
           github_action_config.auto_describe: "true"
           github_action_config.auto_review: "true"
+          github_action_config.auto_improve: "false"
