@@ -1,0 +1,74 @@
+name: PR Agent
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+    # PRs touching only cmd/assets/** already get an LLM review from the
+    # skill-quality LLM-judge (skill-quality.yml) — skip here to avoid a
+    # second, redundant opinion on the same diff. paths-ignore only skips
+    # the run when EVERY changed file matches, so mixed PRs still run.
+    paths-ignore:
+      - 'cmd/assets/**'
+  issue_comment:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  pr_agent_job:
+    # Fork PRs never see GEMINI_API_KEY/secrets on a plain `pull_request`
+    # trigger (GitHub redacts them) — skip rather than let the step fail
+    # with an opaque auth error. No fork PR has ever been opened against
+    # this repo, but forking is enabled, so this is a real (if rare) path.
+    # Mirrors plumber.yml's existing fork handling. `!= true` (not
+    # `== false`) because `issue_comment` events don't populate
+    # `pull_request.head.repo.fork` at all — it's null there, and this
+    # trigger must still run for that event.
+    if: ${{ github.event.sender.type != 'Bot' && github.event.pull_request.head.repo.fork != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Digest-pinned to the `0.38.0-github_action` multi-arch image
+      # (confirmed via Docker Hub's tags API, ADR-041 #4) rather than the
+      # floating `the-pr-agent/pr-agent@main` ref shown in the project's own
+      # quick-start — this repo pins every third-party action by immutable
+      # reference (see .plumber.yaml's actionsMustBePinnedByCommitSha).
+      #
+      # continue-on-error: this workflow is advisory-only (plan Decision 1)
+      # — a Gemini outage, rate-limit, or bad response must never turn this
+      # into a red, blocking check.
+      - name: PR Agent action step
+        continue-on-error: true
+        uses: docker://pragent/pr-agent@sha256:ea2ea90f072fd97708755e59827a317272f66097a1ef349eca23d39160bb0baf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Gemini via Google AI Studio's free tier — no Anthropic/OpenAI/
+          # Bedrock credential is available for this integration (ADR-041 #3).
+          # gemini-1.5-flash was retired by Google; gemini-3.5-flash is the
+          # current stable flash-tier model (confirmed against
+          # ai.google.dev/gemini-api/docs/models 2026-07-05). Model IDs on
+          # every provider here are point-in-time — expect to need to bump
+          # these again as providers retire models (see the skill-quality.yml
+          # finding: the same class of bug hit claude-sonnet-4-20250514).
+          config.model: "gemini/gemini-3.5-flash"
+          # Mistral then Cerebras as fallbacks — Gemini's free tier was the
+          # primary rate-limit/single-point-of-failure risk this plan's
+          # review flagged; these give litellm somewhere to retry instead of
+          # just failing the (already continue-on-error) step.
+          config.fallback_models: '["mistral/mistral-small-2603", "cerebras/gpt-oss-120b"]'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # PR-Agent has explicit MISTRAL.KEY handling (maps to MISTRAL_API_KEY).
+          MISTRAL.KEY: ${{ secrets.MISTRAL_API_KEY }}
+          # Cerebras has no PR-Agent-specific config key — litellm reads
+          # CEREBRAS_API_KEY directly from the environment.
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          # Only describe + review for this initial rollout; improve/ask are
+          # deferred pending a trial-period read on signal-to-noise (plan
+          # Decision 2). auto_improve must be explicitly "false", not left
+          # unset — smoke test #2 showed PR-Agent runs /improve anyway when
+          # this key is absent (internally: auto_improve=None still passes
+          # whatever check gates it, only an explicit "false" string disables it).
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_review: "true"
+          github_action_config.auto_improve: "false"
