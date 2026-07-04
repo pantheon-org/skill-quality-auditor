@@ -1,13 +1,13 @@
 ---
 title: "ADR-032: User-configurable scoring pattern overrides"
-status: proposed
+status: accepted
 date: 2026-07-03
 context:
   - path: ".context/plans/user-configurable-scoring-patterns-2026-07-03.md"
   - path: "docs/ADR/adr-028-scoring-pattern-config.md"
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-03
 
 ## Context
