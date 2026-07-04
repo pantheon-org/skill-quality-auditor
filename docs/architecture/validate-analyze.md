@@ -66,6 +66,10 @@ DetectStructuralConformance(skill)→ canonical section checks
 DetectAntiPatternSignals(skill)   → anti-pattern detection
 ```
 
+`DetectAntiPatternSignals` sources its hedge/vague/passive word lists from
+`internal/patternconfig` (the same maintainer-editable YAML config used by D1/D6 —
+see [Architecture overview](overview.md) and ADR-028) rather than hardcoded Go slices.
+
 ### Output
 
 Output type depends on flags:
