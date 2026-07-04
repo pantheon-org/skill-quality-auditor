@@ -1,7 +1,7 @@
 ---
 title: "Plan: Plumber CI/CD security workflow — fail on Critical, track the rest as issues"
 type: plan
-status: draft
+status: done
 date: 2026-07-04
 related:
   - ../findings/plumber-cicd-security-2026-07-04.md
@@ -87,6 +87,8 @@ Dependencies: Phase 1.
 - Confirm `score-push` did not publish anything to `score.getplumber.io`.
 - Confirm the gate step fails the job if and only if a Critical finding is present.
 - Confirm the issue-filing step does not create duplicate issues across repeated runs.
+
+**Verification outcome (2026-07-04):** all confirmed against the live repo. `permissions:` grew to `{ contents: read, issues: write, pull-requests: write }` — the extra scope is ADR-039's PR-comment step, not scope creep beyond what shipped. The gate/issue-filing/PR-comment design went through two live-caught corrections before landing (see ADR-038, ADR-039, and PR #124/#154 history): a commit-SHA-embedded dedup key that never matched, and a rollup issue that was being overwritten by concurrent PR runs. Both fixed and re-verified live. No branch-protection ruleset makes `plumber` an implicitly required check.
 
 ## Open Questions
 
