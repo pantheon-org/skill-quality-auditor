@@ -27,3 +27,7 @@ coverage.html
 !.context/
 !.context/**/
 !opencode.json
+
+# The broad !.context/**/ un-ignore above overrides the top-level .aislop/
+# rule for anything nested under .context/ — re-exclude it explicitly.
+.context/**/.aislop/
