@@ -1,7 +1,8 @@
 ---
 title: "ADR-037: Plumber CI/CD gate — fail on Critical, track lower severities as issues"
-status: proposed
+status: superseded
 date: 2026-07-04
+superseded_by: "adr-038"
 context:
   - path: "docs/ADR/adr-036-plumber-cicd-security-advisory-workflow.md"
   - path: ".context/findings/plumber-cicd-security-2026-07-04.md"
