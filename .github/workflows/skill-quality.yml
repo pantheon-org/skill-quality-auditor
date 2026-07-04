@@ -4,12 +4,12 @@ on:
   pull_request:
     paths:
       - 'cmd/assets/**'
-      - '**/*.go'
+      - '.context/plugins/**'
   push:
     branches: [main]
     paths:
       - 'cmd/assets/**'
-      - '**/*.go'
+      - '.context/plugins/**'
   schedule:
     # Nightly at 06:00 UTC — runs the LLM-judge advisory on main.
     - cron: '0 6 * * *'
