@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   issues: write
+  pull-requests: write
 
 concurrency:
   group: plumber-${{ github.ref }}
@@ -56,3 +57,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: scripts/plumber-file-issues.sh results.json
+
+      # Fork PRs run with a read-only GITHUB_TOKEN regardless of the
+      # permissions: block above, so gh pr comment would 403.
+      - name: Skip PR comment for fork PRs
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
+        run: echo "::notice::Fork PR — GITHUB_TOKEN is read-only, skipping the summary comment. See this check's log for the gate result."
+
+      - name: Comment gate result on the PR
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: scripts/plumber-pr-comment.sh results.json
