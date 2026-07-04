@@ -53,17 +53,22 @@ main.go
               │     └── prompt.go     (JudgePrompt, ActorMessages, JudgeMessages)
               │
               ├── patternconfig/ (externalised D1/D6/analysis-quality pattern words)
-              │     └── loads & validates cmd/assets/assets/config/scoring-patterns.yaml
-              │         against scoring-patterns.schema.json (ADR-028)
+              │     └── loads & validates scoring-patterns.yaml against
+              │         scoring-patterns.schema.json (ADR-028); LoadFromPath +
+              │         WriteDefault back the 5-tier override chain (ADR-032)
               │
               └── tokenize/   (text normalization)
                     └── tokenize.go (Normalize, Set, Counts)
 ```
 
-`internal/patternconfig.Get()` is initialised once in `cmd/root.go` and consumed by
-`scoreD1`, `scoreD6`, and `analysis/patterns.go` — so the beginner/expert signal words,
-"when not to use" phrases, and hedge/vague/passive word lists are maintainer-editable YAML,
-not Go constants. See ADR-028 and [Adding a scorer](../development/adding-a-scorer.md).
+`internal/patternconfig` is resolved once per invocation via `cmd/root.go`'s
+`PersistentPreRunE` and consumed by `scoreD1`, `scoreD6`, and `analysis/patterns.go` — so
+the beginner/expert signal words, "when not to use" phrases, and hedge/vague/passive word
+lists are maintainer-editable YAML, not Go constants. Resolution follows a 5-tier
+precedence (`-c/--config` flag → CWD file → per-OS default path → embedded config →
+hardcoded defaults; `eval` and `--no-user-config` skip straight to the embedded tier for
+reproducibility) — see ADR-028, ADR-032, and
+[Configuring scoring patterns](../development/setup.md#configuring-scoring-patterns).
 
 ## Data flow
 

@@ -13,6 +13,14 @@ Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-au
 | 3 | Allow skills to evolve with experience | NEVER treat a skill as final; ALWAYS revisit and improve |
 | 4 | Formalise ad hoc scripts after repeated use | ALWAYS use `.tmp/` for one-off scripts; formalise after 2nd use |
 | 5 | Never write temporary scripts outside `.tmp` | NEVER write ad hoc scripts outside `.tmp/` |
+| 6 | Follow the finding-to-plan workflow | ALWAYS follow the 7-step read → plan → index → branch → commit sequence when drafting a plan from a `.context/findings/` entry |
+| 7 | Always conduct session-end reflection | ALWAYS run a confidence audit and blind-spot check before concluding a session |
+| 8 | Never use `/tmp` or `/temp` — use `.tmp` | NEVER write temporary files to `/tmp/` or `/temp/`; ALWAYS use the repo-local `.tmp/` |
+| 9 | Never leak sensitive information | NEVER expose proprietary code, internal URLs, or other non-public data |
+| 10 | Always consider subagent delegation when authoring skills | PREFER an independent subagent for self-reflective, meta-cognitive, or adversarial review steps |
+| 11 | Never embed templates in markdown — use YAML template files | ALWAYS pair a template with a JSON Schema and a validation script under the skill's `assets/`/`scripts/` |
+| 12 | Always check skill overlap before creating new skills | ALWAYS scan existing skills' triggers/descriptions for overlap before proposing a new one |
+| 13 | Avoid Python/Node.js scripts in skills | PREFER bash/awk/sed over Python/Node.js for skill `scripts/` logic |
 
 To add a new rule, load the [`rules-management`](#rules-management) skill — it will load existing rules, check for duplicates, and append with the correct format.
 
@@ -33,7 +41,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **adr-capture** — capture Architecture Decision Records (ADRs) from `.context/` plans,
   findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the
-  machine-readable index.
+  machine-readable index. Also runs post-merge status sync: after a PR merges,
+  `merge-status-sync.sh` detects plans/ADRs left `active`/`proposed` when the merge should
+  have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
 - **rules-management** — manage the agent behavioural rules in `.agents/RULES.md` — load
   existing rules, check for duplicates, and append new rules in the standard format with
   directive and rationale.
