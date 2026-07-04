@@ -24,6 +24,11 @@
       "type": "anti-pattern",
       "why_given": "new knowledge",
       "content": "NEVER skip creating an ADR when a .context/ file contains a clear decision — without an ADR the decision is invisible to future agents."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER auto-flip an ADR's status from proposed to accepted, even when merge-status-sync.sh reports a strong (direct) link to a merged PR — acceptance is a deliberate decision requiring human confirmation, not a mechanical status field."
     }
   ]
 }

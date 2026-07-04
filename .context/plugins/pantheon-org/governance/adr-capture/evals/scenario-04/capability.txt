@@ -1,0 +1,1 @@
+Check a merged PR for plan/ADR status drift and correctly classify what to auto-flip versus flag.

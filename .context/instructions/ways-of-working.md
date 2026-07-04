@@ -53,7 +53,13 @@ When you implement what a plan describes, update its frontmatter `status: active
 
 ## After merge
 
-Delete the branch locally (GitHub auto-deletes remote branches after PR merge):
-```
-git checkout main && git pull && git branch -d <branch-name>
-```
+1. Delete the branch locally (GitHub auto-deletes remote branches after PR merge):
+   ```
+   git checkout main && git pull && git branch -d <branch-name>
+   ```
+
+2. Check whether the merged PR closes out any linked plan or ADR that's still `active`/`draft`/`proposed` — run this from any branch, not from `main`, since the script opens its own branch and PR when it has something to write:
+   ```
+   .context/plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh --dry-run <pr-number>
+   ```
+   Single-phase plans directly or frontmatter-linked to the PR auto-flip to `done` via a branch + PR when run without `--dry-run`. Multi-phase plans and ADRs are always flagged, never auto-applied — ADR acceptance stays a deliberate, separate decision (see `adr-capture`'s `references/merge-status-sync.md`). This replaces the manual "did I forget to flip the ADR" reminder.
