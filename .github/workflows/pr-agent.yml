@@ -17,7 +17,15 @@ permissions:
 
 jobs:
   pr_agent_job:
-    if: ${{ github.event.sender.type != 'Bot' }}
+    # Fork PRs never see GEMINI_API_KEY/secrets on a plain `pull_request`
+    # trigger (GitHub redacts them) — skip rather than let the step fail
+    # with an opaque auth error. No fork PR has ever been opened against
+    # this repo, but forking is enabled, so this is a real (if rare) path.
+    # Mirrors plumber.yml's existing fork handling. `!= true` (not
+    # `== false`) because `issue_comment` events don't populate
+    # `pull_request.head.repo.fork` at all — it's null there, and this
+    # trigger must still run for that event.
+    if: ${{ github.event.sender.type != 'Bot' && github.event.pull_request.head.repo.fork != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -26,7 +34,12 @@ jobs:
       # floating `the-pr-agent/pr-agent@main` ref shown in the project's own
       # quick-start — this repo pins every third-party action by immutable
       # reference (see .plumber.yaml's actionsMustBePinnedByCommitSha).
+      #
+      # continue-on-error: this workflow is advisory-only (plan Decision 1)
+      # — a Gemini outage, rate-limit, or bad response must never turn this
+      # into a red, blocking check.
       - name: PR Agent action step
+        continue-on-error: true
         uses: docker://pragent/pr-agent@sha256:ea2ea90f072fd97708755e59827a317272f66097a1ef349eca23d39160bb0baf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

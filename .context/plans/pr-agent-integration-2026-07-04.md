@@ -58,16 +58,17 @@ Add `The-PR-Agent/pr-agent` as an advisory GitHub Action that posts `/describe` 
 
 ### Phase 1 — Wire in the advisory workflow
 
-- Create `.github/workflows/pr-agent.yml`: trigger on `pull_request` (`opened`, `reopened`, `ready_for_review`) with `paths-ignore: ['cmd/assets/**']`, plus `issue_comment`; `permissions: { issues: write, pull-requests: write }`; `uses: docker://pragent/pr-agent@sha256:ea2ea90f072fd97708755e59827a317272f66097a1ef349eca23d39160bb0baf`; env `GITHUB_TOKEN`, `config.model: "gemini/gemini-1.5-flash"`, `config.fallback_models: '["gemini/gemini-1.5-flash"]'`, `GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}`, `github_action_config.auto_describe: "true"`, `github_action_config.auto_review: "true"` (`auto_improve` left unset).
-- Add a `.pr_agent.toml` scoping tone/focus to this repo (Go idioms, CLI UX, test coverage).
+- Create `.github/workflows/pr-agent.yml`: trigger on `pull_request` (`opened`, `reopened`, `ready_for_review`) with `paths-ignore: ['cmd/assets/**']`, plus `issue_comment`; job-level `if` guards on non-bot sender AND non-fork PR (`github.event.pull_request.head.repo.fork != true` — `!= true`, not `== false`, because `issue_comment` events don't populate that path at all and must still run); `permissions: { issues: write, pull-requests: write }`; `uses: docker://pragent/pr-agent@sha256:ea2ea90f072fd97708755e59827a317272f66097a1ef349eca23d39160bb0baf`; step-level `continue-on-error: true` (advisory-only per Decision 1 — a Gemini outage/rate-limit must never redden this check); env `GITHUB_TOKEN`, `config.model: "gemini/gemini-1.5-flash"`, `config.fallback_models: '["gemini/gemini-1.5-flash"]'`, `GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}`, `github_action_config.auto_describe: "true"`, `github_action_config.auto_review: "true"` (`auto_improve` left unset).
+- Add a `.pr_agent.toml` scoping tone/focus to this repo (Go idioms, CLI UX, test coverage), plus a `pr_reviewer.extra_instructions` line telling the reviewer to disregard `cmd/assets/**` changes — PR-Agent has no native path-exclusion config (only PR title/branch/label/author/repo and file-extension/language-framework ignores), so a prompt-level instruction is the best available mitigation for the mixed-PR double-review gap (best-effort, not a hard guarantee).
 - Smoke-test on a throwaway PR to confirm `/describe` and `/review` comments post correctly and the Plumber gate passes with the pinned digest.
 - Exit criterion: a PR touching non-`cmd/assets/` files shows PR-Agent `/describe` and `/review` comments; a PR touching only `cmd/assets/**` shows none; Plumber CI passes; no `contents: write` requested anywhere in the new workflow.
 
 ### Phase 2 — Observe
 
-- Run across real PRs for a fixed window (proposed: 2 weeks, mirroring the proving-period language already used for Tessl review and `agent-scan`).
-- Track: comment quality/signal, false positives, any overlap/noise on PRs that also touch `cmd/assets/**`, and rate-limit throttling against Gemini's free-tier quota.
-- Exit criterion: enough observed runs to decide on enabling `/improve`/`/ask`, adjusting scope, upgrading to a paid tier, or dropping the integration.
+- **Owner: Thomas.**
+- Run across real PRs for a fixed window: **2 weeks, no additional minimum-PR-count or numeric threshold** — whatever PR volume occurs in that window is the dataset for the Phase 3 decision (a deliberate choice to keep this lightweight rather than instrument thresholds up front; if the window turns out too quiet to judge anything, extend it rather than retrofit thresholds).
+- Track: comment quality/signal, false positives, any overlap/noise on PRs that also touch `cmd/assets/**` (despite the Phase 1 prompt-instruction mitigation), and rate-limit throttling against Gemini's free-tier quota.
+- Exit criterion: the 2-week window has elapsed; Thomas makes the Phase 3 call from whatever was observed.
 
 ### Phase 3 — Decide on next tier
 
@@ -81,7 +82,9 @@ Add `The-PR-Agent/pr-agent` as an advisory GitHub Action that posts `/describe` 
 - **Digest drift** — pinning by digest means picking up upstream fixes requires a manual re-pin; a forgotten digest can silently go stale. Mitigated by treating the digest as a recurring maintenance item, same as any other pinned action in this repo.
 - **Docker-based action latency** — `uses: docker://...` steps pull an image on every run, unlike composite/JS actions; adds latency to every PR. Acceptable for an advisory step; revisit if it materially slows CI.
 - **Review fatigue** — low-signal `/review` comments risk reviewers tuning the bot out entirely, the same alert-fatigue risk flagged in the `agent-scan` plan. Phase 2's observation window exists to catch this before Phase 3.
-- **Plumber may still flag the docker step** — Decision 5's reasoning (docker refs fall outside the GitHub Action pinning/authorized-sources controls) is based on reading the control descriptions, not a live Plumber run against this exact workflow. If Plumber's `plumber.yml` run does flag it, add `the-pr-agent/pr-agent` to `trustedGithubActions` at that point.
+- **Mixed-path double review is not fully solved** — the Phase 1 `pr_reviewer.extra_instructions` line asking PR-Agent to disregard `cmd/assets/**` is a prompt-level instruction, not an enforced filter (PR-Agent has no native path-exclusion config). A PR mixing Go and skill-asset changes may still get commentary from both this bot and the `skill-quality.yml` judge on the asset portion. Accepted for the trial period; revisit only if Phase 2 shows it's actually noisy in practice.
+- **No automated kill-switch** — if the key leaks, output turns abusive, or Gemini throttling degrades the experience badly, the only rollback is manually disabling the workflow from the Actions tab or reverting the merge commit. Accepted as sufficient for an advisory-only, low-traffic integration; matches how other advisory workflows in this repo (e.g. the Tessl review step) are handled.
+- **Plumber does flag the docker step, but non-Critically — verified, not speculative.** A live Plumber run on the PR that introduced `pr-agent.yml` confirmed: the "container image pinning" control finds 0 container images (it doesn't classify `uses: docker://...` steps as images), but the "third-party actions must be pinned by commit SHA" control counts it as 1 of 25 action refs and marks it "Not Pinned By SHA" (a `sha256:` digest isn't a 40-char commit SHA). It's non-Critical, so `plumber-gate.sh` passes ("No Critical-severity Plumber findings. Gate passed."), but per this repo's ADR-038 process it will appear in the non-Critical rollup issue once merged to `main`. Decision 5's "no allowlist entry needed" call was correct (25/25 authorized without one), but its assumption that the docker ref is invisible to Plumber's pinning control was wrong — it's visible, just not blocking. Accepted as a known, tracked, non-Critical finding rather than something to fix.
 
 ## Verification
 
@@ -91,8 +94,20 @@ gh pr view <pr-number> --json comments --jq '.comments[].body' | grep -iE "pr-ag
 
 # Confirm a cmd/assets/-only PR does NOT trigger pr-agent.yml
 gh run list --workflow=pr-agent.yml --json headBranch,event | jq .
+
+# Confirm Plumber's actual disposition on the docker step (expect: non-Critical
+# "Not Pinned By SHA" finding, gate still passes)
+gh run view <plumber-run-id> --log | grep -i "Not Pinned By SHA\|Gate passed"
 ```
 
 ## Open Questions
 
-- None remaining from the original draft — provider (Gemini/free-tier), digest, and `cmd/assets/**` exclusion mechanism are now resolved above. The only open item is Phase 0's human action: provisioning `GEMINI_API_KEY`.
+Resolved via a 3-reviewer plan review (Technical/Strategic/Risk, all Claude Sonnet 5) plus a follow-up interview on 2026-07-05:
+
+- **Phase 2 exit bar**: fixed 2-week window, no additional PR-count or numeric thresholds (deliberately kept lightweight).
+- **Phase 2/3 owner**: Thomas.
+- **Data egress to Google AI Studio**: self-certified as acceptable — this repo (skill-quality-auditor) is public, open-source Go tooling; diffs sent to Gemini are source code, docs, and CI config, never PLG participant or customer data.
+- **`cmd/assets/**` mixed-PR double-review**: no native PR-Agent fix exists; mitigated with a prompt-level `extra_instructions` line (see Phase 1), accepted as best-effort rather than enforced.
+- **Kill-switch**: manual disable via GitHub UI or commit revert is sufficient; no repo-variable toggle added.
+- **Fork-PR trigger safety**: confirmed via `gh pr list` that this repo has had zero fork PRs historically (though `allow_forking: true`); the workflow already used the safe `pull_request` trigger (not `pull_request_target`), and a job-level fork guard was added in Phase 1 as defense-in-depth, mirroring `plumber.yml`'s existing pattern.
+- **Plumber disposition on the docker step**: verified live against PR #176 (see Risks) rather than left as a speculative risk.
