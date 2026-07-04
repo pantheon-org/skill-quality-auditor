@@ -1,0 +1,58 @@
+name: Plumber
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: plumber-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plumber:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # `getplumber/plumber` pinned by commit SHA of the latest tagged release
+      # (v0.3.86), not a floating tag — consistent with the pinning hygiene
+      # this repo's own .plumber.yaml enforces on every other third-party action.
+      #
+      # threshold: '0' + soft-fail: true make the composite action's own
+      # built-in "Enforce threshold" step a no-op for compliance purposes —
+      # its exit code reflects an overall A-E score, not per-finding severity,
+      # and must never decide pass/fail here. A non-zero exit from this step
+      # therefore only ever means Plumber itself failed to run (bad config,
+      # install/attestation failure), which should fail the job.
+      - name: Run Plumber
+        uses: getplumber/plumber@a697e9c316b058d279861719c73b87093fb5a60f # v0.3.86
+        with:
+          score-push: false
+          threshold: '0'
+          soft-fail: true
+          upload-sarif: false
+          sarif: ''
+          output: results.json
+
+      - name: Gate on Critical findings
+        run: scripts/plumber-gate.sh results.json
+
+      # Fork PRs run pull_request with a read-only GITHUB_TOKEN regardless of
+      # the permissions: block above, so gh issue create/list would 403.
+      - name: Skip issue filing for fork PRs
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
+        run: echo "::notice::Fork PR — GITHUB_TOKEN is read-only, skipping issue filing for High/Medium/Low findings. These surface once the change lands via a push-to-main run."
+
+      - name: File issues for High/Medium/Low findings
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: scripts/plumber-file-issues.sh results.json
