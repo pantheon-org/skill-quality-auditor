@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.21.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.20.0...v0.21.0) (2026-07-04)
+
+
+### Features
+
+* **ci:** Plumber CI/CD security gate — fail on Critical, track the rest as issues ([#124](https://github.com/pantheon-org/skill-quality-auditor/issues/124)) ([3817570](https://github.com/pantheon-org/skill-quality-auditor/commit/3817570125cd19e466095ea3825cdb13277a1ccb))
+* **ci:** single rollup issue for Plumber findings (fixes duplicate-issue bug) ([#154](https://github.com/pantheon-org/skill-quality-auditor/issues/154)) ([bfabdc3](https://github.com/pantheon-org/skill-quality-auditor/commit/bfabdc3c4092a1744e44261ce0c65fc80c9dce90))
+* **governance:** post-merge ADR/plan status sync ([#119](https://github.com/pantheon-org/skill-quality-auditor/issues/119)) ([bf1ee3b](https://github.com/pantheon-org/skill-quality-auditor/commit/bf1ee3b9a2b775204e7c7cee90585f25fa1f42e7))
+
 ## [0.20.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.19.0...v0.20.0) (2026-07-04)
 
 
