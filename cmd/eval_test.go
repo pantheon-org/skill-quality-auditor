@@ -128,6 +128,7 @@ func TestEval_structuralOnly_noKey(t *testing.T) {
 	t.Setenv("GEMINI_API_KEY", "")
 	t.Setenv("GOOGLE_API_KEY", "")
 
+	resetConfigFlags(t)
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
 	rootCmd.SetErr(&buf)
@@ -154,6 +155,7 @@ func TestEval_structuralOnly_criteriaMismatchFails(t *testing.T) {
 	t.Setenv("ANTHROPIC_API_KEY", "")
 	t.Setenv("LLM_PROVIDER", "")
 
+	resetConfigFlags(t)
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
 	rootCmd.SetErr(&buf)
@@ -174,6 +176,7 @@ func TestEval_noEvalsDir(t *testing.T) {
 	t.Setenv("ANTHROPIC_API_KEY", "")
 	t.Setenv("LLM_PROVIDER", "")
 
+	resetConfigFlags(t)
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
 	rootCmd.SetErr(&buf)
@@ -643,6 +646,7 @@ func TestEval_fullCommandStructuralPipeline(t *testing.T) {
 	t.Setenv("ANTHROPIC_API_KEY", "")
 	t.Setenv("LLM_PROVIDER", "")
 
+	resetConfigFlags(t)
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
 	rootCmd.SetErr(&buf)

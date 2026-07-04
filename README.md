@@ -84,8 +84,12 @@ Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to 
 | `-s / --store` | evaluate, analyze, batch, duplication, trend |
 | `-r / --repo-root` | most commands |
 | `-n / --dry-run` | aggregate, remediate, prune, init |
+| `-c / --config <path>` | global — overrides the D1/D6/analysis-quality scoring pattern lists |
+| `--no-user-config` | global — ignore any config file and score with the embedded/built-in patterns only |
 
 `--json` and `--markdown` are mutually exclusive. Default format: JSON for evaluate/analyze/batch/remediate/aggregate, Markdown for duplication/trend. Run any command with `--help` for the full flag reference.
+
+`-c/--config` and `--no-user-config` are persistent flags accepted by every scoring command; `skill-auditor eval` ignores both and always scores against the embedded config, so CI results stay reproducible. See [Configuring scoring patterns](docs/development/setup.md#configuring-scoring-patterns) for the full 5-tier precedence chain and the per-OS default config path.
 
 ```bash
 skill-auditor evaluate path/to/skill              # JSON (default)

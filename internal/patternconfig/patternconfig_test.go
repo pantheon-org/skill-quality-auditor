@@ -4,6 +4,7 @@ import (
 	"embed"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -126,6 +127,175 @@ func findRepoRoot(t *testing.T) string {
 			t.Fatal("could not find repo root (no go.mod found)")
 		}
 		dir = parent
+	}
+}
+
+func TestLoadFromPath_ValidConfig_OverridesActive(t *testing.T) {
+	resetActive(t)
+	cfg, ok, err := LoadFromPath(filepath.Join("testdata", "valid.yaml"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !ok {
+		t.Fatal("expected ok=true for a valid config")
+	}
+	if cfg.Patterns.D1KnowledgeDelta.BeginnerSignals[0] != "custom beginner" {
+		t.Errorf("expected returned config to reflect the file, got %v", cfg.Patterns.D1KnowledgeDelta.BeginnerSignals)
+	}
+	active := Get()
+	if active.Patterns.D1KnowledgeDelta.BeginnerSignals[0] != "custom beginner" {
+		t.Errorf("expected active config to be overridden, got %v", active.Patterns.D1KnowledgeDelta.BeginnerSignals)
+	}
+}
+
+func TestLoadFromPath_MissingFile_SilentlySkipped(t *testing.T) {
+	resetActive(t)
+	_, ok, err := LoadFromPath(filepath.Join("testdata", "does-not-exist.yaml"))
+	if err != nil {
+		t.Errorf("expected nil error for an absent file, got %v", err)
+	}
+	if ok {
+		t.Error("expected ok=false for an absent file")
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched when the file is absent")
+	}
+}
+
+func TestLoadFromPath_Directory_ReturnsDistinctError(t *testing.T) {
+	resetActive(t)
+	dir := t.TempDir()
+	_, ok, err := LoadFromPath(dir)
+	if ok {
+		t.Error("expected ok=false for a directory")
+	}
+	if err == nil {
+		t.Fatal("expected an error for a directory")
+	}
+	if !strings.Contains(err.Error(), "directory") {
+		t.Errorf("expected error to mention 'directory', got %v", err)
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched when the path is a directory")
+	}
+}
+
+func TestLoadFromPath_PermissionDenied_ReturnsError(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: permission bits are not enforced")
+	}
+	resetActive(t)
+	dir := t.TempDir()
+	path := filepath.Join(dir, "unreadable.yaml")
+	if err := os.WriteFile(path, []byte("version: 1\n"), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+	if err := os.Chmod(path, 0o000); err != nil {
+		t.Fatalf("chmod: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(path, 0o644) })
+
+	_, ok, err := LoadFromPath(path)
+	if ok {
+		t.Error("expected ok=false for a permission-denied file")
+	}
+	if err == nil {
+		t.Fatal("expected an error for a permission-denied file")
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched on a permission error")
+	}
+}
+
+func TestLoadFromPath_SymlinkToMissingTarget_ReturnsError(t *testing.T) {
+	resetActive(t)
+	dir := t.TempDir()
+	link := filepath.Join(dir, "dangling.yaml")
+	if err := os.Symlink(filepath.Join(dir, "does-not-exist.yaml"), link); err != nil {
+		t.Fatalf("symlink: %v", err)
+	}
+	_, ok, err := LoadFromPath(link)
+	if ok {
+		t.Error("expected ok=false for a dangling symlink")
+	}
+	if err == nil {
+		t.Fatal("expected an error for a dangling symlink")
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched for a dangling symlink")
+	}
+}
+
+func TestLoadFromPath_MalformedYAML_ReturnsDistinctError(t *testing.T) {
+	resetActive(t)
+	_, ok, err := LoadFromPath(filepath.Join("testdata", "malformed.yaml"))
+	if ok {
+		t.Error("expected ok=false for malformed YAML")
+	}
+	if err == nil || !strings.Contains(err.Error(), "parse YAML") {
+		t.Errorf("expected a parse error, got %v", err)
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched for malformed YAML")
+	}
+}
+
+func TestLoadFromPath_MissingGroups_ReturnsDistinctError(t *testing.T) {
+	resetActive(t)
+	_, ok, err := LoadFromPath(filepath.Join("testdata", "partial-groups.yaml"))
+	if ok {
+		t.Error("expected ok=false for a config missing a pattern group")
+	}
+	if err == nil || !strings.Contains(err.Error(), "missing groups") {
+		t.Errorf("expected a missing-groups error naming the group, got %v", err)
+	}
+	if !strings.Contains(err.Error(), "d6_freedom_calibration.when_not_to_use") {
+		t.Errorf("expected error to name the missing group, got %v", err)
+	}
+	if Get().Patterns.D1KnowledgeDelta.BeginnerSignals[0] != defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals[0] {
+		t.Error("expected active config to remain untouched when groups are missing")
+	}
+}
+
+func TestLoadFromPath_EmptyGroup_ReturnsDistinctError(t *testing.T) {
+	resetActive(t)
+	_, ok, err := LoadFromPath(filepath.Join("testdata", "empty-group.yaml"))
+	if ok {
+		t.Error("expected ok=false for an empty pattern group")
+	}
+	if err == nil || !strings.Contains(err.Error(), "missing groups") {
+		t.Errorf("expected a missing-groups error, got %v", err)
+	}
+}
+
+func TestWriteDefault_RoundTrips(t *testing.T) {
+	resetActive(t)
+	dir := t.TempDir()
+	path := filepath.Join(dir, "generated", "scoring-patterns.yaml")
+	if err := WriteDefault(path, defaultConfig); err != nil {
+		t.Fatalf("WriteDefault: %v", err)
+	}
+	cfg, ok, err := LoadFromPath(path)
+	if err != nil || !ok {
+		t.Fatalf("expected the written file to load back cleanly, ok=%v err=%v", ok, err)
+	}
+	assertSameStrings(t, "beginner_signals", cfg.Patterns.D1KnowledgeDelta.BeginnerSignals, defaultConfig.Patterns.D1KnowledgeDelta.BeginnerSignals)
+	assertSameStrings(t, "when_not_to_use", cfg.Patterns.D6FreedomCalibration.WhenNotToUse, defaultConfig.Patterns.D6FreedomCalibration.WhenNotToUse)
+}
+
+func TestWriteDefault_SurfacesWriteFailure(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: permission bits are not enforced")
+	}
+	dir := t.TempDir()
+	if err := os.Chmod(dir, 0o500); err != nil {
+		t.Fatalf("chmod: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+
+	path := filepath.Join(dir, "subdir", "scoring-patterns.yaml")
+	if err := WriteDefault(path, defaultConfig); err == nil {
+		t.Error("expected WriteDefault to surface a write failure, got nil")
 	}
 }
 

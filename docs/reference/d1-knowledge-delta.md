@@ -14,10 +14,17 @@
 
 **Core principle:** Skill = Expert Knowledge − What AI Assistants Already Know
 
-**Signal word configuration:** the beginner-signal and expert-signal phrase lists used to
-detect redundancy are not hardcoded in `scorer/d1_knowledge_delta.go` — they live in
-`cmd/assets/assets/config/scoring-patterns.yaml` under `patterns.d1_knowledge_delta`, loaded
-via `internal/patternconfig`. Edit that YAML file (see ADR-028) to tune the signal words.
+## Pattern configuration
+
+The beginner-signal and expert-signal phrase lists used to detect redundancy are not
+hardcoded in `scorer/d1_knowledge_delta.go` — they live in `scoring-patterns.yaml` under
+`patterns.d1_knowledge_delta`, loaded via `internal/patternconfig`. Maintainers editing the
+shipped defaults tune `cmd/assets/assets/config/scoring-patterns.yaml` directly (see
+ADR-028). Anyone running a pre-built binary can override the same lists without
+recompiling — see [Configuring scoring patterns](../development/setup.md#configuring-scoring-patterns)
+for the full mechanism (`-c/--config`, a project-local `./scoring-patterns.yaml`, or a
+per-OS user config directory). `skill-auditor eval` always scores against the embedded
+defaults regardless of any override, so CI eval results stay reproducible.
 
 ## Three Knowledge Types
 

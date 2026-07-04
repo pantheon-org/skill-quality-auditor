@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -17,6 +18,36 @@ import (
 type exitCoder interface {
 	ExitCode() int
 }
+
+// embeddedConfigPath is the location of the embedded scoring-patterns.yaml
+// inside embeddedConfig (see cmd/embed.go). It is the tier-4/5 fallback for
+// every scoring command, and the only source ever used by "eval".
+const embeddedConfigPath = "assets/assets/config/scoring-patterns.yaml"
+
+// userConfigDirName/userConfigFileName name the default per-OS config
+// location and the opportunistic CWD override:
+//
+//	Linux:   $XDG_CONFIG_HOME/skill-quality-auditor/scoring-patterns.yaml (or ~/.config/... )
+//	macOS:   ~/Library/Application Support/skill-quality-auditor/scoring-patterns.yaml
+//	Windows: %AppData%\skill-quality-auditor\scoring-patterns.yaml
+const (
+	userConfigDirName  = "skill-quality-auditor"
+	userConfigFileName = "scoring-patterns.yaml"
+)
+
+// userConfigDir is a seam over os.UserConfigDir so tests can point the
+// default config-directory tier at a scratch directory instead of the real
+// per-OS user config location.
+var userConfigDir = os.UserConfigDir
+
+// configFlag and noUserConfigFlag back the persistent -c/--config and
+// --no-user-config flags declared in init() below. They are package vars
+// (rather than fields on a struct) because they must be visible to
+// PersistentPreRunE at the root level, ahead of any subcommand's own flags.
+var (
+	configFlag       string
+	noUserConfigFlag bool
+)
 
 // buildVersion is injected by GoReleaser via ldflags at release time.
 // It takes precedence over the version embedded in tile.json.
@@ -85,7 +116,85 @@ func exitCodeFor(err error) int {
 }
 
 func init() {
-	patternconfig.Init(embeddedConfig, "assets/assets/config/scoring-patterns.yaml")
+	rootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "path to a scoring-patterns.yaml override (hard error if missing or invalid)")
+	rootCmd.PersistentFlags().BoolVar(&noUserConfigFlag, "no-user-config", false, "ignore CWD/user config files and score with the embedded/built-in patterns only")
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		return resolveConfig(cmd.Name() == "eval")
+	}
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.Version = version
+}
+
+// resolveConfig implements the 5-tier scoring-pattern precedence:
+//
+//  1. Explicit -c/--config flag — hard error if missing or invalid.
+//  2. ./scoring-patterns.yaml in the current working directory — malformed
+//     warns and falls through; absent is silently skipped. Never auto-created.
+//  3. The default per-OS config-directory path — malformed warns and falls
+//     through; absent falls through to tier 4 and is then auto-generated
+//     from whatever tier 4/5 resolves to, best-effort.
+//  4. The embedded scoring-patterns.yaml.
+//  5. The hardcoded defaults built into internal/patternconfig.
+//
+// isEval and --no-user-config both skip straight to tier 4/5, ignoring the
+// flag, the CWD file, and the default path entirely — eval scenarios must be
+// reproducible across machines and CI runners.
+func resolveConfig(isEval bool) error {
+	if isEval || noUserConfigFlag {
+		patternconfig.Init(embeddedConfig, embeddedConfigPath)
+		return nil
+	}
+
+	if configFlag != "" {
+		_, ok, err := patternconfig.LoadFromPath(configFlag)
+		if err != nil {
+			return fmt.Errorf("--config %s: %w", configFlag, err)
+		}
+		if !ok {
+			return fmt.Errorf("--config %s: no such file", configFlag)
+		}
+		return nil
+	}
+
+	if cwd, err := os.Getwd(); err == nil {
+		cwdPath := filepath.Join(cwd, userConfigFileName)
+		switch _, ok, err := patternconfig.LoadFromPath(cwdPath); {
+		case err != nil:
+			warnf("ignoring %s: %v", cwdPath, err)
+		case ok:
+			return nil
+		}
+	}
+
+	if defaultPath, err := defaultConfigPath(); err == nil {
+		switch _, ok, err := patternconfig.LoadFromPath(defaultPath); {
+		case err != nil:
+			warnf("ignoring %s: %v", defaultPath, err)
+		case ok:
+			return nil
+		default:
+			patternconfig.Init(embeddedConfig, embeddedConfigPath)
+			if werr := patternconfig.WriteDefault(defaultPath, patternconfig.Get()); werr != nil {
+				warnf("could not write default pattern config to %s: %v", defaultPath, werr)
+			}
+			return nil
+		}
+	}
+
+	patternconfig.Init(embeddedConfig, embeddedConfigPath)
+	return nil
+}
+
+// defaultConfigPath returns the per-OS default config-directory path for
+// scoring-patterns.yaml (see userConfigDirName/userConfigFileName above).
+func defaultConfigPath() (string, error) {
+	dir, err := userConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, userConfigDirName, userConfigFileName), nil
+}
+
+func warnf(format string, a ...any) {
+	fmt.Fprintf(os.Stderr, "warning: "+format+"\n", a...)
 }

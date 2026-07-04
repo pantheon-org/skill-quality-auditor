@@ -32,6 +32,7 @@ const fixturesBase = "../testdata/fixtures"
 
 func runBatch(t *testing.T, args ...string) (string, error) {
 	t.Helper()
+	resetConfigFlags(t)
 	batchCmd.ResetFlags()
 	batchCmd.Flags().BoolP("json", "j", false, "emit JSON array output")
 	batchCmd.Flags().BoolP("markdown", "m", false, "emit Markdown table output")
