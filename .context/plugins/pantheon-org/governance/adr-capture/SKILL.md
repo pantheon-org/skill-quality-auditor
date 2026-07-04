@@ -94,6 +94,7 @@ Create an ADR whenever a `.context/` file or a review makes a **binding decision
 3. Run the index regeneration script after creating the ADR
 4. Set `status: proposed` initially; promote to `accepted` after implementation starts
 5. When a decision is superseded: set `status: superseded` and `superseded_by` on the old ADR; create a new ADR referencing the old one via `context:`
+6. After a PR merges, run `scripts/merge-status-sync.sh --dry-run <pr-number>` to check whether the PR closes out any linked plan or ADR that's still `active`/`draft`/`proposed`. Single-phase plans directly or frontmatter-linked to the PR auto-flip to `done` via a branch + PR when run without `--dry-run`; multi-phase plans, ADRs, and file-touch-only links are always flagged for a human to confirm — see `references/merge-status-sync.md`.
 
 ## Scripts
 
@@ -101,6 +102,7 @@ Create an ADR whenever a `.context/` file or a review makes a **binding decision
 scripts/validate-adr-frontmatter.sh        # Validate ADR frontmatter against JSON schema
 scripts/regenerate-adr-index.sh            # Scan docs/ADR/ and regenerate index.yaml
 scripts/check-undocumented-decisions.sh    # Find decisions without ADR coverage
+scripts/merge-status-sync.sh               # Detect and (optionally) apply post-merge plan/ADR status drift
 ```
 
 ## Mindset
@@ -147,3 +149,4 @@ Decision not found in ADR index         | Check the ADR has context: and valid f
 | --- | --- | --- |
 | ADR frontmatter field rules, status lifecycle, and validation | [ADR Frontmatter Schema](references/adr-frontmatter-schema.md) | Validating or debugging ADR frontmatter errors |
 | Step-by-step supersession workflow with examples | [ADR Supersession](references/adr-supersession.md) | Reversing or replacing an existing decision via supersession |
+| Post-merge plan/ADR status drift detection: signals, auto-flip rules, usage | [Merge Status Sync](references/merge-status-sync.md) | Checking or applying status drift after a PR merges |

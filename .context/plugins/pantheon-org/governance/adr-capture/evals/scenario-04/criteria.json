@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to run the post-merge drift check, correctly classify signal strength, and respect the never-auto-flip-ADRs rule.",
+  "checklist": [
+    {"name": "Drift check run", "description": "merge-status-sync.sh --dry-run (or equivalent) run against the merged PR before concluding", "max_score": 25},
+    {"name": "Drift correctly identified", "description": "ADR-032 identified as drifted (still proposed) with the correct direct signal", "max_score": 25},
+    {"name": "Never auto-flip ADRs", "description": "ADR-032 reported as flagged for confirmation, never silently flipped to accepted", "max_score": 30},
+    {"name": "No false positive on the plan", "description": "The already-done plan is not reported as drift", "max_score": 20}
+  ]
+}
