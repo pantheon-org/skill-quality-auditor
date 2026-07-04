@@ -116,3 +116,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** Skills with overlapping triggers fragment agent attention and confuse discovery. A 30-second overlap check prevents duplicate work and surfaces consolidation opportunities before they become maintenance debt.
 
+---
+
+### Rule: Avoid Python/Node.js scripts in skills
+
+**Directive:** NEVER implement a skill's `scripts/` logic in Python or Node.js when a pure POSIX shell (bash/awk/sed) implementation is feasible. PREFER bash/awk/sed for skill scripts, even where it requires more code than an equivalent Python one-liner.
+
+**Rationale:** Skill scripts under `.context/plugins/` run on whatever machine invokes the skill; bash/awk/sed are available on virtually every Unix-like system by default, while Python 3 and Node.js are not guaranteed to be installed or on `PATH`. A skill that silently depends on an uninstalled interpreter fails opaquely for portability reasons that a shell-only implementation avoids entirely.
+
