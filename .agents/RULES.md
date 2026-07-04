@@ -124,3 +124,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** Skill scripts under `.context/plugins/` run on whatever machine invokes the skill; bash/awk/sed are available on virtually every Unix-like system by default, while Python 3 and Node.js are not guaranteed to be installed or on `PATH`. A skill that silently depends on an uninstalled interpreter fails opaquely for portability reasons that a shell-only implementation avoids entirely.
 
+---
+
+### Rule: No man left behind — triage every warning surfaced during work
+
+**Directive:** NEVER leave a warning, issue, or error unaddressed just because it is unrelated to the current task, including ones surfaced incidentally by a script, linter, build, or tool run. ALWAYS triage it in the same session: either fix it, or explicitly defer it with a documented reason (e.g. a `.context/findings/` entry or a note to the user) — never let it pass by silently.
+
+**Rationale:** Incidental warnings are often the cheapest signal of latent problems available — ignoring them because they're "out of scope" lets known issues accumulate invisibly until they resurface as harder-to-diagnose failures. Triage-or-document costs little and keeps the repository's issue surface honest.
+
