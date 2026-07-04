@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   issues: write
+  pull-requests: write
 
 concurrency:
   group: plumber-${{ github.ref }}
@@ -44,15 +45,29 @@ jobs:
       - name: Gate on Critical findings
         run: scripts/plumber-gate.sh results.json
 
-      # Fork PRs run pull_request with a read-only GITHUB_TOKEN regardless of
-      # the permissions: block above, so gh issue create/list would 403.
-      - name: Skip issue filing for fork PRs
-        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
-        run: echo "::notice::Fork PR — GITHUB_TOKEN is read-only, skipping issue filing for High/Medium/Low findings. These surface once the change lands via a push-to-main run."
-
+      # Only push to main updates the rollup issue. It reflects the state of
+      # main, not a PR branch's speculative merged state — running this on
+      # pull_request too would mean concurrent/unrelated PRs fight over the
+      # single rollup issue, each overwriting it with their own branch's
+      # findings. The Critical gate above still runs on every PR; only the
+      # non-blocking backlog tracking is push-to-main-only.
       - name: File issues for High/Medium/Low findings
-        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        if: always() && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: scripts/plumber-file-issues.sh results.json
+
+      # Fork PRs run with a read-only GITHUB_TOKEN regardless of the
+      # permissions: block above, so gh pr comment would 403.
+      - name: Skip PR comment for fork PRs
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
+        run: echo "::notice::Fork PR — GITHUB_TOKEN is read-only, skipping the summary comment. See this check's log for the gate result."
+
+      - name: Comment gate result on the PR
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: scripts/plumber-pr-comment.sh results.json
