@@ -1,7 +1,8 @@
 ---
 title: "ADR-036: Advisory-only Plumber CI/CD security workflow"
-status: proposed
+status: superseded
 date: 2026-07-04
+superseded_by: "adr-037"
 context:
   - path: ".context/findings/plumber-cicd-security-2026-07-04.md"
   - path: ".context/plans/plumber-advisory-workflow-2026-07-04.md"

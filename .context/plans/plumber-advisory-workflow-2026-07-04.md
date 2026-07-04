@@ -1,104 +1,119 @@
 ---
-title: "Plan: Advisory-only Plumber CI/CD security workflow"
+title: "Plan: Plumber CI/CD security workflow — fail on Critical, track the rest as issues"
 type: plan
 status: draft
 date: 2026-07-04
 related:
   - ../findings/plumber-cicd-security-2026-07-04.md
+  - ../../docs/ADR/adr-036-plumber-cicd-security-advisory-workflow.md
+  - ../../docs/ADR/adr-037-plumber-critical-fail-issue-tracking.md
 ---
-# Plan: Advisory-only Plumber CI/CD security workflow
+# Plan: Plumber CI/CD security workflow — fail on Critical, track the rest as issues
 
 ## Goal
 
-Add a non-blocking `.github/workflows/plumber.yml` that runs the official `getplumber/plumber` GitHub Action on every pull request and on push to `main`, surfacing CI/CD security findings without gating merges. This is step 1 of the phased rollout recommended in `plumber-cicd-security-2026-07-04.md` — get real signal into PRs first, fix the pre-existing pinning/permissions debt second, promote to a blocking gate third.
+Add `.github/workflows/plumber.yml` that runs the official `getplumber/plumber` GitHub Action on every pull request and push to `main`, hard-failing the job when any Critical-severity finding is present and filing a tracked GitHub issue for every High, Medium, or Low finding instead of blocking on them. This supersedes the advisory-only design recorded in `adr-036`, per explicit directive: (1) `.plumber.yaml` will need configuring for this repo regardless of timing, so that work is folded into this phase rather than deferred; (2) this repo is not in PLG's regulated scope, so no compliance check-in gates this decision; (3) the integration should fail the pipeline outright on the severity that matters and turn everything else into tracked, non-blocking work rather than advisory output nobody reads.
 
 ## Scope
 
 in_scope:
 
 - New workflow file `.github/workflows/plumber.yml`, triggered on `pull_request` (not `pull_request_target` — fork PRs must get a restricted, read-only token) and `push: branches: [main]`.
-- `score-push: false` — no public score badge, no public repo-name disclosure.
-- Advisory framing: the Plumber step runs with `continue-on-error: true`, mirroring the Tessl review proving-period step already in `skill-quality.yml`.
-- A minimal `permissions:` block on the new workflow: `contents: read` only (see Amendment 2 below — `security-events: write` is dropped for this phase).
-- `timeout-minutes` on the job and a `concurrency` group keyed on ref, to bound CI-minute cost if the Action hangs or a branch gets duplicate runs.
-- A named owner and review cadence for reading the advisory findings, plus a dated follow-up (issue or plan stub) that decides whether to proceed to the deferred pinning/permissions/blocking phases — without this, the advisory period has no forcing function to ever end.
+- `score-push: false` — no public score badge, no public repo-name disclosure. Unchanged; no directive to revisit this.
+- Trim `.plumber.yaml` to the `github:` controls this repo actually needs (drop the `gitlab:` block entirely — this repo has no GitLab CI) and commit it as part of this phase, so the Action runs against the intended config from day one instead of built-in defaults.
+- `permissions: { contents: read, issues: write }` — `issues: write` is new, required for the issue-filing step. No `security-events: write` — this design has no SARIF-upload step.
+- The `getplumber/plumber` step pinned to a commit SHA of the latest tagged release (not a floating tag or `@latest`), consistent with the pinning hygiene this repo's own `.plumber.yaml` enforces on every other third-party action.
+- `timeout-minutes` on the job and a `concurrency` group keyed on ref, to bound CI-minute cost.
+- Structured output via `plumber analyze --output results.json` — not relying on Plumber's own exit code, which reflects an overall A-E score against `--threshold`, not per-finding severity.
+- A gate step that parses `results.json` and fails the job (non-zero exit, no `continue-on-error`) if any **Critical**-severity finding is present.
+- An issue-filing step, run via `if: always()` so it still runs even when the gate step fails, that files a deduplicated GitHub issue for every **High, Medium, or Low** finding not already tracked.
 
-out_of_scope (deferred to later phases of the parent finding):
+out_of_scope:
 
-- Pinning the five existing third-party actions (`golangci-lint-action`, `mise-action`, `release-please-action`, `goreleaser-action`, `setup-tessl`) by commit SHA.
+- Pinning the five pre-existing third-party actions (`golangci-lint-action`, `mise-action`, `release-please-action`, `goreleaser-action`, `setup-tessl`) by commit SHA — stays a separate follow-up, unless Phase 1's dry-run (below) shows one of them currently produces a Critical finding, in which case fixing it must be pulled forward so this PR doesn't block itself.
 - Adding `permissions:` blocks to `ci.yml` and `skill-quality.yml`.
-- Extending `.plumber.yaml`'s `trustedGithubActions` allowlist.
-- Committing or trimming the existing untracked `.plumber.yaml` default config.
 - Enabling `score-push` / the public score badge.
-- Promoting this check to a required/blocking gate or setting a `--threshold`.
+- SARIF upload to GitHub Code Scanning (no `security-events: write`, no consumer step in this design).
 
 ## Phases
 
-### Phase 1 — Author the workflow
+### Phase 1 — Author the workflow and configuration
 
-Exit criterion: `.github/workflows/plumber.yml` exists on a feature branch, is syntactically valid, and is advisory-only (cannot fail the job).
+Exit criterion: `.github/workflows/plumber.yml` and a trimmed, committed `.plumber.yaml` exist on a feature branch; the workflow is syntactically valid; a dry run shows what it will actually gate on before it ever runs against a real PR.
 
 Tasks:
 
-- Create `.github/workflows/plumber.yml` on a new branch (`feat/plumber-advisory-workflow`), triggered on `pull_request` (confirmed not `pull_request_target`) and `push` to `main`. (wave: single)
-- Set workflow-level `permissions: { contents: read }` — no `security-events: write` in this phase (Amendment 2: dropped because Phase 1 ships no SARIF-upload step, so the permission has no consumer). (wave: single)
-- Add the `getplumber/plumber` step pinned to a commit SHA of the latest tagged release, not a floating version tag — this repo's own `.plumber.yaml` enforces SHA-pinning on every other third-party action, so exempting the checker itself would be inconsistent (Amendment 1). If no release has a resolvable SHA yet, pin to the tag and add an inline comment noting the exception and why. (wave: single)
-- Mark the Plumber step `continue-on-error: true` so a low score or findings never fail the job. (wave: single)
-- Add `timeout-minutes: 10` on the job and a `concurrency: { group: plumber-${{ github.ref }}, cancel-in-progress: true }` block, so a hung Action run or duplicate pushes cannot silently consume CI minutes indefinitely. (wave: single)
-- Confirm whether `getplumber/plumber` reads `.plumber.yaml` from the checked-out working tree by default. Since that file is currently untracked, either commit a trimmed version of it in this phase, or explicitly note in the workflow (comment) that Phase 1 runs against Plumber's built-in defaults until it's committed — don't leave this ambiguous. (wave: single)
+- Trim `.plumber.yaml` to the `github:` controls block only (drop `gitlab:` entirely) and commit it. (wave: single)
+- Create `.github/workflows/plumber.yml`, triggered on `pull_request` (confirmed not `pull_request_target`) and `push` to `main`. (wave: single)
+- Set `permissions: { contents: read, issues: write }`. (wave: single)
+- Add the `getplumber/plumber` step pinned to a commit SHA of the latest tagged release; if none is resolvable, pin to the tag and add an inline comment documenting the exception. (wave: single)
+- Add `timeout-minutes: 10` and a `concurrency: { group: plumber-${{ github.ref }}, cancel-in-progress: true }` block. (wave: single)
+- Run `plumber analyze --output results.json` with `continue-on-error: true` on this step specifically — its own exit code is score-threshold-based, not severity-based, and must never be what decides pass/fail here. (wave: single)
+- Add a gate step (no `continue-on-error`) that parses `results.json`, counts findings with `severity: Critical` (verify the exact field name and value casing against a real run's output before finalizing — not yet confirmed against live JSON), and exits non-zero if the count is greater than zero. (wave: single)
+- Add an issue-filing step (`if: always()`) that reads every High/Medium/Low finding from `results.json` and creates a GitHub issue for each one not already open, deduplicated by a stable key (e.g. Plumber's issue code plus the affected file/job path) — check for an existing open issue with that key (e.g. via `gh issue list --search`) before creating a new one. (wave: single)
+- **Before opening the PR**, dry-run `plumber analyze` against current `main` (locally, or via `workflow_dispatch` on the feature branch) and inspect the JSON output for any Critical findings among the repo's known pre-existing gaps (five unpinned actions, two workflows missing `permissions:` blocks). If any are Critical-severity, this PR cannot merge under its own new gate until they're fixed — pull that fix forward into this phase rather than deferring it. (wave: single, but sequenced before Phase 2 — do this before opening the PR, not after)
 
 Dependencies: none.
 
 ### Phase 2 — Land and verify
 
-Exit criterion: the workflow has run successfully (green, non-blocking) on both a real PR and a push to `main`, and its findings are visible in the run output.
+Exit criterion: the workflow runs on a real PR, fails only when a Critical finding is present, files (and does not duplicate) issues for every other finding, and the PR merges once that behaviour is confirmed.
 
 Tasks:
 
 - Open the PR from the Phase 1 branch (never commit straight to `main`, per this repo's working conventions).
-- Confirm the workflow triggers on the PR event and completes without failing the job, even though the repo's known pinning/permissions gaps will produce real findings.
-- Confirm the new check has not become an implicitly required status check via an existing branch-protection wildcard rule (e.g. "require all status checks to pass") — `continue-on-error` only makes the *step* tolerant; a broad branch-protection rule can still make the *job* required, silently turning "advisory" into "blocking" (Amendment 4).
-- Read the Plumber output on that run, distinguish "ran clean, no findings" from "the Action itself failed to run" (the latter is masked by `continue-on-error` and would otherwise look identical), and record anything unexpected as a note in the PR description, including any network calls the Action makes even with `score-push: false`.
-- Assign a named owner and review cadence for reading advisory findings going forward, and open a tracked follow-up (issue or plan stub) with a dated decision point for whether to proceed to the deferred pinning/permissions/blocking phases (Amendment 5) — mirroring the Tessl precedent's defined 2-week end state rather than leaving the advisory period open-ended.
-- Merge once the rest of CI (`ci.yml`, `skill-quality.yml`) is green.
+- Confirm the gate step's pass/fail behaviour matches the Phase 1 dry run — no surprises between the dry run and the real PR run.
+- Confirm the issue-filing step creates exactly one issue per unique finding (re-run the workflow, e.g. by pushing an empty commit, and confirm no duplicate issues appear for findings already filed).
+- Confirm the new check has not become an implicitly required status check via an unrelated branch-protection wildcard rule beyond the intended "fail on Critical" behaviour.
+- Confirm the trigger is `pull_request`, not `pull_request_target`. Note that fork PRs will run with a restricted token and likely cannot file issues even from the non-blocking step — confirm this degrades cleanly (a clear log message) rather than as a confusing API error, since it only affects the issue-filing step, not the Critical gate.
+- Merge once the rest of CI (`ci.yml`, `skill-quality.yml`) is green and the above are confirmed.
 
 Dependencies: Phase 1.
 
 ## Risks
 
-- The Action reference needs a concrete, resolvable release SHA at implementation time; if `getplumber/plumber` has no tagged release with a stable SHA, this plan's own pinning requirement (Amendment 1) cannot be fully satisfied and the exception must be documented, not silently dropped.
-- `continue-on-error: true` makes the step non-blocking, but it also masks the difference between "Plumber ran and found nothing" and "Plumber crashed before producing output" — both look identical in the Actions UI. Phase 2 must check which one happened, not just that the job is green.
-- If nobody reads the run output during the advisory period, the integration adds CI minutes without adding safety. Without a dated graduation-or-removal trigger (Amendment 5), this risk compounds indefinitely — unlike the Tessl proving-period precedent this plan mirrors, which has a defined 2-week end state.
-- `getplumber/plumber`'s own supply-chain trustworthiness (maintainer history, release cadence, prior incidents) has not been independently vetted in this investigation. Given this repo belongs to a regulated organisation (PLG), adding an unvetted third-party Action to every PR's CI run may warrant a lightweight Security/Compliance check-in before merge, separate from the later decision to promote this check to blocking — this is a routing question, not one this plan resolves on its own.
-- A broad branch-protection rule (e.g. "require all status checks") could make this new job an implicitly required check despite `continue-on-error`, converting "advisory" into "blocking" without anyone deciding that. See the new Phase 2 verification task.
+- **This PR could block itself.** The new gate fails on any Critical finding, and this repo has known pre-existing gaps (unpinned actions, missing permissions blocks) whose severity hasn't been confirmed against Plumber's actual taxonomy. Phase 1's dry-run task exists specifically to catch this before it becomes a live blocker — treat that task as mandatory, not optional.
+- **Severity field assumptions are unverified.** This plan assumes `results.json` exposes a `severity` field with a `Critical` value distinguishable from `High`/`Medium`/`Low`, based on the aggregate categories shown on Plumber's public Radar page. The exact JSON schema has not been inspected directly — confirm against a real `results.json` before finalizing the gate-parsing script, and adjust field names/casing as needed.
+- **Issue-filing dedup is custom-built, not a Plumber feature.** Plumber has no native "file a GitHub issue" output — this requires a hand-written dedup step. A dedup key that's too loose spams the repo with duplicates on every run; one that's too strict silently stops filing new issues after the first match.
+- **`issues: write` is a new, broader permission** than anything else this workflow needs — scope it to the job or step that uses it rather than the whole workflow if the Action step itself doesn't need it.
+- The `getplumber/plumber` action reference needs a concrete, resolvable release SHA at implementation time; if none exists, the pinning requirement can't be fully satisfied and the exception must be documented, not silently dropped.
+- Fork PRs run with a restricted `GITHUB_TOKEN` and likely cannot file issues even from the non-blocking step — confirm this fails clearly rather than silently.
 
 ## Verification
 
-- Validate the new YAML as an explicit Phase 1 task, not a post-hoc check: run `actionlint .github/workflows/plumber.yml` if available; otherwise the PR's own Actions run is the first real validation (note this is a weaker pre-merge guarantee and accept it as such rather than treating it as equivalent).
-- Confirm the workflow appears in the Actions tab and completes with a green check on the PR, regardless of Plumber's findings.
-- Confirm the workflow's `permissions:` block is exactly `{ contents: read }` — no broader scope was introduced.
-- Confirm `score-push` did not publish anything to `score.getplumber.io` (check the job log for the score-push step's outcome).
-- Confirm the trigger is `pull_request`, not `pull_request_target`, so fork PRs run with a restricted token.
-- Confirm the new check does not appear as a required status check under the repo's branch-protection settings unless that was an explicit, separate decision.
+- Validate the new YAML with `actionlint .github/workflows/plumber.yml` if available.
+- Confirm `.plumber.yaml` is committed, trimmed to the `github:` block only, and is the config the Action actually reads (not a built-in default).
+- Confirm the workflow's `permissions:` block is exactly `{ contents: read, issues: write }` (or narrower, per the risk above) — no broader scope introduced.
+- Confirm `score-push` did not publish anything to `score.getplumber.io`.
+- Confirm the gate step fails the job if and only if a Critical finding is present.
+- Confirm the issue-filing step does not create duplicate issues across repeated runs.
 
 ## Open Questions
 
-- Should this repo commit a trimmed `.plumber.yaml` as part of this phase (currently ~1000 lines, mostly inapplicable GitLab controls), or is it acceptable for Phase 1 to run Plumber against its built-in defaults for now? This determines whether the config work belongs in this plan or stays deferred.
-- Does adding an unvetted third-party Action to CI warrant a lightweight Security/Compliance check-in given this org's regulatory posture, and if so, who owns making that call before Phase 2 merges?
-- Who is the named owner for reading advisory findings on an ongoing basis, and what date should the follow-up plan (pinning, permissions, threshold, promotion-or-removal decision) be scheduled? Phase 2 now requires opening a tracked follow-up as an exit condition, but the owner and date are still unassigned at plan-approval time.
+- What is the exact field name and value set Plumber's JSON output uses for severity (confirm `severity: Critical|High|Medium|Low` or equivalent) — needed before the gate-parsing script can be written precisely.
+- Does Plumber support a native baseline/suppression mechanism for pre-existing findings (so day-one debt doesn't need fixing before the gate can be enabled), or is Phase 1's "fix Critical findings first" dry-run the only option? Worth checking `docs/scoring.md` / `plumber explain` before assuming no such feature exists.
+- Who triages the GitHub issues this workflow files for High/Medium/Low findings, and on what cadence? The fail-on-Critical gate is self-enforcing, but the issue backlog it creates needs an owner or it becomes as unread as the advisory design it replaces.
 
 ## Critical Review Findings (2026-07-04)
 
-Reviewed by 3 independent Claude Sonnet 5 subagents (Technical, Strategic, Risk) via the `plan-review` skill, using an identical self-contained brief. All three converged independently on the same core issue: the plan's original Open Questions were being deferred into implementation rather than resolved before it, and the advisory period had no defined end state — unlike the Tessl proving-period precedent it mirrors. The Risk reviewer additionally flagged that this repo belongs to a regulated organisation, which the Technical and Strategic reviews did not weigh.
+Reviewed by 3 independent Claude Sonnet 5 subagents (Technical, Strategic, Risk) via the `plan-review` skill, against the original advisory-only design. All three converged independently on the same core issue: that design's Open Questions were being deferred into implementation rather than resolved before it, and its advisory period had no defined end state. The Risk reviewer additionally flagged this repo's (then-assumed) regulated-org posture, which the Technical and Strategic reviews did not weigh.
 
-Amendments applied above, numbered for traceability:
+Amendments applied to the advisory-only design at the time (see "Amendments (2026-07-04, second pass)" below for what has since changed):
 
-1. **Action pinning resolved, not deferred** — pin `getplumber/plumber` by commit SHA in Phase 1 itself, consistent with the pinning hygiene this repo already expects of every other third-party action (Technical, Strategic).
-2. **`security-events: write` dropped from this phase** — Phase 1 ships no SARIF-upload step, so the permission had no consumer; requesting it "on spec" contradicted the plan's own minimal-permissions framing (all three reviewers).
-3. **Fork-PR and cost controls made explicit** — confirmed trigger is `pull_request` not `pull_request_target`; added `timeout-minutes` and a `concurrency` group so a hung or duplicated run cannot consume CI minutes unbounded (Risk, Technical).
-4. **Branch-protection check added to Phase 2** — `continue-on-error` only protects the step; a broad branch-protection rule can still mark the job required, silently converting advisory into blocking (Risk, Technical).
-5. **Ownership and a graduation/removal trigger made a Phase 2 exit condition** — the single finding all three reviewers raised independently: without a named owner, a review cadence, and a dated follow-up decision, the advisory integration risks running forever with no one reading it, unlike the Tessl precedent's defined 2-week end state (Technical, Strategic, Risk).
-6. **`.plumber.yaml` discovery clarified as a Phase 1 task** — the file is currently untracked; if the Action can't see it in CI, Phase 1 silently runs against built-in defaults instead of the intended config (Technical).
-7. **Regulated-org routing surfaced as an Open Question, not resolved by this plan** — the Risk reviewer noted that adding an unvetted third-party Action to CI may warrant Security/Compliance input given this org's posture; this plan does not make that call, it only ensures the question is asked before Phase 2 merges.
+1. **Action pinning resolved, not deferred** — pin `getplumber/plumber` by commit SHA in Phase 1 itself (Technical, Strategic). *Retained in the current design.*
+2. **`security-events: write` dropped** — no SARIF-upload consumer (all three reviewers). *Retained.*
+3. **Fork-PR and cost controls made explicit** — `pull_request` not `pull_request_target`; `timeout-minutes`; `concurrency` group (Risk, Technical). *Retained.*
+4. **Branch-protection check added to Phase 2** (Risk, Technical). *Retained, reframed since the gate is now intentionally blocking for Critical findings by design.*
+5. **Ownership and a graduation/removal trigger made a Phase 2 exit condition** (Technical, Strategic, Risk). *Superseded — the Critical gate is now self-enforcing and permanent by design; the ownership question moves to the issue backlog instead (see Open Questions).*
+6. **`.plumber.yaml` discovery clarified** (Technical). *Superseded — resolved outright: trim and commit it in Phase 1.*
+7. **Regulated-org routing surfaced as an Open Question** (Risk). *Resolved — this repo is confirmed out of PLG's regulated scope; no compliance check-in required.*
 
-Not adopted: the Strategic reviewer's suggestion to formalise open questions 1–2 as a separate "Phase 0" was folded directly into Phase 1's task list instead, since both were resolvable now rather than requiring separate sequencing.
+## Amendments (2026-07-04, second pass — user directives)
+
+After the critical review above, the user resolved all three of its remaining Open Questions directly, and one of those answers changed the design's core mechanism:
+
+1. **`.plumber.yaml` timing:** "We'll need to configure plumber so either way is fine" — resolved by folding the trim-and-commit work into Phase 1 rather than deferring it, since the timing was explicitly a non-issue.
+2. **Regulated-org routing:** "This isn't a PLG repo, so we are going to use Plumber" — resolved. The Security/Compliance check-in flagged by the Risk reviewer and recorded as an open item in `adr-036` does not apply to this repository; no further routing needed.
+3. **Gating design:** "We need to fail the pipeline on failure, and anything lower needs to be an issue" — clarified via follow-up: **Critical-severity findings fail the pipeline; High, Medium, and Low findings are filed as tracked GitHub issues instead of blocking.** This replaces the advisory-only, `continue-on-error` design outright — a reversal of the original central decision (non-blocking → blocking-for-Critical), not an extension of it. Captured as a new decision, `adr-037`, which supersedes `adr-036` rather than amending it (ADRs are immutable once created).
+
+This second pass introduces implementation surface the first review never saw: JSON-output parsing for severity, a custom issue-filing/dedup step, and a new `issues: write` permission. Flagged here for visibility, not as a blocker — the user's directives are explicit, and what remains is implementation detail (exact JSON field names, dedup key design) rather than an open design question.
