@@ -1,0 +1,9 @@
+[config]
+model = "gemini/gemini-1.5-flash"
+fallback_models = ["gemini/gemini-1.5-flash"]
+
+[pr_description]
+extra_instructions = "This is a Go CLI (skill-auditor) and Tessl tile. Note when a change affects cmd/assets/ (the embedded SKILL.md, tile.json, evals, or references) versus the Go implementation, since those have different review/eval paths."
+
+[pr_reviewer]
+extra_instructions = "Focus on Go idioms, error handling, and test coverage. Flag exported identifiers without doc comments, and any change to scorer/ or reporter/ that isn't covered by a table-driven test. This repo's CLAUDE.md forbids narrative comments and premature abstraction — flag comments that restate what the code does rather than explaining a non-obvious why."

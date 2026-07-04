@@ -1,13 +1,14 @@
 ---
 title: "ADR-040: PR-Agent as an advisory PR review bot, describe+review only"
-status: proposed
+status: superseded
 date: 2026-07-04
+superseded_by: "adr-041"
 context:
   - path: ".context/findings/pr-agent-integration-2026-07-04.md"
   - path: ".context/plans/pr-agent-integration-2026-07-04.md"
 ---
 
-**Status:** Proposed
+**Status:** Superseded by ADR-041
 **Date:** 2026-07-04
 
 ## Context

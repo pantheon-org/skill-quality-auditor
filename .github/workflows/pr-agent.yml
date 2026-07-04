@@ -1,0 +1,41 @@
+name: PR Agent
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+    # PRs touching only cmd/assets/** already get an LLM review from the
+    # skill-quality LLM-judge (skill-quality.yml) — skip here to avoid a
+    # second, redundant opinion on the same diff. paths-ignore only skips
+    # the run when EVERY changed file matches, so mixed PRs still run.
+    paths-ignore:
+      - 'cmd/assets/**'
+  issue_comment:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  pr_agent_job:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Digest-pinned to the `0.38.0-github_action` multi-arch image
+      # (confirmed via Docker Hub's tags API, ADR-041 #4) rather than the
+      # floating `the-pr-agent/pr-agent@main` ref shown in the project's own
+      # quick-start — this repo pins every third-party action by immutable
+      # reference (see .plumber.yaml's actionsMustBePinnedByCommitSha).
+      - name: PR Agent action step
+        uses: docker://pragent/pr-agent@sha256:ea2ea90f072fd97708755e59827a317272f66097a1ef349eca23d39160bb0baf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Gemini via Google AI Studio's free tier — no Anthropic/OpenAI/
+          # Bedrock credential is available for this integration (ADR-041 #3).
+          config.model: "gemini/gemini-1.5-flash"
+          config.fallback_models: '["gemini/gemini-1.5-flash"]'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Only describe + review for this initial rollout; improve/ask are
+          # deferred pending a trial-period read on signal-to-noise.
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_review: "true"
