@@ -32,6 +32,7 @@ While the immediate cause was fixable (normalize the commit-ref segment out of t
    - This guarantees at most one open tracking issue at any time; "no duplicates" holds by construction, not by a fingerprint that can drift.
 4. **The per-finding dedup fingerprint mechanism from the first implementation is removed entirely** — it is no longer needed once there is only ever one issue to find or not find.
 5. **Critical findings are still never listed in this issue** — they block the pipeline via `plumber-gate.sh` (ADR-037 point 2, unchanged) and are fixed before merge, not tracked as backlog.
+6. **The rollup issue is only maintained on `push` to `main`, not on `pull_request`.** Live-verifying this PR (#154) against the real repo surfaced the reason: `pull_request` runs scan the PR branch's speculative merged state, not `main`. With one shared issue, two concurrent/unrelated PRs would each overwrite it with their own branch's findings, and a PR that fixes a finding could have it reappear if another PR's run lands after. The Critical gate (`plumber-gate.sh`) still runs on every PR and push — only the non-blocking backlog tracking is push-to-main-only. This also removes the need for the fork-PR skip step from the first implementation, since issue-filing no longer runs on `pull_request` at all.
 
 ## Consequences
 
