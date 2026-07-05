@@ -5,12 +5,15 @@
 # so a PR author can see exactly what to fix without opening the
 # `plumber` check's log.
 #
-# Uses `gh pr comment --edit-last --create-if-none`, which edits the
-# bot's own last comment on the PR (scoped by the GITHUB_TOKEN identity)
-# instead of posting a fresh comment every run — the same "one artifact,
-# regenerated in place" principle as the rollup issue (ADR-038), applied
-# here without needing a custom marker search: gh already tracks "last
-# comment by this identity" natively.
+# Finds the existing comment by its <!-- plumber-pr-comment --> marker and
+# edits it in place, rather than posting a fresh comment every run — the
+# same "one artifact, regenerated in place" principle as the rollup issue
+# (ADR-038). Deliberately NOT `gh pr comment --edit-last`: that edits the
+# last comment by the authenticated identity, not by this script — and
+# every automated comment in this repo posts as the same github-actions[bot]
+# identity, so --edit-last silently overwrote whichever tool (this one,
+# or Skill Quality Gate's PR comments) happened to have commented most
+# recently. Marker-based lookup targets only this script's own comment.
 #
 # Finding extraction mirrors plumber-file-issues.sh: Plumber has no
 # unified findings[] array with a per-finding severity, so this walks
@@ -22,6 +25,7 @@ RESULTS_PATH="${1:?usage: plumber-pr-comment.sh <results.json>}"
 REPO="${GITHUB_REPOSITORY:?GITHUB_REPOSITORY must be set}"
 PR_NUMBER="${PR_NUMBER:?PR_NUMBER must be set}"
 ROLLUP_MARKER="<!-- plumber-compliance-backlog -->"
+COMMENT_MARKER="<!-- plumber-pr-comment -->"
 TMP_BODY="${RUNNER_TEMP:-/tmp}/plumber-pr-comment.md"
 MAX_ROWS_PER_SECTION=25
 
@@ -99,7 +103,15 @@ write_section() {
 
     echo "_[View this run](${GITHUB_SERVER_URL:-https://github.com}/${REPO}/actions/runs/${GITHUB_RUN_ID:-})_"
     echo ""
-    echo "<!-- plumber-pr-comment -->"
+    echo "$COMMENT_MARKER"
 } >"$TMP_BODY"
 
-gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file "$TMP_BODY" --edit-last --create-if-none
+EXISTING_COMMENT_ID="$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --paginate 2>/dev/null \
+    | jq -r --arg marker "$COMMENT_MARKER" '[.[] | select((.body // "") | contains($marker))] | last.id // empty' \
+    || true)"
+
+if [ -n "$EXISTING_COMMENT_ID" ]; then
+    gh api "repos/${REPO}/issues/comments/${EXISTING_COMMENT_ID}" -X PATCH -f body="@${TMP_BODY}" >/dev/null
+else
+    gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file "$TMP_BODY"
+fi
