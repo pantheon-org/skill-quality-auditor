@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.22.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.21.1...v0.22.0) (2026-07-05)
+
+
+### Features
+
+* **ci:** add PR-Agent advisory review bot on Gemini free tier ([#176](https://github.com/pantheon-org/skill-quality-auditor/issues/176)) ([421a6c5](https://github.com/pantheon-org/skill-quality-auditor/commit/421a6c5c2d77ba2a27e6c6797980505e0c193d6e))
+
+
+### Bug Fixes
+
+* **ci:** scope Skill Quality Gate to skill content, not all Go changes ([#179](https://github.com/pantheon-org/skill-quality-auditor/issues/179)) ([804a002](https://github.com/pantheon-org/skill-quality-auditor/commit/804a002955402a47a913b81325f5418c30b80d88))
+* **llmclient:** fix skill-quality.yml's LLM-judge (Mistral + Retry-After backoff) ([#178](https://github.com/pantheon-org/skill-quality-auditor/issues/178)) ([e9f40f0](https://github.com/pantheon-org/skill-quality-auditor/commit/e9f40f097e7d7fdba4048cb3e42977b95924eb1b))
+
 ## [0.21.1](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.21.0...v0.21.1) (2026-07-04)
 
 
