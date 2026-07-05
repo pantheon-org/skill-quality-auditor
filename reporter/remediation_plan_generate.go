@@ -15,9 +15,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ---- YAML structs matching remediation-plan.schema.json ----
-
 type remPlanFrontmatter struct {
+	Title            string                `yaml:"title"              json:"title"`
+	Type             string                `yaml:"type"               json:"type"`
+	Status           string                `yaml:"status"             json:"status"`
+	Date             string                `yaml:"date"               json:"date"`
+	Effort           string                `yaml:"effort"             json:"effort"`
 	PlanDate         string                `yaml:"plan_date"          json:"plan_date"`
 	SkillName        string                `yaml:"skill_name"         json:"skill_name"`
 	SourceAudit      string                `yaml:"source_audit"       json:"source_audit"`
@@ -95,8 +98,6 @@ type remNotes struct {
 	Assessment string `yaml:"assessment" json:"assessment"`
 }
 
-// ---- Generation ----
-
 // RemediationPlan generates a schema-compliant YAML-frontmatter + markdown
 // remediation plan. targetScore ≤ 0 defaults to min(current+20, 140).
 func RemediationPlan(r *scorer.Result, targetScore int, auditPath, date string) (string, error) {
@@ -165,7 +166,14 @@ func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, a
 		focusAreas = append(focusAreas, dimLabelToCode(g.label)+": "+g.label)
 	}
 
+	effort := gapEffort(totalGap)
+
 	fm := remPlanFrontmatter{
+		Title:       fmt.Sprintf("Remediation Plan — %s", skillName),
+		Type:        "plan",
+		Status:      "draft",
+		Date:        date,
+		Effort:      effort,
 		PlanDate:    date,
 		SkillName:   skillName,
 		SourceAudit: auditPath,
@@ -179,7 +187,7 @@ func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, a
 				Target:  scorer.Grade(targetScore),
 			},
 			Priority:   gapPriority(totalGap),
-			Effort:     gapEffort(totalGap),
+			Effort:     effort,
 			FocusAreas: focusAreas,
 			Verdict:    planVerdict(gapPriority(totalGap)),
 		},
@@ -266,8 +274,6 @@ func writeRemediationVerifAndCriteria(sb *strings.Builder, fm remPlanFrontmatter
 	}
 	sb.WriteString("\n")
 }
-
-// ---- Helpers ----
 
 func planSkillName(skill string) string {
 	base := strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(skill, "/", "-"), "\\", "-"))

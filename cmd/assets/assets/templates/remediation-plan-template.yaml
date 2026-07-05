@@ -8,6 +8,11 @@
 # Required: YAML frontmatter with metadata
 # Format: Standard YAML frontmatter (--- delimited)
 ---
+title: "Remediation Plan — <skill-name>"  # required for .context/index.yaml discoverability
+type: plan
+status: draft                     # draft until the phases below are implemented
+date: "YYYY-MM-DD"                 # same value as plan_date, context-frontmatter field name
+effort: "S|M|L"                   # same value as executive_summary.effort, surfaced at top level for the index
 plan_date: "YYYY-MM-DD"           # ISO date when plan was created
 skill_name: "string"              # Name of the skill being remediated
 source_audit: "path"              # Path to audit file (e.g., .context/audits/<skill>-audit-YYYY-MM-DD.md)

@@ -8,6 +8,7 @@ plans:
     title: "Remediation Plan: adr-capture"
     status: done
     date: 2026-06-30
+    effort: L
   - path: ".context/plans/agent-scan-integration-2026-07-04.md"
     title: "Draft Plan: Integrate snyk/agent-scan as an Advisory PR Check"
     status: draft
@@ -39,10 +40,12 @@ plans:
     title: "Remediation Plan: context-file"
     status: done
     date: 2026-06-30
+    effort: L
   - path: ".context/plans/context-index-remediation-plan-2026-06-30.md"
     title: "Remediation Plan: context-index"
     status: done
     date: 2026-06-30
+    effort: L
   - path: ".context/plans/cross-reference-drift-audit-2026-07-04.md"
     title: "Draft Plan: Periodic Cross-Reference Drift Audit"
     status: draft
