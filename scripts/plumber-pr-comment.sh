@@ -111,7 +111,11 @@ EXISTING_COMMENT_ID="$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --pag
     || true)"
 
 if [ -n "$EXISTING_COMMENT_ID" ]; then
-    gh api "repos/${REPO}/issues/comments/${EXISTING_COMMENT_ID}" -X PATCH -f body="@${TMP_BODY}" >/dev/null
+    # -F (not -f): the "@file reads the value from a file" convention is
+    # documented only for -F/--field. -f/--raw-field takes its value
+    # completely literally, so -f body="@$TMP_BODY" would post the literal
+    # string "@/path/to/file" as the comment body instead of its contents.
+    gh api "repos/${REPO}/issues/comments/${EXISTING_COMMENT_ID}" -X PATCH -F body="@${TMP_BODY}" >/dev/null
 else
     gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file "$TMP_BODY"
 fi
