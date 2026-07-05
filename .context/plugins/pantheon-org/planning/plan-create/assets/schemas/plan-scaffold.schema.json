@@ -15,13 +15,18 @@
         "filename": { "type": "string", "minLength": 1 },
         "frontmatter": {
           "type": "object",
-          "required": ["title", "type", "status", "date"],
+          "required": ["title", "type", "status", "date", "effort"],
           "additionalProperties": false,
           "properties": {
             "title": { "type": "string", "minLength": 1 },
             "type": { "type": "string", "enum": ["plan"] },
             "status": { "type": "string", "enum": ["draft"] },
             "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+            "effort": {
+              "type": "string",
+              "enum": ["S", "M", "L", "TBD"],
+              "description": "T-shirt-sized total effort estimate, matching the skill-auditor remediation-plan convention. TBD only if genuinely blocked on an unresolved Open Question."
+            },
             "related": {
               "type": "array",
               "items": { "type": "string" }

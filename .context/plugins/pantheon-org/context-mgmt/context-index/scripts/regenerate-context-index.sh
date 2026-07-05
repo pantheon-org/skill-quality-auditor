@@ -58,6 +58,8 @@ for md in sorted(context_dir.rglob("*.md")):
         continue
     entry = {k: fm[k] for k in required}
     entry["path"] = rel
+    if fm.get("effort"):
+        entry["effort"] = fm["effort"]
     related_match = re.search(r"related:\n((?:  - .+\n?)+)", fm["_raw"])
     if related_match:
         items = [
@@ -117,6 +119,8 @@ for t in type_order:
         lines.append(f'    title: "{e["title"]}"')
         lines.append(f"    status: {e['status']}")
         lines.append(f"    date: {e['date']}")
+        if e.get("effort"):
+            lines.append(f"    effort: {e['effort']}")
         if e.get("related"):
             lines.append("    related:")
             for r in e["related"]:

@@ -3,6 +3,7 @@ title: "Draft Plan: Migrate Skill Evaluation off Tessl"
 type: plan
 status: draft
 date: 2026-06-29
+effort: TBD
 related:
   - ../findings/eval-gating-byok-2026-06-29.md
 ---
@@ -12,6 +13,8 @@ Status: DRAFT for review
 Date: 29-06-2026
 Branch (proposed): `feat/native-eval-runner`
 Author: investigation by AI agent, decisions pending human owner
+
+**Effort:** TBD — Layer 1 (the native eval runner itself) already shipped via `native-eval-runner-2026-07-01.md` (done). Remaining scope depends on the 6 open owner decisions in Section 9, particularly whether distribution/packaging (Layer 3) is also dropped — re-size once those are answered.
 
 > This is decision-support material. The final approach, scope, and any
 > CI or secret changes must be decided and documented by a human maintainer

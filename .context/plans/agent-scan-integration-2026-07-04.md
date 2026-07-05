@@ -3,12 +3,15 @@ title: "Draft Plan: Integrate snyk/agent-scan as an Advisory PR Check"
 type: plan
 status: draft
 date: 2026-07-04
+effort: S
 related:
   - ../findings/agent-scan-integration-2026-07-04.md
   - ../../docs/ADR/adr-034-agent-scan-skill-security-scanning.md
   - ../../.github/workflows/skill-quality.yml
   - ../instructions/ways-of-working.md
 ---
+
+**Effort:** S — one new advisory step in an existing job, closely mirroring the already-shipped `pr-agent.yml` pattern. Blocked on a human prerequisite (Phase 0: provisioning `SNYK_TOKEN`), which isn't itself engineering effort but does gate the start date.
 
 ## Goal
 

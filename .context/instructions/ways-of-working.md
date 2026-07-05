@@ -51,6 +51,8 @@ date: 2026-07-01
 
 When you implement what a plan describes, update its frontmatter `status: active → done` in the same PR. The `context-index` hook will regenerate `.context/index.yaml` automatically.
 
+Every plan (`type: plan`) with `status: draft` or `active` must also carry an `effort: S|M|L|TBD` frontmatter field — a T-shirt-sized total effort estimate, matching the `skill-auditor remediate` convention already used for skill remediation plans. `validate-context-frontmatter.sh` enforces this. Use `TBD` only when sizing is genuinely blocked on an unresolved item in the plan's Open Questions — don't pick a number just to pass validation. `effort` is set once at creation, like `date`; re-size only if scope materially changes. It surfaces in `.context/index.yaml` so plans can be triaged by effort without opening each file.
+
 ## After merge
 
 1. Delete the branch locally (GitHub auto-deletes remote branches after PR merge):

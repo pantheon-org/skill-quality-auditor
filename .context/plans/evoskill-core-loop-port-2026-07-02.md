@@ -3,6 +3,7 @@ title: "Plan: Port EvoSkill Core Loop as --evolve Mode"
 type: plan
 status: draft
 date: 2026-07-02
+effort: L
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - migrate-off-tessl-eval-2026-06-29.md
@@ -11,6 +12,8 @@ related:
 
 Status: DRAFT for review
 Date: 2026-07-02
+
+**Effort:** L — a new proposer/iterate/re-evaluate loop with multiple LLM calls per generation, replacing static remediation advice. No implementation started; also blocked on `migrate-off-tessl-eval`'s owner decisions landing first.
 
 ## Goal
 

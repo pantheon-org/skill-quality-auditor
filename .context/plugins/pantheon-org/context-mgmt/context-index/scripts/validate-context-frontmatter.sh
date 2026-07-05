@@ -52,6 +52,12 @@ for f in files:
         if not fm.get(field):
             errors.append(f"{f}: missing required field '{field}'")
 
+    if fm.get("type") == "plan" and fm.get("status") in ("draft", "active") and not fm.get("effort"):
+        errors.append(
+            f"{f}: type: plan with status: {fm.get('status')} must set 'effort' "
+            f"(S/M/L, or TBD if genuinely blocked on an Open Question)"
+        )
+
     for field, values in enum_fields.items():
         if field in fm and fm[field] not in values:
             errors.append(f"{f}: '{field}' must be one of {values}, got '{fm[field]}'")

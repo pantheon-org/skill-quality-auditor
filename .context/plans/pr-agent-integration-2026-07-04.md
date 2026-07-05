@@ -3,6 +3,7 @@ title: "Draft Plan: Integrate PR-Agent as an Advisory PR Review Bot"
 type: plan
 status: active
 date: 2026-07-04
+effort: M
 related:
   - ../findings/pr-agent-integration-2026-07-04.md
   - ../../.github/workflows/skill-quality.yml
@@ -10,6 +11,8 @@ related:
   - ../../.pr_agent.toml
   - ../../docs/ADR/adr-041-pr-agent-gemini-free-tier.md
 ---
+
+**Effort:** M — Phase 1 (the bulk of the engineering) is done: three rounds of smoke-testing caught a retired Gemini model and an `auto_improve` default, both fixed and merged. What remains is Phase 2's 2-week observation window (elapsed time, not engineering effort) and a short Phase 3 decision.
 
 ## Goal
 
