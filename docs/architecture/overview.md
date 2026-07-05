@@ -50,6 +50,8 @@ main.go
               │     ├── anthropic.go  (Anthropic provider)
               │     ├── openai.go     (OpenAI provider)
               │     ├── gemini.go     (Gemini provider)
+              │     ├── mistral.go    (Mistral provider, OpenAI-wire-compatible)
+              │     ├── cerebras.go   (Cerebras provider, OpenAI-wire-compatible)
               │     └── prompt.go     (JudgePrompt, ActorMessages, JudgeMessages)
               │
               ├── patternconfig/ (externalised D1/D6/analysis-quality pattern words)

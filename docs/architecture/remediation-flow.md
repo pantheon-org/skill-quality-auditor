@@ -77,6 +77,10 @@ The remediation plan follows a JSON schema defined at
 
 ```text
 remPlanFrontmatter (YAML frontmatter)
+  ├── title, type ("plan"), status ("draft"), date, effort (S/M/L/TBD)
+  │     └── matches the standard .context/ frontmatter schema, so a freshly
+  │         generated plan is picked up by context-index/frontmatter
+  │         validation without hand-patching
   ├── plan_date, skill_name, source_audit
   ├── execution_summary (current_score, target_score)
   ├── score_range (min, max, current, target)

@@ -71,6 +71,8 @@ Providers (registered in client.go):
   ├── anthropic → internal/llmclient/anthropic.go
   ├── openai    → internal/llmclient/openai.go
   ├── gemini    → internal/llmclient/gemini.go
+  ├── mistral   → internal/llmclient/mistral.go (OpenAI-wire-compatible, reuses OpenAIClient)
+  ├── cerebras  → internal/llmclient/cerebras.go (OpenAI-wire-compatible, reuses OpenAIClient)
   └── openai-compatible → (same client, different base URL)
 ```
 
@@ -84,8 +86,12 @@ NewFromEnv(providerOverride) → (Client, error)
 2. Reads provider-specific env vars for API key, base URL, model
 3. Returns `(nil, nil)` when no key configured → triggers structural-only mode
 
-Retry policy: `IsRetryable(429, 5xx)` with exponential backoff
-(500ms base, 8s max, random jitter).
+Retry policy: `IsRetryable(429, 5xx)`. Transient 5xx errors use `Backoff()`
+(500ms base, 8s max, random jitter). 429 rate-limit responses use
+`RateLimitBackoff()` instead, which honors the provider's `Retry-After` header
+when present, falling back to a 15s-base/90s-capped schedule otherwise — sized
+for per-minute quota windows rather than transient failures. `MaxRetryAttempts`
+is 4 (across all adapters), giving the longer 429 backoff room to matter.
 
 ### Prompt architecture
 
@@ -123,3 +129,5 @@ evals/
 | `internal/llmclient/anthropic.go` | Anthropic provider implementation |
 | `internal/llmclient/openai.go` | OpenAI (+ compatible) provider implementation |
 | `internal/llmclient/gemini.go` | Gemini provider implementation |
+| `internal/llmclient/mistral.go` | Mistral provider implementation (OpenAI-wire-compatible) |
+| `internal/llmclient/cerebras.go` | Cerebras provider implementation (OpenAI-wire-compatible) |
