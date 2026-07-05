@@ -21,6 +21,7 @@ Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-au
 | 11 | Never embed templates in markdown — use YAML template files | ALWAYS pair a template with a JSON Schema and a validation script under the skill's `assets/`/`scripts/` |
 | 12 | Always check skill overlap before creating new skills | ALWAYS scan existing skills' triggers/descriptions for overlap before proposing a new one |
 | 13 | Avoid Python/Node.js scripts in skills | PREFER bash/awk/sed over Python/Node.js for skill `scripts/` logic |
+| 14 | No man left behind — triage every warning surfaced during work | NEVER leave a warning, issue, or error unaddressed just because it's unrelated to the current task; ALWAYS fix it or explicitly defer it with a documented reason |
 
 To add a new rule, load the [`rules-management`](#rules-management) skill — it will load existing rules, check for duplicates, and append with the correct format.
 
@@ -59,6 +60,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **docs-check** — validate the GitHub Pages documentation site built by docmd — orphan
   detection, ADR index freshness, build verification, and LLM output audit.
+- **guided-interview** — conduct a structured, one-question-at-a-time interview with
+  concrete mutually-exclusive options plus a free-text path, adapting later questions to
+  prior answers, ending in a user-confirmed recap.
 - **pr-author** — create and maintain GitHub PRs with live descriptions — template
   discovery, intelligent filling, and lifecycle updates.
 - **session-reflection** — conduct a two-question session-end reflection to catch blind
