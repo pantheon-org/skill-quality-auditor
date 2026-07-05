@@ -297,8 +297,9 @@ entries:
   - path: "ADR/adr-039-plumber-pr-comment.md"
     adr: "ADR-039"
     title: "ADR-039: Plumber PR comment — single comment per PR, edited in place"
-    status: accepted
+    status: superseded
     date: 2026-07-04
+    superseded_by: "adr-043"
     context:
       - path: "docs/ADR/adr-037-plumber-critical-fail-issue-tracking.md"
       - path: "docs/ADR/adr-038-plumber-single-rollup-issue.md"
@@ -327,3 +328,11 @@ entries:
     date: 2026-07-05
     context:
       - path: ".context/findings/skill-quality-llm-judge-failure-chain-2026-07-05.md"
+  - path: "ADR/adr-043-marker-based-pr-comment-upsert.md"
+    adr: "ADR-043"
+    title: "ADR-043: Marker-based lookup for all automated PR comment upserts"
+    status: accepted
+    date: 2026-07-05
+    context:
+      - path: "docs/ADR/adr-039-plumber-pr-comment.md"
+      - path: ".context/findings/pr-comment-clobbering-2026-07-05.md"

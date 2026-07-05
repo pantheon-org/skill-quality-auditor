@@ -1,14 +1,17 @@
 ---
 title: "ADR-039: Plumber PR comment — single comment per PR, edited in place"
-status: accepted
+status: superseded
 date: 2026-07-04
+superseded_by: "adr-043"
 context:
   - path: "docs/ADR/adr-037-plumber-critical-fail-issue-tracking.md"
   - path: "docs/ADR/adr-038-plumber-single-rollup-issue.md"
 ---
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-043](adr-043-marker-based-pr-comment-upsert.md)
 **Date:** 2026-07-04
+
+> **2026-07-05:** Point 2 of this ADR's Decision — using `gh pr comment --edit-last` — is superseded by ADR-043. `--edit-last` scopes to the last comment by the *authenticated identity* (`github-actions[bot]`), not by *this script*; once `skill-quality.yml` started posting its own PR comments under the same identity, `--edit-last` began silently overwriting whichever comment was posted most recently, regardless of which workflow wrote it. See `.context/findings/pr-comment-clobbering-2026-07-05.md`. The rest of this ADR (comment content, permissions, fork handling) still holds.
 
 ## Context
 
