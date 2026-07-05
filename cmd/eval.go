@@ -156,7 +156,7 @@ func init() {
 		},
 	}
 
-	cmd.Flags().StringVar(&flags.provider, "provider", "", "override LLM provider: anthropic|openai|gemini|openai-compatible (default: LLM_PROVIDER env, else anthropic)")
+	cmd.Flags().StringVar(&flags.provider, "provider", "", "override LLM provider: anthropic|openai|gemini|mistral|cerebras|openai-compatible (default: LLM_PROVIDER env, else anthropic)")
 	cmd.Flags().StringVar(&flags.model, "model", "", "override actor model (default: per-provider)")
 	cmd.Flags().StringVar(&flags.judgeModel, "judge-model", "", "override judge model (defaults to --model)")
 	cmd.Flags().IntVar(&flags.failBelow, "fail-below", 0, "exit non-zero if any scenario's percentage score is below this (default 0: structural-only gate)")

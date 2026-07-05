@@ -13,7 +13,9 @@ import (
 // OpenAIClient implements Client against the OpenAI Chat Completions API
 // (default model gpt-4o, key OPENAI_API_KEY). Honours LLM_BASE_URL so it
 // also serves as the openai-compatible adapter for Ollama, vLLM, and
-// internal gateways.
+// internal gateways, and — via mistral.go / cerebras.go — for any other
+// provider whose API is wire-compatible with OpenAI's chat completions
+// endpoint.
 type OpenAIClient struct {
 	cfg  Config
 	http *http.Client
@@ -82,7 +84,7 @@ type openAIError struct {
 
 func (c *OpenAIClient) Chat(ctx context.Context, req Request) (*Response, error) {
 	if c.cfg.Key == "" {
-		return nil, errors.New("openai client has no API key")
+		return nil, fmt.Errorf("%s client has no API key", c.cfg.Provider)
 	}
 	model := req.Model
 	if model == "" {
@@ -99,12 +101,12 @@ func (c *OpenAIClient) Chat(ctx context.Context, req Request) (*Response, error)
 		Temperature: req.Temperature,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("marshal openai request: %w", err)
+		return nil, fmt.Errorf("marshal %s request: %w", c.cfg.Provider, err)
 	}
 
 	url := c.cfg.BaseURL + "/v1/chat/completions"
 	var resp *http.Response
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < MaxRetryAttempts; attempt++ {
 		r, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 		if err != nil {
 			return nil, err
@@ -119,18 +121,19 @@ func (c *OpenAIClient) Chat(ctx context.Context, req Request) (*Response, error)
 		if resp.StatusCode == http.StatusOK {
 			break
 		}
-		if IsRetryable(resp.StatusCode) && attempt < 2 {
+		if IsRetryable(resp.StatusCode) && attempt < MaxRetryAttempts-1 {
+			wait := retryDelay(resp.StatusCode, resp.Header, attempt)
 			_ = resp.Body.Close()
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
-			case <-timeAfter(Backoff(attempt)):
+			case <-timeAfter(wait):
 			}
 			continue
 		}
 		raw, _ := io.ReadAll(resp.Body)
 		_ = resp.Body.Close()
-		return nil, fmt.Errorf("openai api status %d: %s", resp.StatusCode, string(raw))
+		return nil, fmt.Errorf("%s api status %d: %s", c.cfg.Provider, resp.StatusCode, string(raw))
 	}
 	defer func() { _ = resp.Body.Close() }()
 
@@ -140,10 +143,10 @@ func (c *OpenAIClient) Chat(ctx context.Context, req Request) (*Response, error)
 	}
 	var or openAIResponse
 	if err := json.Unmarshal(raw, &or); err != nil {
-		return nil, fmt.Errorf("parse openai response: %w", err)
+		return nil, fmt.Errorf("parse %s response: %w", c.cfg.Provider, err)
 	}
 	if or.Error != nil {
-		return nil, fmt.Errorf("openai error: %s: %s", or.Error.Type, or.Error.Message)
+		return nil, fmt.Errorf("%s error: %s: %s", c.cfg.Provider, or.Error.Type, or.Error.Message)
 	}
 
 	out := &Response{Provider: c.cfg.Provider, Model: model}
