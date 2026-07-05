@@ -71,9 +71,9 @@ Add `The-PR-Agent/pr-agent` as an advisory GitHub Action that posts `/describe` 
 ### Phase 2 — Observe
 
 - **Owner: Thomas.**
-- Run across real PRs for a fixed window: **2 weeks, no additional minimum-PR-count or numeric threshold** — whatever PR volume occurs in that window is the dataset for the Phase 3 decision (a deliberate choice to keep this lightweight rather than instrument thresholds up front; if the window turns out too quiet to judge anything, extend it rather than retrofit thresholds).
+- Run across real PRs for a fixed window: **2 weeks from Phase 1 merge (PR #176, merged 2026-07-04 23:51 UTC) — target end date 2026-07-19**, no additional minimum-PR-count or numeric threshold — whatever PR volume occurs in that window is the dataset for the Phase 3 decision (a deliberate choice to keep this lightweight rather than instrument thresholds up front; if the window turns out too quiet to judge anything, extend it rather than retrofit thresholds).
 - Track: comment quality/signal, false positives, any overlap/noise on PRs that also touch `cmd/assets/**` (despite the Phase 1 prompt-instruction mitigation), and rate-limit throttling against Gemini's free-tier quota.
-- Exit criterion: the 2-week window has elapsed; Thomas makes the Phase 3 call from whatever was observed.
+- Exit criterion: 2026-07-19 has passed; Thomas makes the Phase 3 call from whatever was observed.
 
 ### Phase 3 — Decide on next tier
 
