@@ -1,0 +1,9 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to recognize when the guided-interview protocol does NOT apply — a purely factual question with one right answer.",
+  "checklist": [
+    {"name": "No interview triggered", "description": "Agent does NOT launch the guided-interview protocol for a purely factual question", "max_score": 40},
+    {"name": "Direct answer", "description": "Agent answers directly and concisely (e.g. 5432) without multiple-choice framing", "max_score": 35},
+    {"name": "No unsolicited file", "description": "Agent does not create or propose a written summary/brief for a one-line factual answer", "max_score": 25}
+  ]
+}

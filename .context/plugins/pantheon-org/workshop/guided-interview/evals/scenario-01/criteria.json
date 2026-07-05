@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to open a guided interview with exactly one question, concrete options, and an open free-text path.",
+  "checklist": [
+    {"name": "Single question", "description": "Exactly one question is asked in the opening turn, not several bundled together", "max_score": 30},
+    {"name": "3-4 concrete options", "description": "The question offers 3 or 4 distinct, real options, not a false binary or an overloaded list", "max_score": 30},
+    {"name": "Options carry tradeoffs", "description": "Each option includes a short description of its implication or tradeoff, not just a bare label", "max_score": 20},
+    {"name": "Free-text path open", "description": "An 'other'/free-text path is explicitly available alongside the curated options", "max_score": 20}
+  ]
+}

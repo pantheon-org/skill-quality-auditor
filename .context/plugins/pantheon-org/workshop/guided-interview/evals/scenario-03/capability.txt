@@ -1,0 +1,1 @@
+Skip the guided-interview protocol and any unsolicited file output for purely factual questions.

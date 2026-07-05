@@ -1,0 +1,1 @@
+Open a guided interview with exactly one question offering 3-4 concrete options plus a free-text path.
