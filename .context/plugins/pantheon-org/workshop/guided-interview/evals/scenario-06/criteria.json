@@ -1,0 +1,9 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to keep the free-text path open even when the user pre-names options, instead of treating the named set as exhaustive.",
+  "checklist": [
+    {"name": "Named options presented with tradeoffs", "description": "Postgres, MySQL, and MongoDB are each presented with a short tradeoff or implication, not bare labels", "max_score": 35},
+    {"name": "Free-text path explicitly open", "description": "A fourth, open-ended path is explicitly offered alongside the three named options", "max_score": 40},
+    {"name": "Not framed as exhaustive", "description": "The three named options are not presented as the only possible answers", "max_score": 25}
+  ]
+}

@@ -1,0 +1,1 @@
+Keep the free-text path explicitly open even when the user pre-names candidate options.

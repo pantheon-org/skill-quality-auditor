@@ -34,6 +34,21 @@
       "type": "anti-pattern",
       "why_given": "preference",
       "content": "Skip this skill entirely for purely factual questions with one right answer or requests that are already unambiguous."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER keep asking after the user gives a clear override signal like 'just decide for me' — stop, state the assumed defaults, and move to the recap."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Write a file when the user explicitly asked for a shareable artifact upfront (e.g. 'write it up as a brief') — the chat-only default only applies when no such request was made."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER treat user-pre-named options as the exhaustive set — keep the free-text path open even when the user already suggested candidates."
     }
   ]
 }
