@@ -41,6 +41,17 @@ jobs:
       - name: shellcheck
         run: shellcheck scripts/*.sh
 
+  docs-drift:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for new docs drift
+        run: scripts/check-docs-drift.sh "origin/${{ github.base_ref }}"
+
   test:
     runs-on: ubuntu-latest
     needs: lint

@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 # Checks docs/*.md and README.md against a static map of related source
-# paths for drift: if related source has git commits after the doc's last
-# commit, the doc has likely gone stale. Informational only — exits 0.
+# paths for drift.
+#
+# Default mode (no args): cumulative check used by the pre-push hook —
+# flags a doc as possibly stale if related source has git commits after
+# the doc's last commit, no matter how long ago. Informational only —
+# always exits 0.
+#
+# Gate mode (pass a base ref, e.g. `check-docs-drift.sh origin/main`):
+# used by CI on pull_request — flags only source changes made between
+# the base ref and HEAD that touch a mapped source glob without this
+# same range also touching the corresponding doc. Exits 1 on any gap,
+# so it can block a PR that introduces new drift without also failing
+# on whatever pre-existing drift the cumulative mode already knows about.
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
+BASE_REF="${1:-}"
 COUNT=0
 
 # doc_path|source_glob1;source_glob2;...
@@ -34,6 +46,41 @@ MAPPINGS=(
     "docs/development/skills-and-rules.md|.context/plugins/**;.agents/RULES.md;tessl.json"
     "docs/development/setup.md|hk.pkl;mise.toml"
 )
+
+if [ -n "$BASE_REF" ]; then
+    for entry in "${MAPPINGS[@]}"; do
+        doc_path="${entry%%|*}"
+        globs="${entry#*|}"
+        doc_file="$ROOT/$doc_path"
+        [ -f "$doc_file" ] || continue
+
+        doc_touched=$(git -C "$ROOT" log --oneline "$BASE_REF"...HEAD -- "$doc_path" 2>/dev/null || true)
+        [ -n "$doc_touched" ] && continue
+
+        IFS=';' read -ra glob_arr <<<"$globs"
+        hits=""
+        for g in "${glob_arr[@]}"; do
+            matches=$(git -C "$ROOT" log --oneline "$BASE_REF"...HEAD -- "$g" 2>/dev/null || true)
+            [ -z "$matches" ] && continue
+            hits="${hits}${matches}"$'\n'
+        done
+
+        if [ -n "$hits" ]; then
+            hits="${hits%$'\n'}"
+            echo "✗ $doc_path is likely out of date — this PR changes related source without updating it:"
+            echo "    ${hits//$'\n'/$'\n    '}"
+            COUNT=$((COUNT + 1))
+        fi
+    done
+
+    if [ "$COUNT" -gt 0 ]; then
+        echo
+        echo "→ $COUNT doc(s) likely need an update in this PR. Update the doc(s) above, or if this change genuinely doesn't warrant one, explain why in the PR description."
+        exit 1
+    fi
+    echo "No new doc drift introduced by this PR."
+    exit 0
+fi
 
 for entry in "${MAPPINGS[@]}"; do
     doc_path="${entry%%|*}"
