@@ -145,8 +145,10 @@ jobs:
               return;
             }
             const status = results.overall_pass ? '✅ PASS' : '⚠️ ATTENTION';
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const lines = [
-              `### Native Eval Results — ${status}`,
+              '## 🔍 Skill Quality Gate — Advisory LLM-Judge Eval',
+              `### ${status}`,
               `Provider: \`${results.provider || 'n/a'}\` | Judge prompt version: \`${results.judge_prompt_version || 'n/a'}\``,
               `Model: \`${results.model || 'n/a'}\` | Samples: ${results.samples || 1}`,
               '',
@@ -156,7 +158,7 @@ jobs:
                 `| ${s.id} | ${s.total}/100 | ${s.pass ? '✓' : '✗'} |`
               ),
               '',
-              `_[Advisory only — does not block merge]_`
+              `_[Advisory only — does not block merge]_ · _[View this run](${runUrl})_`
             ];
             await github.rest.issues.createComment({
               ...context.repo,
@@ -193,13 +195,17 @@ jobs:
               return;
             }
             const status = '${{ job.status }}' === 'success' ? '✅ PASS' : '⚠️ FAILED';
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const marker = '<!-- skill-quality-structural-comment -->';
             const body = [
               marker,
-              `### Skill Quality Structural Audit — ${status}`,
+              '## 🔍 Skill Quality Gate — Structural Audit',
+              `### ${status}`,
               '_Duplication + per-skill grade gate — deterministic, runs on every PR (separate from the advisory LLM-judge eval, which is opt-in via the `run-eval` label)._',
               '',
               ...parts,
+              '',
+              `_[View this run](${runUrl})_`,
             ].join('\n');
             const { data: comments } = await github.rest.issues.listComments({
               ...context.repo,

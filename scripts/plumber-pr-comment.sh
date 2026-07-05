@@ -73,6 +73,9 @@ write_section() {
 }
 
 {
+    echo "## 🛡️ Plumber — CI/CD Security Compliance"
+    echo ""
+
     if [ "$CRITICAL_COUNT" -gt 0 ]; then
         echo "### 🔴 ${CRITICAL_COUNT} Critical-severity finding(s) — blocking merge"
         echo ""
@@ -94,6 +97,8 @@ write_section() {
         echo ""
     fi
 
+    echo "_[View this run](${GITHUB_SERVER_URL:-https://github.com}/${REPO}/actions/runs/${GITHUB_RUN_ID:-})_"
+    echo ""
     echo "<!-- plumber-pr-comment -->"
 } >"$TMP_BODY"
 
