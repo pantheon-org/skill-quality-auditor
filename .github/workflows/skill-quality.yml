@@ -54,16 +54,29 @@ jobs:
       # ── Tier 2: LLM-judge eval (advisory only) ──
       # Triggers: nightly schedule, workflow_dispatch, or a PR with the
       # 'run-eval' label (and never from fork PRs — fork PRs cannot see
-      # ANTHROPIC_API_KEY, so the runner would degrade to structural-only
+      # MISTRAL_API_KEY, so the runner would degrade to structural-only
       # anyway; the explicit guard makes this safe).
+      #
+      # Provider is Mistral, not Anthropic: this org has no ANTHROPIC_API_KEY
+      # at all (internal/llmclient's Anthropic support and default model are
+      # still correct and used by anyone who does have a key — this was
+      # never wrong in the Go code, only in this workflow's hardcoded
+      # provider choice). Gemini, Cerebras, and Mistral were all live-tested;
+      # all three connect successfully but all three hit provider-side
+      # per-minute rate limits under this eval run's call volume (multiple
+      # samples x scenarios x actor+judge calls) — Mistral got furthest
+      # (3/6 scenarios) before internal/llmclient gained Retry-After-aware
+      # backoff for 429s (see client.go's RateLimitBackoff), which should
+      # let all three tolerate this workload; Mistral is kept as the
+      # best-performing default from that comparison.
       - name: LLM-judge eval (advisory)
         if: |
           (github.event_name == 'schedule') ||
           (github.event_name == 'workflow_dispatch') ||
           (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && contains(github.event.pull_request.labels.*.name, 'run-eval'))
         env:
-          LLM_PROVIDER: anthropic
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LLM_PROVIDER: mistral
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log > eval-results.json
         continue-on-error: true
 

@@ -1,6 +1,6 @@
 // Package llmclient provides a provider-agnostic abstraction over LLM
-// chat completion APIs (Anthropic, OpenAI, Gemini, and OpenAI-compatible
-// gateways such as Ollama and vLLM).
+// chat completion APIs (Anthropic, OpenAI, Gemini, Mistral, Cerebras, and
+// OpenAI-compatible gateways such as Ollama and vLLM).
 //
 // The Client interface is the model-call boundary shared by every provider
 // implementation. NewFromEnv selects a provider based on the LLM_PROVIDER
@@ -31,8 +31,9 @@ type Response struct {
 	Content string `json:"content"`
 	Usage   Usage  `json:"usage"`
 	// Provider is the selected provider id (anthropic, openai, gemini,
-	// openai-compatible) recorded in the response so callers can surface it
-	// in their own output (e.g. the eval runner's JSON report).
+	// mistral, cerebras, openai-compatible) recorded in the response so
+	// callers can surface it in their own output (e.g. the eval runner's
+	// JSON report).
 	Provider string `json:"provider"`
 	Model    string `json:"model"`
 }
@@ -47,7 +48,7 @@ type Usage struct {
 
 // Config carries the resolved provider settings for a single Client.
 type Config struct {
-	Provider    string  // "anthropic" | "openai" | "gemini" | "openai-compatible"
+	Provider    string  // "anthropic" | "openai" | "gemini" | "mistral" | "cerebras" | "openai-compatible"
 	Model       string  // resolved model id (env override or provider default)
 	BaseURL     string  // endpoint (overridden via LLM_BASE_URL when set)
 	Key         string  // provider-specific API key

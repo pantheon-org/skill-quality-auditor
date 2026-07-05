@@ -118,6 +118,46 @@ func TestNewFromEnv_openAIProvider(t *testing.T) {
 	}
 }
 
+func TestNewFromEnv_mistralProvider(t *testing.T) {
+	t.Setenv("MISTRAL_API_KEY", "mis-key")
+	c, err := NewFromEnv(ProviderMistral)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c == nil {
+		t.Fatal("expected non-nil client for mistral provider with key")
+	}
+	if c.Config().Provider != ProviderMistral {
+		t.Errorf("provider = %q, want mistral", c.Config().Provider)
+	}
+	if c.Config().Model != DefaultModelMistral {
+		t.Errorf("model = %q, want %q", c.Config().Model, DefaultModelMistral)
+	}
+	if c.Config().BaseURL != DefaultBaseMistral {
+		t.Errorf("base = %q, want %q", c.Config().BaseURL, DefaultBaseMistral)
+	}
+}
+
+func TestNewFromEnv_cerebrasProvider(t *testing.T) {
+	t.Setenv("CEREBRAS_API_KEY", "cer-key")
+	c, err := NewFromEnv(ProviderCerebras)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c == nil {
+		t.Fatal("expected non-nil client for cerebras provider with key")
+	}
+	if c.Config().Provider != ProviderCerebras {
+		t.Errorf("provider = %q, want cerebras", c.Config().Provider)
+	}
+	if c.Config().Model != DefaultModelCerebras {
+		t.Errorf("model = %q, want %q", c.Config().Model, DefaultModelCerebras)
+	}
+	if c.Config().BaseURL != DefaultBaseCerebras {
+		t.Errorf("base = %q, want %q", c.Config().BaseURL, DefaultBaseCerebras)
+	}
+}
+
 func TestNewFromEnv_geminiFallsBackToGoogleKey(t *testing.T) {
 	t.Setenv("GEMINI_API_KEY", "")
 	t.Setenv("GOOGLE_API_KEY", "g-key")
@@ -332,6 +372,80 @@ func TestOpenAIClient_compatibleProviderIDReported(t *testing.T) {
 	}
 }
 
+// ---- Mistral / Cerebras adapters (OpenAI-wire-compatible reuse) ----
+
+func TestMistralClient_happyPath(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasSuffix(r.URL.Path, "/v1/chat/completions") {
+			t.Errorf("path = %q, want suffix /v1/chat/completions", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"bonjour"}}],"usage":{"prompt_tokens":3,"completion_tokens":1}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderMistral, Key: "mis-key", BaseURL: srv.URL, Model: "mistral-small-2603"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err != nil {
+		t.Fatalf("chat: %v", err)
+	}
+	if resp.Content != "bonjour" {
+		t.Errorf("content = %q, want bonjour", resp.Content)
+	}
+	if resp.Provider != ProviderMistral {
+		t.Errorf("provider = %q, want mistral", resp.Provider)
+	}
+}
+
+func TestCerebrasClient_happyPath(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasSuffix(r.URL.Path, "/v1/chat/completions") {
+			t.Errorf("path = %q, want suffix /v1/chat/completions", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"fast"}}],"usage":{"prompt_tokens":3,"completion_tokens":1}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderCerebras, Key: "cer-key", BaseURL: srv.URL, Model: "gpt-oss-120b"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err != nil {
+		t.Fatalf("chat: %v", err)
+	}
+	if resp.Content != "fast" {
+		t.Errorf("content = %q, want fast", resp.Content)
+	}
+	if resp.Provider != ProviderCerebras {
+		t.Errorf("provider = %q, want cerebras", resp.Provider)
+	}
+}
+
+func TestOpenAIClient_errorMessagesReferenceProvider(t *testing.T) {
+	// Error strings should name the actual provider (mistral, cerebras, ...)
+	// rather than a hardcoded "openai", since OpenAIClient backs all of them.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"error":{"message":"bad key"}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderMistral, Key: "bad", BaseURL: srv.URL, Model: "m"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_, err = c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err == nil {
+		t.Fatal("expected error for 401 response")
+	}
+	if !strings.Contains(err.Error(), "mistral") {
+		t.Errorf("error = %q, want it to mention provider %q", err.Error(), "mistral")
+	}
+}
+
 // ---- Gemini adapter against httptest ----
 
 func TestGeminiClient_happyPath(t *testing.T) {
@@ -447,7 +561,7 @@ func TestAnthropicClient_retriesOn5xx(t *testing.T) {
 	}
 }
 
-func TestAnthropicClient_givesUpAfterThreeAttempts(t *testing.T) {
+func TestAnthropicClient_givesUpAfterMaxRetryAttempts(t *testing.T) {
 	calls := 0
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		calls++
@@ -471,8 +585,8 @@ func TestAnthropicClient_givesUpAfterThreeAttempts(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error after exhausting retries")
 	}
-	if calls != 3 {
-		t.Errorf("expected 3 attempts, got %d", calls)
+	if calls != MaxRetryAttempts {
+		t.Errorf("expected %d attempts, got %d", MaxRetryAttempts, calls)
 	}
 }
 
@@ -679,5 +793,115 @@ func TestBackoff_monotonicAndCapped(t *testing.T) {
 			}
 		}
 		prev = cur
+	}
+}
+
+func TestRetryAfter_secondsFormat(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "30")
+	d, ok := RetryAfter(h)
+	if !ok {
+		t.Fatal("expected ok=true for a numeric Retry-After")
+	}
+	if d != 30*time.Second {
+		t.Errorf("duration = %v, want 30s", d)
+	}
+}
+
+func TestRetryAfter_httpDateFormat(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", time.Now().Add(45*time.Second).UTC().Format(http.TimeFormat))
+	d, ok := RetryAfter(h)
+	if !ok {
+		t.Fatal("expected ok=true for an HTTP-date Retry-After")
+	}
+	// Allow slack for clock/formatting rounding.
+	if d < 40*time.Second || d > 46*time.Second {
+		t.Errorf("duration = %v, want ~45s", d)
+	}
+}
+
+func TestRetryAfter_absentOrUnparseable(t *testing.T) {
+	cases := []http.Header{
+		{},
+		{"Retry-After": []string{"not-a-number-or-date"}},
+		{"Retry-After": []string{"-5"}},
+	}
+	for _, h := range cases {
+		if _, ok := RetryAfter(h); ok {
+			t.Errorf("RetryAfter(%v) expected ok=false", h)
+		}
+	}
+}
+
+func TestRateLimitBackoff_prefersRetryAfterHeader(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "5")
+	if got := RateLimitBackoff(0, h); got != 5*time.Second {
+		t.Errorf("RateLimitBackoff = %v, want 5s (from header)", got)
+	}
+}
+
+func TestRateLimitBackoff_capsHeaderValueAtMax(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "600") // 10 minutes — way over the cap
+	if got := RateLimitBackoff(0, h); got != 90*time.Second {
+		t.Errorf("RateLimitBackoff = %v, want capped at 90s", got)
+	}
+}
+
+func TestRateLimitBackoff_exponentialFallbackWhenNoHeader(t *testing.T) {
+	prev := RateLimitBackoff(0, http.Header{})
+	if prev < 15*time.Second {
+		t.Errorf("first fallback wait = %v, want >= 15s (longer than transient-error Backoff)", prev)
+	}
+	for i := 1; i < 10; i++ {
+		cur := RateLimitBackoff(i, http.Header{})
+		if cur > 90*time.Second {
+			t.Errorf("RateLimitBackoff(%d) = %v, exceeds 90s cap", i, cur)
+		}
+	}
+}
+
+func TestOpenAIClient_retriesOn429ThenSucceeds(t *testing.T) {
+	calls := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		if calls < 2 {
+			w.Header().Set("Retry-After", "1")
+			w.WriteHeader(http.StatusTooManyRequests)
+			_, _ = w.Write([]byte(`{"error":{"message":"rate limited"}}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"ok"}}],"usage":{}}`))
+	}))
+	defer srv.Close()
+
+	origAfter := timeAfter
+	var capturedWait time.Duration
+	timeAfter = func(d time.Duration) <-chan time.Time {
+		capturedWait = d
+		ch := make(chan time.Time)
+		close(ch)
+		return ch
+	}
+	defer func() { timeAfter = origAfter }()
+
+	c, err := MustNew(Config{Provider: ProviderOpenAI, Key: "k", BaseURL: srv.URL})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "x"}}})
+	if err != nil {
+		t.Fatalf("expected eventual success, got error: %v", err)
+	}
+	if resp.Content != "ok" {
+		t.Errorf("content = %q, want ok", resp.Content)
+	}
+	if calls != 2 {
+		t.Errorf("expected 2 attempts, got %d", calls)
+	}
+	if capturedWait != time.Second {
+		t.Errorf("wait = %v, want 1s (from Retry-After header, not the transient-error Backoff schedule)", capturedWait)
 	}
 }
