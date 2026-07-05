@@ -10,9 +10,6 @@ on:
     paths:
       - 'cmd/assets/**'
       - '.context/plugins/**'
-  schedule:
-    # Nightly at 06:00 UTC — runs the LLM-judge advisory on main.
-    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -52,13 +49,12 @@ jobs:
         run: ./dist/skill-auditor eval ./cmd/assets --fail-below 0
 
       # ── Tier 2: LLM-judge eval (advisory only) ──
-      # Triggers: nightly schedule, workflow_dispatch, or a PR with the
-      # 'run-eval' label (and never from fork PRs — fork PRs cannot see
-      # ANTHROPIC_API_KEY, so the runner would degrade to structural-only
-      # anyway; the explicit guard makes this safe).
+      # Triggers: workflow_dispatch, or a PR with the 'run-eval' label (and
+      # never from fork PRs — fork PRs cannot see ANTHROPIC_API_KEY, so the
+      # runner would degrade to structural-only anyway; the explicit guard
+      # makes this safe). No nightly schedule — removed per user request.
       - name: LLM-judge eval (advisory)
         if: |
-          (github.event_name == 'schedule') ||
           (github.event_name == 'workflow_dispatch') ||
           (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && contains(github.event.pull_request.labels.*.name, 'run-eval'))
         env:
