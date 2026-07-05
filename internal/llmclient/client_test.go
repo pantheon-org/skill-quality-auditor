@@ -118,6 +118,46 @@ func TestNewFromEnv_openAIProvider(t *testing.T) {
 	}
 }
 
+func TestNewFromEnv_mistralProvider(t *testing.T) {
+	t.Setenv("MISTRAL_API_KEY", "mis-key")
+	c, err := NewFromEnv(ProviderMistral)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c == nil {
+		t.Fatal("expected non-nil client for mistral provider with key")
+	}
+	if c.Config().Provider != ProviderMistral {
+		t.Errorf("provider = %q, want mistral", c.Config().Provider)
+	}
+	if c.Config().Model != DefaultModelMistral {
+		t.Errorf("model = %q, want %q", c.Config().Model, DefaultModelMistral)
+	}
+	if c.Config().BaseURL != DefaultBaseMistral {
+		t.Errorf("base = %q, want %q", c.Config().BaseURL, DefaultBaseMistral)
+	}
+}
+
+func TestNewFromEnv_cerebrasProvider(t *testing.T) {
+	t.Setenv("CEREBRAS_API_KEY", "cer-key")
+	c, err := NewFromEnv(ProviderCerebras)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if c == nil {
+		t.Fatal("expected non-nil client for cerebras provider with key")
+	}
+	if c.Config().Provider != ProviderCerebras {
+		t.Errorf("provider = %q, want cerebras", c.Config().Provider)
+	}
+	if c.Config().Model != DefaultModelCerebras {
+		t.Errorf("model = %q, want %q", c.Config().Model, DefaultModelCerebras)
+	}
+	if c.Config().BaseURL != DefaultBaseCerebras {
+		t.Errorf("base = %q, want %q", c.Config().BaseURL, DefaultBaseCerebras)
+	}
+}
+
 func TestNewFromEnv_geminiFallsBackToGoogleKey(t *testing.T) {
 	t.Setenv("GEMINI_API_KEY", "")
 	t.Setenv("GOOGLE_API_KEY", "g-key")
@@ -329,6 +369,80 @@ func TestOpenAIClient_compatibleProviderIDReported(t *testing.T) {
 	}
 	if resp.Provider != ProviderOpenAICompatible {
 		t.Errorf("provider = %q, want openai-compatible", resp.Provider)
+	}
+}
+
+// ---- Mistral / Cerebras adapters (OpenAI-wire-compatible reuse) ----
+
+func TestMistralClient_happyPath(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasSuffix(r.URL.Path, "/v1/chat/completions") {
+			t.Errorf("path = %q, want suffix /v1/chat/completions", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"bonjour"}}],"usage":{"prompt_tokens":3,"completion_tokens":1}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderMistral, Key: "mis-key", BaseURL: srv.URL, Model: "mistral-small-2603"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err != nil {
+		t.Fatalf("chat: %v", err)
+	}
+	if resp.Content != "bonjour" {
+		t.Errorf("content = %q, want bonjour", resp.Content)
+	}
+	if resp.Provider != ProviderMistral {
+		t.Errorf("provider = %q, want mistral", resp.Provider)
+	}
+}
+
+func TestCerebrasClient_happyPath(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasSuffix(r.URL.Path, "/v1/chat/completions") {
+			t.Errorf("path = %q, want suffix /v1/chat/completions", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"fast"}}],"usage":{"prompt_tokens":3,"completion_tokens":1}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderCerebras, Key: "cer-key", BaseURL: srv.URL, Model: "gpt-oss-120b"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err != nil {
+		t.Fatalf("chat: %v", err)
+	}
+	if resp.Content != "fast" {
+		t.Errorf("content = %q, want fast", resp.Content)
+	}
+	if resp.Provider != ProviderCerebras {
+		t.Errorf("provider = %q, want cerebras", resp.Provider)
+	}
+}
+
+func TestOpenAIClient_errorMessagesReferenceProvider(t *testing.T) {
+	// Error strings should name the actual provider (mistral, cerebras, ...)
+	// rather than a hardcoded "openai", since OpenAIClient backs all of them.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"error":{"message":"bad key"}}`))
+	}))
+	defer srv.Close()
+
+	c, err := MustNew(Config{Provider: ProviderMistral, Key: "bad", BaseURL: srv.URL, Model: "m"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_, err = c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "hi"}}})
+	if err == nil {
+		t.Fatal("expected error for 401 response")
+	}
+	if !strings.Contains(err.Error(), "mistral") {
+		t.Errorf("error = %q, want it to mention provider %q", err.Error(), "mistral")
 	}
 }
 

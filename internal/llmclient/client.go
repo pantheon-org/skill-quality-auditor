@@ -14,17 +14,25 @@ const (
 	ProviderAnthropic        = "anthropic"
 	ProviderOpenAI           = "openai"
 	ProviderGemini           = "gemini"
+	ProviderMistral          = "mistral"
+	ProviderCerebras         = "cerebras"
 	ProviderOpenAICompatible = "openai-compatible"
 )
 
-// Default models per provider (recorded in ADR-025). Override via LLM_MODEL.
-// gemini-2.0-flash's continued availability is unverified; gemini-3.5-flash
-// is confirmed working against the live API (see pr-agent.yml's smoke
-// tests, which hit the same retired-model class of bug on gemini-1.5-flash).
+// Default models per provider (recorded in ADR-025; Mistral/Cerebras added
+// after). Override via LLM_MODEL. gemini-2.0-flash's continued availability
+// was unverified; gemini-3.5-flash is confirmed working against the live
+// API (see pr-agent.yml's smoke tests, which hit the same retired-model
+// class of bug on gemini-1.5-flash) — but its free tier is limited to 5
+// requests/minute, which this package's own eval-runner caller can exceed
+// in a single scenario; Mistral/Cerebras give callers a way to route around
+// that without code changes.
 const (
 	DefaultModelAnthropic = "claude-sonnet-4-6"
 	DefaultModelOpenAI    = "gpt-4o"
 	DefaultModelGemini    = "gemini-3.5-flash"
+	DefaultModelMistral   = "mistral-small-2603"
+	DefaultModelCerebras  = "gpt-oss-120b"
 )
 
 // Default endpoints per provider. Override via LLM_BASE_URL.
@@ -32,6 +40,8 @@ const (
 	DefaultBaseAnthropic = "https://api.anthropic.com"
 	DefaultBaseOpenAI    = "https://api.openai.com"
 	DefaultBaseGemini    = "https://generativelanguage.googleapis.com"
+	DefaultBaseMistral   = "https://api.mistral.ai"
+	DefaultBaseCerebras  = "https://api.cerebras.ai"
 )
 
 // providers is the registry of shipped provider factories. Each adapter
@@ -95,6 +105,14 @@ func NewFromEnv(providerOverride string) (Client, error) {
 		cfg.Key = firstNonEmpty(os.Getenv("GEMINI_API_KEY"), os.Getenv("GOOGLE_API_KEY"))
 		cfg.BaseURL = envOrDefault("LLM_BASE_URL", DefaultBaseGemini)
 		cfg.Model = envOrDefault("LLM_MODEL", DefaultModelGemini)
+	case ProviderMistral:
+		cfg.Key = os.Getenv("MISTRAL_API_KEY")
+		cfg.BaseURL = envOrDefault("LLM_BASE_URL", DefaultBaseMistral)
+		cfg.Model = envOrDefault("LLM_MODEL", DefaultModelMistral)
+	case ProviderCerebras:
+		cfg.Key = os.Getenv("CEREBRAS_API_KEY")
+		cfg.BaseURL = envOrDefault("LLM_BASE_URL", DefaultBaseCerebras)
+		cfg.Model = envOrDefault("LLM_MODEL", DefaultModelCerebras)
 	case ProviderOpenAICompatible:
 		cfg.Key = os.Getenv("OPENAI_API_KEY") // gateways usually proxy OpenAI auth
 		cfg.BaseURL = os.Getenv("LLM_BASE_URL")
