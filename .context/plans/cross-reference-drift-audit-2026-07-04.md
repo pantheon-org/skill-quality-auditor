@@ -3,12 +3,16 @@ title: "Draft Plan: Periodic Cross-Reference Drift Audit"
 type: plan
 status: draft
 date: 2026-07-04
+effort: M
 related:
   - ../findings/cross-reference-status-drift-2026-07-04.md
   - ../findings/automate-post-merge-status-sync-2026-07-04.md
   - post-merge-status-sync-2026-07-04.md
   - ../plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh
 ---
+
+**Effort:** M — a new scheduled GitHub Action plus a YAML drift-checking script, integrating with the existing `merge-status-sync.sh`. Reviewed and scoped (Technical 6/10, Strategic 6/10, Risk 5/10, all folded in); still needs a maintainer sign-off on cadence and automation scope before implementation starts.
+
 # Draft plan: periodic cross-reference drift audit
 
 Status: DRAFT for review

@@ -56,6 +56,12 @@ Ask the user about the plan. Collect at minimum:
 - **Dependencies** — does this plan depend on other plans, PRs, or external work?
 - **Risks** — what could go wrong? What's the biggest unknown?
 - **Timeline** — optional, if the user has a deadline or priority
+- **Effort** — a T-shirt-sized total estimate (`S`/`M`/`L`), matching the
+  skill-auditor remediation-plan convention. Use `TBD` only when sizing is
+  genuinely blocked on something listed in Open Questions — don't guess a
+  number to satisfy the field. Required in frontmatter for every plan this
+  skill creates; it flows straight into `.context/index.yaml` so a reader can
+  triage plans by effort without opening each file.
 
 ### 2. Infer local conventions
 
@@ -81,7 +87,8 @@ The template is validated against
 [assets/schemas/plan-scaffold.schema.json](assets/schemas/plan-scaffold.schema.json).
 
 The plan always includes:
-- YAML frontmatter with `title`, `type: plan`, `status: draft`, `date` (today)
+- YAML frontmatter with `title`, `type: plan`, `status: draft`, `date` (today),
+  `effort` (`S`/`M`/`L`/`TBD`)
 - `## Goal` section — one paragraph describing the desired end state
 - `## Phases` section — numbered phases with tasks and wave annotations
 - `## Open Questions` section — unresolved items for the reviewer
@@ -138,6 +145,9 @@ After creating the plan, run these checks:
    an exit criterion. Phases with more than 8 tasks should be split.
 4. **Wave annotation** — verify tasks that can run in parallel are marked
    (e.g., "Wave A: frontend, Wave B: backend — can run concurrently").
+5. **Effort declared** — frontmatter has `effort` set to `S`/`M`/`L`/`TBD`.
+   If `TBD`, confirm the corresponding Open Question actually explains what's
+   blocking the estimate.
 
 ## Mindset
 
@@ -200,6 +210,24 @@ sprint (1-2 weeks). 8+ tasks means the phase is underspecified.
 
 **BAD:** A flat list of 15 tasks with no phase grouping.
 **GOOD:** 3 phases, each with 3-5 tasks and an exit criterion.
+
+**NEVER** — Omit or guess the `effort` field
+
+**SYMPTOM:** The plan has no `effort` in frontmatter, or has one picked
+arbitrarily to satisfy validation rather than reflecting an actual estimate.
+
+**CONSEQUENCE:** A reader scanning `.context/index.yaml` for quick wins vs.
+big lifts can't distinguish them without opening every plan file. A fake
+number is worse than a missing one — it looks authoritative but isn't.
+
+**WHY:** `effort` exists so plans are triageable at a glance, the same way
+`status` lets a reader triage by lifecycle stage. `validate-context-frontmatter.sh`
+requires it for any `type: plan` with `status: draft` or `active`.
+
+**BAD:** Setting `effort: S` on a plan nobody has actually sized, just to pass
+validation.
+**GOOD:** `effort: TBD` with an Open Question stating exactly what decision
+blocks sizing (see `migrate-off-tessl-eval-2026-06-29.md` for a real example).
 
 ## References
 

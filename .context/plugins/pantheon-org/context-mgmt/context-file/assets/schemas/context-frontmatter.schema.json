@@ -35,6 +35,11 @@
         "minLength": 1
       },
       "description": "Relative paths to related .context files. Omit the field entirely if there are no related files."
+    },
+    "effort": {
+      "type": "string",
+      "enum": ["S", "M", "L", "TBD"],
+      "description": "T-shirt-sized total implementation effort, matching the skill-auditor remediation-plan convention (S/M/L). Required for type: plan while status is draft or active (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Use TBD only when sizing is genuinely blocked on an unresolved item in Open Questions. Not applicable to finding/analysis/instruction/audit. Set once at creation like date; re-size only if scope materially changes."
     }
   }
 }
