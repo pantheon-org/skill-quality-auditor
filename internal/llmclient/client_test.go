@@ -561,7 +561,7 @@ func TestAnthropicClient_retriesOn5xx(t *testing.T) {
 	}
 }
 
-func TestAnthropicClient_givesUpAfterThreeAttempts(t *testing.T) {
+func TestAnthropicClient_givesUpAfterMaxRetryAttempts(t *testing.T) {
 	calls := 0
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		calls++
@@ -585,8 +585,8 @@ func TestAnthropicClient_givesUpAfterThreeAttempts(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error after exhausting retries")
 	}
-	if calls != 3 {
-		t.Errorf("expected 3 attempts, got %d", calls)
+	if calls != MaxRetryAttempts {
+		t.Errorf("expected %d attempts, got %d", MaxRetryAttempts, calls)
 	}
 }
 
@@ -793,5 +793,115 @@ func TestBackoff_monotonicAndCapped(t *testing.T) {
 			}
 		}
 		prev = cur
+	}
+}
+
+func TestRetryAfter_secondsFormat(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "30")
+	d, ok := RetryAfter(h)
+	if !ok {
+		t.Fatal("expected ok=true for a numeric Retry-After")
+	}
+	if d != 30*time.Second {
+		t.Errorf("duration = %v, want 30s", d)
+	}
+}
+
+func TestRetryAfter_httpDateFormat(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", time.Now().Add(45*time.Second).UTC().Format(http.TimeFormat))
+	d, ok := RetryAfter(h)
+	if !ok {
+		t.Fatal("expected ok=true for an HTTP-date Retry-After")
+	}
+	// Allow slack for clock/formatting rounding.
+	if d < 40*time.Second || d > 46*time.Second {
+		t.Errorf("duration = %v, want ~45s", d)
+	}
+}
+
+func TestRetryAfter_absentOrUnparseable(t *testing.T) {
+	cases := []http.Header{
+		{},
+		{"Retry-After": []string{"not-a-number-or-date"}},
+		{"Retry-After": []string{"-5"}},
+	}
+	for _, h := range cases {
+		if _, ok := RetryAfter(h); ok {
+			t.Errorf("RetryAfter(%v) expected ok=false", h)
+		}
+	}
+}
+
+func TestRateLimitBackoff_prefersRetryAfterHeader(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "5")
+	if got := RateLimitBackoff(0, h); got != 5*time.Second {
+		t.Errorf("RateLimitBackoff = %v, want 5s (from header)", got)
+	}
+}
+
+func TestRateLimitBackoff_capsHeaderValueAtMax(t *testing.T) {
+	h := http.Header{}
+	h.Set("Retry-After", "600") // 10 minutes — way over the cap
+	if got := RateLimitBackoff(0, h); got != 90*time.Second {
+		t.Errorf("RateLimitBackoff = %v, want capped at 90s", got)
+	}
+}
+
+func TestRateLimitBackoff_exponentialFallbackWhenNoHeader(t *testing.T) {
+	prev := RateLimitBackoff(0, http.Header{})
+	if prev < 15*time.Second {
+		t.Errorf("first fallback wait = %v, want >= 15s (longer than transient-error Backoff)", prev)
+	}
+	for i := 1; i < 10; i++ {
+		cur := RateLimitBackoff(i, http.Header{})
+		if cur > 90*time.Second {
+			t.Errorf("RateLimitBackoff(%d) = %v, exceeds 90s cap", i, cur)
+		}
+	}
+}
+
+func TestOpenAIClient_retriesOn429ThenSucceeds(t *testing.T) {
+	calls := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		if calls < 2 {
+			w.Header().Set("Retry-After", "1")
+			w.WriteHeader(http.StatusTooManyRequests)
+			_, _ = w.Write([]byte(`{"error":{"message":"rate limited"}}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"ok"}}],"usage":{}}`))
+	}))
+	defer srv.Close()
+
+	origAfter := timeAfter
+	var capturedWait time.Duration
+	timeAfter = func(d time.Duration) <-chan time.Time {
+		capturedWait = d
+		ch := make(chan time.Time)
+		close(ch)
+		return ch
+	}
+	defer func() { timeAfter = origAfter }()
+
+	c, err := MustNew(Config{Provider: ProviderOpenAI, Key: "k", BaseURL: srv.URL})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	resp, err := c.Chat(context.Background(), Request{Messages: []Message{{Role: "user", Content: "x"}}})
+	if err != nil {
+		t.Fatalf("expected eventual success, got error: %v", err)
+	}
+	if resp.Content != "ok" {
+		t.Errorf("content = %q, want ok", resp.Content)
+	}
+	if calls != 2 {
+		t.Errorf("expected 2 attempts, got %d", calls)
+	}
+	if capturedWait != time.Second {
+		t.Errorf("wait = %v, want 1s (from Retry-After header, not the transient-error Backoff schedule)", capturedWait)
 	}
 }

@@ -79,18 +79,10 @@ type geminiError struct {
 	Status  string `json:"status"`
 }
 
-func (c *GeminiClient) Chat(ctx context.Context, req Request) (*Response, error) {
-	if c.cfg.Key == "" {
-		return nil, errors.New("gemini client has no API key")
-	}
-	model := req.Model
-	if model == "" {
-		model = c.cfg.Model
-	}
-	if req.MaxTokens == 0 {
-		req.MaxTokens = 4096
-	}
-
+// buildGeminiRequest translates the provider-agnostic Request into Gemini's
+// generateContent body, remapping "assistant" to "model" and pulling any
+// "system" message out into the top-level systemInstruction field.
+func buildGeminiRequest(req Request) geminiRequest {
 	var greq geminiRequest
 	greq.GenerationConfig = geminiGenConfig{
 		MaxOutputTokens: req.MaxTokens,
@@ -110,15 +102,29 @@ func (c *GeminiClient) Chat(ctx context.Context, req Request) (*Response, error)
 			Parts: []geminiPart{{Text: m.Content}},
 		})
 	}
+	return greq
+}
 
-	body, err := json.Marshal(greq)
+func (c *GeminiClient) Chat(ctx context.Context, req Request) (*Response, error) {
+	if c.cfg.Key == "" {
+		return nil, errors.New("gemini client has no API key")
+	}
+	model := req.Model
+	if model == "" {
+		model = c.cfg.Model
+	}
+	if req.MaxTokens == 0 {
+		req.MaxTokens = 4096
+	}
+
+	body, err := json.Marshal(buildGeminiRequest(req))
 	if err != nil {
 		return nil, fmt.Errorf("marshal gemini request: %w", err)
 	}
 
 	endpoint := c.cfg.BaseURL + "/v1beta/models/" + url.PathEscape(model) + ":generateContent"
 	var resp *http.Response
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < MaxRetryAttempts; attempt++ {
 		r, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 		if err != nil {
 			return nil, err
@@ -134,12 +140,13 @@ func (c *GeminiClient) Chat(ctx context.Context, req Request) (*Response, error)
 		if resp.StatusCode == http.StatusOK {
 			break
 		}
-		if IsRetryable(resp.StatusCode) && attempt < 2 {
+		if IsRetryable(resp.StatusCode) && attempt < MaxRetryAttempts-1 {
+			wait := retryDelay(resp.StatusCode, resp.Header, attempt)
 			_ = resp.Body.Close()
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
-			case <-timeAfter(Backoff(attempt)):
+			case <-timeAfter(wait):
 			}
 			continue
 		}

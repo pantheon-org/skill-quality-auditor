@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -171,9 +172,15 @@ func IsRetryable(status int) bool {
 	return status == 429 || (status >= 500 && status < 600)
 }
 
+// MaxRetryAttempts is the total number of HTTP attempts (initial + retries)
+// each adapter's Chat loop makes before giving up. Shared so tuning applies
+// uniformly across providers.
+const MaxRetryAttempts = 4
+
 // Backoff returns the delay for a given retry attempt (0-indexed) using
-// exponential backoff with a small full-jitter cap. Adapters may use this
-// in their retry loops.
+// exponential backoff with a small cap. Sized for transient server errors
+// (5xx) — too short to be useful against a per-minute rate-limit quota; use
+// RateLimitBackoff for 429 responses instead.
 func Backoff(attempt int) time.Duration {
 	base := 500 * time.Millisecond
 	max := 8 * time.Second
@@ -183,6 +190,70 @@ func Backoff(attempt int) time.Duration {
 	}
 	if d > max {
 		d = max
+	}
+	return d
+}
+
+// rateLimitMaxWait caps how long a single retry will wait, whether from a
+// provider's Retry-After header or the exponential fallback below. Keeps a
+// worst-case run bounded even if a provider reports (or we compute) an
+// unreasonably long delay.
+const rateLimitMaxWait = 90 * time.Second
+
+// RetryAfter parses a standard HTTP Retry-After response header — either
+// an integer number of seconds or an HTTP-date — into a wait duration.
+// Returns (0, false) when the header is absent, unparseable, or already in
+// the past.
+func RetryAfter(h http.Header) (time.Duration, bool) {
+	v := h.Get("Retry-After")
+	if v == "" {
+		return 0, false
+	}
+	if secs, err := strconv.Atoi(strings.TrimSpace(v)); err == nil {
+		if secs < 0 {
+			return 0, false
+		}
+		return time.Duration(secs) * time.Second, true
+	}
+	if t, err := http.ParseTime(v); err == nil {
+		if d := time.Until(t); d > 0 {
+			return d, true
+		}
+	}
+	return 0, false
+}
+
+// retryDelay picks the wait duration for a retryable response: RateLimitBackoff
+// for 429s (which honors Retry-After when the provider sends one), Backoff
+// for everything else (5xx). Shared by every adapter's Chat retry loop.
+func retryDelay(status int, h http.Header, attempt int) time.Duration {
+	if status == http.StatusTooManyRequests {
+		return RateLimitBackoff(attempt, h)
+	}
+	return Backoff(attempt)
+}
+
+// RateLimitBackoff returns the wait duration after a 429 (rate limited)
+// response: the server's Retry-After header when present (this is what
+// providers use to tell callers exactly how long their quota window takes
+// to clear), otherwise an exponential schedule with a base long enough to
+// have a chance against a typical per-minute quota — unlike Backoff, which
+// is tuned for transient 5xx errors, not quota resets. Both paths are
+// capped at rateLimitMaxWait.
+func RateLimitBackoff(attempt int, h http.Header) time.Duration {
+	if d, ok := RetryAfter(h); ok {
+		if d > rateLimitMaxWait {
+			return rateLimitMaxWait
+		}
+		return d
+	}
+	base := 15 * time.Second
+	d := base
+	for i := 0; i < attempt; i++ {
+		d *= 2
+	}
+	if d > rateLimitMaxWait {
+		d = rateLimitMaxWait
 	}
 	return d
 }

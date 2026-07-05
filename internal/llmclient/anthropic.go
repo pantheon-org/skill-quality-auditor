@@ -93,7 +93,7 @@ func (c *AnthropicClient) Chat(ctx context.Context, req Request) (*Response, err
 
 	url := c.cfg.BaseURL + "/v1/messages"
 	var resp *http.Response
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < MaxRetryAttempts; attempt++ {
 		r, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 		if err != nil {
 			return nil, err
@@ -110,12 +110,13 @@ func (c *AnthropicClient) Chat(ctx context.Context, req Request) (*Response, err
 			break
 		}
 		// Retryable: 429 or 5xx.
-		if IsRetryable(resp.StatusCode) && attempt < 2 {
+		if IsRetryable(resp.StatusCode) && attempt < MaxRetryAttempts-1 {
+			wait := retryDelay(resp.StatusCode, resp.Header, attempt)
 			_ = resp.Body.Close()
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
-			case <-timeAfter(Backoff(attempt)):
+			case <-timeAfter(wait):
 			}
 			continue
 		}
