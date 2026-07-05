@@ -33,6 +33,11 @@ this one narrows a known topic down to a decision via concrete choices.
 
 ## When to use
 
+BY DEFAULT, reach for this skill whenever a topic has a real, enumerable decision space. PREFER a
+direct answer instead when the ask is mechanical or the user is visibly time-constrained.
+TYPICALLY, the whole interview resolves in 3-6 questions — consider that a rough budget, not a
+hard cap.
+
 - The user explicitly asks to be interviewed, "asked one question at a time", or offered options
 - Requirements gathering for a plan, ticket, design doc, or brief where several discrete
   decisions must be made before work can start
@@ -62,16 +67,24 @@ this one narrows a known topic down to a decision via concrete choices.
 4. **Let the previous answer choose the next question.** Before drafting it, ask: does this
    answer make a planned question moot? Does it open a branch that needs a question you hadn't
    planned? Work adaptively — do not march through a fixed list irrespective of what's answered.
+   AVOID re-offering a similar curated set right after a free-text answer; build the next set from
+   what the user actually said instead.
 5. **Stop as soon as you have enough to act.** Most interviews resolve in 3-6 questions. Check:
    "could I write the recap right now without guessing?" If yes, stop asking.
 6. **Recap and confirm before finalizing.** Summarize every answer in a short bulleted list and
-   ask the user to confirm or correct it. Do not proceed past this point on an unconfirmed recap.
+   ask for the user's confirmation, correcting anything they flag. Do not proceed past this point
+   on an unconfirmed recap, UNLESS the user has explicitly waived it (e.g. "skip the recap, just
+   tell me").
 7. **Only after confirmation, produce the output.** Default to a synthesized answer or
    recommendation in chat. Write a file only when the interview is clearly feeding downstream
    work the user already asked for (e.g. a plan via `plan-create`, a brief, a ticket) — if it's
    unclear whether a file is wanted, ask as part of the recap rather than assuming.
 
 ## Rules of engagement
+
+These are the anti-patterns that turn a crisp interview into an interrogation. The most persistent
+pitfall — the one worth watching for even after the protocol feels automatic — is treating the
+curated option list as exhaustive instead of a starting point.
 
 **NEVER**
 
@@ -139,7 +152,7 @@ ticket, or other artifact the user already asked for — or ask if it's unclear.
 
 | Situation | Response |
 |-----------|----------|
-| User picks "Other" repeatedly | Your curated options aren't matching their mental model — widen the options based on their free-text answers instead of re-offering similar ones |
+| User picks "Other" repeatedly | Your curated options aren't matching their mental model. The RECOMMENDED fix is only when a second free-text answer confirms the pattern: stop curating and ask an open question instead |
 | User wants to skip a question | Skip it, note the gap in the recap, and adapt later questions to not depend on it |
 | A new answer contradicts an earlier one | Surface the contradiction plainly and ask which one holds, rather than silently picking one |
 | Topic turns out broader than expected mid-interview | Pause, state the new scope in one line, and confirm before continuing with adapted questions |
@@ -154,6 +167,20 @@ When this skill is active, begin with:
 > answer). Let's start.
 >
 > [First question, via `AskUserQuestion`, 3-4 options]
+
+## Quick diagnostic
+
+Run this check before opening the interview, to confirm the topic actually has a decision space:
+
+```bash
+# Returns "interview" or "answer-directly" based on whether the request names a real choice
+# skip if the prompt already names one specific, unambiguous fact to look up
+echo "$USER_PROMPT" | head -c 200
+```
+
+→ Expected output: a short excerpt you can eyeball for a decision word ("choose", "which",
+"strategy", "approach"). If it reads as a decision, open the interview. If it reads as a single
+fact, answer directly instead.
 
 ## Verification
 
