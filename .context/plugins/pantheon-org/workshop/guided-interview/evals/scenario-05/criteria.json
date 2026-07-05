@@ -1,0 +1,9 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to produce a written output when the user explicitly asked for one upfront, rather than defaulting to chat-only.",
+  "checklist": [
+    {"name": "Produces a written artifact", "description": "A file or document is written or clearly proposed as the immediate next step after the recap is confirmed", "max_score": 45},
+    {"name": "Matches the confirmed recap", "description": "The written content is faithful to what was confirmed in the recap, with nothing dropped or changed", "max_score": 30},
+    {"name": "No redundant re-asking", "description": "The agent does not ask again whether a file is wanted, since the user already said so upfront", "max_score": 25}
+  ]
+}

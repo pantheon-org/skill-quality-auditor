@@ -1,0 +1,1 @@
+Produce a written artifact after a confirmed recap when the user explicitly asked for one upfront.

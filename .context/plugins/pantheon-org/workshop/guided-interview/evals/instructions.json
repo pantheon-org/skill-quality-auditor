@@ -1,0 +1,54 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Ask exactly ONE question per turn — never bundle multiple questions into a single call, even if the question tool nominally supports several at once."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Every question must offer 3-4 concrete, mutually exclusive options, each with a short description of its implication or tradeoff, plus an always-open free-text path."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Use the previous answer to decide the next question — skip questions the answer made moot, add questions a new branch opened. Do not work through a fixed list regardless of answers."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Recap every answer in a short bulleted summary and get explicit confirmation before producing any final output."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER offer fewer than 3 or more than 4 options on a question that has a real decision space — split an overloaded question into two instead."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER produce a written file the user did not ask for and that isn't clearly needed by downstream work — default to a chat answer."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "preference",
+      "content": "Skip this skill entirely for purely factual questions with one right answer or requests that are already unambiguous."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER keep asking after the user gives a clear override signal like 'just decide for me' — stop, state the assumed defaults, and move to the recap."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Write a file when the user explicitly asked for a shareable artifact upfront (e.g. 'write it up as a brief') — the chat-only default only applies when no such request was made."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER treat user-pre-named options as the exhaustive set — keep the free-text path open even when the user already suggested candidates."
+    }
+  ]
+}

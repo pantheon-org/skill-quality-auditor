@@ -15,6 +15,7 @@ on:
 permissions:
   contents: read
   issues: write
+  pull-requests: write
 
 jobs:
   quality-gate:
@@ -38,15 +39,61 @@ jobs:
         run: ./dist/skill-auditor validate artifacts
 
       - name: Duplication check
-        run: ./dist/skill-auditor duplication cmd/assets
+        run: set -o pipefail; ./dist/skill-auditor duplication cmd/assets | tee duplication-cmd-assets.md
 
       - name: Batch quality gate
-        run: ./dist/skill-auditor batch ./cmd/assets --fail-below B
+        run: set -o pipefail; ./dist/skill-auditor batch ./cmd/assets --fail-below B | tee batch-cmd-assets.md
 
       # ── Tier 1: structural eval gate (required every PR/main push) ──
       # Deterministic, no key needed, ~1s (ADR-007 Tier 1).
       - name: Structural eval gate
         run: ./dist/skill-auditor eval ./cmd/assets --fail-below 0
+
+      # ── Helper skills (.context/plugins/**) ──
+      # The trigger's paths filter covers .context/plugins/**, but every check
+      # above only ever touches cmd/assets — a helper-skill-only PR could go
+      # green without the helper skill itself being validated at all. These
+      # steps close that gap by discovering every helper skill under
+      # .context/plugins/ and running the same duplication/batch/structural
+      # checks used for the audited tile. All 11 existing helper skills score
+      # B or above today, so --fail-below B does not retroactively break CI.
+      - name: Discover helper skills
+        id: helper_skills
+        run: |
+          set -euo pipefail
+          DIRS=$(find .context/plugins -name SKILL.md -exec dirname {} \; | sort -u)
+          COUNT=$(printf '%s\n' "$DIRS" | grep -c . || true)
+          {
+            echo "dirs<<SKILL_EOF"
+            printf '%s\n' "$DIRS"
+            echo "SKILL_EOF"
+            echo "count=$COUNT"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Duplication check (helper skills)
+        if: steps.helper_skills.outputs.count != '0'
+        run: set -o pipefail; ./dist/skill-auditor duplication .context/plugins | tee duplication-helper-skills.md
+
+      - name: Batch quality gate (helper skills)
+        if: steps.helper_skills.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          ARGS=()
+          while IFS= read -r d; do
+            [ -n "$d" ] && ARGS+=("./$d")
+          done <<< "${{ steps.helper_skills.outputs.dirs }}"
+          ./dist/skill-auditor batch "${ARGS[@]}" --fail-below B | tee batch-helper-skills.md
+
+      - name: Structural eval gate (helper skills)
+        if: steps.helper_skills.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          while IFS= read -r d; do
+            [ -n "$d" ] || continue
+            echo "::group::eval $d"
+            ./dist/skill-auditor eval "./$d" --fail-below 0
+            echo "::endgroup::"
+          done <<< "${{ steps.helper_skills.outputs.dirs }}"
 
       # ── Tier 2: LLM-judge eval (advisory only) ──
       # Triggers: workflow_dispatch, or a PR with the 'run-eval' label (and
@@ -98,8 +145,10 @@ jobs:
               return;
             }
             const status = results.overall_pass ? '✅ PASS' : '⚠️ ATTENTION';
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const lines = [
-              `### Native Eval Results — ${status}`,
+              '## 🔍 Skill Quality Gate — Advisory LLM-Judge Eval',
+              `### ${status}`,
               `Provider: \`${results.provider || 'n/a'}\` | Judge prompt version: \`${results.judge_prompt_version || 'n/a'}\``,
               `Model: \`${results.model || 'n/a'}\` | Samples: ${results.samples || 1}`,
               '',
@@ -109,13 +158,65 @@ jobs:
                 `| ${s.id} | ${s.total}/100 | ${s.pass ? '✓' : '✗'} |`
               ),
               '',
-              `_[Advisory only — does not block merge]_`
+              `_[Advisory only — does not block merge]_ · _[View this run](${runUrl})_`
             ];
             await github.rest.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
               body: lines.join('\n')
             });
+
+      # ── Structural audit comment (always runs, unlike the advisory eval above) ──
+      # Duplication + batch grade results are deterministic and gate every PR,
+      # but previously only appeared in Actions logs. This surfaces them
+      # directly on the PR, updating one comment in place across re-pushes
+      # instead of spamming a new one each time.
+      - name: Post structural audit comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const readFile = (path) => {
+              try { return fs.readFileSync(path, 'utf8').trim(); } catch (e) { return null; }
+            };
+            const sections = [
+              { title: 'cmd/assets — Duplication', file: 'duplication-cmd-assets.md' },
+              { title: 'cmd/assets — Batch Quality Gate', file: 'batch-cmd-assets.md' },
+              { title: 'Helper Skills — Duplication', file: 'duplication-helper-skills.md' },
+              { title: 'Helper Skills — Batch Quality Gate', file: 'batch-helper-skills.md' },
+            ];
+            const parts = sections
+              .map(s => ({ ...s, content: readFile(s.file) }))
+              .filter(s => s.content)
+              .map(s => `<details><summary>${s.title}</summary>\n\n${s.content}\n\n</details>`);
+            if (parts.length === 0) {
+              core.info('No structural audit output found, skipping comment');
+              return;
+            }
+            const status = '${{ job.status }}' === 'success' ? '✅ PASS' : '⚠️ FAILED';
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            const marker = '<!-- skill-quality-structural-comment -->';
+            const body = [
+              marker,
+              '## 🔍 Skill Quality Gate — Structural Audit',
+              `### ${status}`,
+              '_Duplication + per-skill grade gate — deterministic, runs on every PR (separate from the advisory LLM-judge eval, which is opt-in via the `run-eval` label)._',
+              '',
+              ...parts,
+              '',
+              `_[View this run](${runUrl})_`,
+            ].join('\n');
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+            }
 
       # ── Proving period: Tessl review kept alongside the native runner ──
       # Both steps use continue-on-error so CI is always green; "green" is

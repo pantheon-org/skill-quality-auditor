@@ -1,0 +1,9 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to respect an explicit override signal mid-interview by stopping immediately, never asking a further question after it.",
+  "checklist": [
+    {"name": "Stops immediately", "description": "No further question is asked after the 'just decide for me' override signal", "max_score": 40},
+    {"name": "States assumed defaults", "description": "The agent explicitly names the default it is assuming for the unanswered verbosity question rather than silently picking one", "max_score": 35},
+    {"name": "Moves to final output", "description": "The agent proceeds to a synthesized recap/answer instead of continuing to gather more input", "max_score": 25}
+  ]
+}

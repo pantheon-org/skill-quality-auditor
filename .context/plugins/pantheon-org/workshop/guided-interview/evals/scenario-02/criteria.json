@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates the agent's ability to adapt later questions to prior answers instead of following a fixed script, and to recap and confirm before finalizing.",
+  "checklist": [
+    {"name": "Adapts to prior answer", "description": "The next question is visibly reshaped by the 'serverless' answer rather than repeating a now-moot planned question", "max_score": 35},
+    {"name": "Still one question at a time", "description": "Only a single question is asked in the turn following the answer", "max_score": 20},
+    {"name": "Bulleted recap presented", "description": "A short bulleted summary of answers given so far is presented before finalizing", "max_score": 25},
+    {"name": "Explicit confirmation requested", "description": "The agent explicitly asks the user to confirm or correct the recap before producing a final output", "max_score": 20}
+  ]
+}
