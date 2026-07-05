@@ -54,16 +54,23 @@ jobs:
       # ── Tier 2: LLM-judge eval (advisory only) ──
       # Triggers: nightly schedule, workflow_dispatch, or a PR with the
       # 'run-eval' label (and never from fork PRs — fork PRs cannot see
-      # ANTHROPIC_API_KEY, so the runner would degrade to structural-only
+      # GEMINI_API_KEY, so the runner would degrade to structural-only
       # anyway; the explicit guard makes this safe).
+      #
+      # Provider is Gemini, not Anthropic: this org has no ANTHROPIC_API_KEY
+      # at all (internal/llmclient's Anthropic support and default model are
+      # still correct and used by anyone who does have a key — this was
+      # never wrong in the Go code, only in this workflow's hardcoded
+      # provider choice). Reuses the same GEMINI_API_KEY secret as
+      # .github/workflows/pr-agent.yml.
       - name: LLM-judge eval (advisory)
         if: |
           (github.event_name == 'schedule') ||
           (github.event_name == 'workflow_dispatch') ||
           (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && contains(github.event.pull_request.labels.*.name, 'run-eval'))
         env:
-          LLM_PROVIDER: anthropic
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LLM_PROVIDER: gemini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log > eval-results.json
         continue-on-error: true
 

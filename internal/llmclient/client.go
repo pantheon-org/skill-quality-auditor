@@ -18,10 +18,13 @@ const (
 )
 
 // Default models per provider (recorded in ADR-025). Override via LLM_MODEL.
+// gemini-2.0-flash's continued availability is unverified; gemini-3.5-flash
+// is confirmed working against the live API (see pr-agent.yml's smoke
+// tests, which hit the same retired-model class of bug on gemini-1.5-flash).
 const (
 	DefaultModelAnthropic = "claude-sonnet-4-6"
 	DefaultModelOpenAI    = "gpt-4o"
-	DefaultModelGemini    = "gemini-2.0-flash"
+	DefaultModelGemini    = "gemini-3.5-flash"
 )
 
 // Default endpoints per provider. Override via LLM_BASE_URL.
