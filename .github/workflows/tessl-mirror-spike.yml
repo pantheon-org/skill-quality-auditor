@@ -1,0 +1,35 @@
+name: THROWAWAY — tessl mirror spike
+
+# Temporary, manual-only workflow for
+# .context/plans/tessl-mirror-drift-check-2026-07-06.md's Phase 2: confirms
+# `tessl install` succeeds with no TESSL_TOKEN in a clean CI runner, gating
+# whether Phase 3's real CI wiring can rely on `npm install -g tessl` alone.
+# No secrets are referenced anywhere in this job, so a green run is
+# conclusive proof the tokenless path works.
+#
+# Delete this file once the spike goes green and its result is folded into
+# Phase 3 — it exists to answer one question, not to run indefinitely.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  spike:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install tessl (no token)
+        run: npm install -g tessl
+
+      - name: tessl install
+        run: tessl install
+
+      - name: Confirm pantheon-org mirror populated
+        run: |
+          test -d .tessl/plugins/pantheon-org
+          find .tessl/plugins/pantheon-org -mindepth 2 -maxdepth 2 -type d | sort
