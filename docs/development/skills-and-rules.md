@@ -53,7 +53,12 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **adr-capture** — capture Architecture Decision Records (ADRs) from `.context/` plans,
   findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the
-  machine-readable index. Also runs post-merge status sync: after a PR merges,
+  machine-readable index. `regenerate-adr-index.sh` has a `--check` mode (regenerate in
+  memory and diff the committed `docs/ADR/index.yaml`) so a **stale** ADR index fails CI,
+  not just a missing one. `check-undocumented-decisions.sh` scans for binding-decision
+  headings (`## Decision`, `**Decision:**`, `Adopt Option`) not covered by an ADR — it
+  deliberately does not match finding-recommendation headings, since findings recommend
+  while plans decide. Also runs post-merge status sync: after a PR merges,
   `merge-status-sync.sh` detects plans/ADRs left `ACTIVE`/`proposed` when the merge should
   have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
 - **rules-management** — manage the agent behavioural rules in `.agents/RULES.md` — load
