@@ -132,3 +132,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** Incidental warnings are often the cheapest signal of latent problems available — ignoring them because they're "out of scope" lets known issues accumulate invisibly until they resurface as harder-to-diagnose failures. Triage-or-document costs little and keeps the repository's issue surface honest.
 
+---
+
+### Rule: Regenerate, don't hand-merge, conflicts on auto-generated files
+
+**Directive:** NEVER hand-resolve merge/rebase conflict markers on a file that's produced by a generator script (e.g. `.context/index.yaml`, `docs/ADR/index.yaml`). ALWAYS take either side (`git checkout --ours` or `--theirs`) to clear the conflict, then re-run that file's generator script (e.g. `regenerate-context-index.sh`, `regenerate-adr-index.sh`) so the committed content is freshly derived from the current source-of-truth files, then stage and continue.
+
+**Rationale:** These files are deterministically derived by scanning current frontmatter/content across the repo, not authored by hand. A manually merged set of conflict markers can satisfy git's conflict resolution while still being internally inconsistent with what the generator would actually produce (duplicate entries, stale counts, wrong ordering) — regenerating is strictly correct and no slower than merging by hand.
+
