@@ -16,6 +16,12 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
+if ! command -v jq >/dev/null 2>&1; then
+    echo "Error: jq is required by $0 (writes the JSONL sidecar) but was not found on PATH." >&2
+    echo "Install it (e.g. 'brew install jq' or 'apt install jq') and retry." >&2
+    exit 1
+fi
+
 mapped_docs=$(sed -n 's/^ *"\([^|]*\)|.*"$/\1/p' "$CHECK_SCRIPT")
 reviewed_iso=$(git -C "$ROOT" log -1 --format='%cI')
 reviewed_epoch=$(git -C "$ROOT" log -1 --format='%ct')
