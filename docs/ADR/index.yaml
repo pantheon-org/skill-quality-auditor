@@ -359,3 +359,11 @@ entries:
     context:
       - path: ".context/known-issues/docs-drift-jq-hard-dependency-2026-07-06.md"
       - path: ".context/known-issues/docs-drift-cumulative-not-enforced-2026-07-06.md"
+  - path: "ADR/adr-047-tessl-mirror-ephemeral-diff.md"
+    adr: "ADR-047"
+    title: "ADR-047: verify the .tessl/plugins mirror via CI-only diff, don't track it"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/findings/tessl-mirror-drift-protection-2026-07-06.md"
+      - path: ".context/findings/index-yaml-split-review-2026-07-06.md"
