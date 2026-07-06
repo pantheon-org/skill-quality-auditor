@@ -106,7 +106,7 @@ cobra.Command
     ├── analyze   ──► read SKILL.md → ExtractKeywords() + Detect*() → CombinedAnalysis
     │
     ├── validate  ──► artifacts: walk skills dir → check schemas/templates/scripts/SKILL.md conventions
-    │                 context:   JSON-schema-validate .context/**/*.md frontmatter (santhosh-tekuri)
+    │                 context:   JSON-schema-validate context frontmatter under a given path (default .context; santhosh-tekuri)
     │
     ├── init      ──► resolve agents → write embedded assets → symlink/copy to harness dirs
     │
