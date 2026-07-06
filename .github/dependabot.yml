@@ -12,6 +12,18 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Supply-chain cooldown (ADR-055): hold version-update PRs for 7 days so a
+    # compromised or malicious release sits unadopted through its typical
+    # detection/yank window before we pull it in. Mirrors mise.toml's
+    # `minimum_release_age = "7d"` for mise-managed tools.
+    #
+    # PREREQUISITE (see known-issue dependabot-security-updates-disabled): this
+    # only means "7 days UNLESS critical" while Dependabot security updates are
+    # ENABLED — advisory-driven security PRs bypass cooldown (dependabot-core
+    # #13979, fixed 2026-02-12). With security updates OFF, cooldown delays
+    # everything, including would-be-critical fixes.
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: chore
       include: scope
