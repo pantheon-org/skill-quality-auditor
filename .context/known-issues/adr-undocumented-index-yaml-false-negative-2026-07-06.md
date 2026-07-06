@@ -1,7 +1,7 @@
 ---
 title: "Known issue: check-undocumented-decisions.sh silently skips any file mentioning 'index.yaml'"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 value: MEDIUM
 severity: MEDIUM

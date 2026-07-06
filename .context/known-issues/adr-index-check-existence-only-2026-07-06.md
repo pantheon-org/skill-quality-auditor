@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: the adr-index gate only checks the file exists, so a stale ADR index passes CI"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 severity: MEDIUM
 value: MEDIUM
