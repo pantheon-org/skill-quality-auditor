@@ -4,6 +4,7 @@ type: plan
 status: active
 date: 2026-07-06
 effort: L
+value: high
 related:
   - ../findings/prioritisation-signal-gap-2026-07-06.md
   - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json

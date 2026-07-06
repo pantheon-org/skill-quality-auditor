@@ -62,6 +62,13 @@ Ask the user about the plan. Collect at minimum:
   number to satisfy the field. Required in frontmatter for every plan this
   skill creates; it flows straight into `.context/index.yaml` so a reader can
   triage plans by effort without opening each file.
+- **Value** — a `high`/`medium`/`low` benefit-of-action grade, distinct from
+  effort (cost) and severity (risk-of-inaction). Grade against
+  [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md)
+  (leverage, consumers unblocked, reversibility) — do not guess. Required in
+  frontmatter for every plan this skill creates; it flows into
+  `.context/index.yaml`, where the "what's next" read protocol sorts by value
+  descending, then effort ascending.
 
 ### 2. Infer local conventions
 
@@ -88,7 +95,7 @@ The template is validated against
 
 The plan always includes:
 - YAML frontmatter with `title`, `type: plan`, `status: draft`, `date` (today),
-  `effort` (`S`/`M`/`L`/`TBD`)
+  `effort` (`S`/`M`/`L`/`TBD`), `value` (`high`/`medium`/`low`)
 - `## Goal` section — one paragraph describing the desired end state
 - `## Phases` section — numbered phases with tasks and wave annotations
 - `## Open Questions` section — unresolved items for the reviewer
@@ -148,6 +155,8 @@ After creating the plan, run these checks:
 5. **Effort declared** — frontmatter has `effort` set to `S`/`M`/`L`/`TBD`.
    If `TBD`, confirm the corresponding Open Question actually explains what's
    blocking the estimate.
+6. **Value graded** — frontmatter has `value` set to `high`/`medium`/`low`,
+   graded against `.context/instructions/value-rubric.md` rather than guessed.
 
 ## Mindset
 

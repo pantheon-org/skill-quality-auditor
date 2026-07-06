@@ -3,6 +3,7 @@ title: "Finding: .context carries no value signal, so \"highest value\" is re-de
 type: finding
 status: active
 date: 2026-07-06
+value: high
 related:
   - ../index.yaml
   - ../../.agents/skills/context-index/scripts/regenerate-context-index.sh
