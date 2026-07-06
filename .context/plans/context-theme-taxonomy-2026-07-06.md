@@ -1,7 +1,7 @@
 ---
 title: "Plan: Add a thematic axis to .context/ so work can be grouped, sliced, and tie-broken by area"
 type: PLAN
-status: DRAFT
+status: ACTIVE
 date: 2026-07-06
 effort: M
 value: MEDIUM
@@ -19,13 +19,20 @@ related:
 `value` signal cut (schema, validator, index generator, two authoring skills in two
 plugin bundles, a single serialised backfill, an ADR). It is smaller than `value` (L)
 because there is no historical-corpus phase and no calibration-pass subtlety: a theme is
-a categorical fact about an entry, not a graded judgement. The one genuinely open piece
-of design is ratifying the controlled vocabulary (see Open Questions), which is why this
-plan ships as DRAFT pending that decision rather than going straight to ACTIVE.
+a categorical fact about an entry, not a graded judgement. The multi-valued shape adds a
+small authoring discipline (order tags by primary) but no engineering complexity.
 
-**Review status:** DRAFT, not yet through `plan-review`. The vocabulary fork (Decision 1
-options) should be settled by a `guided-interview` or a short `design-debate` before
-promotion, the same way the `value` plan resolved its Q1-Q4 forks.
+**Review status:** ACTIVE. The three design forks were resolved by a `guided-interview`
+on 2026-07-06 (see Decisions 1, 8, 9). Not yet through a full `plan-review`; the forks
+that would have blocked promotion are closed, so it is ready for execution.
+
+**Interview outcomes (2026-07-06):** (Q1) the axis is a **multi-valued `themes` list**,
+not a single enum — an entry can belong to several areas (Decision 1). (Q2) the list is
+**ordered and `themes[0]` is the primary theme**, which breaks read-protocol ties below
+`value` then `effort` (Decision 8, resolving the old below-or-above-`effort` fork). (Q3)
+**ship the coarse 6 seed themes and split on evidence** — split a theme only once backfill
+shows it dominating (rough threshold ~30% of entries), recorded in the ADR, mirroring how
+the `value` plan deferred a numeric scale (Decision 9).
 
 ## Goal
 
@@ -41,8 +48,8 @@ closes.
 
 **In scope:**
 
-- A new thematic frontmatter field on the three action-candidate types (`PLAN`,
-  `FINDING`, `KNOWN_ISSUE`), shape decided by Decision 1.
+- A new multi-valued `themes` frontmatter field (an ordered list, Decision 1) on the
+  three action-candidate types (`PLAN`, `FINDING`, `KNOWN_ISSUE`).
 - A **ratified controlled vocabulary** of themes, seeded from the latent clusters the
   finding identified, published as an instruction file so backfill grades against it.
 - Schema update in `context-frontmatter.schema.json` (`additionalProperties: false`, so
@@ -54,7 +61,8 @@ closes.
 - `plan-create` and `context-file` skill updates to prompt for the theme, plus
   `tessl install` to keep both plugin-bundle mirrors in sync.
 - Read-protocol update in `ways-of-working.md` and the value rubric / read protocol:
-  theme as a documented tie-breaker below `value` then `effort`.
+  `themes[0]` (the primary theme) as a documented tie-breaker below `value` then
+  `effort` (Decision 8).
 - An ADR recording the contract change and the vocabulary.
 
 **Out of scope (deferred):**
@@ -65,26 +73,26 @@ closes.
   any aggregation is a read-time query or a future skill concern.
 - Adding the theme to `ANALYSIS`/`INSTRUCTION`/`AUDIT` types (reference material).
 - Building the "what's next" skill that would consume theme as a grouping key.
-- Free-form uncontrolled tags. If Decision 1 lands on tags, they are still drawn from the
-  ratified vocabulary, not open text, so the axis stays queryable.
+- Free-form uncontrolled tags. The `themes` list is multi-valued (Decision 1) but every
+  member is drawn from the ratified vocabulary, not open text, so the axis stays queryable.
 
 ## Decisions
 
-Decision 1 is deliberately left open for a pre-promotion interview; the rest are settled
-by direct analogy to the `value` signal (ADR-049).
+All decisions are settled. Decisions 1, 8, and 9 record the outcomes of the
+2026-07-06 guided-interview on the forks this plan was left DRAFT to resolve.
 
-1. **Vocabulary shape — OPEN, resolve before promotion.** Three candidates:
-   (A) single `theme` enum, one theme per entry, small ratified vocabulary;
-   (B) multi-valued `themes`/`tags` list drawn from the same ratified vocabulary;
-   (C) derive grouping from the `related` graph, no new field. Leaning A: it matches the
-   `value`/`severity` enum pattern, keeps sort/tie-break semantics trivial, and forces a
-   single primary area per entry (which is what a tie-breaker needs). B is more faithful
-   to genuinely cross-cutting items but muddies the tie-break; C avoids a schema change
-   but depends on link discipline the repo has already seen drift on.
-2. **Seed the vocabulary from the finding's latent clusters, then ratify.** Candidate
-   values: `EVAL`, `PR-TOOLING`, `DOCS`, `GOVERNANCE`, `SKILL-QUALITY`, `DISTRIBUTION`.
-   The set is ratified in Phase 1 (with the interview) rather than accreted ad hoc, and
-   kept deliberately small; a too-fine vocabulary is as useless as none.
+1. **Vocabulary shape — multi-valued `themes` list (Option B), not a single enum (A) or
+   derive-from-`related` (C) (resolves the interview's Q1).** An entry can genuinely
+   belong to several areas (e.g. `cross-reference-drift-audit` is both `GOVERNANCE` and
+   tooling), and a single enum would force a lossy choice. The list draws every member
+   from the ratified vocabulary, so it stays queryable; the tie-break complication that
+   made B look costly is resolved by Decision 8 (ordered list, primary is `themes[0]`).
+   C is rejected: it depends on `related`-link discipline the repo has already seen drift
+   on, and it cannot express "this is about X" independently of "this links to Y".
+2. **Ship the six seed themes drawn from the finding's latent clusters:** `EVAL`,
+   `PR-TOOLING`, `DOCS`, `GOVERNANCE`, `SKILL-QUALITY`, `DISTRIBUTION`. The set is kept
+   deliberately coarse; a too-fine vocabulary is as useless as none. Splitting a theme
+   later is evidence-driven, not speculative (Decision 9).
 3. **UPPER_CASE enum values (ADR-050).** Whatever the vocabulary, values follow the
    established frontmatter casing convention.
 4. **Migrate field-optional-first.** Schema accepts the field and the validator does not
@@ -97,54 +105,75 @@ by direct analogy to the `value` signal (ADR-049).
    the ratified vocabulary in hand is sufficient.
 7. **Single serialised backfill, one PR, one index regeneration**, to avoid the
    `index.yaml` merge conflicts already seen on PRs #200/#201.
+8. **The `themes` list is ordered; `themes[0]` is the primary theme and is the sole
+   tie-breaker, sitting below `value` then `effort` (resolves the interview's Q2 and the
+   old below-or-above-`effort` fork).** The full sort is `value` descending, then `effort`
+   ascending, then `themes[0]` as a final tie-break. Only the primary participates in the
+   sort; the remaining tags are for filtering and cluster views, never for ordering.
+   Theme sits *below* `effort` because it expresses preference-of-area, not priority.
+   Authors order the list primary-first; this is the one authoring discipline the
+   multi-valued shape adds, documented in the authoring skills and `ways-of-working.md`.
+9. **Ship the coarse six and split a theme only on evidence (resolves the interview's
+   Q3).** No theme is subdivided pre-emptively. Once the Phase 3 backfill is in, if a
+   single theme carries a disproportionate share of entries (rough guide ~30%, with
+   `GOVERNANCE` the likely first candidate) it is split, and the split is recorded as an
+   ADR amendment to the vocabulary. This mirrors the `value` plan's deferral of a numeric
+   scale until ties proved blocking: ship the simple thing, refine on observed need.
 
 ## Phases
 
 ### Phase 1 - Vocabulary plus contract (schema and validator, field optional)
 
-- Ratify the theme vocabulary (Decision 2) via a `guided-interview` or `design-debate`
-  that also settles Decision 1's shape. Publish it as an instruction file, the artefact
-  backfill grades against.
-- Add the theme property to `context-frontmatter.schema.json`: the ratified UPPER_CASE
-  enum, applicable to `PLAN`/`FINDING`/`KNOWN_ISSUE`, description mirroring `value`.
+- Publish the ratified six-theme vocabulary (Decision 2) as an instruction file, the
+  artefact backfill grades against. The vocabulary and shape are already settled by the
+  interview, so no further ratification step is needed.
+- Add the `themes` property to `context-frontmatter.schema.json`: an array whose items
+  are the ratified UPPER_CASE enum, applicable to `PLAN`/`FINDING`/`KNOWN_ISSUE`,
+  description mirroring `value`. Constrain to a non-empty array of unique enum members.
 - Update the per-type conditional block in `validate-context-frontmatter.sh` to accept
   the field without yet requiring it.
-- Add fixtures: an entry with a valid theme, one with none (both pass), and a lowercase
-  value (rejected, per Decision 3).
-- Exit criterion: a file with a valid theme passes, a file with none passes, a lowercase
-  theme is rejected, the vocabulary instruction is committed.
+- Add fixtures: an entry with a valid `themes` list, one with none (both pass), a
+  lowercase member (rejected, per Decision 3), and an unknown-theme member (rejected).
+- Exit criterion: a file with a valid `themes` list passes, a file with none passes, a
+  lowercase or unknown member is rejected, the vocabulary instruction is committed.
 
 ### Phase 2 - Surface it, and update authoring skills early
 
-- Update `regenerate-context-index.sh` to emit the theme on each `PLAN`/`FINDING`/
-  `KNOWN_ISSUE` entry that carries it.
-- Update `plan-create` and `context-file` to prompt for and emit the theme, and run
+- Update `regenerate-context-index.sh` to emit the `themes` list (order preserved, so
+  `themes[0]` stays the primary) on each `PLAN`/`FINDING`/`KNOWN_ISSUE` entry that
+  carries it.
+- Update `plan-create` and `context-file` to prompt for and emit `themes` primary-first
+  (Decision 8), and run
   `tessl install` in the same change so the `.tessl/` mirrors (two bundles:
   `context-mgmt` and `planning`) do not drift.
 - Verify idempotency with the generator's `--check` mode.
-- Exit criterion: the index shows the theme on the source finding and this plan;
+- Exit criterion: the index shows the `themes` list on the source finding and this plan;
   `--check` passes; both mirrors are drift-clean.
 
 ### Phase 3 - Backfill (single serialised pass)
 
 - Enumerate the target set at execution time: every `PLAN`/`FINDING`/`KNOWN_ISSUE` with
   `status` in {`DRAFT`, `ACTIVE`}. Do not rely on baked-in counts.
-- Assign a theme to each from the ratified vocabulary. Where an entry genuinely spans
-  areas, apply the Decision 1 rule (single primary theme under A; the list under B).
+- Assign a `themes` list to each from the ratified vocabulary, ordered primary-first
+  (Decision 8). An entry that genuinely spans areas carries all its areas; the primary is
+  the one that best answers "what is this mainly about?".
 - Regenerate the index once, in this branch.
-- Exit criterion: a scripted check reports zero active/draft action-candidates missing a
-  theme; the index regenerates clean.
+- Exit criterion: a scripted check reports zero active/draft action-candidates with an
+  empty or missing `themes` list; the index regenerates clean.
 
 ### Phase 4 - Enforce and record
 
-- Flip `validate-context-frontmatter.sh` to require the theme for `PLAN`/`FINDING`/
-  `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`. `DONE`/`SUPERSEDED` exempt.
-- Document the theme field and its tie-breaker role in `ways-of-working.md`, the value
-  rubric's read protocol (theme as the tie-breaker below `value` then `effort`), and the
-  CLAUDE.md context-index section.
-- Write an ADR (via `adr-capture`) recording the contract change and the vocabulary.
+- Flip `validate-context-frontmatter.sh` to require a non-empty `themes` list for
+  `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`.
+  `DONE`/`SUPERSEDED` exempt.
+- Document the `themes` field and the `themes[0]` tie-breaker role in `ways-of-working.md`,
+  the value rubric's read protocol (`themes[0]` as the tie-breaker below `value` then
+  `effort`, per Decision 8), and the CLAUDE.md context-index section.
+- Write an ADR (via `adr-capture`) recording the contract change, the multi-valued
+  ordered-list shape, the six-theme vocabulary, and the evidence-driven split rule
+  (Decision 9).
 - Run the full pre-push gate including the `.tessl` mirror-drift check.
-- Exit criterion: a new action-candidate without a theme fails validation with a clear
+- Exit criterion: a new action-candidate with no `themes` fails validation with a clear
   message; the ADR is indexed; the full gate is green.
 
 ## Risks
@@ -152,9 +181,14 @@ by direct analogy to the `value` signal (ADR-049).
 - **Vocabulary churn.** A too-fine or contested vocabulary erodes the axis's value.
   Mitigated by ratifying a small set up front (Decision 2) and treating additions as an
   ADR amendment, not an ad-hoc edit.
-- **Cross-cutting items.** Some entries genuinely belong to two themes; forcing one
-  primary (Decision 1 A) loses information. Accepted as the cost of a clean tie-break;
-  revisit as multi-value (B) if single-theme proves lossy in practice.
+- **Primary-tag drift.** Because `themes[0]` is load-bearing for the tie-break, an entry
+  whose primary is set carelessly sorts wrongly within its bucket. Lower stakes than a
+  `value` misgrade (it only affects same-`value`/`effort` ties), but mitigated by the
+  authoring-skill prompt asking for the primary explicitly and by `ways-of-working.md`
+  stating the primary-first convention.
+- **Over-tagging.** A multi-valued list invites attaching every plausible theme, diluting
+  the filter. Mitigated by keeping the vocabulary coarse (Decision 2) and by guidance to
+  tag only genuine areas, not tangential links.
 - **Big-bang validation breakage.** Mitigated by optional-first sequencing (Decision 4).
 - **Validator field-specific logic.** Schema alone will not make the validator accept or
   require the field. Mitigated by Phase 1 editing the conditional block explicitly.
@@ -170,12 +204,12 @@ by direct analogy to the `value` signal (ADR-049).
 .context/plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh \
   .context/findings/context-taxonomy-gap-2026-07-06.md
 
-# Phase 2 - index surfaces the theme; idempotency via --check
+# Phase 2 - index surfaces the themes list; idempotency via --check
 bash .context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh --check
-grep -A7 'context-taxonomy-gap' .context/index.yaml | grep 'theme:'
+grep -A7 'context-taxonomy-gap' .context/index.yaml | grep 'themes:'
 
 # Phase 3 - scripted completeness check (no baked-in counts)
-#   expect zero active/draft plan|finding|known-issue entries missing a theme: line
+#   expect zero active/draft plan|finding|known-issue entries with an empty/missing themes list
 
 # Phase 4 - enforcement bites on a new file, and the full gate passes
 hk check && go test ./...
@@ -183,12 +217,17 @@ hk check && go test ./...
 
 ## Open Questions
 
-- **Decision 1 (vocabulary shape): single enum vs multi-value tags vs derived-from-related.**
-  This is the one load-bearing fork and must be resolved before promotion. Leaning single
-  enum (A) for tie-break cleanliness.
-- **Granularity of the vocabulary.** Six seed themes may be too coarse (governance
-  currently swallows eight distinct entries) or, if split finer, too many. What is the
-  right number, and what is the rule for adding one later?
-- **Does theme belong below or above `effort` in the read protocol tie-break?** Leaning
-  below (theme breaks ties only after `value` then `effort`), since theme expresses
-  preference-of-area, not priority. Confirm in the interview.
+The three forks this plan was left DRAFT to resolve (vocabulary shape, granularity/growth
+rule, tie-break position) are settled in Decisions 1, 8, and 9. Remaining, non-blocking:
+
+- **Split threshold precision.** Decision 9 uses a rough ~30% guide for when a theme is
+  dominant enough to split. What counts precisely is left to the evidence at split time,
+  but a firmer threshold would stop it being litigated ad hoc.
+- **Primary-theme guidance.** Decision 8 makes `themes[0]` load-bearing but "what is this
+  mainly about?" is still a judgement. Does the vocabulary instruction need worked
+  examples of primary selection, or is the one-line rule enough? (Leaning: add two or
+  three examples, as the value rubric did.)
+- **Should the index emit a derived primary-theme convenience field** (e.g. `theme:` =
+  `themes[0]`) for cheaper grepping, or is reading `themes[0]` at query time sufficient?
+  (Leaning: no derived field, matching the `value` plan's Decision 11 that the generator
+  emits fields only.)
