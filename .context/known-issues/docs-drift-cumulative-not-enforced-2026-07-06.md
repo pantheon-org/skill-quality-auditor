@@ -3,6 +3,7 @@ title: "Known Issue: cumulative docs-drift is now visible in CI but still never 
 type: known-issue
 status: active
 date: 2026-07-06
+value: medium
 severity: high
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md

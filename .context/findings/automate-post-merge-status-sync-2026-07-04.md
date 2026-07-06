@@ -3,6 +3,7 @@ title: "Finding: automate post-merge plan/ADR status sync via a GitHub Action"
 type: finding
 status: active
 date: 2026-07-04
+value: medium
 related:
   - ../plans/post-merge-status-sync-2026-07-04.md
   - ../plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh

@@ -3,6 +3,7 @@ title: "Draft Plan: Integrate PR-Agent as an Advisory PR Review Bot"
 type: plan
 status: active
 date: 2026-07-04
+value: medium
 effort: M
 related:
   - ../findings/pr-agent-integration-2026-07-04.md

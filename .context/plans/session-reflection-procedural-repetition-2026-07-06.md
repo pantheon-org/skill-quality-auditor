@@ -3,6 +3,7 @@ title: "Plan: add a procedural-repetition check to session-reflection"
 type: plan
 status: draft
 date: 2026-07-06
+value: medium
 effort: S
 related:
   - ../findings/session-reflection-procedural-repetition-blind-spot-2026-07-06.md

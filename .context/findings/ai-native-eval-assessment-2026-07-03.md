@@ -3,6 +3,7 @@ title: "Finding: ai-native-eval Assessment"
 type: finding
 status: active
 date: 2026-07-03
+value: low
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - ../findings/arxiv-self-evolution-survey-2026-07-03.md

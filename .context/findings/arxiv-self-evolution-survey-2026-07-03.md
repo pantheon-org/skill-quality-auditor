@@ -3,6 +3,7 @@ title: "Finding: Arxiv Self-Evolution Research Survey"
 type: finding
 status: active
 date: 2026-07-03
+value: low
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - ../plans/evoskill-core-loop-port-2026-07-02.md

@@ -3,6 +3,7 @@ title: "Finding: PR-Agent's ticket compliance analysis misfires on casual '#N' P
 type: finding
 status: active
 date: 2026-07-06
+value: low
 related:
   - ../plans/pr-agent-integration-2026-07-04.md
   - ../../.pr_agent.toml

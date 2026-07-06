@@ -3,6 +3,7 @@ title: "Finding: snyk/agent-scan as a PR security gate for cmd/assets/"
 type: finding
 status: active
 date: 2026-07-04
+value: low
 related:
   - ../plans/agent-scan-integration-2026-07-04.md
   - ../../docs/ADR/index.yaml

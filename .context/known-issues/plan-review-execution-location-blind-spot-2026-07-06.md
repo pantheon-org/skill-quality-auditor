@@ -3,6 +3,7 @@ title: "Known Issue: plan-review's reviewer prompts never ask where a mechanism 
 type: known-issue
 status: active
 date: 2026-07-06
+value: medium
 severity: medium
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md

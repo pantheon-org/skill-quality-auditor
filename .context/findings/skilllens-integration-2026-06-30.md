@@ -3,6 +3,7 @@ title: "Finding: SkillLens Integration Assessment"
 type: finding
 status: active
 date: 2026-06-30
+value: low
 ---
 
 # Finding: SkillLens Integration Assessment

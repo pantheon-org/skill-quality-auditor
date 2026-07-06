@@ -3,6 +3,7 @@ title: "Finding: Cross-Reference Status Drift Across Plans, Findings, and ADRs"
 type: finding
 status: active
 date: 2026-07-04
+value: low
 related:
   - ../plans/post-merge-status-sync-2026-07-04.md
   - ../findings/automate-post-merge-status-sync-2026-07-04.md

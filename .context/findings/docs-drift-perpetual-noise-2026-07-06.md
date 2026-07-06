@@ -3,6 +3,7 @@ title: "Finding: check-docs-drift.sh's cumulative mode can never clear a reviewe
 type: finding
 status: active
 date: 2026-07-06
+value: medium
 related:
   - ../../scripts/check-docs-drift.sh
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

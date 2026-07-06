@@ -3,6 +3,7 @@ title: "Finding: Packaging skill-quality-auditor as a reusable GitHub Action"
 type: finding
 status: active
 date: 2026-07-04
+value: medium
 related:
   - ../../.github/workflows/release.yml
   - ../../.github/workflows/skill-quality.yml

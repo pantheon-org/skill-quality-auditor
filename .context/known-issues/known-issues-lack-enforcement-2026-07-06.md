@@ -3,6 +3,7 @@ title: "Known Issue: known-issues has no enforcement, forcing function, or expir
 type: known-issue
 status: active
 date: 2026-07-06
+value: medium
 severity: high
 related:
   - ../../docs/ADR/adr-046-known-issues-context-type.md

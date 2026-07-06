@@ -3,6 +3,7 @@ title: "Plan: add a rule for repeated multi-step procedures, not just scripts"
 type: plan
 status: draft
 date: 2026-07-06
+value: medium
 effort: S
 related:
   - ../findings/rules-scoped-to-scripts-not-procedures-2026-07-06.md

@@ -19,6 +19,7 @@ known-issues:
     status: active
     date: 2026-07-06
     severity: high
+    value: medium
     related:
       - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -28,6 +29,7 @@ known-issues:
     status: active
     date: 2026-07-06
     severity: high
+    value: medium
     related:
       - ../../docs/ADR/adr-046-known-issues-context-type.md
       - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md
@@ -36,6 +38,7 @@ known-issues:
     status: active
     date: 2026-07-06
     severity: medium
+    value: medium
     related:
       - ../plugins/pantheon-org/governance/adr-capture/scripts/check-undocumented-decisions.sh
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -44,6 +47,7 @@ known-issues:
     status: active
     date: 2026-07-06
     severity: medium
+    value: medium
     related:
       - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
       - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
@@ -71,6 +75,7 @@ plans:
     status: draft
     date: 2026-07-04
     effort: S
+    value: medium
     related:
       - ../findings/agent-scan-integration-2026-07-04.md
       - ../../docs/ADR/adr-034-agent-scan-skill-security-scanning.md
@@ -120,6 +125,7 @@ plans:
     status: draft
     date: 2026-07-04
     effort: M
+    value: medium
     related:
       - ../findings/cross-reference-status-drift-2026-07-04.md
       - ../findings/automate-post-merge-status-sync-2026-07-04.md
@@ -178,6 +184,7 @@ plans:
     status: draft
     date: 2026-07-02
     effort: L
+    value: medium
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - migrate-off-tessl-eval-2026-06-29.md
@@ -190,6 +197,7 @@ plans:
     status: draft
     date: 2026-06-29
     effort: TBD
+    value: high
     related:
       - ../findings/eval-gating-byok-2026-06-29.md
   - path: ".context/plans/migrate-to-hk-and-markdownlint-cli2-2026-06-29.md"
@@ -236,6 +244,7 @@ plans:
     status: active
     date: 2026-07-04
     effort: M
+    value: medium
     related:
       - ../findings/pr-agent-integration-2026-07-04.md
       - ../../.github/workflows/skill-quality.yml
@@ -251,6 +260,7 @@ plans:
     status: draft
     date: 2026-07-06
     effort: M
+    value: medium
     related:
       - ../findings/pr-merge-validation-gap-2026-07-06.md
       - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
@@ -260,6 +270,7 @@ plans:
     status: draft
     date: 2026-07-06
     effort: S
+    value: medium
     related:
       - ../findings/rules-scoped-to-scripts-not-procedures-2026-07-06.md
       - ../../.agents/RULES.md
@@ -274,6 +285,7 @@ plans:
     status: draft
     date: 2026-07-06
     effort: S
+    value: medium
     related:
       - ../findings/session-reflection-procedural-repetition-blind-spot-2026-07-06.md
       - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
@@ -329,10 +341,12 @@ findings:
     title: "Academic Research Findings: 9-Dimension Quality Framework"
     status: active
     date: 2026-04-29
+    value: low
   - path: ".context/findings/agent-scan-integration-2026-07-04.md"
     title: "Finding: snyk/agent-scan as a PR security gate for cmd/assets/"
     status: active
     date: 2026-07-04
+    value: low
     related:
       - ../plans/agent-scan-integration-2026-07-04.md
       - ../../docs/ADR/index.yaml
@@ -341,6 +355,7 @@ findings:
     title: "Finding: ai-native-eval Assessment"
     status: active
     date: 2026-07-03
+    value: low
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - ../findings/arxiv-self-evolution-survey-2026-07-03.md
@@ -349,6 +364,7 @@ findings:
     title: "Finding: Arxiv Self-Evolution Research Survey"
     status: active
     date: 2026-07-03
+    value: low
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - ../plans/evoskill-core-loop-port-2026-07-02.md
@@ -357,6 +373,7 @@ findings:
     title: "Finding: automate post-merge plan/ADR status sync via a GitHub Action"
     status: active
     date: 2026-07-04
+    value: medium
     related:
       - ../plans/post-merge-status-sync-2026-07-04.md
       - ../plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh
@@ -370,6 +387,7 @@ findings:
     title: "Finding: Cross-Reference Status Drift Across Plans, Findings, and ADRs"
     status: active
     date: 2026-07-04
+    value: low
     related:
       - ../plans/post-merge-status-sync-2026-07-04.md
       - ../findings/automate-post-merge-status-sync-2026-07-04.md
@@ -381,6 +399,7 @@ findings:
     title: "Finding: check-docs-drift.sh's cumulative mode never runs in CI, only at local pre-push"
     status: active
     date: 2026-07-06
+    value: medium
     related:
       - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -391,6 +410,7 @@ findings:
     title: "Finding: check-docs-drift.sh's cumulative mode can never clear a reviewed-but-unedited doc"
     status: active
     date: 2026-07-06
+    value: medium
     related:
       - ../../scripts/check-docs-drift.sh
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -399,16 +419,19 @@ findings:
     title: "Findings: Eval Gating, Local Runs, and Bring-Your-Own-Key"
     status: active
     date: 2026-06-29
+    value: medium
     related:
       - ../plans/migrate-off-tessl-eval-2026-06-29.md
   - path: ".context/findings/evoskill-integration-2026-07-02.md"
     title: "Finding: EvoSkill Integration Opportunities"
     status: active
     date: 2026-07-02
+    value: low
   - path: ".context/findings/gh-pages-docs-drift-2026-07-05.md"
     title: "Finding: GH Pages docs-drift investigation — no deploy pipeline bug found"
     status: active
     date: 2026-07-05
+    value: low
     related:
       - ../../.github/workflows/docs.yml
       - ../../docmd.config.json
@@ -417,6 +440,7 @@ findings:
     title: "Finding: Packaging skill-quality-auditor as a reusable GitHub Action"
     status: active
     date: 2026-07-04
+    value: medium
     related:
       - ../../.github/workflows/release.yml
       - ../../.github/workflows/skill-quality.yml
@@ -429,18 +453,21 @@ findings:
     title: "Finding: Homebrew Tap Repository Required"
     status: active
     date: 2026-07-01
+    value: medium
     related:
       - ../plans/onboarding-improvements-2026-04-27.md
   - path: ".context/findings/homebrew-tap-prerequisites.md"
     title: "Finding: Homebrew Tap Prerequisites"
     status: active
     date: 2026-04-28
+    value: low
     related:
       - ../plans/onboarding-improvements-2026-04-27.md
   - path: ".context/findings/index-yaml-split-review-2026-07-06.md"
     title: "Finding: should .context/index.yaml be split into per-type files? — reviewed, decided against for now"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - ../../.agents/RULES.md
       - ../../.context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh
@@ -455,6 +482,7 @@ findings:
     title: "Finding: plumbing getplumber.io into skill-quality-auditor's CI"
     status: active
     date: 2026-07-04
+    value: medium
     related:
       - ../../.plumber.yaml
       - ../../.github/workflows/ci.yml
@@ -464,6 +492,7 @@ findings:
     title: "Finding: PR-Agent as an automated PR review bot"
     status: active
     date: 2026-07-04
+    value: low
     related:
       - ../../.github/workflows/skill-quality.yml
       - ../../.plumber.yaml
@@ -472,6 +501,7 @@ findings:
     title: "Finding: PR-Agent's ticket compliance analysis misfires on casual '#N' PR-description references"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - ../plans/pr-agent-integration-2026-07-04.md
       - ../../.pr_agent.toml
@@ -487,6 +517,7 @@ findings:
     title: "Finding: no skill covers validating and merging a PR"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
       - ../plugins/pantheon-org/governance/adr-capture/SKILL.md
@@ -505,6 +536,7 @@ findings:
     title: "Finding: agent rules formalize repeated scripts, not repeated procedures"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - ../../.agents/RULES.md
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -512,6 +544,7 @@ findings:
     title: "Finding: Scoring Pattern Config Review — Naming and Dimension Mapping"
     status: active
     date: 2026-07-03
+    value: medium
     related:
       - ../plans/yaml-content-validation-config-2026-07-03.md
       - ../findings/yaml-content-validation-config-2026-07-03.md
@@ -524,6 +557,7 @@ findings:
     title: "Finding: session-reflection never checks for the agent's own repeated procedures"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -531,6 +565,7 @@ findings:
     title: "Finding: skill-quality.yml's LLM-judge failure chain — wrong diagnosis, missing key, then three rate-limited providers"
     status: active
     date: 2026-07-05
+    value: medium
     related:
       - ../../.github/workflows/skill-quality.yml
       - ../../internal/llmclient/client.go
@@ -546,18 +581,22 @@ findings:
     title: "Finding: SkillEval Analysis — 2026-06-30"
     status: active
     date: 2026-06-30
+    value: low
   - path: ".context/findings/skilllens-integration-2026-06-30.md"
     title: "Finding: SkillLens Integration Assessment"
     status: active
     date: 2026-06-30
+    value: low
   - path: ".context/findings/tessl-eval-criteria-schema-2026-06-30.md"
     title: "Finding: Tessl Eval Criteria JSON Schema — 2026-06-30"
     status: active
     date: 2026-06-30
+    value: low
   - path: ".context/findings/tessl-mirror-drift-protection-2026-07-06.md"
     title: "Finding: don't track the .tessl/plugins mirror — use a CI-only ephemeral diff instead"
     status: active
     date: 2026-07-06
+    value: low
     related:
       - index-yaml-split-review-2026-07-06.md
       - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md
@@ -565,6 +604,7 @@ findings:
     title: "Finding: YAML Content Validation Config — 2026-07-03"
     status: active
     date: 2026-07-03
+    value: low
     related:
       - ../plans/yaml-content-validation-config-2026-07-03.md
 

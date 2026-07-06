@@ -3,6 +3,7 @@ title: "Draft Plan: Periodic Cross-Reference Drift Audit"
 type: plan
 status: draft
 date: 2026-07-04
+value: medium
 effort: M
 related:
   - ../findings/cross-reference-status-drift-2026-07-04.md
