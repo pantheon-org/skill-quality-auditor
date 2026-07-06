@@ -32,7 +32,7 @@ jobs:
       # A draft release does not create the underlying git tag ref, so we check out the
       # release commit by SHA and create/push the tag ourselves before building. goreleaser
       # derives {{.Version}} from the tag, so the tag must exist first. See ADR-053.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ needs.release-please.outputs.sha }}
@@ -40,7 +40,7 @@ jobs:
         run: |
           git tag "${{ needs.release-please.outputs.tag_name }}" "${{ needs.release-please.outputs.sha }}"
           git push origin "${{ needs.release-please.outputs.tag_name }}"
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
       - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6
