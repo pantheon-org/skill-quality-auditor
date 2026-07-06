@@ -106,6 +106,15 @@ Exit criterion: a real GitHub Actions run — not just local `tessl install --he
 confirms `tessl install` succeeds with no `TESSL_TOKEN` in an environment matching
 `quality-gate`'s runner.
 
+**Confirmed 2026-07-06** — [run 28785540629](https://github.com/pantheon-org/skill-quality-auditor/actions/runs/28785540629),
+triggered via a branch-scoped `push` trigger on a throwaway `tessl-mirror-spike.yml`
+(not `workflow_dispatch`: that only becomes callable via API/CLI once a workflow file
+exists on the default branch, which would have meant merging a throwaway spike to
+`main` first). `actions/setup-node@v4` (node 22) + `npm install -g tessl` +
+`tessl install`, no secrets referenced anywhere in the job, green in 17s, all 12
+`pantheon-org` skills present under `.tessl/plugins/pantheon-org/`. Spike workflow
+deleted immediately after. Phase 3 proceeds with `npm install -g tessl`, no auth step.
+
 ### Phase 3 — CI wiring
 
 1. Add a step to `skill-quality.yml`'s `quality-gate` job, after the existing helper-skill
