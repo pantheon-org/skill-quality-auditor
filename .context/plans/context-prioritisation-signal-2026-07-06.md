@@ -1,7 +1,7 @@
 ---
 title: "Plan: Add a prioritisation signal to .context/ so \"highest value\" is queryable"
 type: plan
-status: active
+status: done
 date: 2026-07-06
 effort: L
 value: high
