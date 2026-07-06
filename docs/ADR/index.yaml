@@ -434,3 +434,10 @@ entries:
     date: 2026-07-06
     context:
       - path: ".context/known-issues/dependabot-security-updates-disabled-2026-07-06.md"
+  - path: "ADR/adr-056-scheduled-release-automerge.md"
+    adr: "ADR-056"
+    title: "ADR-056: Release-please PRs are auto-merged on a schedule via a GitHub App token"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: "docs/ADR/adr-053-release-draft-then-publish.md"
