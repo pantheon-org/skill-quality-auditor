@@ -1,7 +1,7 @@
 ---
 title: "Finding: .context carries no value signal, so \"highest value\" is re-derived by ad-hoc judgement every time"
 type: FINDING
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 value: HIGH
 related:
