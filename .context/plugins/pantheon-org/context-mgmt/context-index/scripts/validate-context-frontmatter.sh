@@ -52,26 +52,26 @@ for f in files:
         if not fm.get(field):
             errors.append(f"{f}: missing required field '{field}'")
 
-    if fm.get("type") == "plan" and fm.get("status") in ("draft", "active") and not fm.get("effort"):
+    if fm.get("type") == "PLAN" and fm.get("status") in ("DRAFT", "ACTIVE") and not fm.get("effort"):
         errors.append(
-            f"{f}: type: plan with status: {fm.get('status')} must set 'effort' "
+            f"{f}: type: PLAN with status: {fm.get('status')} must set 'effort' "
             f"(S/M/L, or TBD if genuinely blocked on an Open Question)"
         )
 
-    if fm.get("type") == "known-issue" and not fm.get("severity"):
+    if fm.get("type") == "KNOWN_ISSUE" and not fm.get("severity"):
         errors.append(
-            f"{f}: type: known-issue must set 'severity' (critical/high/medium/low)"
+            f"{f}: type: KNOWN_ISSUE must set 'severity' (CRITICAL/HIGH/MEDIUM/LOW)"
         )
 
     if (
-        fm.get("type") in ("plan", "finding", "known-issue")
-        and fm.get("status") in ("draft", "active")
+        fm.get("type") in ("PLAN", "FINDING", "KNOWN_ISSUE")
+        and fm.get("status") in ("DRAFT", "ACTIVE")
         and not fm.get("value")
     ):
         errors.append(
             f"{f}: type: {fm.get('type')} with status: {fm.get('status')} must set 'value' "
-            f"(high/medium/low, graded against .context/instructions/value-rubric.md). "
-            f"done/superseded entries are exempt."
+            f"(HIGH/MEDIUM/LOW, graded against .context/instructions/value-rubric.md). "
+            f"DONE/SUPERSEDED entries are exempt."
         )
 
     for field, values in enum_fields.items():

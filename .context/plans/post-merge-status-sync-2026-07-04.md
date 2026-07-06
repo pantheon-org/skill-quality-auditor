@@ -1,9 +1,9 @@
 ---
 title: "Plan: Post-Merge ADR/Plan Status Sync"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-07-04
-value: high
+value: HIGH
 related:
   - ../../docs/ADR/adr-032-user-configurable-scoring-patterns.md
   - ../instructions/ways-of-working.md

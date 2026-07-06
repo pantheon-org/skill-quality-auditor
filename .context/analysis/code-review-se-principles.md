@@ -1,7 +1,7 @@
 ---
 title: "Software Engineering Principles Review"
-type: analysis
-status: done
+type: ANALYSIS
+status: DONE
 date: 2026-04-29
 related:
   - ../plans/se-principles-remediation-plan-2026-04-29.md

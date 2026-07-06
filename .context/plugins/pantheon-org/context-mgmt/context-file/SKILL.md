@@ -25,7 +25,7 @@ Create a new `.context/` file with standard YAML frontmatter and appropriate sec
 - For skill remediation plans, use `skill-auditor remediate` — it produces a richer schema
 - Do not store secrets, credentials, or personal data in `.context/` files
 - Do not create `.context/` files for ephemeral notes — use inline comments instead
-- Do not create a `known-issue` for something you're fixing in the same session — just fix it. `known-issue` is for deferred, tracked work only.
+- Do not create a `KNOWN_ISSUE` for something you're fixing in the same session — just fix it. `KNOWN_ISSUE` is for deferred, tracked work only.
 
 ## Frontmatter Schema
 
@@ -34,29 +34,29 @@ Every `.context/` file MUST start with this exact block:
 ```yaml
 ---
 title: "Human-readable title"
-type: plan | finding | analysis | instruction | audit | known-issue
-status: draft | active | done | superseded
+type: PLAN | FINDING | ANALYSIS | INSTRUCTION | AUDIT | KNOWN_ISSUE
+status: DRAFT | ACTIVE | DONE | SUPERSEDED
 date: YYYY-MM-DD
 related:
   - relative/path/to/related.md
 ---
 ```
 
-Field rules:
+Enum values are UPPER_CASE. Field rules:
 - `title` — prose title matching the H1 heading; wrap in quotes
-- `type` — matches the subdirectory (`plans/` → `plan`, `findings/` → `finding`, `analysis/` → `analysis`, `known-issues/` → `known-issue`)
-- `status` — `draft` until reviewed, `active` for in-progress work, `done` when complete, `superseded` when replaced (for `known-issue`: `active` = still open, `done` = fixed)
+- `type` — matches the subdirectory (`plans/` → `PLAN`, `findings/` → `FINDING`, `analysis/` → `ANALYSIS`, `known-issues/` → `KNOWN_ISSUE`; note the underscore vs the hyphenated directory)
+- `status` — `DRAFT` until reviewed, `ACTIVE` for in-progress work, `DONE` when complete, `SUPERSEDED` when replaced (for `KNOWN_ISSUE`: `ACTIVE` = still open, `DONE` = fixed)
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
-- `severity` — required for `type: known-issue` only: `critical | high | medium | low`. Not applicable to other types.
-- `value` — required for `type: plan`, `finding`, and `known-issue` while `status` is `draft` or `active`: `high | medium | low`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `analysis` / `instruction` / `audit`. Exempt on `done` / `superseded`.
+- `severity` — required for `type: KNOWN_ISSUE` only: `CRITICAL | HIGH | MEDIUM | LOW`. Not applicable to other types.
+- `value` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`: `HIGH | MEDIUM | LOW`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
 
 ## Workflow
 
-1. Determine type: plan / finding / analysis / known-issue
+1. Determine type: PLAN / FINDING / ANALYSIS / KNOWN_ISSUE
 2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval.md`), `topic-YYYY-MM-DD.md` for timestamped reports and known-issues
 3. Create the file using the template matching the type below
-4. Set `status: draft` until the content is reviewed (`known-issue` starts at `active` — it's already a confirmed, real gap by the time it's written down)
+4. Set `status: DRAFT` until the content is reviewed (`KNOWN_ISSUE` starts at `ACTIVE` — it's already a confirmed, real gap by the time it's written down)
 5. Run the context index regeneration script to update the index after creation
 
 ## Templates
@@ -66,8 +66,8 @@ Field rules:
 ```markdown
 ---
 title: "Plan: <concise title>"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: YYYY-MM-DD
 ---
 # Plan: <title>
@@ -85,8 +85,8 @@ One paragraph describing the desired end state.
 ```markdown
 ---
 title: "Finding: <topic>"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: YYYY-MM-DD
 related:
   - ../plans/related-plan.md
@@ -103,8 +103,8 @@ related:
 ```markdown
 ---
 title: "<Topic> Analysis — YYYY-MM-DD"
-type: analysis
-status: done
+type: ANALYSIS
+status: DONE
 date: YYYY-MM-DD
 ---
 # <Topic> Analysis — YYYY-MM-DD
@@ -118,11 +118,11 @@ date: YYYY-MM-DD
 ```markdown
 ---
 title: "Known Issue: <concrete, verified problem>"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: YYYY-MM-DD
-severity: critical | high | medium | low
-value: high | medium | low
+severity: CRITICAL | HIGH | MEDIUM | LOW
+value: HIGH | MEDIUM | LOW
 related:
   - ../plans/related-plan.md
 ---
@@ -136,7 +136,7 @@ related:
 ## Mindset
 
 - Write for the next agent or human who reads this cold — assume no prior context
-- `status: draft` is the safe default; promote to `active` only when reviewed
+- `status: DRAFT` is the safe default; promote to `ACTIVE` only when reviewed
 - Date is creation date, not last-modified — do not update it on subsequent edits
 - After creating or updating a `.context/` file, consider regenerating the index to keep it current
 - Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern

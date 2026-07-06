@@ -1,9 +1,9 @@
 ---
 title: "Plan: Remediate Audit Frontmatter & Validation Gaps"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-07-03
-value: high
+value: HIGH
 related:
   - ../../hk.pkl
   - ../../.agents/skills/context-index/scripts/regenerate-context-index.sh
@@ -98,8 +98,8 @@ Use the **canonical generator format** (so a future `evaluate --store` regenerat
 ```yaml
 ---
 title: "Skill Audit — <skill>"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-06-30
 ---
 ```
@@ -109,8 +109,8 @@ date: 2026-06-30
 ```yaml
 ---
 title: "Remediation Plan — <skill>"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-06-30
 ---
 ```

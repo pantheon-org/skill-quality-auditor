@@ -16,24 +16,24 @@
 
 ```yaml
 - title: "Plan: Add Structured Logging"
-  type: plan
-  status: draft
+  type: PLAN
+  status: DRAFT
   date: 2026-06-30
 - title: "Plan: Improve Test Coverage"
-  type: plan
-  status: active
+  type: PLAN
+  status: ACTIVE
   date: 2026-06-28
 - title: "Finding: Logging Library Evaluation"
-  type: finding
-  status: active
+  type: FINDING
+  status: ACTIVE
   date: 2026-06-30
 - title: "Finding: Go Version Evaluation"
-  type: finding
-  status: done
+  type: FINDING
+  status: DONE
   date: 2026-06-29
 - title: "CLI Flag Audit — 2026-06-30"
-  type: analysis
-  status: done
+  type: ANALYSIS
+  status: DONE
   date: 2026-06-30
 ```
 

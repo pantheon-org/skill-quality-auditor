@@ -15,12 +15,12 @@ This reference covers the technical details and edge cases for `regenerate-conte
 
 ```yaml
 - title: "Plan: Add Structured Logging"
-  type: plan
-  status: draft
+  type: PLAN
+  status: DRAFT
   date: 2026-06-30
 - title: "Finding: Database Migration Strategy"
-  type: finding
-  status: active
+  type: FINDING
+  status: ACTIVE
   date: 2026-06-30
   related:
     - "../plans/add-structured-logging.md"

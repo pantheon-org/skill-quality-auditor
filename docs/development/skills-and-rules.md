@@ -37,12 +37,12 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **context-file** — create `.context/` files (plans, findings, analysis, known-issues) with
   standard YAML frontmatter, appropriate sections, and correct placement in `plans/`,
   `findings/`, `analysis/`, or `known-issues/`. Prompts for the `value` benefit-of-action
-  grade (`high`/`medium`/`low`) on `plan`/`finding`/`known-issue`, graded against
+  grade (`HIGH`/`MEDIUM`/`LOW`) on `PLAN`/`FINDING`/`KNOWN_ISSUE`, graded against
   [`value-rubric.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/value-rubric.md).
 - **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
   frontmatter block. `validate-context-frontmatter.sh` requires `value` on
-  `plan`/`finding`/`known-issue` while `status` is `draft`/`active` (`done`/`superseded`
+  `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE` (`DONE`/`SUPERSEDED`
   exempt); the index emits `effort`, `severity`, and `value` so the "what's next" read
   protocol (sort by `value` descending, then `effort` ascending) works from the index alone.
 
@@ -51,7 +51,7 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **adr-capture** — capture Architecture Decision Records (ADRs) from `.context/` plans,
   findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the
   machine-readable index. Also runs post-merge status sync: after a PR merges,
-  `merge-status-sync.sh` detects plans/ADRs left `active`/`proposed` when the merge should
+  `merge-status-sync.sh` detects plans/ADRs left `ACTIVE`/`proposed` when the merge should
   have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
 - **rules-management** — manage the agent behavioural rules in `.agents/RULES.md` — load
   existing rules, check for duplicates, and append new rules in the standard format with

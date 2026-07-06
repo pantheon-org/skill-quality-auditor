@@ -1,9 +1,9 @@
 ---
 title: "Finding: EvoSkill Integration Opportunities"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-02
-value: low
+value: LOW
 ---
 
 # Finding: EvoSkill Integration Opportunities

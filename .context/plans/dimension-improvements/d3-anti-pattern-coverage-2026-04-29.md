@@ -1,9 +1,9 @@
 ---
 title: "Improvement Plan: D3 — Anti-Pattern Coverage"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-04-29
-value: medium
+value: MEDIUM
 ---
 # Improvement Plan: D3 — Anti-Pattern Coverage
 

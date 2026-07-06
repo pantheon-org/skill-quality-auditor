@@ -1,7 +1,7 @@
 ---
 title: "Remediation Plan — design-debate"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-07-06
 ---
 

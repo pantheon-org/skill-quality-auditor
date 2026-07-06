@@ -1,9 +1,9 @@
 ---
 title: "Draft Plan: Migrate Skill Evaluation off Tessl"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-06-29
-value: high
+value: HIGH
 effort: TBD
 related:
   - ../findings/eval-gating-byok-2026-06-29.md

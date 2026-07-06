@@ -1,9 +1,9 @@
 ---
 title: "Finding: SkillEval Analysis — 2026-06-30"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
-value: low
+value: LOW
 ---
 
 # Finding: SkillEval Analysis — 2026-06-30

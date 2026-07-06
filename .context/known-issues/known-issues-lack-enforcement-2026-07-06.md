@@ -1,10 +1,10 @@
 ---
 title: "Known Issue: known-issues has no enforcement, forcing function, or expiry"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: 2026-07-06
-value: medium
-severity: high
+value: MEDIUM
+severity: HIGH
 related:
   - ../../docs/ADR/adr-046-known-issues-context-type.md
   - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md

@@ -1,9 +1,9 @@
 ---
 title: "Finding: PR-Agent's ticket compliance analysis misfires on casual '#N' PR-description references"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: low
+value: LOW
 related:
   - ../plans/pr-agent-integration-2026-07-04.md
   - ../../.pr_agent.toml

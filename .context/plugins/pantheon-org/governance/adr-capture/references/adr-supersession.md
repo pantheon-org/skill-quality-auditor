@@ -5,7 +5,7 @@ When a decision is reversed or replaced, do NOT edit or delete the existing ADR.
 ## Process
 
 1. Identify the existing ADR covering the old decision
-2. Update its frontmatter only: change `status` to `superseded`, add `superseded_by: adr-NNN`
+2. Update its frontmatter only: change `status` to `SUPERSEDED`, add `superseded_by: adr-NNN`
 3. Do NOT modify the ADR body, title, date, or context fields
 4. Create a new ADR with the next available number
 5. In the new ADR's `context:` field, reference the superseded ADR via its relative path: `docs/ADR/adr-004-use-sqlite.md`
@@ -32,7 +32,7 @@ context:
 ```yaml
 ---
 title: "ADR-004: Use SQLite for Audit Storage"
-status: superseded
+status: SUPERSEDED
 date: 2026-06-15
 superseded_by: "adr-005"
 context:

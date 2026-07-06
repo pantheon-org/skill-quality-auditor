@@ -46,7 +46,7 @@ context:
 
 Field rules:
 - `title` — Must start with `ADR-NNN: ` prefix; wrap in quotes
-- `status` — `proposed` until reviewed, `accepted` for active decisions, `deprecated` or `superseded` when replaced
+- `status` — `proposed` until reviewed, `accepted` for active decisions, `deprecated` or `SUPERSEDED` when replaced
 - `date` — Creation date in ISO format; do not update on edits
 - `superseded_by` — Only when `status: superseded`; value is the replacement ADR name
 - `context` — List of relative paths to `.context/` files that motivated the decision; omit entirely if none
@@ -94,7 +94,7 @@ Create an ADR whenever a `.context/` file or a review makes a **binding decision
 3. Run the index regeneration script after creating the ADR
 4. Set `status: proposed` initially; promote to `accepted` after implementation starts
 5. When a decision is superseded: set `status: superseded` and `superseded_by` on the old ADR; create a new ADR referencing the old one via `context:`
-6. After a PR merges, run `scripts/merge-status-sync.sh --dry-run <pr-number>` to check whether the PR closes out any linked plan or ADR that's still `active`/`draft`/`proposed`. Single-phase plans directly or frontmatter-linked to the PR auto-flip to `done` via a branch + PR when run without `--dry-run`; multi-phase plans, ADRs, and file-touch-only links are always flagged for a human to confirm — see `references/merge-status-sync.md`.
+6. After a PR merges, run `scripts/merge-status-sync.sh --dry-run <pr-number>` to check whether the PR closes out any linked plan or ADR that's still `ACTIVE`/`DRAFT`/`proposed`. Single-phase plans directly or frontmatter-linked to the PR auto-flip to `DONE` via a branch + PR when run without `--dry-run`; multi-phase plans, ADRs, and file-touch-only links are always flagged for a human to confirm — see `references/merge-status-sync.md`.
 
 ## Scripts
 

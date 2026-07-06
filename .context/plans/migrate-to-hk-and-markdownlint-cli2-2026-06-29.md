@@ -1,9 +1,9 @@
 ---
 title: "Draft Plan: Migrate to hk, markdownlint-cli2, and mise Hooks"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-06-29
-value: medium
+value: MEDIUM
 ---
 # Draft plan: migrate to hk + markdownlint-cli2 + mise hooks
 

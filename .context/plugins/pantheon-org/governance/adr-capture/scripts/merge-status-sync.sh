@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Detects .context/plans/*.md and docs/ADR/*.md whose status is still
-# active/draft/proposed after the PR that implemented them has merged, and
+# ACTIVE/DRAFT/proposed after the PR that implemented them has merged, and
 # (unless --dry-run) auto-flips the safe cases via a branch + PR.
 #
 # Pure bash + gh's built-in `-q` JSON query — no python/node (see
@@ -176,7 +176,7 @@ git checkout -b "$BRANCH" origin/main
 CHANGED_PLAN_FILES=()
 while IFS= read -r plan; do
   [ -n "$plan" ] || continue
-  sed -i.bak -E 's/^status: (active|draft)$/status: done/' "$plan"
+  sed -i.bak -E 's/^status: (ACTIVE|DRAFT)$/status: DONE/' "$plan"
   rm -f "${plan}.bak"
   CHANGED_PLAN_FILES+=("$plan")
 done <"$AUTO_PLANS_FILE"

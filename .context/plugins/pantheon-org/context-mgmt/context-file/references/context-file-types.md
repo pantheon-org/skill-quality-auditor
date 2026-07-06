@@ -8,12 +8,12 @@ Plans document multi-step implementation, migration, or remediation work.
 
 **Location:** `.context/plans/<kebab-case-name>.md`
 
-**Required frontmatter fields:** `title`, `type: plan`, `status`, `date`
+**Required frontmatter fields:** `title`, `type: PLAN`, `status`, `date`
 
 | Field | Convention | Example |
 |-------|-----------|---------|
 | `title` | `"Plan: <concise title>"` | `"Plan: Migrate to Structured Logging"` |
-| `status` | Start as draft | `draft` |
+| `status` | Start as draft | `DRAFT` |
 | `filename` | kebab-case with optional date | `migrate-structured-logging-2026-06-30.md` |
 
 **Required sections:** Goal, Steps, Open Questions
@@ -24,12 +24,12 @@ Findings document research output, code review results, audit findings, and prer
 
 **Location:** `.context/findings/<topic>-YYYY-MM-DD.md`
 
-**Required frontmatter fields:** `title`, `type: finding`, `status`, `date`, optionally `related`
+**Required frontmatter fields:** `title`, `type: FINDING`, `status`, `date`, optionally `related`
 
 | Field | Convention | Example |
 |-------|-----------|---------|
 | `title` | `"Finding: <topic>"` | `"Finding: Database Migration Strategy"` |
-| `status` | Start as active | `active` |
+| `status` | Start as active | `ACTIVE` |
 | `related` | Reference related plans/analyses | `../plans/improve-test-coverage.md` |
 | `filename` | topic-YYYY-MM-DD.md | `database-migration-strategy-2026-06-30.md` |
 
@@ -41,12 +41,12 @@ Analyses document duplication reports, benchmark results, comparative reviews, a
 
 **Location:** `.context/analysis/<topic>-YYYY-MM-DD.md`
 
-**Required frontmatter fields:** `title`, `type: analysis`, `status`, `date`
+**Required frontmatter fields:** `title`, `type: ANALYSIS`, `status`, `date`
 
 | Field | Convention | Example |
 |-------|-----------|---------|
 | `title` | `"<Topic> Analysis — YYYY-MM-DD"` | `"CLI Flag Audit — 2026-06-30"` |
-| `status` | Typically done on creation | `done` |
+| `status` | Typically done on creation | `DONE` |
 
 **Required sections:** Summary, Findings, Conclusion
 

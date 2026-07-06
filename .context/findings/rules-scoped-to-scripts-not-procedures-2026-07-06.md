@@ -1,9 +1,9 @@
 ---
 title: "Finding: agent rules formalize repeated scripts, not repeated procedures"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: low
+value: LOW
 related:
   - ../../.agents/RULES.md
   - ../findings/pr-merge-validation-gap-2026-07-06.md

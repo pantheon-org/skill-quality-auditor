@@ -158,8 +158,8 @@ EOF
   cat >"$wt/.context/plans/unrelated-plan-2026-07-01.md" <<'EOF'
 ---
 title: "Plan: Unrelated Plan"
-type: plan
-status: active
+type: PLAN
+status: ACTIVE
 date: 2026-07-01
 related:
   - ../../shared/config.yaml
@@ -183,7 +183,7 @@ EOF
   out=$(cd "$wt" && PATH="$stub_dir:$PATH" STUB_GH_VIEW_JSON="$view_json" \
     "$SCRIPT" --dry-run 42 2>&1) || true
 
-  if echo "$out" | grep -q "unrelated-plan-2026-07-01.md \[plan\]: status active (signal: file-touch"; then
+  if echo "$out" | grep -q "unrelated-plan-2026-07-01.md \[plan\]: status ACTIVE (signal: file-touch"; then
     pass "fixture (b): file-touch-only link flagged with the correct signal"
   else
     fail "fixture (b): expected a file-touch flag, got:
@@ -210,8 +210,8 @@ test_fixture_c() {
   cat >"$wt/.context/plans/squash-target-2026-07-01.md" <<'EOF'
 ---
 title: "Plan: Squash Target"
-type: plan
-status: active
+type: PLAN
+status: ACTIVE
 date: 2026-07-01
 related:
   - ../../src/widget.go
@@ -248,7 +248,7 @@ $out"
     pass "fixture (c): squash-merge fallback triggered"
   fi
 
-  if echo "$out" | grep -q "squash-target-2026-07-01.md \[plan\]: status active (signal: file-touch"; then
+  if echo "$out" | grep -q "squash-target-2026-07-01.md \[plan\]: status ACTIVE (signal: file-touch"; then
     pass "fixture (c): fallback found the match via the merge-commit message body"
   else
     fail "fixture (c): expected the fallback to surface the plan, got:
@@ -272,8 +272,8 @@ test_fixture_e() {
   cat >"$wt/.context/plans/single-phase-2026-07-01.md" <<'EOF'
 ---
 title: "Plan: Single Phase"
-type: plan
-status: active
+type: PLAN
+status: ACTIVE
 date: 2026-07-01
 ---
 
@@ -332,14 +332,14 @@ $out"
     fail "fixture (e): expected to be back on main, got $current_branch"
   fi
 
-  if grep -q '^status: active$' "$wt/.context/plans/single-phase-2026-07-01.md"; then
+  if grep -q '^status: ACTIVE$' "$wt/.context/plans/single-phase-2026-07-01.md"; then
     pass "fixture (e): local main working copy left untouched"
   else
     fail "fixture (e): local main working copy was mutated in place"
   fi
 
   git -C "$wt" fetch --quiet origin "chore/status-sync-pr-77" || true
-  if git -C "$wt" show "origin/chore/status-sync-pr-77:.context/plans/single-phase-2026-07-01.md" 2>/dev/null | grep -q '^status: done$'; then
+  if git -C "$wt" show "origin/chore/status-sync-pr-77:.context/plans/single-phase-2026-07-01.md" 2>/dev/null | grep -q '^status: DONE$'; then
     pass "fixture (e): pushed sync branch has the flipped status"
   else
     fail "fixture (e): pushed sync branch does not have the flipped status"

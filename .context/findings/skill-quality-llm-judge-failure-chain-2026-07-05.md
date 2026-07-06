@@ -1,9 +1,9 @@
 ---
 title: "Finding: skill-quality.yml's LLM-judge failure chain — wrong diagnosis, missing key, then three rate-limited providers"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-05
-value: medium
+value: MEDIUM
 related:
   - ../../.github/workflows/skill-quality.yml
   - ../../internal/llmclient/client.go

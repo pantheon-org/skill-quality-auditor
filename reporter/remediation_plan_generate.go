@@ -170,8 +170,8 @@ func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, a
 
 	fm := remPlanFrontmatter{
 		Title:       fmt.Sprintf("Remediation Plan — %s", skillName),
-		Type:        "plan",
-		Status:      "draft",
+		Type:        "PLAN",
+		Status:      "DRAFT",
 		Date:        date,
 		Effort:      effort,
 		PlanDate:    date,

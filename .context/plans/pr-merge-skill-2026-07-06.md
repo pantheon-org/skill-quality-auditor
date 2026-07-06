@@ -1,9 +1,9 @@
 ---
 title: "Plan: create a pr-merge skill"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-07-06
-value: medium
+value: MEDIUM
 effort: M
 related:
   - ../findings/pr-merge-validation-gap-2026-07-06.md

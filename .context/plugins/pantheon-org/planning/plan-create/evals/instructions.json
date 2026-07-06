@@ -8,7 +8,7 @@
     {
       "type": "procedure",
       "why_given": "new knowledge",
-      "content": "Always include YAML frontmatter with title, type: plan, status: draft, and date in YYYY-MM-DD format."
+      "content": "Always include YAML frontmatter with title, type: PLAN, status: DRAFT, and date in YYYY-MM-DD format."
     },
     {
       "type": "procedure",

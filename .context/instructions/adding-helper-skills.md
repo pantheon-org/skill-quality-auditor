@@ -1,7 +1,7 @@
 ---
 title: "Adding Helper Skills"
-type: instruction
-status: active
+type: INSTRUCTION
+status: ACTIVE
 date: 2026-07-03
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "Known Issue: plan-review's reviewer prompts never ask where a mechanism actually executes"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: 2026-07-06
-value: medium
-severity: medium
+value: MEDIUM
+severity: MEDIUM
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md

@@ -1,9 +1,9 @@
 ---
 title: "Remediation Plan: adr-capture"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-06-30
-value: medium
+value: MEDIUM
 effort: L
 plan_date: "2026-06-30"
 skill_name: adr-capture

@@ -1,7 +1,7 @@
 ---
 title: "Remediation Plan — plan-create"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-07-03
 ---
 

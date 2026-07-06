@@ -1,11 +1,11 @@
 ---
 title: "Finding: YAML Content Validation Config — 2026-07-03"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 related:
   - ../plans/yaml-content-validation-config-2026-07-03.md
 date: 2026-07-03
-value: low
+value: LOW
 ---
 # Finding: YAML Content Validation Config — 2026-07-03
 

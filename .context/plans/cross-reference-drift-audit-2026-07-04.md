@@ -1,9 +1,9 @@
 ---
 title: "Draft Plan: Periodic Cross-Reference Drift Audit"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-07-04
-value: medium
+value: MEDIUM
 effort: M
 related:
   - ../findings/cross-reference-status-drift-2026-07-04.md

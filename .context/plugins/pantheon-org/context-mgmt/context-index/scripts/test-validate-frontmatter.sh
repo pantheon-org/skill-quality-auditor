@@ -2,13 +2,14 @@
 # Fixture tests for validate-context-frontmatter.sh, covering the `value`
 # field contract from .context/plans/context-prioritisation-signal-2026-07-06.md.
 #
-# Phase 4 semantics (value required for draft/active action-candidate types):
-#   (a) value: high on a draft/active plan validates.
-#   (b) value: high on a finding validates (all action-candidate types).
+# Enum values are UPPER_CASE (ADR-050). value is required for draft/active
+# action-candidate types:
+#   (a) value: HIGH on a draft/active plan validates.
+#   (b) value: HIGH on a finding validates (all action-candidate types).
 #   (c) a draft/active plan with NO value is REJECTED (value now required).
-#   (d) a done plan with no value validates (done/superseded are exempt).
-#   (e) an instruction with no value validates (value not applicable).
-#   (f) value: HIGH is rejected (enum is case-sensitive).
+#   (d) a DONE plan with no value validates (DONE/SUPERSEDED are exempt).
+#   (e) an INSTRUCTION with no value validates (value not applicable).
+#   (f) value: high is rejected (enum is case-sensitive; UPPER_CASE only).
 #   (g) value: urgent is rejected (not in the enum).
 set -euo pipefail
 
@@ -37,8 +38,8 @@ write_fixture() {
     echo "type: $type"
     echo "status: $status"
     echo "date: 2026-07-06"
-    [ "$type" = "plan" ] && echo "effort: S"
-    [ "$type" = "known-issue" ] && echo "severity: low"
+    [ "$type" = "PLAN" ] && echo "effort: S"
+    [ "$type" = "KNOWN_ISSUE" ] && echo "severity: LOW"
     for line in "$@"; do echo "$line"; done
     echo "---"
     echo ""
@@ -55,13 +56,13 @@ expect_fail() {
   if "$VALIDATOR" "$2" >/dev/null 2>&1; then fail "$1 (expected error, got valid)"; else pass "$1"; fi
 }
 
-expect_pass "draft plan with value: high validates"        "$(write_fixture plan-high plan active 'value: high')"
-expect_pass "finding with value: high validates"           "$(write_fixture finding-high finding active 'value: high')"
-expect_fail "draft/active plan with no value is rejected"  "$(write_fixture plan-none plan active)"
-expect_pass "done plan with no value is exempt"            "$(write_fixture plan-done plan done)"
-expect_pass "instruction with no value validates"          "$(write_fixture instr instruction active)"
-expect_fail "value: HIGH is rejected (case)"               "$(write_fixture plan-upper plan active 'value: HIGH')"
-expect_fail "value: urgent is rejected (enum)"             "$(write_fixture plan-bad plan active 'value: urgent')"
+expect_pass "draft plan with value: HIGH validates"       "$(write_fixture plan-high PLAN ACTIVE 'value: HIGH')"
+expect_pass "finding with value: HIGH validates"          "$(write_fixture finding-high FINDING ACTIVE 'value: HIGH')"
+expect_fail "draft/active plan with no value is rejected"  "$(write_fixture plan-none PLAN ACTIVE)"
+expect_pass "DONE plan with no value is exempt"           "$(write_fixture plan-done PLAN DONE)"
+expect_pass "INSTRUCTION with no value validates"         "$(write_fixture instr INSTRUCTION ACTIVE)"
+expect_fail "value: high is rejected (case)"              "$(write_fixture plan-lower PLAN ACTIVE 'value: high')"
+expect_fail "value: urgent is rejected (enum)"            "$(write_fixture plan-bad PLAN ACTIVE 'value: urgent')"
 
 echo ""
 if [ "$FAILURES" -eq 0 ]; then

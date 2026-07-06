@@ -1,9 +1,9 @@
 ---
 title: "Finding: GH Pages docs-drift investigation — no deploy pipeline bug found"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-05
-value: low
+value: LOW
 related:
   - ../../.github/workflows/docs.yml
   - ../../docmd.config.json

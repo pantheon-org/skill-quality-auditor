@@ -17,7 +17,7 @@ for plan in "$ROOT"/.context/plans/**/*.md "$ROOT"/.context/plans/*.md; do
     [ -n "$frontmatter" ] || continue
 
     status=$(echo "$frontmatter" | grep -E '^status: ' | sed 's/^status: *//' | tr -d '"')
-    [ "$status" = "active" ] || continue
+    [ "$status" = "ACTIVE" ] || continue
 
     plan_date=$(echo "$frontmatter" | grep -E '^date: ' | sed 's/^date: *//' | tr -d '"')
     title=$(echo "$frontmatter" | grep -E '^title: ' | sed 's/^title: *//' | tr -d '"')
@@ -71,6 +71,6 @@ for plan in "$ROOT"/.context/plans/**/*.md "$ROOT"/.context/plans/*.md; do
 done
 
 if [ "$COUNT" -gt 0 ]; then
-    echo "→ $COUNT stale plan(s) found. Update frontmatter status to 'done' if implemented."
+    echo "→ $COUNT stale plan(s) found. Update frontmatter status to 'DONE' if implemented."
 fi
 exit 0

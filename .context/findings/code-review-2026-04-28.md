@@ -1,9 +1,9 @@
 ---
 title: "Critical Code Review — skill-quality-auditor"
-type: finding
-status: done
+type: FINDING
+status: DONE
 date: 2026-04-28
-value: high
+value: HIGH
 ---
 # Critical Code Review — skill-quality-auditor
 

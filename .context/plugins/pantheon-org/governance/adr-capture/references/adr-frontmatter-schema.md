@@ -7,7 +7,7 @@ This reference provides detailed field-level documentation for ADR frontmatter.
 | Field | Type | Description |
 |-------|------|-------------|
 | `title` | string | Must start with `ADR-NNN: ` prefix. The NNN is a zero-padded 3-digit number. Wrap the full value in quotes. |
-| `status` | enum | One of: `proposed`, `accepted`, `deprecated`, `superseded` |
+| `status` | enum | One of: `proposed`, `accepted`, `deprecated`, `SUPERSEDED` |
 | `date` | string (date) | ISO 8601 date: `YYYY-MM-DD`. This is the creation date and must never be updated. |
 
 ## Optional Fields
@@ -28,7 +28,7 @@ proposed ──► accepted ──► deprecated
 - `proposed`: Initial state for new ADRs before implementation review
 - `accepted`: Decision is active and being implemented
 - `deprecated`: Decision is no longer relevant but no direct replacement exists
-- `superseded`: Decision has been replaced by a newer ADR; requires `superseded_by`
+- `SUPERSEDED`: Decision has been replaced by a newer ADR; requires `superseded_by`
 
 ## Common Validation Errors
 

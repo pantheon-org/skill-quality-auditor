@@ -36,12 +36,12 @@ The generated `index.yaml` looks like:
 plans:
   - path: ".context/plans/example-plan.md"
     title: "Example Plan"
-    status: active
+    status: ACTIVE
     date: 2026-07-01
 findings:
   - path: ".context/findings/topic-2026-07-01.md"
     title: "Finding: Topic"
-    status: active
+    status: ACTIVE
     date: 2026-07-01
 ```
 
@@ -78,8 +78,8 @@ Every `.context/*.md` file requires this frontmatter block (template at `assets/
 ```yaml
 ---
 title: "Human-readable title"
-type: plan | finding | analysis
-status: draft | active | done | superseded
+type: PLAN | finding | analysis
+status: DRAFT | active | done | superseded
 date: YYYY-MM-DD
 related:
   - ../plans/related-plan.md   # omit entirely if no related files

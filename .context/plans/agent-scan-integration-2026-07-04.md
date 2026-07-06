@@ -1,9 +1,9 @@
 ---
 title: "Draft Plan: Integrate snyk/agent-scan as an Advisory PR Check"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-07-04
-value: medium
+value: MEDIUM
 effort: S
 related:
   - ../findings/agent-scan-integration-2026-07-04.md

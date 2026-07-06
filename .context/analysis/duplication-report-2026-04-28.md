@@ -1,7 +1,7 @@
 ---
 title: "Duplication Report — 2026-04-28"
-type: analysis
-status: done
+type: ANALYSIS
+status: DONE
 date: 2026-04-28
 ---
 # Duplication Report — 2026-04-28

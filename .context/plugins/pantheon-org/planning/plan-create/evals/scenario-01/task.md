@@ -8,7 +8,7 @@
 
 1. Ask the user about the goal, scope, phases, tasks, dependencies, and risks.
 2. Scan existing plans with `grep -r '^## ' .context/plans/*.md` to infer local conventions.
-3. Draft the plan file with YAML frontmatter (title, type: plan, status: draft, date).
+3. Draft the plan file with YAML frontmatter (title, type: PLAN, status: DRAFT, date).
 4. Structure the body with `## Goal`, `## Phases` (with tasks and wave annotations), and `## Open Questions`.
 5. Run `validate-context-frontmatter.sh` on the created file.
 6. Offer to run the `plan-review` skill on the new plan.

@@ -1,10 +1,10 @@
 ---
 title: "Known issue: check-undocumented-decisions.sh silently skips any file mentioning 'index.yaml'"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: 2026-07-06
-value: medium
-severity: medium
+value: MEDIUM
+severity: MEDIUM
 related:
   - ../plugins/pantheon-org/governance/adr-capture/scripts/check-undocumented-decisions.sh
   - ../findings/pr-merge-validation-gap-2026-07-06.md

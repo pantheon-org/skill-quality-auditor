@@ -17,7 +17,7 @@ Catch blind spots and under-investigated areas before concluding a session by as
 - A session that appears to be concluding (user signals completion, asks for summary, or starts wrap-up language)
 - The `RULES.md` rule "Always conduct session-end reflection" should already be active (it references this skill) — the rule lives in the agents directory under the repo root
 - For persisting uncovered findings: the `context-file` skill, and optionally the `adr-capture` skill if a binding decision emerges
-- For genuine gaps that aren't being fixed in this session: the `context-file` skill's `known-issue` type (`.context/known-issues/`) — this is the primary, intended source of known-issue entries; see step 6
+- For genuine gaps that aren't being fixed in this session: the `context-file` skill's `KNOWN_ISSUE` type (`.context/known-issues/`) — this is the primary, intended source of known-issue entries; see step 6
 
 ## Quick Start
 
@@ -88,7 +88,7 @@ After the user responds to both questions:
 - If an item reveals a genuine issue, offer to fix it before signing off
 - If an item is a false alarm, explain why and move on
 - If a finding warrants preservation, create a new finding entry using the `context-file` skill
-- **If an item is a verified, concrete gap that is NOT being fixed in this session, create a `.context/known-issues/<topic>-YYYY-MM-DD.md` entry** using the `context-file` skill's `known-issue` type (`status: active`, `severity: critical | high | medium | low`). This is the primary, intended source of `known-issue` entries — a reflection item that gets discussed and then only lives in chat scrollback is exactly the failure mode this step exists to prevent. Do not create one for something you're about to fix right now; fix it instead. Do not inflate severity to make an item feel actioned — `low`/`medium` are legitimate, honest ratings, not failures.
+- **If an item is a verified, concrete gap that is NOT being fixed in this session, create a `.context/known-issues/<topic>-YYYY-MM-DD.md` entry** using the `context-file` skill's `KNOWN_ISSUE` type (`status: ACTIVE`, `severity: CRITICAL | HIGH | MEDIUM | LOW`). This is the primary, intended source of `KNOWN_ISSUE` entries — a reflection item that gets discussed and then only lives in chat scrollback is exactly the failure mode this step exists to prevent. Do not create one for something you're about to fix right now; fix it instead. Do not inflate severity to make an item feel actioned — `LOW`/`MEDIUM` are legitimate, honest ratings, not failures.
 
 ### 7. Conclude
 
@@ -156,7 +156,7 @@ Before marking the session as fully complete:
 - Precision over quantity for confidence items. Better 3 specific items than 7 vague ones
 - The blind-spot check is the harder question — it requires synthesizing across the entire session
 - If a reflection reveals a critical issue, the session was not actually over — treat it as continuation, not wrap-up
-- Persist important findings as context entries so future sessions benefit from the discovery — a verified-but-deferred gap becomes a `known-issue`, not just a paragraph in a chat transcript nobody re-reads
+- Persist important findings as context entries so future sessions benefit from the discovery — a verified-but-deferred gap becomes a `KNOWN_ISSUE`, not just a paragraph in a chat transcript nobody re-reads
 - This technique works because the questions are complementary: internal audit (confidence) + external audit (blind spot)
 - **Sub-agent spawn is preferred for deep sessions.** The act of summarizing the session for a sub-agent forces the main agent to be explicit about what was done vs. assumed — itself a valuable metacognitive exercise. The fresh perspective from an independent agent often catches things the main agent normalized
 
@@ -222,7 +222,7 @@ If the sub-agent flags something the main agent is confident about, investigate 
 
 | Skill | How it connects |
 |-------|----------------|
-| `context-file` | Persist reflection findings as context entries when they reveal actionable gaps; persist verified-but-deferred gaps as `known-issue` entries under `.context/known-issues/` (see step 6) — this is the standing backlog of "critical, fix soon" items this skill drives |
+| `context-file` | Persist reflection findings as context entries when they reveal actionable gaps; persist verified-but-deferred gaps as `KNOWN_ISSUE` entries under `.context/known-issues/` (see step 6) — this is the standing backlog of "critical, fix soon" items this skill drives |
 | `adr-capture` | If a reflection reveals a decision-level blind spot, capture it as an ADR |
 | `rules-management` | If reflection reveals a pattern worth codifying as a behavioural rule, create one |
 

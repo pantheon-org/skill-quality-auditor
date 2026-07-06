@@ -77,7 +77,7 @@ The remediation plan follows a JSON schema defined at
 
 ```text
 remPlanFrontmatter (YAML frontmatter)
-  ├── title, type ("plan"), status ("draft"), date, effort (S/M/L/TBD)
+  ├── title, type ("PLAN"), status ("DRAFT"), date, effort (S/M/L/TBD)
   │     └── matches the standard .context/ frontmatter schema, so a freshly
   │         generated plan is picked up by context-index/frontmatter
   │         validation without hand-patching
