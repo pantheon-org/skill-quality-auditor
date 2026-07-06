@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: check-docs-drift.sh hard-fails pre-push if jq is missing"
 type: known-issue
-status: active
+status: done
 date: 2026-07-06
 severity: critical
 related:
@@ -24,6 +24,8 @@ Caught during a session-reflection sub-agent review that tested the failure live
 
 A contributor whose machine lacks `jq` (not on `PATH` via Homebrew, system package, or personal dotfiles) pushes normally, `hk`'s `pre-push` hook runs `check-docs-drift.sh`, and the push fails with a cryptic `jq: command not found` / exit 127 — no guidance that `jq` is the missing piece, no indication this is unrelated to their actual change. Blocks pushing entirely until they either install `jq` or discover `--no-verify`.
 
-## Suggested fix (not yet applied — this is the tracked issue, not the fix)
+## Fix applied
 
-Add a `command -v jq >/dev/null` guard near the top of `check-docs-drift.sh`'s cumulative-mode branch (and `mark-docs-reviewed.sh`, which has the same dependency). On missing `jq`, print a clear one-line explanation and either: (a) skip the reviewed-baseline lookup and fall back to the pre-ADR-045 doc-edit-only comparison (degrades the feature, not the script), or (b) skip cumulative mode's drift check entirely with a warning (matches the script's existing "informational only" character — never block a push over a missing optional tool). Option (a) is closer to graceful degradation; option (b) is simpler. Neither has been decided yet.
+Chose option (a) from the original suggested-fix list: `check-docs-drift.sh` now checks `command -v jq` once at startup; if absent, it prints one clear warning ("jq not found on PATH — skipping reviewed-baseline lookups...") and `lookup_reviewed()` short-circuits, degrading to the pre-ADR-045 doc-edit-only comparison rather than the script itself. `mark-docs-reviewed.sh` (whose entire purpose requires `jq`) instead fails fast with a clear, actionable error message naming the missing dependency and how to install it, rather than an opaque `jq: command not found`.
+
+Verified live, reproducing the exact failure mode this issue reported: built a curated `PATH` with symlinks to every tool the script needs except `jq`, confirmed `command -v jq` genuinely fails in that environment, then ran both scripts under it. `check-docs-drift.sh` now exits 0 with the warning and correctly falls back to flagging all docs by edit-date only (including previously-reviewed ones, since the reviewed-baseline lookup is unavailable without `jq`) instead of exit 127. `mark-docs-reviewed.sh` now exits 1 with the clear dependency message instead of an unguarded jq invocation failing partway through.

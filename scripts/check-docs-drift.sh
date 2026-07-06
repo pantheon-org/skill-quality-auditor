@@ -96,8 +96,22 @@ REVIEWED_SIDECAR="$ROOT/scripts/docs-drift-reviewed.jsonl"
 # elsewhere in this repo's scripts/ (plumber-*.sh). Deliberately not a bash
 # associative array (declare -A): bash 3.2 (macOS's default /bin/bash, still
 # what `env bash` resolves to on a stock Mac) predates bash 4 and has none.
+#
+# If jq isn't on PATH, this degrades to the pre-ADR-045 doc-edit-only
+# comparison (reviewed-baseline lookups are skipped) rather than aborting
+# the whole script under set -e — a missing optional tool must never break
+# a contributor's ability to push (see
+# .context/known-issues/docs-drift-jq-hard-dependency-2026-07-06.md).
+if command -v jq >/dev/null 2>&1; then
+    HAS_JQ=1
+else
+    HAS_JQ=0
+    echo "⚠  jq not found on PATH — skipping reviewed-baseline lookups (doc-edit-only comparison used instead)" >&2
+fi
+
 lookup_reviewed() {
     local doc="$1"
+    [ "$HAS_JQ" -eq 1 ] || return 0
     [ -f "$REVIEWED_SIDECAR" ] || return 0
     jq -c --arg d "$doc" 'select(.doc == $d)' "$REVIEWED_SIDECAR" 2>/dev/null
 }
