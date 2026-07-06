@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "remediation-plan-frontmatter",
+  "title": "Generated remediation-plan frontmatter",
+  "description": "Frontmatter contract for skill-auditor-generated remediation plans (.context/plans/*-remediation-plan-*.md). These carry the standard action-candidate fields plus the generator's structured summary keys, so they validate against this schema rather than context-frontmatter.schema.json. Enum casing follows ADR-050 (effort stays S/M/L per the ADR-050 amendment).",
+  "type": "object",
+  "additionalProperties": false,
+  "comment": "required is intentionally only the universal base fields, matching context-frontmatter.schema.json. Per-type/status requiredness (value/themes on DRAFT/ACTIVE, exempt on DONE/SUPERSEDED) is enforced by validate-context-frontmatter.sh, which runs alongside this schema; duplicating it here would wrongly reject pre-themes DONE plans. This schema's job is additionalProperties:false (catch typo'd/unknown keys) plus enum/pattern/type correctness.",
+  "required": ["title", "type", "status", "date"],
+  "properties": {
+    "related": { "type": "array", "items": { "type": "string" } },
+    "title": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["PLAN"] },
+    "status": { "type": "string", "enum": ["DRAFT", "ACTIVE", "DONE", "SUPERSEDED"] },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "effort": {
+      "type": "string",
+      "enum": ["S", "M", "L", "TBD"],
+      "description": "T-shirt size. Single-letter by deliberate exception to the UPPER_CASE convention (ADR-050 amendment)."
+    },
+    "value": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+    "themes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["EVAL", "PR-TOOLING", "DOCS", "GOVERNANCE", "SKILL-QUALITY", "DISTRIBUTION"]
+      }
+    },
+    "plan_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "skill_name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "source_audit": { "type": "string" },
+    "executive_summary": { "type": "object" },
+    "critical_issues": { "type": "array" },
+    "remediation_phases": { "type": "array" },
+    "verification_commands": { "type": "array", "items": { "type": "string" } },
+    "success_criteria": { "type": "array" },
+    "effort_estimates": { "type": "array" },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "rollback_plan": { "type": "string" },
+    "notes": { "type": "object" }
+  }
+}
