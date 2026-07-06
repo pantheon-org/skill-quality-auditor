@@ -1,7 +1,7 @@
 ---
 title: "Plan: CI check for .tessl/plugins/pantheon-org mirror drift"
 type: plan
-status: draft
+status: active
 date: 2026-07-06
 effort: S
 related:
@@ -44,10 +44,16 @@ not open for re-litigation here; this plan is implementation only.
   session: `evals/` is deliberately not part of the installed/published skill for every
   existing helper skill, including `design-debate` (authored and installed this same
   session, `evals/` correctly absent from its mirror).
-- Hard-fails the build on real divergence (enforcement, per ADR-047 — not an advisory
-  cumulative-mode-style check like `docs-drift`/`plan-drift`). Zero divergence exists
-  today across all 12 `pantheon-org` skills (verified during the `design-debate` that
-  produced ADR-047), so there is nothing to grandfather.
+- Enforcement mode (hard-fail from day one vs. an initial advisory rollout window) is a
+  maintainer call — see Decisions. ADR-047 frames this as enforcement in spirit (unlike
+  `docs-drift`/`plan-drift`'s permanent advisory mode), and zero divergence exists today
+  across all 12 `pantheon-org` skills (verified during the `design-debate` that produced
+  ADR-047), so there is nothing to grandfather regardless of which mode is chosen.
+- `quality-gate`'s trigger paths gain `scripts/check-tessl-mirror-drift.sh` and
+  `.github/workflows/skill-quality.yml` itself, alongside the existing `cmd/assets/**`
+  and `.context/plugins/**` — otherwise the PR that lands this check wouldn't trigger
+  the job it adds a step to, and future edits to the script or its wiring would
+  silently stop being re-verified.
 
 **Out of scope:**
 
@@ -64,73 +70,103 @@ not open for re-litigation here; this plan is implementation only.
 ### Phase 1 — Script
 
 1. Write `scripts/check-tessl-mirror-drift.sh`:
-   - Run `tessl install` (assumes the `tessl` CLI is already on `PATH` — see Open
-     Questions for how CI provides it).
-   - For each skill directory under `.context/plugins/pantheon-org/<domain>/<skill>/`,
-     diff its content (excluding `evals/`) against
-     `.tessl/plugins/pantheon-org/<domain>/<skill>/`.
-   - Print a clear diff summary per divergent skill; exit 1 if any divergence found,
-     exit 0 otherwise.
+   - Diff-only, no install side effects — the script assumes `.tessl/plugins/pantheon-org/**`
+     is already populated by a prior `tessl install` (that's the CI step's job, per Phase 2,
+     not the script's), so it can be re-run repeatedly against the same `.tessl/` state.
+   - For each skill directory under `.context/plugins/pantheon-org/<domain>/<skill>/`, run
+     `diff -rq --exclude=evals <source-dir> <installed-dir>` — content-only comparison;
+     timestamps and permissions are not compared.
+   - Treat a missing directory on either side as divergence: a source skill with no
+     installed counterpart (newly added, not yet installed) and an installed skill with
+     no source counterpart (deleted from source, stale in the mirror) both fail.
+   - Print a clear diff summary per divergent skill (the skill name plus its `diff -rq`
+     output); exit 1 if any divergence found, exit 0 otherwise.
 2. `shellcheck scripts/check-tessl-mirror-drift.sh` clean.
 
 Exit criterion: running the script locally against the current (non-divergent) repo
 state exits 0 with no output; introducing a throwaway one-line edit to a source SKILL.md
 without re-running `tessl install` causes it to exit 1 with a clear message naming the
-divergent skill.
+divergent skill; a throwaway skill directory that exists on only one side is also caught
+(see Verification).
 
-### Phase 2 — CI wiring
+### Phase 2 — Spike: verify `tessl` CLI works tokenless in clean CI
+
+Gates Phase 3 — do not write the CI-wiring step until this goes green (Decisions).
+
+1. Trigger a throwaway `workflow_dispatch` job (or a scratch run reusing an existing
+   runner) that does nothing but `npm install -g tessl && tessl install` against a clean
+   checkout, with no `TESSL_TOKEN` secret exposed.
+2. Run it via `gh workflow run` / `gh run watch`; confirm it exits 0 with
+   `pantheon-org/**` skills present under `.tessl/plugins/`.
+3. If it fails needing a token, stop and resolve an auth path before Phase 3 starts. If
+   it succeeds, remove the throwaway job (or fold its two commands straight into Phase
+   3's step) and proceed.
+
+Exit criterion: a real GitHub Actions run — not just local `tessl install --help` —
+confirms `tessl install` succeeds with no `TESSL_TOKEN` in an environment matching
+`quality-gate`'s runner.
+
+### Phase 3 — CI wiring
 
 1. Add a step to `skill-quality.yml`'s `quality-gate` job, after the existing helper-skill
-   structural-eval step, that ensures the `tessl` CLI is available (resolution depends on
-   Open Question 1) and runs `tessl install` then `scripts/check-tessl-mirror-drift.sh`.
-2. Confirm the step only runs when helper skills exist in the diff (mirroring the
-   existing `if: steps.helper_skills.outputs.count != '0'` guard on sibling steps) —
-   or decide it should always run regardless of what changed, since the check verifies
-   the whole `pantheon-org/**` mirror, not just the PR's diff (see Open Question 2).
+   structural-eval step, that: (a) ensures the `tessl` CLI is available via
+   `npm install -g tessl` — confirmed tokenless by Phase 2's spike, (b) removes any
+   pre-existing `.tessl/plugins/pantheon-org` to avoid stale state masking a real
+   divergence, (c) runs `tessl install`, (d) runs `scripts/check-tessl-mirror-drift.sh`
+   (diff-only, per Phase 1) with `continue-on-error: true` for the advisory rollout
+   (Decisions).
+2. Widen `quality-gate`'s trigger paths to include `scripts/check-tessl-mirror-drift.sh`
+   and `.github/workflows/skill-quality.yml` (see Scope) so this landing PR — and any
+   future edit to the script or its wiring — actually exercises the check.
+3. Gate the new step on `if: steps.helper_skills.outputs.count != '0'`, matching the
+   existing sibling-step convention (Decisions).
 
-Exit criterion: a live PR (or `workflow_dispatch` run) shows the new step passing on
+Exit criterion: a live PR shows the new step passing (with `continue-on-error: true`) on
 current `main`, and a deliberately-broken throwaway PR (source edited, mirror not
-reinstalled) shows it failing with a clear message.
+reinstalled) shows it failing with a clear message while not blocking the merge.
 
-### Phase 3 — Verify and land
+### Phase 4 — Verify and land
 
 1. Open a PR with the new script + workflow wiring.
-2. Confirm `quality-gate` passes on the PR itself (the new step necessarily exercises
-   itself, since the PR touches `.context/plugins/**`... actually it touches
-   `scripts/` and `.github/workflows/`, not `.context/plugins/**` — confirm the
-   workflow's path filter still triggers `quality-gate` for this PR, or use
-   `workflow_dispatch` to force a run if not).
-3. Mark this plan `status: done` once merged and confirmed passing.
+2. Confirm `quality-gate` passes on the PR itself — the widened path filter (Phase 3,
+   step 2) means this PR's own diff (`scripts/**`, `.github/workflows/skill-quality.yml`)
+   now triggers the job directly, no `workflow_dispatch` workaround needed.
+3. Mark this plan `status: done` once merged and confirmed passing — but leave one
+   open follow-up noted below (the hard-fail flip) rather than closing it silently.
 
-## Open Questions
+## Decisions (resolved during plan-review)
 
-- **How does CI get the `tessl` CLI without depending on the soon-to-be-removed
-  `tesslio/setup-tessl` action?** That action requires `TESSL_TOKEN` and is explicitly
-  marked for deletion once the native eval runner proving period ends. `tessl.json`
-  sources `pantheon-org/**` via `file:` paths (no registry involved), and `tessl install
-  --help` runs with no auth prompt — suggesting `tessl install` for purely
-  file-sourced plugins may not need `TESSL_TOKEN` at all. Not yet verified: whether a
-  full `tessl install` run (not just `--help`) in a clean CI environment with no token
-  succeeds. If it does, the simplest fix is `npm install -g tessl` (matching
-  `mise.toml`'s `"npm:tessl" = "latest"`) with no token — decoupled entirely from the
-  block slated for removal. If it doesn't, this needs its own auth path decided before
-  Phase 2 can land.
-- **Should the new step be gated on `helper_skills.outputs.count != '0'` like its
-  siblings, or run unconditionally?** The check verifies the entire `pantheon-org/**`
-  mirror's fidelity, not just whatever the current PR touched — a PR that touches
-  `cmd/assets/**` only (triggering `quality-gate` via the workflow's path filter) but
-  not `.context/plugins/**` would still benefit from catching a pre-existing mirror
-  problem, but the existing sibling steps skip entirely when the PR touches no helper
-  skills. Leaning toward "run whenever the job runs at all" for a stronger guarantee,
-  but this changes the job's runtime characteristics slightly (always doing a full
-  `tessl install`, not just when relevant) — a maintainer call, not decided here.
-- **Hard-fail from day one, or advisory-warn for an initial rollout window?** The
-  scope says hard-fail per ADR-047 and because zero divergence exists today, but this
-  mechanism is entirely new and unproven in actual CI (only tested locally in this
-  session). A short advisory-only window (e.g. `continue-on-error: true` for the first
-  few merged PRs) would catch any CI-environment-specific surprise (e.g. the auth
-  question above) without ever blocking a real merge on a false positive. Not decided
-  — plan-review should weigh in.
+- **Enforcement mode: advisory rollout, then flip.** The new step runs with
+  `continue-on-error: true` initially rather than hard-failing from day one. **Revisit
+  trigger:** after 5 merged PRs that exercise this step (or 2 weeks, whichever comes
+  first) with zero false positives, open a follow-up PR removing `continue-on-error` and
+  hard-fail per ADR-047's original intent. Recorded here, not left implicit, so
+  "advisory" doesn't silently become "permanent" the way the known-issue on
+  known-issues-lacking-enforcement warned against.
+- **Gating: match the sibling convention.** The new step is gated on
+  `if: steps.helper_skills.outputs.count != '0'`, same as the existing helper-skill
+  steps in this job, rather than running unconditionally. Trade-off accepted: a PR
+  touching only `cmd/assets/**` won't re-verify the mirror on that run, in exchange for
+  consistency with how every other step in this section already behaves.
+- **`tessl` CLI provisioning: gated spike first.** Phase 2 verifies `tessl install`
+  succeeds tokenless in a clean CI runner before Phase 3's CI-wiring step is written,
+  rather than discovering an auth requirement mid-implementation.
+
+## Risks
+
+- **`tessl` version drift**: `mise.toml` pins `"npm:tessl" = "latest"`, so CI tracks
+  whatever's newest at each run — consistent with local dev, but an upstream change to
+  `tessl install`'s file-filtering (e.g. what's excluded besides `evals/`) could produce
+  a false positive with no advance signal. Accepted tradeoff, not pinned independently,
+  to avoid a second place `tessl`'s version could drift from `mise.toml`. Caught safely
+  during the advisory window (above) rather than blocking a merge.
+- **Stale `.tessl` state**: mitigated by the CI step's `rm -rf .tessl/plugins/pantheon-org`
+  before each `tessl install` (Phase 3, step 1b) — without it, a prior run's leftover
+  files could mask a real divergence.
+- **Advisory silently becoming permanent**: the biggest residual risk after the
+  Decisions above isn't a false positive — it's nobody remembering to flip
+  `continue-on-error` off. Mitigated by the concrete revisit trigger stated above; if
+  that PR hasn't happened by the time this plan is reviewed again, treat it as overdue.
 
 ## Verification
 
@@ -144,7 +180,16 @@ echo "" >> .context/plugins/pantheon-org/planning/plan-create/SKILL.md
 scripts/check-tessl-mirror-drift.sh              # expect: exits 1, names the divergent skill
 git checkout -- .context/plugins/pantheon-org/planning/plan-create/SKILL.md
 
-# Phase 2 + 3
+# Asymmetric case: a skill directory present on only one side, then discard
+mkdir -p .tessl/plugins/pantheon-org/workshop/throwaway-test-skill
+scripts/check-tessl-mirror-drift.sh              # expect: exits 1, names throwaway-test-skill (installed-only)
+rm -rf .tessl/plugins/pantheon-org/workshop/throwaway-test-skill
+
+# Phase 2 (spike)
+gh workflow run skill-quality.yml                # or a scratch workflow_dispatch job
+gh run watch                                     # confirm tessl install succeeds tokenless
+
+# Phase 3 + 4
 gh workflow run skill-quality.yml                # or push a PR
-gh run watch                                     # confirm the new step passes
+gh run watch                                     # confirm the new step passes (continue-on-error)
 ```

@@ -367,3 +367,10 @@ entries:
     context:
       - path: ".context/findings/tessl-mirror-drift-protection-2026-07-06.md"
       - path: ".context/findings/index-yaml-split-review-2026-07-06.md"
+  - path: "ADR/adr-048-tessl-mirror-drift-rollout.md"
+    adr: "ADR-048"
+    title: "ADR-048: .tessl mirror drift check rollout — advisory-first, gated spike, sibling gating"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/plans/tessl-mirror-drift-check-2026-07-06.md"
