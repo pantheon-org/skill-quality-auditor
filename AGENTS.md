@@ -119,9 +119,11 @@ Total: **140 pts.** Grade bands and CI thresholds: `cmd/assets/references/qualit
 
 ## Context Index
 
-Actionable plans, findings, and analyses live under `.context/`. The machine-readable index is at [`.context/index.yaml`](.context/index.yaml) — each entry carries `title`, `type`, `status`, `date`, and optional `related` links.
+Actionable plans, findings, and analyses live under `.context/`. The machine-readable index is at [`.context/index.yaml`](.context/index.yaml) — each entry carries `title`, `type`, `status`, `date`, optional `related` links, and (on `plan`/`finding`/`known-issue`) `effort`, `severity`, and `value`.
 
 Read the index before starting a new task to surface active work items, pending decisions, and historical findings relevant to your change.
+
+To pick the **highest-value item to do next**, use the read protocol: filter to `draft`/`active` `plan`/`finding`/`known-issue`, sort by `value` (`high` > `medium` > `low`) descending, then `effort` ascending, and act on the top item without re-judging. `value` is graded against [`.context/instructions/value-rubric.md`](.context/instructions/value-rubric.md) and required for those types while draft/active (`done`/`superseded` exempt). See [`ways-of-working.md`](.context/instructions/ways-of-working.md) for grading and re-grade rules.
 
 ## Agent Rules
 
