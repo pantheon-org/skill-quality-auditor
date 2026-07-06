@@ -77,10 +77,14 @@ The remediation plan follows a JSON schema defined at
 
 ```text
 remPlanFrontmatter (YAML frontmatter)
-  ├── title, type ("PLAN"), status ("DRAFT"), date, effort (S/M/L/TBD)
+  ├── title, type ("PLAN"), status ("DRAFT"), date, effort (S/M/L/TBD),
+  │   value ("MEDIUM"), themes (["SKILL-QUALITY"])
   │     └── matches the standard .context/ frontmatter schema, so a freshly
   │         generated plan is picked up by context-index/frontmatter
-  │         validation without hand-patching
+  │         validation without hand-patching. `value` (ADR-049) and a non-empty
+  │         `themes` list (ADR-051) are required on DRAFT plans, so the generator
+  │         emits both; the frontmatter is written with 2-space indentation to
+  │         match the validator's block-list parser.
   ├── plan_date, skill_name, source_audit
   ├── execution_summary (current_score, target_score)
   ├── score_range (min, max, current, target)
