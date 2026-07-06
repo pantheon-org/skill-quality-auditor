@@ -412,3 +412,10 @@ entries:
       - path: ".context/plans/governance-enum-and-schema-hardening-2026-07-06.md"
       - path: ".context/known-issues/known-issues-lack-enforcement-2026-07-06.md"
       - path: "docs/ADR/adr-046-known-issues-context-type.md"
+  - path: "ADR/adr-053-release-draft-then-publish.md"
+    adr: "ADR-053"
+    title: "ADR-053: Release assets use a draft-then-publish flow (immutable releases)"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/findings/release-assets-never-attached-2026-07-06.md"
