@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.24.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.23.0...v0.24.0) (2026-07-06)
+
+
+### Features
+
+* **context:** implement themes taxonomy (4 phases, ADR-051) ([#208](https://github.com/pantheon-org/skill-quality-auditor/issues/208)) ([3b5f9bb](https://github.com/pantheon-org/skill-quality-auditor/commit/3b5f9bbf655108e85ade5f44a0fff66028e004e9))
+* **validate:** real JSON-schema validator for .context frontmatter (G5) ([#215](https://github.com/pantheon-org/skill-quality-auditor/issues/215)) ([6f490c7](https://github.com/pantheon-org/skill-quality-auditor/commit/6f490c72697e3dfcbf2b76e7498f1b0a5d88c13b))
+
+
+### Bug Fixes
+
+* **governance:** adr-index freshness gate (G2) + undocumented-decisions false-negative (G3) ([#211](https://github.com/pantheon-org/skill-quality-auditor/issues/211)) ([397e0b3](https://github.com/pantheon-org/skill-quality-auditor/commit/397e0b3c4608021c8414830f970c8610b1b5b5fd))
+* **release:** attach artifacts via draft-then-publish flow (immutable releases) ([#219](https://github.com/pantheon-org/skill-quality-auditor/issues/219)) ([147ab54](https://github.com/pantheon-org/skill-quality-auditor/commit/147ab54af8f379b7264d080d6b4c3685e0c98f98))
+* **reporter:** generated remediation plans carry value + themes (G4) ([#212](https://github.com/pantheon-org/skill-quality-auditor/issues/212)) ([c44acab](https://github.com/pantheon-org/skill-quality-auditor/commit/c44acab00c6c727e6247c875af4014501bab1395))
+* **validate:** accept a path for 'validate context' instead of hardcoding .context ([#216](https://github.com/pantheon-org/skill-quality-auditor/issues/216)) ([643f6ab](https://github.com/pantheon-org/skill-quality-auditor/commit/643f6ab6bc2be85e41dc5a497a3fd8143d6fdf2c))
+
 ## [0.23.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.22.0...v0.23.0) (2026-07-06)
 
 
