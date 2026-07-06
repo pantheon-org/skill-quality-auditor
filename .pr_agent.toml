@@ -11,3 +11,12 @@ extra_instructions = "This is a Go CLI (skill-auditor) and Tessl tile. Note when
 
 [pr_reviewer]
 extra_instructions = "Focus on Go idioms, error handling, and test coverage. Flag exported identifiers without doc comments, and any change to scorer/ or reporter/ that isn't covered by a table-driven test. This repo's CLAUDE.md forbids narrative comments and premature abstraction — flag comments that restate what the code does rather than explaining a non-obvious why. Do not comment on changes under cmd/assets/ (SKILL.md, tile.json, evals, references) — that content already gets a dedicated review from this repo's skill-quality LLM-judge; focus your review on the Go implementation and other non-asset files in the diff."
+# This repo tracks work via .context/plans/ and .context/findings/, not
+# GitHub Issues — a PR description casually referencing a prior PR ("closing
+# out #186") is narrative continuity, not a linked ticket. Left at the
+# documented default (true), require_ticket_analysis_review grades the
+# current PR against whatever issue/PR any bare "#N" auto-links to, which
+# produced a real, confusing false positive on PR #187 (graded against an
+# unrelated, already-merged PR's own checklist). See
+# .context/findings/pr-agent-ticket-compliance-false-positive-2026-07-06.md.
+require_ticket_analysis_review = false
