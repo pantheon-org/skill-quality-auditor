@@ -343,3 +343,11 @@ entries:
     date: 2026-07-06
     context:
       - path: ".context/findings/gh-pages-docs-drift-2026-07-05.md"
+  - path: "ADR/adr-045-docs-drift-reviewed-baseline.md"
+    adr: "ADR-045"
+    title: "ADR-045: check-docs-drift.sh gains a reviewed-baseline sidecar"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/findings/docs-drift-perpetual-noise-2026-07-06.md"
+      - path: ".context/plans/docs-drift-reviewed-baseline-2026-07-06.md"

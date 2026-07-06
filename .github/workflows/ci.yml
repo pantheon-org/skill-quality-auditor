@@ -52,6 +52,14 @@ jobs:
       - name: Check for new docs drift
         run: scripts/check-docs-drift.sh "origin/${{ github.base_ref }}"
 
+      - name: Report cumulative docs drift (informational, never fails)
+        # Cumulative mode always exits 0 by design — this step exists so the
+        # same warnings hk.pkl's local pre-push hook shows are also visible
+        # in every PR's Actions log, since pre-push hooks are bypassable
+        # (--no-verify, web-UI merges, API commits) and this job is not
+        # (see .context/findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md).
+        run: scripts/check-docs-drift.sh
+
   test:
     runs-on: ubuntu-latest
     needs: lint

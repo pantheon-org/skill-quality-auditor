@@ -7,6 +7,13 @@
 # the doc's last commit, no matter how long ago. Informational only —
 # always exits 0.
 #
+# A doc reviewed and confirmed current via mark-docs-reviewed.sh (see
+# ADR-045) has its baseline raised to max(doc_last_touch_epoch,
+# reviewed_epoch) instead of just doc_last_touch_epoch, read from the
+# scripts/docs-drift-reviewed.jsonl sidecar. Comparison is done on epoch
+# integers, never ISO8601 strings — string comparison of differently
+# timezone-offset dates sorts wrong; epoch comparison never does.
+#
 # Gate mode (pass a base ref, e.g. `check-docs-drift.sh origin/main`):
 # used by CI on pull_request — flags only source changes made between
 # the base ref and HEAD that touch a mapped source glob without this
@@ -82,26 +89,60 @@ if [ -n "$BASE_REF" ]; then
     exit 0
 fi
 
+REVIEWED_SIDECAR="$ROOT/scripts/docs-drift-reviewed.jsonl"
+
+# Looks up doc_path's reviewed entry in the sidecar, if any. JSONL (one JSON
+# object per line), parsed via jq — already an assumed-available dependency
+# elsewhere in this repo's scripts/ (plumber-*.sh). Deliberately not a bash
+# associative array (declare -A): bash 3.2 (macOS's default /bin/bash, still
+# what `env bash` resolves to on a stock Mac) predates bash 4 and has none.
+lookup_reviewed() {
+    local doc="$1"
+    [ -f "$REVIEWED_SIDECAR" ] || return 0
+    jq -c --arg d "$doc" 'select(.doc == $d)' "$REVIEWED_SIDECAR" 2>/dev/null
+}
+
 for entry in "${MAPPINGS[@]}"; do
     doc_path="${entry%%|*}"
     globs="${entry#*|}"
     doc_file="$ROOT/$doc_path"
     [ -f "$doc_file" ] || continue
 
-    doc_date=$(git -C "$ROOT" log -1 --format=%cI -- "$doc_path" 2>/dev/null || true)
-    [ -n "$doc_date" ] || continue
+    doc_meta=$(git -C "$ROOT" log -1 --format='%cI|%ct' -- "$doc_path" 2>/dev/null || true)
+    [ -n "$doc_meta" ] || continue
+    doc_date="${doc_meta%%|*}"
+    doc_epoch="${doc_meta#*|}"
+
+    effective_date="$doc_date"
+    effective_epoch="$doc_epoch"
+    reviewed_line=$(lookup_reviewed "$doc_path")
+    if [ -n "$reviewed_line" ]; then
+        reviewed_iso=$(printf '%s' "$reviewed_line" | jq -r '.reviewed_iso // empty')
+        reviewed_epoch=$(printf '%s' "$reviewed_line" | jq -r '.reviewed_epoch // empty')
+        case "$reviewed_epoch" in
+            '' | *[!0-9]*)
+                echo "⚠  Skipping malformed docs-drift-reviewed.jsonl entry for '$doc_path' (non-numeric epoch)" >&2
+                ;;
+            *)
+                if [ "$reviewed_epoch" -gt "$doc_epoch" ]; then
+                    effective_epoch="$reviewed_epoch"
+                    effective_date="$reviewed_iso (reviewed)"
+                fi
+                ;;
+        esac
+    fi
 
     IFS=';' read -ra glob_arr <<<"$globs"
     hits=""
     for g in "${glob_arr[@]}"; do
-        matches=$(git -C "$ROOT" log --oneline --after="$doc_date" -- "$g" 2>/dev/null || true)
+        matches=$(git -C "$ROOT" log --oneline --after="@$effective_epoch" -- "$g" 2>/dev/null || true)
         [ -z "$matches" ] && continue
         hits="${hits}${matches}"$'\n'
     done
 
     if [ -n "$hits" ]; then
         commit_count=$(echo "$hits" | grep -c . || true)
-        echo "⚠  Possibly stale: $doc_path — $commit_count commit(s) touched related source since the doc was last updated ($doc_date)"
+        echo "⚠  Possibly stale: $doc_path — $commit_count commit(s) touched related source since the doc was last updated ($effective_date)"
         COUNT=$((COUNT + 1))
     fi
 done
