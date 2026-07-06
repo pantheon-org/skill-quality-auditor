@@ -48,6 +48,25 @@ func TestRemediationPlan_generatesValidYAML(t *testing.T) {
 	}
 }
 
+// G4 (.context/plans/governance-tooling-hardening-2026-07-06.md): generated
+// remediation plans are type: PLAN, status: DRAFT, so the context-frontmatter
+// validator requires both `value` and a non-empty `themes` list. The themes
+// list must use 2-space block indentation to match that validator's parser.
+func TestRemediationPlan_carriesValueAndThemes(t *testing.T) {
+	r := makeResultWithScore(84)
+	plan, err := RemediationPlan(r, 0, "", "2026-04-27")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(plan, "value: MEDIUM") {
+		t.Error("plan frontmatter should carry value: MEDIUM (required for DRAFT PLAN)")
+	}
+	// exact 2-space block indentation — the validator's regex expects "  - "
+	if !strings.Contains(plan, "themes:\n  - SKILL-QUALITY") {
+		t.Errorf("plan frontmatter should carry a 2-space themes block with SKILL-QUALITY; got:\n%s", plan[:min(len(plan), 300)])
+	}
+}
+
 func TestRemediationPlan_targetScoreBelowOrEqualTotal(t *testing.T) {
 	r := makeResultWithScore(84)
 	_, err := RemediationPlan(r, 50, "", "2026-04-27")

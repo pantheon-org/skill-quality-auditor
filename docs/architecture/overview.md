@@ -28,7 +28,7 @@ main.go
         │     ├── duplication.go       (DuplicationReport)
         │     ├── aggregation.go       (AggregationPlan)
         │     ├── remediation.go       (Remediation — simple plan)
-        │     ├── remediation_plan_generate.go (schema-compliant plan)
+        │     ├── remediation_plan_generate.go (schema-compliant plan: emits effort/value/themes frontmatter)
         │     └── remediation_plan_validate.go (schema validation)
         │
         ├── duplication/   (pairwise similarity)

@@ -21,6 +21,8 @@ type remPlanFrontmatter struct {
 	Status           string                `yaml:"status"             json:"status"`
 	Date             string                `yaml:"date"               json:"date"`
 	Effort           string                `yaml:"effort"             json:"effort"`
+	Value            string                `yaml:"value"              json:"value"`
+	Themes           []string              `yaml:"themes"             json:"themes"`
 	PlanDate         string                `yaml:"plan_date"          json:"plan_date"`
 	SkillName        string                `yaml:"skill_name"         json:"skill_name"`
 	SourceAudit      string                `yaml:"source_audit"       json:"source_audit"`
@@ -174,6 +176,8 @@ func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, a
 		Status:      "DRAFT",
 		Date:        date,
 		Effort:      effort,
+		Value:       "MEDIUM",
+		Themes:      []string{"SKILL-QUALITY"},
 		PlanDate:    date,
 		SkillName:   skillName,
 		SourceAudit: auditPath,
@@ -206,14 +210,19 @@ func buildRemediationFrontmatter(r *scorer.Result, targetScore int, skillName, a
 func renderRemediationPlan(r *scorer.Result, fm remPlanFrontmatter, _ []gap, targetScore int, date string) (string, error) {
 	pct := func(score int) int { return int(math.Round(float64(score) / 140.0 * 100)) }
 
-	fmBytes, err := yaml.Marshal(fm)
-	if err != nil {
-		return "", fmt.Errorf("marshal frontmatter: %w", err)
-	}
-
 	var sb strings.Builder
 	sb.WriteString("---\n")
-	sb.Write(fmBytes)
+	// Encode with 2-space indent to match the .context/ YAML convention — the
+	// context-frontmatter validator's block-list parser (e.g. for themes)
+	// expects "  - ", not yaml.Marshal's default 4-space indent.
+	enc := yaml.NewEncoder(&sb)
+	enc.SetIndent(2)
+	if err := enc.Encode(fm); err != nil {
+		return "", fmt.Errorf("marshal frontmatter: %w", err)
+	}
+	if err := enc.Close(); err != nil {
+		return "", fmt.Errorf("close frontmatter encoder: %w", err)
+	}
 	sb.WriteString("---\n\n")
 
 	fmt.Fprintf(&sb, "# Remediation Plan — %s\n\n", r.Skill)
