@@ -168,6 +168,21 @@ reinstalled) shows it failing with a clear message while not blocking the merge.
   `continue-on-error` off. Mitigated by the concrete revisit trigger stated above; if
   that PR hasn't happened by the time this plan is reviewed again, treat it as overdue.
 
+## Implementation Notes (2026-07-06, Phase 1)
+
+- **`.aislop/` needed its own exclusion, not anticipated by the plan.** The very first
+  clean-state run (before any throwaway edit) exited 1: a stray, gitignored
+  `.aislop/session.jsonl` scan artifact sitting under
+  `.context/plugins/pantheon-org/governance/adr-capture/scripts/` (created by a prior
+  local aislop scan, per `.gitignore`'s `.context/**/.aislop/` re-ignore rule) showed up
+  as a real filesystem difference even though `tessl install` correctly never installs
+  it. Fixed by adding `--exclude=.aislop` alongside `--exclude=evals` in the script's
+  `diff -rq` call. This is exactly the class of surprise Phase 1's local verification
+  exists to catch before it reaches CI — a contributor with a stale local scan session
+  would otherwise have hit a false-positive divergence with no clear cause.
+- All four Verification scenarios (clean state, content divergence, installed-only
+  asymmetric, source-only asymmetric) pass with the expected exit codes and messages.
+
 ## Verification
 
 ```bash
