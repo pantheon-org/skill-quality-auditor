@@ -56,6 +56,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **plan-create** — create `.context/plans/*.md` files with standard frontmatter and
   phases/tasks/waves decomposition, inferring section conventions from existing plans.
+- **design-debate** — stress-test an unwritten idea by spawning independent subagents in
+  genuinely opposing roles (advocate, skeptic, migration/risk), grounded in real repo
+  investigation, concluding in a synthesized verdict — used *before* a plan exists.
 - **plan-review** — review a plan using three independent subagent reviewers (Technical,
   Strategic, Risk) and consolidate their feedback.
 

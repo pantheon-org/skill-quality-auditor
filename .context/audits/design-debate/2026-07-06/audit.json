@@ -1,0 +1,38 @@
+{
+  "skill": "design-debate",
+  "date": "2026-07-06",
+  "dimensions": {
+    "antiPatternQuality": 15,
+    "evalValidation": 18,
+    "freedomCalibration": 9,
+    "knowledgeDelta": 19,
+    "mindsetProcedures": 12,
+    "patternRecognition": 10,
+    "practicalUsability": 15,
+    "progressiveDisclosure": 12,
+    "specificationCompliance": 13
+  },
+  "total": 123,
+  "maxTotal": 140,
+  "grade": "B+",
+  "lines": 203,
+  "hasReferences": true,
+  "referenceCount": 2,
+  "referenceSectionCompliant": false,
+  "errors": 0,
+  "warnings": 3,
+  "warningDetails": [
+    {
+      "dimension": "D7",
+      "message": "description includes negative and workflow anchors — good discriminativeness signal"
+    },
+    {
+      "dimension": "D9",
+      "message": "adversarial bonus: +1 pts — not applied to score"
+    },
+    {
+      "dimension": "D9",
+      "message": "independent authoring bonus: +1 pts — not applied to score"
+    }
+  ]
+}

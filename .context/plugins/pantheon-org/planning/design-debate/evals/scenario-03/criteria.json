@@ -1,0 +1,10 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates whether the agent correctly identifies when NOT to run the full debate pattern (trivial, no-tradeoff decisions) versus when to run it fully, and whether a 'proceed' verdict correctly hands off to plan-create.",
+  "checklist": [
+    {"name": "Declines trivial debate", "description": "Agent recognizes the variable-rename question has no real tradeoff and declines/pushes back on running a full multi-agent debate for it", "max_score": 25},
+    {"name": "Runs full pattern for substantive question", "description": "Agent grounds in facts, assigns opposing roles, and spawns in parallel for the JSON-library question", "max_score": 30},
+    {"name": "Resolved verdict", "description": "Agent renders an actual verdict for the substantive question, not just a list of considerations", "max_score": 20},
+    {"name": "Hands off to plan-create on proceed", "description": "If the verdict is proceed, agent explicitly names plan-create as the next step and connects the debate's facts/design to it", "max_score": 25}
+  ]
+}

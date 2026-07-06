@@ -1,0 +1,1 @@
+Correctly scope the debate pattern to decisions with a real tradeoff — declining it for trivial, obvious calls — and hand off a "proceed" verdict to plan-create with the debate's grounding facts as input.

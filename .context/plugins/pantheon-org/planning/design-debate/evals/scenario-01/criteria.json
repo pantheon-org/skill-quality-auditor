@@ -1,0 +1,12 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates whether the agent runs a genuine two-sided debate: precise decision framing, real grounding, opposing (not neutral) roles, parallel execution, and a resolved verdict.",
+  "checklist": [
+    {"name": "Precise decision framing", "description": "Agent restates the decision as a precise yes/no or A-vs-B question", "max_score": 10},
+    {"name": "Real grounding", "description": "Agent investigates the actual codebase for concrete facts before spawning reviewers, rather than debating from assumption", "max_score": 20},
+    {"name": "Opposing roles, not neutral", "description": "Agent explicitly assigns Advocate and Skeptic (or equivalent opposing stances), not a 'balanced/neutral' framing for both", "max_score": 25},
+    {"name": "Parallel spawn", "description": "Reviewers are spawned in parallel (single message, multiple tool calls), not sequentially", "max_score": 15},
+    {"name": "Resolved verdict", "description": "The final response renders an actual recommendation and names which argument held up, rather than presenting both sides unweighted", "max_score": 20},
+    {"name": "Persistence asked, not assumed", "description": "Agent explicitly asks whether to persist the verdict as a finding, rather than silently deciding either way", "max_score": 10}
+  ]
+}

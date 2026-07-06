@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates whether the agent correctly scales to a 3-role debate (Advocate/Skeptic/Migration-Risk) when the decision has real implementation surface, and keeps role framing distinct rather than uniformly adversarial or uniformly neutral.",
+  "checklist": [
+    {"name": "Adds Migration/Risk role", "description": "Agent recognizes multi-file implementation surface and adds a third Migration/Risk role beyond Advocate/Skeptic", "max_score": 25},
+    {"name": "Distinct role framings", "description": "Advocate and Skeptic get opposing stances; Migration/Risk gets a neutral 'what breaks' framing — not all three treated identically", "max_score": 20},
+    {"name": "Parallel spawn", "description": "All 3 reviewers spawned in parallel", "max_score": 15},
+    {"name": "Verdict incorporates Migration/Risk finding", "description": "The synthesized verdict specifically references a concrete point the Migration/Risk reviewer raised", "max_score": 25},
+    {"name": "Does not misapply plan-review", "description": "Agent does not invoke plan-review or ask for an existing plan file for what is a pre-plan idea", "max_score": 15}
+  ]
+}
