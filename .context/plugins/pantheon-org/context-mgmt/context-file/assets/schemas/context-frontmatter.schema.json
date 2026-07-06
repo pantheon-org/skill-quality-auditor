@@ -45,6 +45,11 @@
       "type": "string",
       "enum": ["critical", "high", "medium", "low"],
       "description": "Urgency of a known-issue entry. Required for type: known-issue (enforced by validate-context-frontmatter.sh, not this schema alone). Not applicable to other types. Set once at creation; re-grade only if the issue's real-world impact turns out to differ from the initial assessment."
+    },
+    "value": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Benefit-of-action signal: how much doing this item unblocks or leverages future work, graded against the rubric in .context/instructions/value-rubric.md. Applies to type: plan, finding, and known-issue (the action-candidate types). Distinct from severity (risk-of-inaction) and effort (cost-of-action). The 'what's next' read protocol sorts by value descending, then effort ascending. Required for those three types while status is draft or active (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Re-grade on status transitions or material scope changes, per ways-of-working.md."
     }
   }
 }
