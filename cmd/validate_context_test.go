@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/pantheon-org/skill-quality-auditor/reporter"
@@ -78,6 +79,36 @@ func TestValidateContext_generatedRemediationPlanPasses(t *testing.T) {
 	v.checkFile(f)
 	if v.errors != 0 {
 		t.Errorf("expected generated remediation plan to validate, got %d error(s)", v.errors)
+	}
+}
+
+// walkMarkdown finds *.md under a directory and skips a plugins/ subdir, so the
+// validator can be pointed at any context-file location, not just .context.
+func TestWalkMarkdown_findsMarkdownAndSkipsPlugins(t *testing.T) {
+	root := t.TempDir()
+	mustWrite(t, filepath.Join(root, "a.md"), "x")
+	mustWrite(t, filepath.Join(root, "sub", "b.md"), "x")
+	mustWrite(t, filepath.Join(root, "notes.txt"), "x")       // non-md ignored
+	mustWrite(t, filepath.Join(root, "plugins", "p.md"), "x") // plugins skipped
+
+	got := walkMarkdown(root)
+	if len(got) != 2 {
+		t.Fatalf("expected 2 markdown files (a.md, sub/b.md), got %d: %v", len(got), got)
+	}
+	for _, g := range got {
+		if strings.Contains(g, string(os.PathSeparator)+"plugins"+string(os.PathSeparator)) {
+			t.Errorf("plugins/ file should be skipped, got %s", g)
+		}
+	}
+}
+
+func mustWrite(t *testing.T, path, body string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
 	}
 }
 

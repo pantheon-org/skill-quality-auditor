@@ -78,7 +78,9 @@ local prePush = new Mapping<String, Step> {
         glob = List(".context/**/*.md")
         exclude = List(".context/plugins/**")
         depends = List("go-build")
-        check = "./dist/skill-auditor validate context"
+        // Pass the path explicitly — .context is THIS repo's location for context
+        // files, expressed here in config rather than assumed by the tool.
+        check = "./dist/skill-auditor validate context .context"
     }
     ["skill-validate"] {
         glob = List("cmd/assets/**")
