@@ -351,3 +351,11 @@ entries:
     context:
       - path: ".context/findings/docs-drift-perpetual-noise-2026-07-06.md"
       - path: ".context/plans/docs-drift-reviewed-baseline-2026-07-06.md"
+  - path: "ADR/adr-046-known-issues-context-type.md"
+    adr: "ADR-046"
+    title: "ADR-046: known-issue becomes a first-class .context/ file type, driven by session-reflection"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/known-issues/docs-drift-jq-hard-dependency-2026-07-06.md"
+      - path: ".context/known-issues/docs-drift-cumulative-not-enforced-2026-07-06.md"

@@ -14,8 +14,8 @@
     },
     "type": {
       "type": "string",
-      "enum": ["plan", "finding", "analysis", "instruction", "audit"],
-      "description": "File category — matches the subdirectory (plans/ → plan, findings/ → finding, analysis/ → analysis)."
+      "enum": ["plan", "finding", "analysis", "instruction", "audit", "known-issue"],
+      "description": "File category — matches the subdirectory (plans/ → plan, findings/ → finding, analysis/ → analysis, known-issues/ → known-issue)."
     },
     "status": {
       "type": "string",
@@ -40,6 +40,11 @@
       "type": "string",
       "enum": ["S", "M", "L", "TBD"],
       "description": "T-shirt-sized total implementation effort, matching the skill-auditor remediation-plan convention (S/M/L). Required for type: plan while status is draft or active (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Use TBD only when sizing is genuinely blocked on an unresolved item in Open Questions. Not applicable to finding/analysis/instruction/audit. Set once at creation like date; re-size only if scope materially changes."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Urgency of a known-issue entry. Required for type: known-issue (enforced by validate-context-frontmatter.sh, not this schema alone). Not applicable to other types. Set once at creation; re-grade only if the issue's real-world impact turns out to differ from the initial assessment."
     }
   }
 }
