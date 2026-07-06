@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: effort's single-letter values (S/M/L) violate the full-word enum convention"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: SUPERSEDED
 date: 2026-07-06
 severity: LOW
 value: LOW
@@ -12,6 +12,17 @@ related:
   - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json
   - ../instructions/ways-of-working.md
 ---
+
+> **Resolution (2026-07-06): won't-fix — `effort` deliberately stays `S`/`M`/`L`/`TBD`.**
+> A 3-reviewer `plan-review` of the proposed migration concluded it is not worth
+> doing: it is `value: LOW`, has a ~5× larger blast radius than first estimated
+> (~73 sites across 28 files, including an independent `aggregationEffort()` in
+> `reporter/aggregation.go` that tests would not catch), and is **net-negative** —
+> full words would make `MEDIUM` a legal value for `effort`, `value`, and `severity`
+> at once, a collision that cannot occur while `effort` stays single-letter. The
+> rationale is recorded as an amendment to ADR-050; this known-issue is closed
+> `SUPERSEDED` by that decision. The "Suggested fix" below is retained only as the
+> record of what was considered and rejected.
 
 ADR-050 standardised every `.context/` frontmatter enum on full UPPER_CASE words:
 `type` (`PLAN`/`FINDING`/…), `status` (`DRAFT`/`ACTIVE`/…), `severity`

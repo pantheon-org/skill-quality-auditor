@@ -5,6 +5,7 @@ date: 2026-07-06
 context:
   - path: "docs/ADR/adr-049-context-value-frontmatter-field.md"
   - path: ".context/plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json"
+  - path: ".context/known-issues/effort-single-letter-values-2026-07-06.md"
 ---
 
 **Status:** Accepted
@@ -68,3 +69,30 @@ from ADR-049 all stand unchanged. Only the surface form of the values changes.
 - **Not addressed:** ADR-status casing (deliberately out of scope) and the
   separate observation that Go-generated remediation plans do not yet carry a
   `value` field (tracked independently, not a casing concern).
+
+## Amendment (2026-07-06): `effort` deliberately stays `S`/`M`/`L`/`TBD`
+
+Decision 1 recorded `effort` as "unchanged" almost in passing. This amendment
+promotes that to an explicit, reasoned decision so it is not re-opened:
+
+**`effort` intentionally keeps its single-letter T-shirt sizes (`S`/`M`/`L`/`TBD`)
+and is the one enum exempt from the full-word UPPER_CASE convention.**
+
+A proposed migration to full words (`SMALL`/`MEDIUM`/`LARGE`) was raised as the
+`effort-single-letter-values` known-issue and taken through a 3-reviewer
+`plan-review` (2026-07-06). All three reviewers recommended against it:
+
+- **No benefit:** `effort` already parses and sorts correctly; nothing downstream
+  depends on its spelling. Graded `value: LOW`.
+- **Net-negative:** full words make `MEDIUM` a legal value for `effort`, `value`,
+  and `severity` simultaneously — an ambiguity that **cannot occur** while `effort`
+  stays single-letter, since `S`/`M`/`L` share no token with the word-based enums.
+  The migration would trade one cosmetic inconsistency for a subtler collision.
+- **Disproportionate blast radius:** ~73 occurrences across ~28 files, including an
+  independent `aggregationEffort()` in `reporter/aggregation.go` that the test suite
+  would not catch — a silent split-brain risk far exceeding the cosmetic gain.
+
+The `effort-single-letter-values` known-issue is therefore closed `SUPERSEDED` by
+this amendment. Single-letter `effort` is the deliberate, documented exception to
+the UPPER_CASE convention, retained specifically to keep the three magnitude axes
+(`effort` / `value` / `severity`) unambiguous at a glance.
