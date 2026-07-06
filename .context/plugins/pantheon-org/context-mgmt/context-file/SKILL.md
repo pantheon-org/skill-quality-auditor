@@ -50,6 +50,7 @@ Enum values are UPPER_CASE. Field rules:
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
 - `severity` — required for `type: KNOWN_ISSUE` only: `CRITICAL | HIGH | MEDIUM | LOW`. Not applicable to other types.
 - `value` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`: `HIGH | MEDIUM | LOW`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
+- `themes` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`: a multi-valued **ordered** list from `EVAL | PR-TOOLING | DOCS | GOVERNANCE | SKILL-QUALITY | DISTRIBUTION`. The subject axis (what area the item is about), orthogonal to the magnitude axes. Write it **primary-first** — `themes[0]` is the primary theme and the only member used in the read-protocol tie-break. Draw members from [`.context/instructions/theme-vocabulary.md`](../../../../instructions/theme-vocabulary.md); do not invent themes. Block YAML style like `related`. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
 
 ## Workflow
 
@@ -123,6 +124,8 @@ status: ACTIVE
 date: YYYY-MM-DD
 severity: CRITICAL | HIGH | MEDIUM | LOW
 value: HIGH | MEDIUM | LOW
+themes:
+  - GOVERNANCE   # ordered, primary-first; from theme-vocabulary.md
 related:
   - ../plans/related-plan.md
 ---

@@ -12,6 +12,11 @@
 #                 only. Graded against .context/instructions/value-rubric.md.
 #                 Required while status is DRAFT/ACTIVE on those types. Omit on
 #                 ANALYSIS/INSTRUCTION/AUDIT.
+# themes values : EVAL | PR-TOOLING | DOCS | GOVERNANCE | SKILL-QUALITY | DISTRIBUTION
+#                 — subject axis, on PLAN/FINDING/KNOWN_ISSUE only. A multi-valued
+#                 ORDERED list, written primary-first (themes[0] is the primary theme).
+#                 Drawn from .context/instructions/theme-vocabulary.md. Required while
+#                 status is DRAFT/ACTIVE on those types. Omit on ANALYSIS/INSTRUCTION/AUDIT.
 
 ---
 title: ""
@@ -19,6 +24,8 @@ type: PLAN
 status: DRAFT
 date: YYYY-MM-DD
 value: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../relative/path/to/related.md
 ---

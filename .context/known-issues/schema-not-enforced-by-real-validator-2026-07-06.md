@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 severity: LOW
 value: LOW
+themes:
+  - GOVERNANCE
 related:
   - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json
   - ../plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh

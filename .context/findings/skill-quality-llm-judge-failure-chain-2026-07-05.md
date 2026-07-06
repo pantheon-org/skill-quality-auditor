@@ -4,6 +4,9 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-05
 value: MEDIUM
+themes:
+  - EVAL
+  - PR-TOOLING
 related:
   - ../../.github/workflows/skill-quality.yml
   - ../../internal/llmclient/client.go

@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 severity: MEDIUM
 value: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../../hk.pkl
   - ../plugins/pantheon-org/governance/adr-capture/scripts/regenerate-adr-index.sh

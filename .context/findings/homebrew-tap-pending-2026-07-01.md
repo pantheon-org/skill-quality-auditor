@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-01
 value: MEDIUM
+themes:
+  - DISTRIBUTION
 related:
   - ../plans/onboarding-improvements-2026-04-27.md
 ---

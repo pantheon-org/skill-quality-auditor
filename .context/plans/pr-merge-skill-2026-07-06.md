@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-07-06
 value: MEDIUM
 effort: M
+themes:
+  - PR-TOOLING
 related:
   - ../findings/pr-merge-validation-gap-2026-07-06.md
   - ../plugins/pantheon-org/workshop/pr-author/SKILL.md

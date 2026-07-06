@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - SKILL-QUALITY
 related:
   - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
   - ../findings/pr-merge-validation-gap-2026-07-06.md

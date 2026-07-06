@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-06-29
 value: MEDIUM
+themes:
+  - EVAL
 related:
   - ../plans/migrate-off-tessl-eval-2026-06-29.md
 ---

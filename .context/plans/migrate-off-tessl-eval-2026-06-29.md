@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-06-29
 value: HIGH
 effort: TBD
+themes:
+  - EVAL
 related:
   - ../findings/eval-gating-byok-2026-06-29.md
 ---

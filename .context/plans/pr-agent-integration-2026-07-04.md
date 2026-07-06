@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-04
 value: MEDIUM
 effort: M
+themes:
+  - PR-TOOLING
 related:
   - ../findings/pr-agent-integration-2026-07-04.md
   - ../../.github/workflows/skill-quality.yml

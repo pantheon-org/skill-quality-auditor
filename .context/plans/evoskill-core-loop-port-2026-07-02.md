@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-07-02
 value: MEDIUM
 effort: L
+themes:
+  - EVAL
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - migrate-off-tessl-eval-2026-06-29.md

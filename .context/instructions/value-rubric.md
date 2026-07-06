@@ -86,7 +86,11 @@ item is highest value to do next?", read `.context/index.yaml` and:
 3. Break ties by `effort` ascending (`S` < `M` < `L` < `TBD`) where present.
    Findings and known-issues have no `effort`, so within a bucket they sort by
    `value` alone.
-4. Act on the top item **without re-forming an independent judgement**. Relocating
+4. Break any remaining tie by `themes[0]` (the primary theme): prefer the item
+   whose primary theme matches the area already in focus. Theme expresses
+   preference-of-area, not priority, so it sits below both magnitude axes. See
+   [`theme-vocabulary.md`](theme-vocabulary.md).
+5. Act on the top item **without re-forming an independent judgement**. Relocating
    the judgement to read-time would reopen the gap this field closes.
 
 This protocol only holds if the grades are trustworthy. That is why grading against

@@ -4,6 +4,9 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: MEDIUM
+themes:
+  - GOVERNANCE
+  - PR-TOOLING
 related:
   - ../plans/post-merge-status-sync-2026-07-04.md
   - ../plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh

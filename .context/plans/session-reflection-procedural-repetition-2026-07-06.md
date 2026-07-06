@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-07-06
 value: MEDIUM
 effort: S
+themes:
+  - SKILL-QUALITY
 related:
   - ../findings/session-reflection-procedural-repetition-blind-spot-2026-07-06.md
   - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md

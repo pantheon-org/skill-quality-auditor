@@ -64,6 +64,13 @@ for md in sorted(context_dir.rglob("*.md")):
         entry["severity"] = fm["severity"]
     if fm.get("value"):
         entry["value"] = fm["value"]
+    themes_match = re.search(r"themes:\n((?:  - .+\n?)+)", fm["_raw"])
+    if themes_match:
+        entry["themes"] = [
+            ln.strip()[2:]
+            for ln in themes_match.group(1).splitlines()
+            if ln.strip().startswith("- ")
+        ]
     related_match = re.search(r"related:\n((?:  - .+\n?)+)", fm["_raw"])
     if related_match:
         items = [
@@ -134,6 +141,10 @@ for t in type_order:
             lines.append(f"    severity: {e['severity']}")
         if e.get("value"):
             lines.append(f"    value: {e['value']}")
+        if e.get("themes"):
+            lines.append("    themes:")
+            for tm in e["themes"]:
+                lines.append(f"      - {tm}")
         if e.get("related"):
             lines.append("    related:")
             for r in e["related"]:

@@ -1,9 +1,11 @@
 ---
 title: "Finding: .context has no thematic axis, so within-tier items are interchangeable and \"which area\" is un-queryable"
 type: FINDING
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 value: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../index.yaml
   - ../instructions/value-rubric.md

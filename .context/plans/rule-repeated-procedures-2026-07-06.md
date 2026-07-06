@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-07-06
 value: MEDIUM
 effort: S
+themes:
+  - SKILL-QUALITY
 related:
   - ../findings/rules-scoped-to-scripts-not-procedures-2026-07-06.md
   - ../../.agents/RULES.md

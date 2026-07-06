@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
 severity: HIGH
+themes:
+  - GOVERNANCE
 related:
   - ../../docs/ADR/adr-046-known-issues-context-type.md
   - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md

@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-06-30
 value: LOW
+themes:
+  - EVAL
 ---
 
 # Finding: Tessl Eval Criteria JSON Schema — 2026-06-30

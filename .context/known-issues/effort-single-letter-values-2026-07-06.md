@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 severity: LOW
 value: LOW
+themes:
+  - GOVERNANCE
 related:
   - ../../docs/ADR/adr-050-uppercase-frontmatter-enums.md
   - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json

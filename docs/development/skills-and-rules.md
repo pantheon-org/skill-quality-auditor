@@ -38,13 +38,16 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   standard YAML frontmatter, appropriate sections, and correct placement in `plans/`,
   `findings/`, `analysis/`, or `known-issues/`. Prompts for the `value` benefit-of-action
   grade (`HIGH`/`MEDIUM`/`LOW`) on `PLAN`/`FINDING`/`KNOWN_ISSUE`, graded against
-  [`value-rubric.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/value-rubric.md).
+  [`value-rubric.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/value-rubric.md),
+  and the `themes` subject-area list (ordered, primary-first) drawn from
+  [`theme-vocabulary.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/theme-vocabulary.md).
 - **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
-  frontmatter block. `validate-context-frontmatter.sh` requires `value` on
-  `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE` (`DONE`/`SUPERSEDED`
-  exempt); the index emits `effort`, `severity`, and `value` so the "what's next" read
-  protocol (sort by `value` descending, then `effort` ascending) works from the index alone.
+  frontmatter block. `validate-context-frontmatter.sh` requires `value` and a non-empty
+  `themes` list on `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE`
+  (`DONE`/`SUPERSEDED` exempt); the index emits `effort`, `severity`, `value`, and `themes`
+  so the "what's next" read protocol (sort by `value` descending, then `effort` ascending,
+  then `themes[0]` to break ties) works from the index alone.
 
 ### governance
 
@@ -61,7 +64,8 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **plan-create** — create `.context/plans/*.md` files with standard frontmatter and
   phases/tasks/waves decomposition, inferring section conventions from existing plans.
-  Requires both `effort` (cost) and `value` (benefit) grades in frontmatter.
+  Requires `effort` (cost), `value` (benefit), and a `themes` subject-area list
+  (ordered, primary-first) in frontmatter.
 - **design-debate** — stress-test an unwritten idea by spawning independent subagents in
   genuinely opposing roles (advocate, skeptic, migration/risk), grounded in real repo
   investigation, concluding in a synthesized verdict — used *before* a plan exists. The

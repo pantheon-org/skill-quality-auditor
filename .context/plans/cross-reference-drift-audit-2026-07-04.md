@@ -5,6 +5,8 @@ status: DRAFT
 date: 2026-07-04
 value: MEDIUM
 effort: M
+themes:
+  - GOVERNANCE
 related:
   - ../findings/cross-reference-status-drift-2026-07-04.md
   - ../findings/automate-post-merge-status-sync-2026-07-04.md

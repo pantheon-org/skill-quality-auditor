@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - SKILL-QUALITY
 related:
   - ../../.agents/RULES.md
   - ../findings/pr-merge-validation-gap-2026-07-06.md

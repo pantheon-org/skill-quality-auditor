@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - PR-TOOLING
 related:
   - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
   - ../plugins/pantheon-org/governance/adr-capture/SKILL.md
