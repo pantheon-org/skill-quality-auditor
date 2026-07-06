@@ -58,6 +58,11 @@ for f in files:
             f"(S/M/L, or TBD if genuinely blocked on an Open Question)"
         )
 
+    if fm.get("type") == "known-issue" and not fm.get("severity"):
+        errors.append(
+            f"{f}: type: known-issue must set 'severity' (critical/high/medium/low)"
+        )
+
     for field, values in enum_fields.items():
         if field in fm and fm[field] not in values:
             errors.append(f"{f}: '{field}' must be one of {values}, got '{fm[field]}'")

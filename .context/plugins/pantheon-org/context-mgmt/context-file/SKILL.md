@@ -9,8 +9,8 @@ Create a new `.context/` file with standard YAML frontmatter and appropriate sec
 
 ## Prerequisites
 
-- A clear understanding of the file type needed: plan (multi-step work), finding (research), or analysis (review)
-- Familiarity with the `.context/` directory structure: `plans/`, `findings/`, `analysis/`
+- A clear understanding of the file type needed: plan (multi-step work), finding (research), analysis (review), or known-issue (a real, verified gap that isn't being fixed right now)
+- Familiarity with the `.context/` directory structure: `plans/`, `findings/`, `analysis/`, `known-issues/`
 - The `context-index` skill available for index regeneration after creation
 
 ## When to Use
@@ -18,12 +18,14 @@ Create a new `.context/` file with standard YAML frontmatter and appropriate sec
 - **plan**: Multi-step implementation, migration, or remediation work with open tasks
 - **finding**: Research output, code review results, audit findings, prerequisite investigations
 - **analysis**: Duplication reports, benchmark results, comparative reviews, one-off audits
+- **known-issue**: A concrete, verified gap or bug that's being consciously deferred rather than fixed now — see `session-reflection`'s workflow, which is the primary source of these
 
 ## When Not to Use
 
 - For skill remediation plans, use `skill-auditor remediate` — it produces a richer schema
 - Do not store secrets, credentials, or personal data in `.context/` files
 - Do not create `.context/` files for ephemeral notes — use inline comments instead
+- Do not create a `known-issue` for something you're fixing in the same session — just fix it. `known-issue` is for deferred, tracked work only.
 
 ## Frontmatter Schema
 
@@ -32,7 +34,7 @@ Every `.context/` file MUST start with this exact block:
 ```yaml
 ---
 title: "Human-readable title"
-type: plan | finding | analysis
+type: plan | finding | analysis | instruction | audit | known-issue
 status: draft | active | done | superseded
 date: YYYY-MM-DD
 related:
@@ -42,17 +44,18 @@ related:
 
 Field rules:
 - `title` — prose title matching the H1 heading; wrap in quotes
-- `type` — matches the subdirectory (`plans/` → `plan`, `findings/` → `finding`, `analysis/` → `analysis`)
-- `status` — `draft` until reviewed, `active` for in-progress work, `done` when complete, `superseded` when replaced
+- `type` — matches the subdirectory (`plans/` → `plan`, `findings/` → `finding`, `analysis/` → `analysis`, `known-issues/` → `known-issue`)
+- `status` — `draft` until reviewed, `active` for in-progress work, `done` when complete, `superseded` when replaced (for `known-issue`: `active` = still open, `done` = fixed)
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
+- `severity` — required for `type: known-issue` only: `critical | high | medium | low`. Not applicable to other types.
 
 ## Workflow
 
-1. Determine type: plan / finding / analysis
-2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval.md`), `topic-YYYY-MM-DD.md` for timestamped reports
+1. Determine type: plan / finding / analysis / known-issue
+2. Choose a filename: kebab-case for plans (`migrate-off-tessl-eval.md`), `topic-YYYY-MM-DD.md` for timestamped reports and known-issues
 3. Create the file using the template matching the type below
-4. Set `status: draft` until the content is reviewed
+4. Set `status: draft` until the content is reviewed (`known-issue` starts at `active` — it's already a confirmed, real gap by the time it's written down)
 5. Run the context index regeneration script to update the index after creation
 
 ## Templates
@@ -109,6 +112,25 @@ date: YYYY-MM-DD
 ## Conclusion
 ```
 
+**Known Issue** (`.context/known-issues/`):
+
+```markdown
+---
+title: "Known Issue: <concrete, verified problem>"
+type: known-issue
+status: active
+date: YYYY-MM-DD
+severity: critical | high | medium | low
+related:
+  - ../plans/related-plan.md
+---
+# Known Issue: <concrete, verified problem>
+> One-sentence statement of the verified impact, not a hypothesis.
+## Why this exists
+## Impact if unfixed
+## Suggested fix (not yet applied — this is the tracked issue, not the fix)
+```
+
 ## Mindset
 
 - Write for the next agent or human who reads this cold — assume no prior context
@@ -121,7 +143,7 @@ date: YYYY-MM-DD
 
 - **Pre-commit hook blocks commit:** Run `check-context-frontmatter.sh` to find files missing YAML frontmatter — add the required block and re-run
 - **Missing from index after creation:** Run `regenerate-context-index.sh` — the index is generated from frontmatter, not file existence alone
-- **Wrong type directory:** Files must live under the matching subdirectory — plans in `plans/`, findings in `findings/`, analysis in `analysis/`
+- **Wrong type directory:** Files must live under the matching subdirectory — plans in `plans/`, findings in `findings/`, analysis in `analysis/`, known-issues in `known-issues/`
 
 ## Anti-Patterns
 

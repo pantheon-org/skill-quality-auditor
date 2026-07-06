@@ -60,6 +60,8 @@ for md in sorted(context_dir.rglob("*.md")):
     entry["path"] = rel
     if fm.get("effort"):
         entry["effort"] = fm["effort"]
+    if fm.get("severity"):
+        entry["severity"] = fm["severity"]
     related_match = re.search(r"related:\n((?:  - .+\n?)+)", fm["_raw"])
     if related_match:
         items = [
@@ -77,9 +79,11 @@ if missing:
     for f in missing:
         print(f"  {f}", file=sys.stderr)
 
-type_group_key = {"plan": "plans", "finding": "findings", "analysis": "analysis", "instruction": "instructions", "audit": "audits"}
-type_order = ["plans", "findings", "analysis", "audits", "instructions"]
-type_label = {"plans": "Plans", "findings": "Findings", "analysis": "Analysis", "audits": "Audits", "instructions": "Instructions"}
+type_group_key = {"plan": "plans", "finding": "findings", "analysis": "analysis", "instruction": "instructions", "audit": "audits", "known-issue": "known-issues"}
+type_order = ["known-issues", "plans", "findings", "analysis", "audits", "instructions"]
+type_label = {"plans": "Plans", "findings": "Findings", "analysis": "Analysis", "audits": "Audits", "instructions": "Instructions", "known-issues": "Known Issues"}
+
+severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
 grouped = {}
 for e in entries:
@@ -94,6 +98,9 @@ if other:
     grouped["other"] = other
     type_order.append("other")
     type_label["other"] = "Other"
+
+if "known-issues" in grouped:
+    grouped["known-issues"].sort(key=lambda e: severity_rank.get(e.get("severity"), 99))
 
 # Count statuses for the summary
 status_counts = {}
@@ -121,6 +128,8 @@ for t in type_order:
         lines.append(f"    date: {e['date']}")
         if e.get("effort"):
             lines.append(f"    effort: {e['effort']}")
+        if e.get("severity"):
+            lines.append(f"    severity: {e['severity']}")
         if e.get("related"):
             lines.append("    related:")
             for r in e["related"]:
