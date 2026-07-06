@@ -46,7 +46,7 @@ local preCommit = new Mapping<String, Step> {
     ["adr-index"] {
         glob = List("docs/ADR/adr-*.md")
         fix = ".context/plugins/pantheon-org/governance/adr-capture/scripts/regenerate-adr-index.sh"
-        check = "test -f docs/ADR/index.yaml"
+        check = ".context/plugins/pantheon-org/governance/adr-capture/scripts/regenerate-adr-index.sh --check"
     }
     ["adr-undocumented"] {
         glob = List(".context/**/*.md")

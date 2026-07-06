@@ -44,8 +44,9 @@ HK=0 git commit ... # bypass hooks for a single commit
 - markdownlint (markdownlint-cli2)
 - shellcheck on shell scripts
 - Context frontmatter validation
-- ADR index freshness check
-- Undocumented decision detection
+- ADR index freshness check (`regenerate-adr-index.sh --check` regenerates and diffs
+  `docs/ADR/index.yaml`; a stale index fails, not just a missing one)
+- Undocumented decision detection (binding `## Decision` headings not covered by an ADR)
 
 ### Pre-push checks
 

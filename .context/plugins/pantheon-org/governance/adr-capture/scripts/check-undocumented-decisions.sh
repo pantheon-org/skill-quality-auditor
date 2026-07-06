@@ -5,8 +5,10 @@
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
-CONTEXT_DIR="$ROOT/.context"
-ADR_DIR="$ROOT/docs/ADR"
+# CONTEXT_DIR/ADR_DIR default to the repo's real trees; they can be overridden
+# via the environment so the fixture test can point at a temporary tree.
+CONTEXT_DIR="${CONTEXT_DIR:-$ROOT/.context}"
+ADR_DIR="${ADR_DIR:-$ROOT/docs/ADR}"
 
 python3 - "$CONTEXT_DIR" "$ADR_DIR" <<'PYEOF'
 import sys
@@ -35,18 +37,19 @@ for adr_file in adr_dir.glob("adr-*.md"):
                     referenced.add(str(resolved))
 
 # --- Decision-indicating keywords in context files ---
+# Binding-decision indicators only. In this repo, plans DECIDE (a "## Decisions"
+# section, captured as an ADR) while findings/known-issues RECOMMEND (a
+# "## Recommended Action" / "## Recommendation" section, which is not itself
+# ADR-triggering — see adr-capture: "DO NOT use for observational findings
+# without decisions"). Matching the soft recommendation headings produced false
+# positives on findings, which the old blanket `index.yaml` skip masked; both are
+# fixed here (G3, .context/plans/governance-tooling-hardening-2026-07-06.md).
 DECISION_KEYWORDS = [
-    r"## Recommended Action",
-    r"## Decision",
-    r"## Proposed Approach",
-    r"## Recommendation",
+    r"## Decision",  # also matches "## Decisions"
     r"### Decision:",
-    r"### Recommendation",
     r"\*\*Decision:\*\*",
+    r"## Proposed Approach",
     r"Adopt Option",
-    r"Option A.*recommended",
-    r"recommended approach",
-    r"recommended path",
 ]
 
 # --- Scan context files ---
@@ -62,9 +65,6 @@ for md_file in sorted(context_dir.rglob("*.md")):
         continue
 
     content = md_file.read_text()
-    # skip index.yaml reference files
-    if "index.yaml" in content:
-        continue
 
     # look for decision indicators
     found_keywords = []
