@@ -131,3 +131,10 @@ cobra.Command
   plans/
     <skill-name>-remediation-plan-<date>.md
 ```
+
+Every `.context/**/*.md` file carries YAML frontmatter whose enum values are
+UPPER_CASE — `type` (`PLAN`/`FINDING`/`ANALYSIS`/`INSTRUCTION`/`AUDIT`/`KNOWN_ISSUE`),
+`status` (`DRAFT`/`ACTIVE`/`DONE`/`SUPERSEDED`), `severity`, and `value`. The
+schema-compliant remediation plan generator emits the same convention, so a freshly
+generated plan validates without hand-patching. See ADR-050 and
+`.context/instructions/value-rubric.md`.
