@@ -434,3 +434,12 @@ entries:
     date: 2026-07-06
     context:
       - path: ".context/known-issues/dependabot-security-updates-disabled-2026-07-06.md"
+  - path: "ADR/adr-057-calver-versioning.md"
+    adr: "ADR-057"
+    title: "ADR-057: Adopt CalVer YYYY.0M.PATCH with monthly patch reset"
+    status: proposed
+    date: 2026-07-06
+    context:
+      - path: "docs/ADR/adr-023-version-sync-policy.md"
+      - path: "docs/ADR/adr-020-multi-method-distribution.md"
+      - path: "docs/ADR/adr-008-homebrew-distribution.md"
