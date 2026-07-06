@@ -1,0 +1,23 @@
+# Keeps GitHub Actions pins fresh so runtime deprecations (e.g. node20 EOL)
+# and third-party action drift are surfaced as PRs instead of accruing
+# silently. Recommended by .plumber.yaml, which enforces SHA-pinning on
+# third-party actions but does not itself track version currency.
+#
+# For SHA-pinned actions (all third-party ones in this repo), Dependabot
+# updates both the commit SHA and its trailing `# vX` version comment.
+# For tag-pinned first-party actions/* it bumps the major/minor tag.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # One grouped PR per run keeps release-please changelogs tidy rather
+      # than opening a separate PR per action.
+      github-actions:
+        patterns:
+          - "*"

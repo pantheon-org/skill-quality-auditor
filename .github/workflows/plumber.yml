@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # `getplumber/plumber` pinned by commit SHA of the latest tagged release
       # (v0.3.86), not a floating tag — consistent with the pinning hygiene

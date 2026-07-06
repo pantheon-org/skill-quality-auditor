@@ -26,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: stable
           cache-dependency-path: go.sum
@@ -108,7 +108,7 @@ jobs:
       # `continue-on-error: true` is a deliberate advisory rollout (ADR-048,
       # not a permanent choice): flip to hard-fail once this step has run
       # clean on 5 merged PRs or 2 weeks, whichever comes first.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.helper_skills.outputs.count != '0'
         with:
           node-version: 22
@@ -156,7 +156,7 @@ jobs:
 
       - name: Upload eval results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: eval-results
           path: eval-results.json
@@ -164,7 +164,7 @@ jobs:
 
       - name: Post eval results comment
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -204,7 +204,7 @@ jobs:
       # instead of spamming a new one each time.
       - name: Post structural audit comment
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
