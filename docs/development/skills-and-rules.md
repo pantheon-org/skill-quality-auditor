@@ -47,7 +47,11 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   `themes` list on `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE`
   (`DONE`/`SUPERSEDED` exempt); the index emits `effort`, `severity`, `value`, and `themes`
   so the "what's next" read protocol (sort by `value` descending, then `effort` ascending,
-  then `themes[0]` to break ties) works from the index alone.
+  then `themes[0]` to break ties) works from the index alone. A companion Go check,
+  `skill-auditor validate context`, compiles the JSON schemas and enforces
+  `additionalProperties:false` (catching typo'd/unknown keys the shell script cannot),
+  running alongside it; generated remediation plans validate against a dedicated
+  `remediation-plan.schema.json` selected by their `skill_name` signature.
 
 ### governance
 

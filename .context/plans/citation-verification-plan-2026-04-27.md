@@ -4,14 +4,14 @@ type: PLAN
 status: DONE
 date: 2026-04-27
 value: MEDIUM
-completed: 2026-06-30
-summary: >
-  All 28 unique papers verified as real (Phase 1). 5 metadata errors fixed in doc
-  files. Claim fidelity assessed across all 9 dimensions (Phase 2). Remediation
-  (Phase 3) added 7 new attribution-supporting papers to D6, D7, D8, replaced 2
-  weak papers in D4, restored 3 papers on user request.
 ---
 # Citation Verification Plan
+
+> **Completed 2026-06-30.** All 28 unique papers verified as real (Phase 1). 5
+> metadata errors fixed in doc files. Claim fidelity assessed across all 9
+> dimensions (Phase 2). Remediation (Phase 3) added 7 new attribution-supporting
+> papers to D6, D7, D8, replaced 2 weak papers in D4, restored 3 papers on user
+> request.
 
 **Goal:** Verify that every academic citation in `docs/d*.md` (a) exists, (b) has correct metadata, and (c) actually supports the claim made in the dimension doc.
 

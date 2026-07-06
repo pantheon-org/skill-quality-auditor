@@ -68,7 +68,7 @@ Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to 
 | `aggregate --family <prefix>` | Plan consolidation for a skill family |
 | `remediate <skill>` | Generate step-by-step fix recommendations |
 | `trend` | Compare score deltas across stored audits |
-| `validate` | Check file conventions (`artifacts` subcommand) and review reports (`review`) |
+| `validate` | Check file conventions (`artifacts`), review reports (`review`), and `.context` frontmatter against the JSON schemas (`context`) |
 | `analyze <skill>` | Extract TF-IDF keywords and structural patterns |
 | `eval <skill>` | Run `evals/` scenarios (structural gate by default; LLM-judged with a provider key) |
 | `init` | Install the auditor skill into your agent environment |

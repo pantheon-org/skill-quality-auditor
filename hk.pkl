@@ -70,6 +70,16 @@ local prePush = new Mapping<String, Step> {
     ["go-build"] {
         check = "go build -o dist/skill-auditor ."
     }
+    // Real JSON-schema validation of .context frontmatter (G5). Runs alongside the
+    // pre-commit context-frontmatter shell check during a proving period — the shell
+    // check keeps per-type/status requiredness; this enforces additionalProperties
+    // (catches typo'd/unknown keys) via the compiled schemas.
+    ["schema-frontmatter"] {
+        glob = List(".context/**/*.md")
+        exclude = List(".context/plugins/**")
+        depends = List("go-build")
+        check = "./dist/skill-auditor validate context"
+    }
     ["skill-validate"] {
         glob = List("cmd/assets/**")
         depends = List("go-build")
