@@ -482,11 +482,47 @@ Present the consolidated report with a preamble that includes the models used:
 If the user wants to dig deeper on any finding, offer to spawn a follow-up
 investigation subagent with the relevant context.
 
-### 10. (Optional) Persist the review
+### 10. Classify findings and resolve — this step is not optional
 
-If the review reveals actionable improvements for the plan, use the `context-file`
-skill to update the plan or create a finding. If a binding decision emerges,
-use the `adr-capture` skill.
+Step 9's presentation is a progress update, not sign-off. Before the review counts as
+finished, sort every item in `critical_issues` and `moderate_concerns` into one of two
+buckets:
+
+- **Editorial** — a contradiction, missing detail, wrong ownership, or unspecified
+  mechanism with one clearly correct fix given the rest of the plan and this repo's
+  existing conventions. No real tradeoff exists; a competent engineer looking at the
+  same facts would land on the same fix. ALWAYS apply these directly to the plan file —
+  don't make the user approve something that isn't actually a choice.
+- **Decision** — a genuine tradeoff with two or more valid answers (hard-fail vs.
+  advisory rollout, gate-on-condition vs. run-unconditionally, spike-first vs.
+  attempt-and-recover). No amount of re-reading the repo resolves these; only the plan
+  owner's judgment does.
+
+For decision-classified items, NEVER leave them sitting in `## Open Questions` for the
+user to notice later — run a short interview immediately: one question at a time, each
+with concrete mutually-exclusive options plus room for free text, matching
+`guided-interview`'s pattern. End with a one-message recap of every answer and get
+explicit confirmation before writing anything into the plan.
+
+Fold both outcomes back into the plan file, not just into chat:
+
+- Editorial fixes land directly in the relevant section (Scope, Phases, Verification).
+- Decisions land in a `## Decisions` section, each with the chosen option and why the
+  alternative didn't win. If a decision carries a review-later condition (e.g. "flip to
+  hard-fail after N clean runs"), state it as a concrete, checkable revisit trigger —
+  never "revisit later" — the same rule `design-debate` enforces on its own verdicts.
+- A `## Decisions` heading is itself an ADR-capture trigger in this repo
+  (`check-undocumented-decisions.sh` flags any `## Decision` heading and fails
+  `hk`'s pre-commit check). Check whether an existing ADR already covers the plan's
+  topic; if not, run `adr-capture` before treating the amendment as done — this is a
+  hard gate, not a suggestion, since the pre-commit hook will block the commit either
+  way.
+
+### 11. (Optional) Persist a standalone finding
+
+If the review surfaced something beyond this one plan — a pattern likely to recur in
+future reviews, a gap in a related skill — capture it as a finding via `context-file`,
+separate from the decisions already folded into the plan in Step 10.
 
 ## When NOT to Use
 
@@ -566,6 +602,24 @@ model for all reviewers.
 **BAD:** All 3 use `general`.
 **GOOD:** Mix `general` and `explore` (and more if your opencode.json routes them differently).
 
+**NEVER** — Leave a decision-type finding sitting in Open Questions after the review
+
+**SYMPTOM:** The consolidated report lists a real tradeoff (e.g. hard-fail vs. advisory
+rollout) as an Open Question, the user reads the report, and the conversation moves on.
+Nobody circles back.
+
+**CONSEQUENCE:** The plan ships with the tradeoff unresolved. Implementation starts
+against whichever reading of the plan happened to be top of mind, not a decision anyone
+actually made — the exact failure mode this skill's Step 10 exists to prevent.
+
+**WHY:** A report is a snapshot, not a commitment. Presenting findings (Step 9) and
+resolving them (Step 10) are different steps; skipping straight from one to "the review
+is done" drops every decision-type finding on the floor.
+
+**BAD:** Present the consolidated report, thank the user, stop.
+**GOOD:** Present the report, then interview the user on every decision-type finding
+before treating the plan as amended (Step 10).
+
 ## Advanced: Model Routing Configuration
 
 The review's power comes from each subagent having a **different cognitive bias**
@@ -628,6 +682,12 @@ signing off:
 5. **Investigation offered** — ask the user if they want to dig deeper on any
    finding. If they accept, run the investigation before concluding.
 
+6. **Every critical/moderate finding is classified and resolved** — confirm each item
+   from `critical_issues` and `moderate_concerns` is either applied as an editorial fix
+   in the plan file, or answered through the Step 10 interview and recorded in a
+   `## Decisions` section. Run `grep -c '^- ' <finding-list>` against the plan's diff if
+   unsure whether anything was dropped.
+
 If any of these checks fail, correct the issue before presenting the report as
 final.
 
@@ -663,6 +723,12 @@ for all structured artifacts. See the project rules for the convention.
 
 - [Model Routing Reference](references/model-routing.md) — detailed opencode.json
   configuration examples for model diversity
-- `context-file` skill — to persist findings from the review
+- `context-file` skill — to persist findings from the review, and to write the plan's
+  `## Decisions` section (Step 10)
+- `guided-interview` skill — the one-question-at-a-time pattern Step 10 follows when
+  resolving decision-type findings
+- `design-debate` skill — source of the "always name a concrete revisit trigger" rule
+  Step 10 applies to time-boxed decisions
 - `session-reflection` skill — for single-agent session-end reflection (complementary use)
-- `adr-capture` skill — if review reveals a binding architectural decision
+- `adr-capture` skill — required, not optional, once a plan gains a `## Decisions`
+  section (Step 10) — this repo's pre-commit hook enforces it

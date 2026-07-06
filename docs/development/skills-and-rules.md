@@ -61,7 +61,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   investigation, concluding in a synthesized verdict — used *before* a plan exists. The
   verdict decides how it's recorded: a finding if proceeding, a known-issue if not.
 - **plan-review** — review a plan using three independent subagent reviewers (Technical,
-  Strategic, Risk) and consolidate their feedback.
+  Strategic, Risk), consolidate their feedback, then resolve it: editorial fixes land
+  directly, genuine tradeoffs go through a one-question-at-a-time interview and are
+  recorded in the plan's `## Decisions` section.
 
 ### workshop
 
