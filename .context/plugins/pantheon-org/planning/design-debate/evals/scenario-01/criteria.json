@@ -7,6 +7,6 @@
     {"name": "Opposing roles, not neutral", "description": "Agent explicitly assigns Advocate and Skeptic (or equivalent opposing stances), not a 'balanced/neutral' framing for both", "max_score": 25},
     {"name": "Parallel spawn", "description": "Reviewers are spawned in parallel (single message, multiple tool calls), not sequentially", "max_score": 15},
     {"name": "Resolved verdict", "description": "The final response renders an actual recommendation and names which argument held up, rather than presenting both sides unweighted", "max_score": 20},
-    {"name": "Persistence offered", "description": "Agent offers to persist the verdict as a finding", "max_score": 10}
+    {"name": "Persistence asked, not assumed", "description": "Agent explicitly asks whether to persist the verdict as a finding, rather than silently deciding either way", "max_score": 10}
   ]
 }

@@ -30,7 +30,8 @@ of recomputing it every run. Should we do this? I want some pushback before we c
 - The final response includes an actual verdict (one of the three enum values in spirit,
   even if not stated in those exact words) with a named rationale referencing specific
   points from the reviews.
-- Agent offers to persist the verdict as a finding.
+- Agent explicitly asks whether to persist the verdict as a finding, rather than
+  silently deciding either way.
 
 ## Failure Conditions
 
@@ -40,3 +41,4 @@ of recomputing it every run. Should we do this? I want some pushback before we c
 - Agent spawns reviewers sequentially.
 - Agent presents both opinions and asks the user to decide, without rendering its own
   verdict.
+- Agent silently persists (or silently skips persisting) the verdict without asking.

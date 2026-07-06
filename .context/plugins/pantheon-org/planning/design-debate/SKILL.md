@@ -123,11 +123,19 @@ Debate verdict validation errors:
 
 This confirms the verdict is complete before it ships or gets persisted.
 
-### 8. Persist the verdict
+### 8. Ask about follow-up — never decide this silently
 
-RECOMMENDED for most debates — they prevent re-litigating a settled question. Use
-`context-file` to write a finding capturing the decision, the grounding facts, and why
-the losing arguments didn't hold up.
+ALWAYS ask explicitly, after presenting the verdict: "Should I persist this as a
+finding?" and "Did any role surface a real gap that isn't being fixed right now?" A
+verdict discussed and then left only in chat is the same failure mode `session-reflection`
+exists to prevent — RECOMMENDED is not the same as done.
+
+- If persisting: use `context-file` to write a finding capturing the decision, the
+  grounding facts, and why the losing arguments didn't hold up.
+- If any role (commonly Migration/Risk, but not exclusively) surfaced a concrete,
+  verified gap that won't be fixed this session: use `context-file`'s `known-issue` type
+  (`severity: critical|high|medium|low`) — do not let it evaporate just because the main
+  decision got resolved.
 
 ```bash
 ./scripts/validate-context-frontmatter.sh <path-to-finding>
