@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.23.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.22.0...v0.23.0) (2026-07-06)
+
+
+### Features
+
+* CI check for .tessl/plugins/pantheon-org mirror drift ([#199](https://github.com/pantheon-org/skill-quality-auditor/issues/199)) ([333e9c0](https://github.com/pantheon-org/skill-quality-auditor/commit/333e9c00b25f3ff662e6dacf7e8153a9e6bc1246))
+* **ci:** gate PRs on newly introduced docs drift ([#185](https://github.com/pantheon-org/skill-quality-auditor/issues/185)) ([6784b2f](https://github.com/pantheon-org/skill-quality-auditor/commit/6784b2f06f2971ec0994d94bfc7754bde089fd9b))
+* **context:** known-issue as a first-class context file type, driven by session-reflection ([#188](https://github.com/pantheon-org/skill-quality-auditor/issues/188)) ([a19612f](https://github.com/pantheon-org/skill-quality-auditor/commit/a19612f2dd0f4d3c78735af1f1b2176a39a75fc8))
+* **context:** value prioritisation signal — full plan (Phases 1-5) ([#204](https://github.com/pantheon-org/skill-quality-auditor/issues/204)) ([71fc98c](https://github.com/pantheon-org/skill-quality-auditor/commit/71fc98c2a78f001ec24cf9a885acd6911b62b706))
+* **planning:** require T-shirt effort sizing on draft/active plans ([#182](https://github.com/pantheon-org/skill-quality-auditor/issues/182)) ([3126653](https://github.com/pantheon-org/skill-quality-auditor/commit/31266530905f5082cad84c574592302eb4984e77))
+* **scripts:** reviewed-baseline mechanism for check-docs-drift.sh ([#187](https://github.com/pantheon-org/skill-quality-auditor/issues/187)) ([be35f5b](https://github.com/pantheon-org/skill-quality-auditor/commit/be35f5b1f7e85649e83336e88038b75e6625c471))
+* **skills:** add design-debate helper skill ([#192](https://github.com/pantheon-org/skill-quality-auditor/issues/192)) ([26c1656](https://github.com/pantheon-org/skill-quality-auditor/commit/26c165685742a13db1cbea807ff0a20376898f45))
+* **skills:** add guided-interview helper skill ([#180](https://github.com/pantheon-org/skill-quality-auditor/issues/180)) ([c5089fd](https://github.com/pantheon-org/skill-quality-auditor/commit/c5089fde756985f9ec0dd3f9c483b7bd28f4d2ef))
+* **skills:** plan-review auto-triggers interview for decision findings ([#198](https://github.com/pantheon-org/skill-quality-auditor/issues/198)) ([345ab50](https://github.com/pantheon-org/skill-quality-auditor/commit/345ab50323f1cbfca2d48a7b6afee585d3d9a058))
+
+
+### Bug Fixes
+
+* **ci:** disable PR-Agent's ticket-compliance analysis, log false positive ([#189](https://github.com/pantheon-org/skill-quality-auditor/issues/189)) ([da9f6ed](https://github.com/pantheon-org/skill-quality-auditor/commit/da9f6ed8b038391f1b917b9dc8be89d65022f1be))
+* **scripts:** degrade gracefully instead of hard-failing when jq is missing ([#193](https://github.com/pantheon-org/skill-quality-auditor/issues/193)) ([4f3db4d](https://github.com/pantheon-org/skill-quality-auditor/commit/4f3db4d8fbd6804faeee8893fa663af7b19d6d53))
+* **skills:** design-debate persistence rule — verdict decides the artifact ([#196](https://github.com/pantheon-org/skill-quality-auditor/issues/196)) ([9af849d](https://github.com/pantheon-org/skill-quality-auditor/commit/9af849d7aac40d640b56bef0149a51d5f8e67e37))
+
 ## [0.22.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.21.1...v0.22.0) (2026-07-05)
 
 
