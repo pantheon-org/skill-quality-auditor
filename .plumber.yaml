@@ -49,17 +49,18 @@ github:
     # silently runs new code with its secrets. This is the vector behind
     # the March 2025 tj-actions/changed-files compromise (CVE-2025-30066).
     #
-    # The default trustedOwners list exempts first-party (`actions/*`,
-    # `github/*`) actions so the initial signal on a fresh repo stays
-    # focused on the third-party surface. Pair with Dependabot
-    # (`version-update-strategy: sha-and-version`) to keep pins fresh.
+    # Repo policy: EVERY action is pinned by commit SHA, including first-party
+    # `actions/*` and `github/*`. The default first-party exemption is
+    # deliberately removed — the tj-actions/CVE-2025-30066 vector (a
+    # compromised or retagged release running with the caller's secrets)
+    # applies to any mutable ref, not only third-party ones. Dependabot
+    # (`.github/dependabot.yml`, github-actions ecosystem) keeps the SHA pins
+    # and their `# vX.Y.Z` comments fresh. See ADR-054.
     actionsMustBePinnedByCommitSha:
       enabled: true
-      # Action-owner prefixes exempt from the pin-by-SHA requirement.
-      # Only list owners already inside the workflow's trust boundary.
-      trustedOwners:
-        - actions
-        - github
+      # No exempt owners: an empty list means all `uses:` refs must be a
+      # 40-char commit SHA.
+      trustedOwners: []
 
     # ===========================================
     # Actions must come from authorized sources
