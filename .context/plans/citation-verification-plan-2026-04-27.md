@@ -3,6 +3,7 @@ title: "Citation Verification Plan"
 type: plan
 status: done
 date: 2026-04-27
+value: medium
 completed: 2026-06-30
 summary: >
   All 28 unique papers verified as real (Phase 1). 5 metadata errors fixed in doc

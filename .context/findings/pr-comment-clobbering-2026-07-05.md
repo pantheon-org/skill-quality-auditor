@@ -3,6 +3,7 @@ title: "Finding: Shared bot identity caused automated PR comments to clobber eac
 type: finding
 status: done
 date: 2026-07-05
+value: medium
 related:
   - ../../docs/ADR/adr-039-plumber-pr-comment.md
   - ../../docs/ADR/index.yaml

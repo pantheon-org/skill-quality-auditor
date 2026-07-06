@@ -3,6 +3,7 @@ title: "Onboarding Improvements Plan"
 type: plan
 status: done
 date: 2026-04-27
+value: medium
 ---
 # Onboarding Improvements Plan
 

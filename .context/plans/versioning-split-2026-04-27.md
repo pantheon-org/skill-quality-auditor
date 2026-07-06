@@ -3,6 +3,7 @@ title: "Plan: Fix release-please tile.json Path"
 type: plan
 status: done
 date: 2026-04-27
+value: medium
 ---
 # Plan: Fix release-please tile.json path (wrong path bug)
 

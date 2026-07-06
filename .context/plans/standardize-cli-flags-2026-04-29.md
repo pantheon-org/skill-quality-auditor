@@ -3,6 +3,7 @@ title: "Plan: Standardise CLI Flags and Output Formats"
 type: plan
 status: done
 date: 2026-04-29
+value: high
 ---
 # Plan: Standardize CLI Flags and Output Formats
 

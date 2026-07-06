@@ -3,6 +3,7 @@ title: "Plan: PR Author — formatted PR creation and update skill"
 type: plan
 status: done
 date: 2026-07-03
+value: medium
 ---
 
 # Plan: PR Author Skill

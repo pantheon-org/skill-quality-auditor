@@ -3,6 +3,7 @@ title: "Improvement Plan: D4 — Specification Compliance"
 type: plan
 status: done
 date: 2026-04-29
+value: medium
 ---
 # Improvement Plan: D4 — Specification Compliance
 

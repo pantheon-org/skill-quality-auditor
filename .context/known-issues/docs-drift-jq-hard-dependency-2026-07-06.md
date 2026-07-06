@@ -3,6 +3,7 @@ title: "Known Issue: check-docs-drift.sh hard-fails pre-push if jq is missing"
 type: known-issue
 status: done
 date: 2026-07-06
+value: high
 severity: critical
 related:
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md

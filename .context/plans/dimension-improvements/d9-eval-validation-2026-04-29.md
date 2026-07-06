@@ -3,6 +3,7 @@ title: "Improvement Plan: D9 — Eval Validation"
 type: plan
 status: done
 date: 2026-04-29
+value: high
 ---
 # Improvement Plan: D9 — Eval Validation
 

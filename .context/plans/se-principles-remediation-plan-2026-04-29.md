@@ -3,6 +3,7 @@ title: "SE Principles Remediation Plan"
 type: plan
 status: done
 date: 2026-04-29
+value: medium
 related:
   - ../analysis/code-review-se-principles.md
 ---

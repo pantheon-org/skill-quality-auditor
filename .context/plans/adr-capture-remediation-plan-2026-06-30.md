@@ -3,6 +3,7 @@ title: "Remediation Plan: adr-capture"
 type: plan
 status: done
 date: 2026-06-30
+value: medium
 effort: L
 plan_date: "2026-06-30"
 skill_name: adr-capture
