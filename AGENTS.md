@@ -1,7 +1,8 @@
 # Agent guidance
 
 This file is the authoritative entry point for AI agents working in this repository.
-Read it before exploring any other files.
+Read it before exploring any other files. `CLAUDE.md` is a symlink to this file — there
+is one source of truth, not two files that could drift apart.
 
 ## What this repo does
 
