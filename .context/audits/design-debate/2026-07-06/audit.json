@@ -1,0 +1,50 @@
+{
+  "skill": "design-debate",
+  "date": "2026-07-06",
+  "dimensions": {
+    "antiPatternQuality": 15,
+    "evalValidation": 18,
+    "freedomCalibration": 6,
+    "knowledgeDelta": 17,
+    "mindsetProcedures": 10,
+    "patternRecognition": 10,
+    "practicalUsability": 5,
+    "progressiveDisclosure": 10,
+    "specificationCompliance": 11
+  },
+  "total": 102,
+  "maxTotal": 140,
+  "grade": "C",
+  "lines": 217,
+  "hasReferences": true,
+  "referenceCount": 1,
+  "referenceSectionCompliant": false,
+  "errors": 0,
+  "warnings": 6,
+  "warningDetails": [
+    {
+      "dimension": "D2",
+      "message": "no postcondition signals detected — add external verification steps (e.g. run tests, confirm output)"
+    },
+    {
+      "dimension": "D4",
+      "message": "agent-specific reference found: claude code"
+    },
+    {
+      "dimension": "D4",
+      "message": ".context/ or .agents/ reference outside code blocks: .context/"
+    },
+    {
+      "dimension": "D7",
+      "message": "description includes negative and workflow anchors — good discriminativeness signal"
+    },
+    {
+      "dimension": "D9",
+      "message": "adversarial bonus: +1 pts — not applied to score"
+    },
+    {
+      "dimension": "D9",
+      "message": "independent authoring bonus: +1 pts — not applied to score"
+    }
+  ]
+}

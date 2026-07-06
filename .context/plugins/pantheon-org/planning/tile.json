@@ -1,10 +1,11 @@
 {
   "name": "pantheon-org/planning",
   "version": "0.1.0",
-  "summary": "Plan creation and review skills",
+  "summary": "Plan creation, pre-plan debate, and review skills",
   "private": false,
   "skills": {
     "plan-create": { "path": "plan-create/SKILL.md" },
-    "plan-review": { "path": "plan-review/SKILL.md" }
+    "plan-review": { "path": "plan-review/SKILL.md" },
+    "design-debate": { "path": "design-debate/SKILL.md" }
   }
 }

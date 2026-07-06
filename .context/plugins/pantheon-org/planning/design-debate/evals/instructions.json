@@ -1,0 +1,54 @@
+{
+  "instructions": [
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "State the decision as a precise yes/no or A-vs-B question before doing anything else."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Before spawning any reviewers, investigate the actual repo/codebase to gather concrete, checkable grounding facts. Put these facts verbatim in the brief every reviewer receives."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Assign genuinely opposing roles — Advocate (for) and Skeptic (against) at minimum, plus Migration/Risk when the change has real implementation surface — never a 'balanced/neutral' framing for all reviewers."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Spawn all reviewers in parallel — single message, N parallel tool calls — never sequentially."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "After collecting all reviews, synthesize a verdict that names which argument held up and why, rather than presenting all opinions unweighted. Render an actual recommendation: proceed, do_not_proceed_for_now, or proceed_with_modification."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "If the verdict is do_not_proceed_for_now, name a concrete revisit trigger — a specific condition, not a vague 'later'."
+    },
+    {
+      "type": "procedure",
+      "why_given": "new knowledge",
+      "content": "Offer to persist the verdict as a .context/findings/*.md entry using the context-file skill."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER assign all reviewers a neutral/balanced framing — this produces false consensus instead of real tension."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER let reviewers debate from assumption instead of investigated facts — ground the brief first."
+    },
+    {
+      "type": "anti-pattern",
+      "why_given": "new knowledge",
+      "content": "NEVER present three opinions without a synthesized verdict that picks a side."
+    }
+  ]
+}
