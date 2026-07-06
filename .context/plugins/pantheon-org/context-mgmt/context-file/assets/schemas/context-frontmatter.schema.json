@@ -50,6 +50,16 @@
       "type": "string",
       "enum": ["HIGH", "MEDIUM", "LOW"],
       "description": "Benefit-of-action signal (UPPER_CASE): how much doing this item unblocks or leverages future work, graded against the rubric in .context/instructions/value-rubric.md. Applies to type: PLAN, FINDING, and KNOWN_ISSUE (the action-candidate types). Distinct from severity (risk-of-inaction) and effort (cost-of-action). The 'what's next' read protocol sorts by value descending, then effort ascending. Required for those three types while status is DRAFT or ACTIVE (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Re-grade on status transitions or material scope changes, per ways-of-working.md."
+    },
+    "themes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["EVAL", "PR-TOOLING", "DOCS", "GOVERNANCE", "SKILL-QUALITY", "DISTRIBUTION"]
+      },
+      "description": "Subject axis (UPPER_CASE): what area(s) of the system this item is about, drawn from the controlled vocabulary in .context/instructions/theme-vocabulary.md. A multi-valued ORDERED list — themes[0] is the primary theme and the only member that participates in the read-protocol tie-break (below value then effort). Applies to type: PLAN, FINDING, and KNOWN_ISSUE (the action-candidate types); orthogonal to the magnitude axes (value/effort/severity). Required for those three types while status is DRAFT or ACTIVE (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Written primary-first in block YAML style, like related."
     }
   }
 }

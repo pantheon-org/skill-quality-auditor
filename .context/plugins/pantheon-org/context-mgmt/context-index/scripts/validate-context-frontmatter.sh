@@ -82,6 +82,26 @@ for f in files:
         if field in fm and not pattern.match(fm[field]):
             errors.append(f"{f}: '{field}' does not match pattern '{pattern.pattern}', got '{fm[field]}'")
 
+    # themes is an array with a nested item enum; the enum_fields check above only
+    # covers top-level scalar enums, so validate its members explicitly. Block YAML
+    # style (like related) is the documented standard; inline [A, B] is tolerated.
+    themes_enum = props.get("themes", {}).get("items", {}).get("enum")
+    if themes_enum is not None:
+        inline = fm.get("themes", "")
+        if inline.startswith("["):
+            members = [x.strip().strip('"').strip("'") for x in inline.strip("[]").split(",") if x.strip()]
+        else:
+            m = re.search(r"^themes:\n((?:  - .+\n?)+)", fm_text, re.MULTILINE)
+            members = (
+                [ln.strip()[2:].strip().strip('"') for ln in m.group(1).splitlines() if ln.strip().startswith("- ")]
+                if m else []
+            )
+        for tm in members:
+            if tm not in themes_enum:
+                errors.append(f"{f}: 'themes' member must be one of {themes_enum}, got '{tm}'")
+        if len(members) != len(set(members)):
+            errors.append(f"{f}: 'themes' members must be unique")
+
 if errors:
     print("Frontmatter validation errors:")
     for e in errors:
