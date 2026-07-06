@@ -32,8 +32,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 ### context-mgmt
 
-- **context-file** — create `.context/` files (plans, findings, analysis) with standard YAML
-  frontmatter, appropriate sections, and correct placement in `plans/`, `findings/`, or `analysis/`.
+- **context-file** — create `.context/` files (plans, findings, analysis, known-issues) with
+  standard YAML frontmatter, appropriate sections, and correct placement in `plans/`,
+  `findings/`, `analysis/`, or `known-issues/`.
 - **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
   frontmatter block.
@@ -66,7 +67,8 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **pr-author** — create and maintain GitHub PRs with live descriptions — template
   discovery, intelligent filling, and lifecycle updates.
 - **session-reflection** — conduct a two-question session-end reflection to catch blind
-  spots and under-investigated areas before concluding.
+  spots and under-investigated areas before concluding. Verified-but-deferred gaps become
+  `.context/known-issues/` entries rather than evaporating in chat.
 - **socratic-method** — refine vague, complex, or high-stakes prompts through Socratic
   dialogue before committing to an implementation.
 
