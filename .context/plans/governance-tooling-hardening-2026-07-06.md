@@ -1,7 +1,7 @@
 ---
 title: "Plan: Close 3 live .context/ADR governance-gate gaps (adr-index freshness, undocumented-decisions false-negative, remediation-plan value)"
 type: PLAN
-status: DRAFT
+status: DONE
 date: 2026-07-06
 effort: M
 value: MEDIUM

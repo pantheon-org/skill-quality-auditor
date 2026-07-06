@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: generated remediation plans omit value and fail the required-value check"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 severity: MEDIUM
 value: MEDIUM
