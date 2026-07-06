@@ -20,6 +20,8 @@
 #   (j) an unknown theme member is rejected (not in the vocabulary).
 #   (k) a lowercase theme member is rejected (enum is case-sensitive).
 #   (l) duplicate theme members are rejected (uniqueItems).
+#   (m) a draft/active action-candidate with NO themes is rejected (now required).
+#   (n) a DONE action-candidate with no themes validates (DONE/SUPERSEDED exempt).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -65,9 +67,9 @@ expect_fail() {
   if "$VALIDATOR" "$2" >/dev/null 2>&1; then fail "$1 (expected error, got valid)"; else pass "$1"; fi
 }
 
-expect_pass "draft plan with value: HIGH validates"       "$(write_fixture plan-high PLAN ACTIVE 'value: HIGH')"
-expect_pass "finding with value: HIGH validates"          "$(write_fixture finding-high FINDING ACTIVE 'value: HIGH')"
-expect_fail "draft/active plan with no value is rejected"  "$(write_fixture plan-none PLAN ACTIVE)"
+expect_pass "draft plan with value + themes validates"    "$(write_fixture plan-high PLAN ACTIVE 'value: HIGH' 'themes:' '  - GOVERNANCE')"
+expect_pass "finding with value + themes validates"       "$(write_fixture finding-high FINDING ACTIVE 'value: HIGH' 'themes:' '  - GOVERNANCE')"
+expect_fail "draft/active plan with no value is rejected"  "$(write_fixture plan-none PLAN ACTIVE 'themes:' '  - GOVERNANCE')"
 expect_pass "DONE plan with no value is exempt"           "$(write_fixture plan-done PLAN DONE)"
 expect_pass "INSTRUCTION with no value validates"         "$(write_fixture instr INSTRUCTION ACTIVE)"
 expect_fail "value: high is rejected (case)"              "$(write_fixture plan-lower PLAN ACTIVE 'value: high')"
@@ -80,6 +82,8 @@ expect_pass "active plan with value + themes validates"   "$(write_fixture theme
 expect_fail "unknown theme member is rejected (enum)"     "$(write_fixture themes-unknown PLAN DONE 'themes:' '  - FRONTEND')"
 expect_fail "lowercase theme member is rejected (case)"   "$(write_fixture themes-lower PLAN DONE 'themes:' '  - eval')"
 expect_fail "duplicate theme members are rejected"        "$(write_fixture themes-dup PLAN DONE 'themes:' '  - EVAL' '  - EVAL')"
+expect_fail "draft/active plan with no themes is rejected" "$(write_fixture plan-no-themes PLAN ACTIVE 'value: HIGH')"
+expect_pass "DONE plan with no themes is exempt"          "$(write_fixture plan-done-no-themes PLAN DONE)"
 
 echo ""
 if [ "$FAILURES" -eq 0 ]; then

@@ -96,6 +96,16 @@ for f in files:
                 [ln.strip()[2:].strip().strip('"') for ln in m.group(1).splitlines() if ln.strip().startswith("- ")]
                 if m else []
             )
+        if (
+            fm.get("type") in ("PLAN", "FINDING", "KNOWN_ISSUE")
+            and fm.get("status") in ("DRAFT", "ACTIVE")
+            and not members
+        ):
+            errors.append(
+                f"{f}: type: {fm.get('type')} with status: {fm.get('status')} must set a non-empty "
+                f"'themes' list (ordered, primary-first, drawn from "
+                f".context/instructions/theme-vocabulary.md). DONE/SUPERSEDED entries are exempt."
+            )
         for tm in members:
             if tm not in themes_enum:
                 errors.append(f"{f}: 'themes' member must be one of {themes_enum}, got '{tm}'")

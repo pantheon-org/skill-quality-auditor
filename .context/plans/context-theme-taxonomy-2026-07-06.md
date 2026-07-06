@@ -1,7 +1,7 @@
 ---
 title: "Plan: Add a thematic axis to .context/ so work can be grouped, sliced, and tie-broken by area"
 type: PLAN
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 effort: M
 value: MEDIUM

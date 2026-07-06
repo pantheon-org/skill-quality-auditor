@@ -391,3 +391,13 @@ entries:
     context:
       - path: "docs/ADR/adr-049-context-value-frontmatter-field.md"
       - path: ".context/plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json"
+  - path: "ADR/adr-051-context-themes-frontmatter-field.md"
+    adr: "ADR-051"
+    title: "ADR-051: a `themes` frontmatter field adds a queryable subject axis to .context/"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/plans/context-theme-taxonomy-2026-07-06.md"
+      - path: ".context/findings/context-taxonomy-gap-2026-07-06.md"
+      - path: ".context/instructions/theme-vocabulary.md"
+      - path: "docs/ADR/adr-049-context-value-frontmatter-field.md"

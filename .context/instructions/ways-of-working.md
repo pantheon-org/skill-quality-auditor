@@ -59,7 +59,11 @@ Every `PLAN`, `FINDING`, and `KNOWN_ISSUE` with `status: DRAFT` or `ACTIVE` must
 
 **Re-grade on transitions.** Unlike `date`, `value` can go stale as context changes. Revisit it when a plan moves `DRAFT → ACTIVE`, or when scope materially changes — the same discipline as the `ACTIVE → DONE` sync above, applied to the value axis.
 
-**Read protocol — "what's next".** To pick the highest-value item to do next, read `.context/index.yaml`, filter to `DRAFT`/`ACTIVE` `PLAN`/`FINDING`/`KNOWN_ISSUE`, sort by `value` descending, then `effort` ascending where present, and act on the top item without re-forming an independent judgement. `value` is an authoritative sort key, not an advisory label; relocating the judgement to read-time reopens the gap the field closes. The full protocol and rubric live in [`value-rubric.md`](value-rubric.md).
+**Read protocol — "what's next".** To pick the highest-value item to do next, read `.context/index.yaml`, filter to `DRAFT`/`ACTIVE` `PLAN`/`FINDING`/`KNOWN_ISSUE`, sort by `value` descending, then `effort` ascending where present, then by `themes[0]` (prefer the area already in focus) to break any remaining tie, and act on the top item without re-forming an independent judgement. `value` is an authoritative sort key, not an advisory label; relocating the judgement to read-time reopens the gap the field closes. The full protocol and rubric live in [`value-rubric.md`](value-rubric.md).
+
+## Tagging themes
+
+Every `PLAN`, `FINDING`, and `KNOWN_ISSUE` with `status: DRAFT` or `ACTIVE` must also carry a `themes` frontmatter field — an **ordered** list of one or more areas from the controlled vocabulary (`EVAL`, `PR-TOOLING`, `DOCS`, `GOVERNANCE`, `SKILL-QUALITY`, `DISTRIBUTION`) in [`theme-vocabulary.md`](theme-vocabulary.md). This is the subject axis (what area the item touches), orthogonal to the magnitude axes. `validate-context-frontmatter.sh` enforces it; `DONE`/`SUPERSEDED` are exempt. Write it **primary-first**: `themes[0]` is the primary theme and the only member used in the read-protocol tie-break. Beyond the sort, `themes` is a filter dimension — "show me all `EVAL` work", "which theme carries the most open debt". The vocabulary ships coarse and is split only on evidence (a theme exceeding ~30% of active/draft entries), recorded as an ADR amendment; do not add themes ad hoc.
 
 ## After merge
 
