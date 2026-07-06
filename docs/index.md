@@ -57,7 +57,7 @@ Warnings:
 | `trend` | Track score changes over time |
 | `eval` | Run LLM-based eval scenarios against a skill |
 | `analyze` | TF-IDF and pattern analysis for a single skill |
-| `validate` | Check skill artifact conventions |
+| `validate` | Check skill artifact conventions and `.context` frontmatter schemas |
 | `init` | Install the skill into agent harness directories |
 | `update` | Self-update the binary from GitHub releases |
 | `prune` | Remove old audit directories, keep N per skill |

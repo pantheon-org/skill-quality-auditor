@@ -51,6 +51,7 @@ HK=0 git commit ... # bypass hooks for a single commit
 ### Pre-push checks
 
 - Full test suite (`go test ./...`)
+- Context frontmatter JSON-schema validation (`skill-auditor validate context`) — enforces the schemas' `additionalProperties:false`, catching typo'd/unknown keys the pre-commit shell check cannot; runs alongside it during a proving period
 - Plan-drift check (`scripts/check-plan-drift.sh`) — flags active plans whose related files changed after the plan was written
 - Docs-drift check (`scripts/check-docs-drift.sh`) — flags docs whose mapped source paths changed after the doc was last updated; both drift checks are informational only (exit 0)
 - Binary build
