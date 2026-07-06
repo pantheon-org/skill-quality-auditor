@@ -3,6 +3,7 @@ title: "Plan: Native Eval Runner with LLM-as-Judge"
 type: plan
 status: done
 date: 2026-07-01
+value: high
 related:
   - ../findings/skilleval-analysis-2026-06-30.md
   - ../findings/eval-gating-byok-2026-06-29.md

@@ -15,7 +15,7 @@
         "filename": { "type": "string", "minLength": 1 },
         "frontmatter": {
           "type": "object",
-          "required": ["title", "type", "status", "date", "effort"],
+          "required": ["title", "type", "status", "date", "effort", "value"],
           "additionalProperties": false,
           "properties": {
             "title": { "type": "string", "minLength": 1 },
@@ -26,6 +26,11 @@
               "type": "string",
               "enum": ["S", "M", "L", "TBD"],
               "description": "T-shirt-sized total effort estimate, matching the skill-auditor remediation-plan convention. TBD only if genuinely blocked on an unresolved Open Question."
+            },
+            "value": {
+              "type": "string",
+              "enum": ["high", "medium", "low"],
+              "description": "Benefit-of-action grade, distinct from effort (cost) and severity (risk-of-inaction). Graded against .context/instructions/value-rubric.md. Required for a new plan (draft status). The 'what's next' read protocol sorts by value descending, then effort ascending."
             },
             "related": {
               "type": "array",

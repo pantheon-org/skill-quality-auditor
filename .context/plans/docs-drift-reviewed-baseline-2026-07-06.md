@@ -3,6 +3,7 @@ title: "Plan: Reviewed-baseline mechanism for check-docs-drift.sh"
 type: plan
 status: done
 date: 2026-07-06
+value: high
 effort: S
 related:
   - ../findings/docs-drift-perpetual-noise-2026-07-06.md

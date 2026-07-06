@@ -3,6 +3,7 @@ title: "Plan: Remediate Audit Frontmatter & Validation Gaps"
 type: plan
 status: done
 date: 2026-07-03
+value: high
 related:
   - ../../hk.pkl
   - ../../.agents/skills/context-index/scripts/regenerate-context-index.sh

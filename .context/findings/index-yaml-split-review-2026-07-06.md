@@ -3,6 +3,7 @@ title: "Finding: should .context/index.yaml be split into per-type files? — re
 type: finding
 status: active
 date: 2026-07-06
+value: low
 related:
   - ../../.agents/RULES.md
   - ../../.context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh

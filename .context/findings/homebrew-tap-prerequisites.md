@@ -3,6 +3,7 @@ title: "Finding: Homebrew Tap Prerequisites"
 type: finding
 status: active
 date: 2026-04-28
+value: low
 related:
   - ../plans/onboarding-improvements-2026-04-27.md
 ---

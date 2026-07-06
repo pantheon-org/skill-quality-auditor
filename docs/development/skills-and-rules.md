@@ -36,10 +36,15 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **context-file** — create `.context/` files (plans, findings, analysis, known-issues) with
   standard YAML frontmatter, appropriate sections, and correct placement in `plans/`,
-  `findings/`, `analysis/`, or `known-issues/`.
+  `findings/`, `analysis/`, or `known-issues/`. Prompts for the `value` benefit-of-action
+  grade (`high`/`medium`/`low`) on `plan`/`finding`/`known-issue`, graded against
+  [`value-rubric.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/value-rubric.md).
 - **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
-  frontmatter block.
+  frontmatter block. `validate-context-frontmatter.sh` requires `value` on
+  `plan`/`finding`/`known-issue` while `status` is `draft`/`active` (`done`/`superseded`
+  exempt); the index emits `effort`, `severity`, and `value` so the "what's next" read
+  protocol (sort by `value` descending, then `effort` ascending) works from the index alone.
 
 ### governance
 
@@ -56,6 +61,7 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 - **plan-create** — create `.context/plans/*.md` files with standard frontmatter and
   phases/tasks/waves decomposition, inferring section conventions from existing plans.
+  Requires both `effort` (cost) and `value` (benefit) grades in frontmatter.
 - **design-debate** — stress-test an unwritten idea by spawning independent subagents in
   genuinely opposing roles (advocate, skeptic, migration/risk), grounded in real repo
   investigation, concluding in a synthesized verdict — used *before* a plan exists. The

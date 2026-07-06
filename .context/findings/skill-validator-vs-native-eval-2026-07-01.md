@@ -3,6 +3,7 @@ title: "Finding: Native eval runner vs skill-validator score evaluate — no ove
 type: finding
 status: done
 date: 2026-07-01
+value: low
 related:
   - ../plans/native-eval-runner-2026-07-01.md
   - ../../docs/ADR/index.yaml

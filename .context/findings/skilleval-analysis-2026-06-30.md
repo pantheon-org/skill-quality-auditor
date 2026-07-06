@@ -3,6 +3,7 @@ title: "Finding: SkillEval Analysis — 2026-06-30"
 type: finding
 status: active
 date: 2026-06-30
+value: low
 ---
 
 # Finding: SkillEval Analysis — 2026-06-30

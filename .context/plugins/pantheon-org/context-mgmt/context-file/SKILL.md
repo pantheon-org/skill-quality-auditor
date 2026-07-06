@@ -49,6 +49,7 @@ Field rules:
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
 - `severity` — required for `type: known-issue` only: `critical | high | medium | low`. Not applicable to other types.
+- `value` — required for `type: plan`, `finding`, and `known-issue` while `status` is `draft` or `active`: `high | medium | low`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `analysis` / `instruction` / `audit`. Exempt on `done` / `superseded`.
 
 ## Workflow
 
@@ -121,6 +122,7 @@ type: known-issue
 status: active
 date: YYYY-MM-DD
 severity: critical | high | medium | low
+value: high | medium | low
 related:
   - ../plans/related-plan.md
 ---

@@ -3,6 +3,7 @@ title: "Known issue: check-undocumented-decisions.sh silently skips any file men
 type: known-issue
 status: active
 date: 2026-07-06
+value: medium
 severity: medium
 related:
   - ../plugins/pantheon-org/governance/adr-capture/scripts/check-undocumented-decisions.sh

@@ -3,6 +3,7 @@ title: "Plan: Implement Shell Script Functionality in the Go CLI"
 type: plan
 status: done
 date: 2026-04-27
+value: high
 ---
 # Plan: Implement Shell Script Functionality in the Go CLI
 

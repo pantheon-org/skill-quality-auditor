@@ -5,6 +5,7 @@ status: active
 related:
   - ../plans/yaml-content-validation-config-2026-07-03.md
 date: 2026-07-03
+value: low
 ---
 # Finding: YAML Content Validation Config — 2026-07-03
 

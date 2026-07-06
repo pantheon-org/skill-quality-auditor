@@ -3,6 +3,7 @@ title: "Finding: EvoSkill Integration Opportunities"
 type: finding
 status: active
 date: 2026-07-02
+value: low
 ---
 
 # Finding: EvoSkill Integration Opportunities

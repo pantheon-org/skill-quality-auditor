@@ -3,6 +3,7 @@ title: "Finding: don't track the .tessl/plugins mirror — use a CI-only ephemer
 type: finding
 status: active
 date: 2026-07-06
+value: low
 related:
   - index-yaml-split-review-2026-07-06.md
   - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md

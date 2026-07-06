@@ -3,6 +3,7 @@ title: "Plan: Plumber CI/CD security workflow — fail on Critical, track the re
 type: plan
 status: done
 date: 2026-07-04
+value: medium
 related:
   - ../findings/plumber-cicd-security-2026-07-04.md
   - ../../docs/ADR/adr-036-plumber-cicd-security-advisory-workflow.md

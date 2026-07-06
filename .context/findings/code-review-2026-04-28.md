@@ -3,6 +3,7 @@ title: "Critical Code Review — skill-quality-auditor"
 type: finding
 status: done
 date: 2026-04-28
+value: high
 ---
 # Critical Code Review — skill-quality-auditor
 

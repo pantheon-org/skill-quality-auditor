@@ -3,6 +3,7 @@ title: "Finding: no skill covers validating and merging a PR"
 type: finding
 status: active
 date: 2026-07-06
+value: low
 related:
   - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
   - ../plugins/pantheon-org/governance/adr-capture/SKILL.md

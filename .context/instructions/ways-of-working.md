@@ -53,6 +53,14 @@ When you implement what a plan describes, update its frontmatter `status: active
 
 Every plan (`type: plan`) with `status: draft` or `active` must also carry an `effort: S|M|L|TBD` frontmatter field — a T-shirt-sized total effort estimate, matching the `skill-auditor remediate` convention already used for skill remediation plans. `validate-context-frontmatter.sh` enforces this. Use `TBD` only when sizing is genuinely blocked on an unresolved item in the plan's Open Questions — don't pick a number just to pass validation. `effort` is set once at creation, like `date`; re-size only if scope materially changes. It surfaces in `.context/index.yaml` so plans can be triaged by effort without opening each file.
 
+## Grading value
+
+Every `plan`, `finding`, and `known-issue` with `status: draft` or `active` must carry a `value: high|medium|low` frontmatter field — the benefit-of-action grade, distinct from `effort` (cost-of-action) and `severity` (risk-of-inaction). `validate-context-frontmatter.sh` enforces this; `done` and `superseded` entries are exempt. Grade against the rubric in [`value-rubric.md`](value-rubric.md) — leverage, consumers unblocked, reversibility — rather than by gut feel. It surfaces in `.context/index.yaml`.
+
+**Re-grade on transitions.** Unlike `date`, `value` can go stale as context changes. Revisit it when a plan moves `draft → active`, or when scope materially changes — the same discipline as the `active → done` sync above, applied to the value axis.
+
+**Read protocol — "what's next".** To pick the highest-value item to do next, read `.context/index.yaml`, filter to `draft`/`active` `plan`/`finding`/`known-issue`, sort by `value` descending, then `effort` ascending where present, and act on the top item without re-forming an independent judgement. `value` is an authoritative sort key, not an advisory label; relocating the judgement to read-time reopens the gap the field closes. The full protocol and rubric live in [`value-rubric.md`](value-rubric.md).
+
 ## After merge
 
 1. Delete the branch locally (GitHub auto-deletes remote branches after PR merge):

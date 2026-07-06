@@ -63,6 +63,17 @@ for f in files:
             f"{f}: type: known-issue must set 'severity' (critical/high/medium/low)"
         )
 
+    if (
+        fm.get("type") in ("plan", "finding", "known-issue")
+        and fm.get("status") in ("draft", "active")
+        and not fm.get("value")
+    ):
+        errors.append(
+            f"{f}: type: {fm.get('type')} with status: {fm.get('status')} must set 'value' "
+            f"(high/medium/low, graded against .context/instructions/value-rubric.md). "
+            f"done/superseded entries are exempt."
+        )
+
     for field, values in enum_fields.items():
         if field in fm and fm[field] not in values:
             errors.append(f"{f}: '{field}' must be one of {values}, got '{fm[field]}'")

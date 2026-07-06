@@ -6,7 +6,8 @@
 #
 # Sections:
 # - frontmatter     : YAML frontmatter block (type always "plan", status "draft",
-#                      effort is a required S/M/L/TBD total-effort estimate)
+#                      effort is a required S/M/L/TBD total-effort estimate,
+#                      value is a required high/medium/low benefit-of-action grade)
 # - goal            : one-paragraph description of the desired end state
 # - scope           : what's in and out of scope (omit if not collected)
 # - phases          : sequential stages with tasks and wave annotations
@@ -23,6 +24,7 @@ plan:
     status: draft
     date: YYYY-MM-DD
     effort: "M"  # S | M | L | TBD — total effort, matches skill-auditor remediation convention
+    value: "medium"  # high | medium | low — benefit-of-action, graded against .context/instructions/value-rubric.md
     related:
       - "../findings/<source-finding>.md"
   goal: |

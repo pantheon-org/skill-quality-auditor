@@ -3,6 +3,7 @@ title: "Remediation Plan: context-index"
 type: plan
 status: done
 date: 2026-06-30
+value: high
 effort: L
 plan_date: "2026-06-30"
 skill_name: context-index

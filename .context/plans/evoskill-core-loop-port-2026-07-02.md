@@ -3,6 +3,7 @@ title: "Plan: Port EvoSkill Core Loop as --evolve Mode"
 type: plan
 status: draft
 date: 2026-07-02
+value: medium
 effort: L
 related:
   - ../findings/evoskill-integration-2026-07-02.md

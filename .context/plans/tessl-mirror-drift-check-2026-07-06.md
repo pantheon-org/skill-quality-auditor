@@ -3,6 +3,7 @@ title: "Plan: CI check for .tessl/plugins/pantheon-org mirror drift"
 type: plan
 status: done
 date: 2026-07-06
+value: medium
 effort: S
 related:
   - ../findings/tessl-mirror-drift-protection-2026-07-06.md

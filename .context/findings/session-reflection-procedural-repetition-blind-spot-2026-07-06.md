@@ -3,6 +3,7 @@ title: "Finding: session-reflection never checks for the agent's own repeated pr
 type: finding
 status: active
 date: 2026-07-06
+value: low
 related:
   - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
   - ../findings/pr-merge-validation-gap-2026-07-06.md

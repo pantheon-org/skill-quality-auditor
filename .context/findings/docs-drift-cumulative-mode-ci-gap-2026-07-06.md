@@ -3,6 +3,7 @@ title: "Finding: check-docs-drift.sh's cumulative mode never runs in CI, only at
 type: finding
 status: active
 date: 2026-07-06
+value: medium
 related:
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

@@ -3,6 +3,7 @@ title: "Finding: Scoring Pattern Config Review — Naming and Dimension Mapping"
 type: finding
 status: active
 date: 2026-07-03
+value: medium
 related:
   - ../plans/yaml-content-validation-config-2026-07-03.md
   - ../findings/yaml-content-validation-config-2026-07-03.md

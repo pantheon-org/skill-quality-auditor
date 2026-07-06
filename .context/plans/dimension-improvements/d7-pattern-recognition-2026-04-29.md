@@ -3,6 +3,7 @@ title: "Improvement Plan: D7 — Pattern Recognition"
 type: plan
 status: done
 date: 2026-04-29
+value: medium
 ---
 # Improvement Plan: D7 — Pattern Recognition
 

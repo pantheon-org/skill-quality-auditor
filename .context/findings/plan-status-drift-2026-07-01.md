@@ -3,6 +3,7 @@ title: "Finding: Plan Frontmatter Status Drift"
 type: finding
 status: done
 date: 2026-07-01
+value: high
 related:
   - ../instructions/ways-of-working.md
 ---

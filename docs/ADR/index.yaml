@@ -374,3 +374,12 @@ entries:
     date: 2026-07-06
     context:
       - path: ".context/plans/tessl-mirror-drift-check-2026-07-06.md"
+  - path: "ADR/adr-049-context-value-frontmatter-field.md"
+    adr: "ADR-049"
+    title: "ADR-049: a `value` frontmatter field makes \"highest value next\" a queryable axis"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/plans/context-prioritisation-signal-2026-07-06.md"
+      - path: ".context/findings/prioritisation-signal-gap-2026-07-06.md"
+      - path: ".context/instructions/value-rubric.md"
