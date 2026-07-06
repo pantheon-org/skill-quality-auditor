@@ -19,7 +19,9 @@ of recomputing it every run. Should we do this? I want some pushback before we c
 6. Synthesize a verdict: proceed, do_not_proceed_for_now, or proceed_with_modification —
    not a restatement of both sides with no resolution.
 7. If the verdict is do_not_proceed_for_now, state a concrete revisit trigger.
-8. Offer to persist the verdict as a finding.
+8. Ask explicitly whether to persist the outcome, using the right artifact for the
+   verdict: a finding if proceed/proceed_with_modification, a known-issue if
+   do_not_proceed_for_now.
 
 ## Success Criteria
 
@@ -30,8 +32,10 @@ of recomputing it every run. Should we do this? I want some pushback before we c
 - The final response includes an actual verdict (one of the three enum values in spirit,
   even if not stated in those exact words) with a named rationale referencing specific
   points from the reviews.
-- Agent explicitly asks whether to persist the verdict as a finding, rather than
-  silently deciding either way.
+- Agent explicitly asks whether to persist the verdict, proposing a finding if the
+  verdict is proceed/proceed_with_modification or a known-issue if
+  do_not_proceed_for_now — not silently deciding, and not defaulting to "finding"
+  regardless of verdict.
 
 ## Failure Conditions
 

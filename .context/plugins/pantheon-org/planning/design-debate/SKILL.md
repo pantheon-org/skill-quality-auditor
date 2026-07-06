@@ -123,19 +123,27 @@ Debate verdict validation errors:
 
 This confirms the verdict is complete before it ships or gets persisted.
 
-### 8. Ask about follow-up — never decide this silently
+### 8. Always record the outcome — the verdict decides which artifact
 
-ALWAYS ask explicitly, after presenting the verdict: "Should I persist this as a
-finding?" and "Did any role surface a real gap that isn't being fixed right now?" A
+ALWAYS persist the outcome and ALWAYS ask explicitly before doing so — never decide
+silently, and never skip recording just because the main question got resolved. A
 verdict discussed and then left only in chat is the same failure mode `session-reflection`
 exists to prevent — RECOMMENDED is not the same as done.
 
-- If persisting: use `context-file` to write a finding capturing the decision, the
-  grounding facts, and why the losing arguments didn't hold up.
-- If any role (commonly Migration/Risk, but not exclusively) surfaced a concrete,
-  verified gap that won't be fixed this session: use `context-file`'s `known-issue` type
-  (`severity: critical|high|medium|low`) — do not let it evaporate just because the main
-  decision got resolved.
+Which artifact is a rule of thumb, not a free choice: **if it's an issue that won't be
+fixed, it's a known-issue; otherwise, it's a finding. Record either way.**
+
+- **Verdict is `proceed` or `proceed_with_modification`** — something is being acted on.
+  Use `context-file` to write a **finding** capturing the decision, the grounding facts,
+  and why the losing arguments didn't hold up.
+- **Verdict is `do_not_proceed_for_now`** — this is, by definition, a real issue being
+  consciously left unfixed. Use `context-file`'s `known-issue` type
+  (`severity: critical|high|medium|low`) instead of a finding, with the revisit trigger
+  from Step 7 as its eventual fix condition.
+- The same rule applies to any individual role's finding, not just the overall verdict:
+  if a role (commonly Migration/Risk, but not exclusively) surfaced a separate concrete
+  gap that won't be fixed this session — even on an otherwise `proceed` verdict — that
+  specific gap is its own known-issue, independent of how the main decision gets recorded.
 
 ```bash
 ./scripts/validate-context-frontmatter.sh <path-to-finding>
