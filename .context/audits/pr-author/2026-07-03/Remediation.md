@@ -1,7 +1,7 @@
 ---
 title: "Remediation Plan — pr-author"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-07-03
 ---
 

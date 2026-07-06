@@ -1,9 +1,9 @@
 ---
 title: "Finding: plumbing getplumber.io into skill-quality-auditor's CI"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-04
-value: medium
+value: MEDIUM
 related:
   - ../../.plumber.yaml
   - ../../.github/workflows/ci.yml

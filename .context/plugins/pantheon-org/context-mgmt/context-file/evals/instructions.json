@@ -23,7 +23,7 @@
     {
       "type": "procedure",
       "why_given": "preference",
-      "content": "Set `status: draft` on creation; promote to `active` only when reviewed."
+      "content": "Set `status: DRAFT` on creation; promote to `active` only when reviewed."
     }
   ]
 }

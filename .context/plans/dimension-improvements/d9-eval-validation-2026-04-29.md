@@ -1,9 +1,9 @@
 ---
 title: "Improvement Plan: D9 — Eval Validation"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-04-29
-value: high
+value: HIGH
 ---
 # Improvement Plan: D9 — Eval Validation
 

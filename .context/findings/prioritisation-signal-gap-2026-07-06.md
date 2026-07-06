@@ -1,9 +1,9 @@
 ---
 title: "Finding: .context carries no value signal, so \"highest value\" is re-derived by ad-hoc judgement every time"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: high
+value: HIGH
 related:
   - ../index.yaml
   - ../../.agents/skills/context-index/scripts/regenerate-context-index.sh

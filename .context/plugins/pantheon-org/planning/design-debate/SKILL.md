@@ -137,8 +137,8 @@ fixed, it's a known-issue; otherwise, it's a finding. Record either way.**
   Use `context-file` to write a **finding** capturing the decision, the grounding facts,
   and why the losing arguments didn't hold up.
 - **Verdict is `do_not_proceed_for_now`** — this is, by definition, a real issue being
-  consciously left unfixed. Use `context-file`'s `known-issue` type
-  (`severity: critical|high|medium|low`) instead of a finding, with the revisit trigger
+  consciously left unfixed. Use `context-file`'s `KNOWN_ISSUE` type
+  (`severity: CRITICAL|HIGH|MEDIUM|LOW`) instead of a finding, with the revisit trigger
   from Step 7 as its eventual fix condition.
 - The same rule applies to any individual role's finding, not just the overall verdict:
   if a role (commonly Migration/Risk, but not exclusively) surfaced a separate concrete

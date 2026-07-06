@@ -62,7 +62,7 @@ Ask the user about the plan. Collect at minimum:
   number to satisfy the field. Required in frontmatter for every plan this
   skill creates; it flows straight into `.context/index.yaml` so a reader can
   triage plans by effort without opening each file.
-- **Value** — a `high`/`medium`/`low` benefit-of-action grade, distinct from
+- **Value** — a `HIGH`/`MEDIUM`/`LOW` benefit-of-action grade, distinct from
   effort (cost) and severity (risk-of-inaction). Grade against
   [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md)
   (leverage, consumers unblocked, reversibility) — do not guess. Required in
@@ -94,8 +94,8 @@ The template is validated against
 [assets/schemas/plan-scaffold.schema.json](assets/schemas/plan-scaffold.schema.json).
 
 The plan always includes:
-- YAML frontmatter with `title`, `type: plan`, `status: draft`, `date` (today),
-  `effort` (`S`/`M`/`L`/`TBD`), `value` (`high`/`medium`/`low`)
+- YAML frontmatter with `title`, `type: PLAN`, `status: DRAFT`, `date` (today),
+  `effort` (`S`/`M`/`L`/`TBD`), `value` (`HIGH`/`MEDIUM`/`LOW`)
 - `## Goal` section — one paragraph describing the desired end state
 - `## Phases` section — numbered phases with tasks and wave annotations
 - `## Open Questions` section — unresolved items for the reviewer
@@ -133,7 +133,7 @@ Created: .context/plans/<file>.md
 Title:   <title>
 Status:  draft
 Phases:  <N> phases, <M> tasks total
-Next:    Run plan-review on it, or mark status: active to start implementing
+Next:    Run plan-review on it, or mark status: ACTIVE to start implementing
 ```
 
 ## Verification
@@ -155,7 +155,7 @@ After creating the plan, run these checks:
 5. **Effort declared** — frontmatter has `effort` set to `S`/`M`/`L`/`TBD`.
    If `TBD`, confirm the corresponding Open Question actually explains what's
    blocking the estimate.
-6. **Value graded** — frontmatter has `value` set to `high`/`medium`/`low`,
+6. **Value graded** — frontmatter has `value` set to `HIGH`/`MEDIUM`/`LOW`,
    graded against `.context/instructions/value-rubric.md` rather than guessed.
 
 ## Mindset
@@ -167,7 +167,7 @@ After creating the plan, run these checks:
   not separate phases.
 - Tasks should be single-session-sized. If a task takes "a few days", it's too
   large — break it down. If it takes "5 minutes", it's too small — combine it.
-- Default to `status: draft`. Promote to `active` only after the plan is reviewed
+- Default to `status: DRAFT`. Promote to `ACTIVE` only after the plan is reviewed
   and approved.
 - The YAML frontmatter is not optional. A plan without frontmatter is invisible
   to `.context/index.yaml` and to every agent that reads it.
@@ -186,7 +186,7 @@ until someone manually finds it and adds frontmatter.
 without it is invisible machinery.
 
 **BAD:** Starting the file with `# Plan: My Title` directly.
-**GOOD:** Always open with `---\ntitle: "Plan: My Title"\ntype: plan\nstatus: draft\ndate: YYYY-MM-DD\n---`.
+**GOOD:** Always open with `---\ntitle: "Plan: My Title"\ntype: PLAN\nstatus: DRAFT\ndate: YYYY-MM-DD\n---`.
 
 **NEVER** — Skip the convention inference step
 
@@ -231,7 +231,7 @@ number is worse than a missing one — it looks authoritative but isn't.
 
 **WHY:** `effort` exists so plans are triageable at a glance, the same way
 `status` lets a reader triage by lifecycle stage. `validate-context-frontmatter.sh`
-requires it for any `type: plan` with `status: draft` or `active`.
+requires it for any `type: PLAN` with `status: DRAFT` or `ACTIVE`.
 
 **BAD:** Setting `effort: S` on a plan nobody has actually sized, just to pass
 validation.

@@ -7,8 +7,8 @@ This reference covers the YAML frontmatter schema used by all `.context/` files.
 ```yaml
 ---
 title: "Human-readable title"
-type: plan | finding | analysis
-status: draft | active | done | superseded
+type: PLAN | finding | analysis
+status: DRAFT | active | done | superseded
 date: YYYY-MM-DD
 ---
 ```
@@ -16,8 +16,8 @@ date: YYYY-MM-DD
 | Field | Type | Rules |
 |-------|------|-------|
 | `title` | string | Prose title matching the H1 heading; wrap in quotes |
-| `type` | enum | One of: `plan`, `finding`, `analysis` — must match the subdirectory |
-| `status` | enum | `draft` until reviewed, `active` for in-progress, `done` when complete, `superseded` when replaced |
+| `type` | enum | One of: `PLAN`, `FINDING`, `ANALYSIS` — must match the subdirectory |
+| `status` | enum | `DRAFT` until reviewed, `ACTIVE` for in-progress, `DONE` when complete, `SUPERSEDED` when replaced |
 | `date` | string (date) | ISO 8601 date `YYYY-MM-DD` — set once on creation, never updated |
 
 ## Optional Fields
@@ -43,8 +43,8 @@ related:
 ```yaml
 ---
 title: "Plan: Add Structured Logging"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-06-30
 ---
 ```
@@ -53,8 +53,8 @@ date: 2026-06-30
 ```yaml
 ---
 title: "Finding: Logging Library Evaluation"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
 related:
   - ../plans/add-structured-logging.md
@@ -65,8 +65,8 @@ related:
 ```yaml
 ---
 title: "CLI Flag Audit — 2026-06-30"
-type: analysis
-status: done
+type: ANALYSIS
+status: DONE
 date: 2026-06-30
 ---
 ```

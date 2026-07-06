@@ -1,9 +1,9 @@
 ---
 title: "Findings: Eval Gating, Local Runs, and Bring-Your-Own-Key"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-29
-value: medium
+value: MEDIUM
 related:
   - ../plans/migrate-off-tessl-eval-2026-06-29.md
 ---

@@ -1,9 +1,9 @@
 ---
 title: "Plan: User-Configurable Scoring Pattern Overrides"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-07-03
-value: medium
+value: MEDIUM
 related:
   - ../../internal/patternconfig/patternconfig.go
   - ../../cmd/root.go

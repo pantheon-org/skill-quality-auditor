@@ -1,9 +1,9 @@
 ---
 title: "Finding: Tessl Eval Criteria JSON Schema — 2026-06-30"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
-value: low
+value: LOW
 ---
 
 # Finding: Tessl Eval Criteria JSON Schema — 2026-06-30

@@ -1,9 +1,9 @@
 ---
 title: "Plan: Port EvoSkill Core Loop as --evolve Mode"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-07-02
-value: medium
+value: MEDIUM
 effort: L
 related:
   - ../findings/evoskill-integration-2026-07-02.md

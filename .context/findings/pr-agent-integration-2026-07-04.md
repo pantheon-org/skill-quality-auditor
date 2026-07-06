@@ -1,9 +1,9 @@
 ---
 title: "Finding: PR-Agent as an automated PR review bot"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-04
-value: low
+value: LOW
 related:
   - ../../.github/workflows/skill-quality.yml
   - ../../.plumber.yaml

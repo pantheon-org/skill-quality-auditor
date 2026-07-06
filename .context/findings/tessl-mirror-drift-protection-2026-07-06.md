@@ -1,9 +1,9 @@
 ---
 title: "Finding: don't track the .tessl/plugins mirror — use a CI-only ephemeral diff instead"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: low
+value: LOW
 related:
   - index-yaml-split-review-2026-07-06.md
   - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md

@@ -1,7 +1,7 @@
 ---
 title: "Value Rubric and Read Protocol"
-type: instruction
-status: active
+type: INSTRUCTION
+status: ACTIVE
 date: 2026-07-06
 related:
   - ../plans/context-prioritisation-signal-2026-07-06.md
@@ -18,8 +18,8 @@ is one of three distinct axes, and must not be conflated with the other two:
 | Cost-of-action | How much work is it? | `effort` (plans only) |
 | Risk-of-inaction | How bad is leaving it undone? | `severity` (known-issues only) |
 
-`value` applies to the three action-candidate types: `plan`, `finding`, and
-`known-issue`. It does not apply to `analysis`, `instruction`, or `audit`, which
+`value` applies to the three action-candidate types: `PLAN`, `FINDING`, and
+`KNOWN_ISSUE`. It does not apply to `ANALYSIS`, `INSTRUCTION`, or `AUDIT`, which
 are reference material rather than things to do next.
 
 This rubric is the standard that all `value` grades are assigned against. Author
@@ -40,18 +40,18 @@ dominates.
    up. Work whose benefit evaporates if delayed (a time-boxed fix, a grade that
    goes stale) may warrant a higher grade to capture the closing window.
 
-### `high`
+### `HIGH`
 
 Foundational or broadly-leveraged: several downstream items depend on it, or it
 retires a recurring cost, or it closes a gap that keeps re-manifesting. Doing it
 changes what else becomes possible.
 
-### `medium`
+### `MEDIUM`
 
 Clear standalone benefit with limited leverage: it improves one workflow, closes
 one gap, or unblocks one or two consumers, but nothing else is waiting on it.
 
-### `low`
+### `LOW`
 
 Narrow, self-contained, or nice-to-have: benefits a single consumer, is easily
 deferred, or is polish rather than capability. Correct to do eventually, not
@@ -61,15 +61,15 @@ urgent to do next.
 
 These grade real `.context/` items against the criteria above.
 
-- **`plans/context-prioritisation-signal-2026-07-06.md` → `high`.** High leverage:
+- **`plans/context-prioritisation-signal-2026-07-06.md` → `HIGH`.** High leverage:
   it produces the `value` signal that a future "what's next" skill and every
   future prioritisation call will consume, and it retires the recurring ad-hoc
   "which is highest value?" judgement. Multiple downstream consumers; foundational.
-- **`plans/pr-merge-skill-2026-07-06.md` → `medium`.** Real standalone benefit
+- **`plans/pr-merge-skill-2026-07-06.md` → `MEDIUM`.** Real standalone benefit
   (closes the `pr-merge-validation-gap` finding and removes a repeated manual
   chore) but nothing else is blocked on it; it unblocks one workflow, not a class
   of future work.
-- **`findings/index-yaml-split-review-2026-07-06.md` → `low`.** A reviewed-and-
+- **`findings/index-yaml-split-review-2026-07-06.md` → `LOW`.** A reviewed-and-
   decided-against investigation. Self-contained, no downstream consumer waiting,
   no recurring cost retired; it documents a closed question rather than enabling
   new work.
@@ -79,10 +79,10 @@ These grade real `.context/` items against the criteria above.
 `value` is an **authoritative sort key**, not an advisory label. To answer "which
 item is highest value to do next?", read `.context/index.yaml` and:
 
-1. Filter to `status` in {`draft`, `active`} of type `plan`, `finding`, or
-   `known-issue`. (`done`/`superseded` grades exist as a learning corpus and never
+1. Filter to `status` in {`DRAFT`, `ACTIVE`} of type `PLAN`, `FINDING`, or
+   `KNOWN_ISSUE`. (`DONE`/`SUPERSEDED` grades exist as a learning corpus and never
    enter this sort.)
-2. Sort by `value` descending (`high` > `medium` > `low`).
+2. Sort by `value` descending (`HIGH` > `MEDIUM` > `LOW`).
 3. Break ties by `effort` ascending (`S` < `M` < `L` < `TBD`) where present.
    Findings and known-issues have no `effort`, so within a bucket they sort by
    `value` alone.

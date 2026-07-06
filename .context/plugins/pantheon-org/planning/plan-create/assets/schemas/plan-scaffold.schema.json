@@ -19,8 +19,8 @@
           "additionalProperties": false,
           "properties": {
             "title": { "type": "string", "minLength": 1 },
-            "type": { "type": "string", "enum": ["plan"] },
-            "status": { "type": "string", "enum": ["draft"] },
+            "type": { "type": "string", "enum": ["PLAN"] },
+            "status": { "type": "string", "enum": ["DRAFT"] },
             "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
             "effort": {
               "type": "string",
@@ -29,8 +29,8 @@
             },
             "value": {
               "type": "string",
-              "enum": ["high", "medium", "low"],
-              "description": "Benefit-of-action grade, distinct from effort (cost) and severity (risk-of-inaction). Graded against .context/instructions/value-rubric.md. Required for a new plan (draft status). The 'what's next' read protocol sorts by value descending, then effort ascending."
+              "enum": ["HIGH", "MEDIUM", "LOW"],
+              "description": "Benefit-of-action grade (UPPER_CASE), distinct from effort (cost) and severity (risk-of-inaction). Graded against .context/instructions/value-rubric.md. Required for a new plan (DRAFT status). The 'what's next' read protocol sorts by value descending, then effort ascending."
             },
             "related": {
               "type": "array",

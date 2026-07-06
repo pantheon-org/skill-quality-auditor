@@ -1,6 +1,6 @@
 # Merge Status Sync Reference
 
-`scripts/merge-status-sync.sh` closes the gap where a PR ships the feature a plan or ADR describes, but the plan stays `active`/`draft` and the ADR stays `proposed` because nothing checks status against merge state. See `.context/plans/post-merge-status-sync-2026-07-04.md` for the full design rationale.
+`scripts/merge-status-sync.sh` closes the gap where a PR ships the feature a plan or ADR describes, but the plan stays `ACTIVE`/`DRAFT` and the ADR stays `proposed` because nothing checks status against merge state. See `.context/plans/post-merge-status-sync-2026-07-04.md` for the full design rationale.
 
 ## Usage
 
@@ -13,7 +13,7 @@ Run it from any branch — the script opens its own branch and PR when it has so
 
 ## Signal strength
 
-For each `.context/plans/*.md` (`status: active`/`draft`) and `docs/ADR/adr-*.md` (`status: proposed`), the script cross-references the merged PR's touched files against:
+For each `.context/plans/*.md` (`status: ACTIVE`/`DRAFT`) and `docs/ADR/adr-*.md` (`status: proposed`), the script cross-references the merged PR's touched files against:
 
 1. The plan/ADR file's own path — **direct** signal.
 2. Its `related:`/`context:` list, when the linked path is itself another `.context/` or `docs/ADR/` file — **frontmatter** signal.
@@ -28,7 +28,7 @@ For each `.context/plans/*.md` (`status: active`/`draft`) and `docs/ADR/adr-*.md
 
 ## Auto-flip rules
 
-- **Plans**: only single-phase plans (at most one `### Phase N` heading) with `direct`/`frontmatter` signal auto-flip `status: active|draft → done`. Multi-phase plans are always flagged, even under a strong signal — a PR that closes one phase of a multi-phase plan must not silently mark the whole plan done.
+- **Plans**: only single-phase plans (at most one `### Phase N` heading) with `direct`/`frontmatter` signal auto-flip `status: ACTIVE|DRAFT → DONE`. Multi-phase plans are always flagged, even under a strong signal — a PR that closes one phase of a multi-phase plan must not silently mark the whole plan done.
 - **ADRs**: never auto-flip, regardless of signal strength. Acceptance is a deliberate decision, not a mechanical status field — flag it for a human to confirm and accept via the normal `adr-capture` workflow.
 - **File-touch-only links**: always flagged, never auto-applied — a plan referencing a shared config file doesn't mean every PR touching that file implements the plan.
 
@@ -42,12 +42,12 @@ For eligible single-phase plans, an apply-mode run (no `--dry-run`):
 
 1. Checks for an already-open sync PR (`chore/status-sync-pr-<n>`) — if one exists, it's a no-op.
 2. Fetches `origin/main` and branches `chore/status-sync-pr-<n>` from it (never commits to the branch you're on, never pushes to `main`).
-3. Flips `status: active|draft` to `status: done` in each eligible plan file.
+3. Flips `status: ACTIVE|DRAFT` to `status: DONE` in each eligible plan file.
 4. Runs `context-index`'s `regenerate-context-index.sh`.
 5. Commits, pushes, and opens a PR — the PR body includes the full flagged summary so ADRs and multi-phase plans still get surfaced for a human decision.
 6. Returns to the branch you started on.
 
-Re-running against a PR that's already fully synced (nothing left `active`/`draft`/`proposed`) reports "nothing to do" and exits 0.
+Re-running against a PR that's already fully synced (nothing left `ACTIVE`/`DRAFT`/`proposed`) reports "nothing to do" and exits 0.
 
 ## Squash-merge fallback
 

@@ -1,9 +1,9 @@
 ---
 title: "Finding: check-docs-drift.sh's cumulative mode can never clear a reviewed-but-unedited doc"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: medium
+value: MEDIUM
 related:
   - ../../scripts/check-docs-drift.sh
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

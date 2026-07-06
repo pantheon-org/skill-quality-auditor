@@ -147,7 +147,7 @@ detect_candidates() {
       local status
       status=$(frontmatter_value "$md" "status")
       case "$status" in
-        active | draft) ;;
+        ACTIVE | DRAFT) ;;
         *) continue ;;
       esac
       local rel_path
@@ -164,7 +164,7 @@ detect_candidates() {
       else
         auto_flip=0
       fi
-      printf 'plan\t%s\t%s\t%s\t%s\t%s\tdone\n' "$rel_path" "$status" "$signal" "$phases" "$auto_flip"
+      printf 'plan\t%s\t%s\t%s\t%s\t%s\tDONE\n' "$rel_path" "$status" "$signal" "$phases" "$auto_flip"
     done < <(find "$plans_dir" -name '*.md' -print0 | sort -z)
   fi
 

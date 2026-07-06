@@ -1,9 +1,9 @@
 ---
 title: "Finding: session-reflection never checks for the agent's own repeated procedures"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: low
+value: LOW
 related:
   - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
   - ../findings/pr-merge-validation-gap-2026-07-06.md

@@ -383,3 +383,11 @@ entries:
       - path: ".context/plans/context-prioritisation-signal-2026-07-06.md"
       - path: ".context/findings/prioritisation-signal-gap-2026-07-06.md"
       - path: ".context/instructions/value-rubric.md"
+  - path: "ADR/adr-050-uppercase-frontmatter-enums.md"
+    adr: "ADR-050"
+    title: "ADR-050: .context frontmatter enum values are UPPER_CASE"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: "docs/ADR/adr-049-context-value-frontmatter-field.md"
+      - path: ".context/plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json"

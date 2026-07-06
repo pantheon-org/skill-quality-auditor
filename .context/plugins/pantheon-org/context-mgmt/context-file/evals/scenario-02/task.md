@@ -16,8 +16,8 @@ Research notes:
 
 ## Expected Behavior
 
-1. Create a new `.context/finding` file under `.context/findings/` with type `finding` in frontmatter.
-2. Frontmatter must include `title`, `type: finding`, `status`, `date`, and `related` linking to the existing plan.
+1. Create a new `.context/finding` file under `.context/findings/` with type `FINDING` in frontmatter.
+2. Frontmatter must include `title`, `type: FINDING`, `status`, `date`, and `related` linking to the existing plan.
 3. The `title` should start with "Finding: ".
 4. Include a **one-sentence summary** at the top (under the date/status line).
 5. Include a **Summary** section with concise overview.

@@ -9,8 +9,8 @@
 ```markdown
 ---
 title: "Finding: Database Migration Strategy"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
 ---
 

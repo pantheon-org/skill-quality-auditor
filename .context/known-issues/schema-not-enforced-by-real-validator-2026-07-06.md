@@ -1,10 +1,10 @@
 ---
 title: "Known Issue: context-frontmatter.schema.json is not enforced by a real JSON-schema validator"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: 2026-07-06
-severity: low
-value: low
+severity: LOW
+value: LOW
 related:
   - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json
   - ../plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh

@@ -81,11 +81,11 @@ if missing:
     for f in missing:
         print(f"  {f}", file=sys.stderr)
 
-type_group_key = {"plan": "plans", "finding": "findings", "analysis": "analysis", "instruction": "instructions", "audit": "audits", "known-issue": "known-issues"}
+type_group_key = {"PLAN": "plans", "FINDING": "findings", "ANALYSIS": "analysis", "INSTRUCTION": "instructions", "AUDIT": "audits", "KNOWN_ISSUE": "known-issues"}
 type_order = ["known-issues", "plans", "findings", "analysis", "audits", "instructions"]
 type_label = {"plans": "Plans", "findings": "Findings", "analysis": "Analysis", "audits": "Audits", "instructions": "Instructions", "known-issues": "Known Issues"}
 
-severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+severity_rank = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
 
 grouped = {}
 for e in entries:

@@ -1,9 +1,9 @@
 ---
 title: "Finding: check-docs-drift.sh's cumulative mode never runs in CI, only at local pre-push"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: medium
+value: MEDIUM
 related:
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

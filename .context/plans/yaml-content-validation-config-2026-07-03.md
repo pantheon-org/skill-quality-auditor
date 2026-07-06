@@ -1,9 +1,9 @@
 ---
 title: "Plan: Externalise Hardcoded Scoring Patterns to YAML Config"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-07-03
-value: medium
+value: MEDIUM
 related:
   - ../findings/yaml-content-validation-config-2026-07-03.md
   - ../../analysis/patterns.go

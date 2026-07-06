@@ -1,7 +1,7 @@
 ---
 title: "Remediation Plan — context-index"
-type: audit
-status: done
+type: AUDIT
+status: DONE
 date: 2026-06-30
 ---
 

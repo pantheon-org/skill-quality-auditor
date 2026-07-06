@@ -14,13 +14,13 @@
     },
     "type": {
       "type": "string",
-      "enum": ["plan", "finding", "analysis", "instruction", "audit", "known-issue"],
-      "description": "File category — matches the subdirectory (plans/ → plan, findings/ → finding, analysis/ → analysis, known-issues/ → known-issue)."
+      "enum": ["PLAN", "FINDING", "ANALYSIS", "INSTRUCTION", "AUDIT", "KNOWN_ISSUE"],
+      "description": "File category (UPPER_CASE) — matches the subdirectory (plans/ → PLAN, findings/ → FINDING, analysis/ → ANALYSIS, known-issues/ → KNOWN_ISSUE). Note KNOWN_ISSUE uses an underscore while its directory is known-issues/."
     },
     "status": {
       "type": "string",
-      "enum": ["draft", "active", "done", "superseded"],
-      "description": "Lifecycle status. Use draft until reviewed, active for in-progress, done when complete, superseded when replaced."
+      "enum": ["DRAFT", "ACTIVE", "DONE", "SUPERSEDED"],
+      "description": "Lifecycle status (UPPER_CASE). Use DRAFT until reviewed, ACTIVE for in-progress, DONE when complete, SUPERSEDED when replaced."
     },
     "date": {
       "type": "string",
@@ -39,17 +39,17 @@
     "effort": {
       "type": "string",
       "enum": ["S", "M", "L", "TBD"],
-      "description": "T-shirt-sized total implementation effort, matching the skill-auditor remediation-plan convention (S/M/L). Required for type: plan while status is draft or active (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Use TBD only when sizing is genuinely blocked on an unresolved item in Open Questions. Not applicable to finding/analysis/instruction/audit. Set once at creation like date; re-size only if scope materially changes."
+      "description": "T-shirt-sized total implementation effort, matching the skill-auditor remediation-plan convention (S/M/L). Required for type: PLAN while status is DRAFT or ACTIVE (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Use TBD only when sizing is genuinely blocked on an unresolved item in Open Questions. Not applicable to FINDING/ANALYSIS/INSTRUCTION/AUDIT. Set once at creation like date; re-size only if scope materially changes."
     },
     "severity": {
       "type": "string",
-      "enum": ["critical", "high", "medium", "low"],
-      "description": "Urgency of a known-issue entry. Required for type: known-issue (enforced by validate-context-frontmatter.sh, not this schema alone). Not applicable to other types. Set once at creation; re-grade only if the issue's real-world impact turns out to differ from the initial assessment."
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+      "description": "Urgency of a KNOWN_ISSUE entry (UPPER_CASE). Required for type: KNOWN_ISSUE (enforced by validate-context-frontmatter.sh, not this schema alone). Not applicable to other types. Set once at creation; re-grade only if the issue's real-world impact turns out to differ from the initial assessment."
     },
     "value": {
       "type": "string",
-      "enum": ["high", "medium", "low"],
-      "description": "Benefit-of-action signal: how much doing this item unblocks or leverages future work, graded against the rubric in .context/instructions/value-rubric.md. Applies to type: plan, finding, and known-issue (the action-candidate types). Distinct from severity (risk-of-inaction) and effort (cost-of-action). The 'what's next' read protocol sorts by value descending, then effort ascending. Required for those three types while status is draft or active (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Re-grade on status transitions or material scope changes, per ways-of-working.md."
+      "enum": ["HIGH", "MEDIUM", "LOW"],
+      "description": "Benefit-of-action signal (UPPER_CASE): how much doing this item unblocks or leverages future work, graded against the rubric in .context/instructions/value-rubric.md. Applies to type: PLAN, FINDING, and KNOWN_ISSUE (the action-candidate types). Distinct from severity (risk-of-inaction) and effort (cost-of-action). The 'what's next' read protocol sorts by value descending, then effort ascending. Required for those three types while status is DRAFT or ACTIVE (enforced by validate-context-frontmatter.sh, not this schema alone, since JSON Schema conditionals aren't evaluated by that validator). Re-grade on status transitions or material scope changes, per ways-of-working.md."
     }
   }
 }

@@ -1,9 +1,9 @@
 ---
 title: "Finding: what the historical value corpus reveals about the rubric and prioritisation patterns"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-06
-value: medium
+value: MEDIUM
 related:
   - ../plans/context-prioritisation-signal-2026-07-06.md
   - ../instructions/value-rubric.md

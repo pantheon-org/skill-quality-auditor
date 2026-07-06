@@ -15,8 +15,8 @@ Review notes:
 
 ## Expected Behavior
 
-1. Create a new `.context/analysis` file under `.context/analysis/` with type `analysis` in frontmatter.
-2. Frontmatter must include `title`, `type: analysis`, `status: done`, and `date`.
+1. Create a new `.context/analysis` file under `.context/analysis/` with type `ANALYSIS` in frontmatter.
+2. Frontmatter must include `title`, `type: ANALYSIS`, `status: DONE`, and `date`.
 3. The `title` should use format "Topic Analysis — YYYY-MM-DD".
 4. Include a **Summary** section with a brief overview.
 5. Include a **Findings** section with at least 3 findings (one for each issue identified).
@@ -25,7 +25,7 @@ Review notes:
 ## Success Criteria
 
 - File created under `.context/analysis/`.
-- Frontmatter has title, type, status, and date; status is `done`.
+- Frontmatter has title, type, status, and date; status is `DONE`.
 - Findings section covers all 3 issues (duplicate flag, naming inconsistency, short flag collision).
 - Conclusion section present with recommended next steps.
 - Title format follows "Topic Analysis — YYYY-MM-DD".
@@ -34,7 +34,7 @@ Review notes:
 
 - File created under wrong `.context/` subdirectory.
 - Frontmatter missing required fields.
-- Status not set to `done`.
+- Status not set to `DONE`.
 - Findings missing one or more of the 3 issues.
 - No conclusion section.
 - Title not following the correct format.

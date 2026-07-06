@@ -15,8 +15,8 @@
 ```yaml
 ---
 title: "Finding: Go Version Evaluation"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
 ---
 ```

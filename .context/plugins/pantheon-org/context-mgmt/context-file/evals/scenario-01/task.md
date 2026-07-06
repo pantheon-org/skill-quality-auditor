@@ -6,8 +6,8 @@
 
 ## Expected Behavior
 
-1. Create a new `.context/plan` file under `.context/plans/` with type `plan` in frontmatter.
-2. Frontmatter must include `title`, `type: plan`, `status: draft`, and `date`.
+1. Create a new `.context/plan` file under `.context/plans/` with type `PLAN` in frontmatter.
+2. Frontmatter must include `title`, `type: PLAN`, `status: DRAFT`, and `date`.
 3. The `title` should start with "Plan: ".
 4. Include a **Goal** section describing the desired end state (a trend command showing score history).
 5. Include a **Steps** section with numbered implementation steps.
@@ -19,7 +19,7 @@
 
 - File created under `.context/plans/` with `.md` extension.
 - Frontmatter has all required fields: title, type, status, date.
-- `status` is set to `draft`.
+- `status` is set to `DRAFT`.
 - Goal section describes the trend feature.
 - Steps section has at least 3 numbered steps.
 - Open Questions section includes at least 2 unresolved items.
@@ -30,5 +30,5 @@
 - Frontmatter missing any required fields.
 - Steps not numbered or missing.
 - No Open Questions section.
-- `status` set to `active` instead of `draft`.
+- `status` set to `ACTIVE` instead of `DRAFT`.
 - Filename not following kebab-case convention.

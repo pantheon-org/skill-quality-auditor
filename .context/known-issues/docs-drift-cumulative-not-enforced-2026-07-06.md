@@ -1,10 +1,10 @@
 ---
 title: "Known Issue: cumulative docs-drift is now visible in CI but still never enforced"
-type: known-issue
-status: active
+type: KNOWN_ISSUE
+status: ACTIVE
 date: 2026-07-06
-value: medium
-severity: high
+value: MEDIUM
+severity: HIGH
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

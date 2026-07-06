@@ -1,9 +1,9 @@
 ---
 title: "Finding: Shared bot identity caused automated PR comments to clobber each other"
-type: finding
-status: done
+type: FINDING
+status: DONE
 date: 2026-07-05
-value: medium
+value: MEDIUM
 related:
   - ../../docs/ADR/adr-039-plumber-pr-comment.md
   - ../../docs/ADR/index.yaml

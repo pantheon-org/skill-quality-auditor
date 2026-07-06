@@ -1,9 +1,9 @@
 ---
 title: "SE Principles Remediation Plan"
-type: plan
-status: done
+type: PLAN
+status: DONE
 date: 2026-04-29
-value: medium
+value: MEDIUM
 related:
   - ../analysis/code-review-se-principles.md
 ---

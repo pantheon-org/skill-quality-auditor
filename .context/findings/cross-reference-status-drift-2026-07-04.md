@@ -1,9 +1,9 @@
 ---
 title: "Finding: Cross-Reference Status Drift Across Plans, Findings, and ADRs"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-04
-value: low
+value: LOW
 related:
   - ../plans/post-merge-status-sync-2026-07-04.md
   - ../findings/automate-post-merge-status-sync-2026-07-04.md

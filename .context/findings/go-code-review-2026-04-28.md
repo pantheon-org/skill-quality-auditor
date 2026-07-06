@@ -1,9 +1,9 @@
 ---
 title: "Go Code Review Findings — 2026-04-28"
-type: finding
-status: done
+type: FINDING
+status: DONE
 date: 2026-04-28
-value: high
+value: HIGH
 ---
 # Go Code Review Findings — 2026-04-28
 

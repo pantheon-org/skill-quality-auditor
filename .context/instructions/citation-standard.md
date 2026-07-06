@@ -1,7 +1,7 @@
 ---
 title: "Citation Standard"
-type: instruction
-status: active
+type: INSTRUCTION
+status: ACTIVE
 date: 2026-06-30
 ---
 

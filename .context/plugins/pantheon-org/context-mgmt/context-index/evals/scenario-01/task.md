@@ -12,8 +12,8 @@ Two new files were created:
 ```yaml
 ---
 title: "Finding: Logging Library Evaluation"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-06-30
 ---
 ```
@@ -22,8 +22,8 @@ date: 2026-06-30
 ```yaml
 ---
 title: "Plan: Add Structured Logging"
-type: plan
-status: draft
+type: PLAN
+status: DRAFT
 date: 2026-06-30
 ---
 ```

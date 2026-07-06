@@ -1,9 +1,9 @@
 ---
 title: "Finding: Homebrew Tap Repository Required"
-type: finding
-status: active
+type: FINDING
+status: ACTIVE
 date: 2026-07-01
-value: medium
+value: MEDIUM
 related:
   - ../plans/onboarding-improvements-2026-04-27.md
 ---
