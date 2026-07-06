@@ -5,11 +5,15 @@ on:
     paths:
       - 'cmd/assets/**'
       - '.context/plugins/**'
+      - 'scripts/check-tessl-mirror-drift.sh'
+      - '.github/workflows/skill-quality.yml'
   push:
     branches: [main]
     paths:
       - 'cmd/assets/**'
       - '.context/plugins/**'
+      - 'scripts/check-tessl-mirror-drift.sh'
+      - '.github/workflows/skill-quality.yml'
   workflow_dispatch:
 
 permissions:
@@ -94,6 +98,33 @@ jobs:
             ./dist/skill-auditor eval "./$d" --fail-below 0
             echo "::endgroup::"
           done <<< "${{ steps.helper_skills.outputs.dirs }}"
+
+      # ── .tessl/plugins/pantheon-org mirror drift (ADR-047, ADR-048) ──
+      # Catches a `tessl install` bug (skipped file, truncated content, a
+      # newly-added skill not picked up) by diffing the source under
+      # .context/plugins/pantheon-org/** against a freshly installed mirror
+      # in the same run — .tessl/plugins/** is gitignored (never tracked),
+      # so this is the only place this class of drift is CI-catchable.
+      # `continue-on-error: true` is a deliberate advisory rollout (ADR-048,
+      # not a permanent choice): flip to hard-fail once this step has run
+      # clean on 5 merged PRs or 2 weeks, whichever comes first.
+      - uses: actions/setup-node@v4
+        if: steps.helper_skills.outputs.count != '0'
+        with:
+          node-version: 22
+
+      - name: Install tessl
+        if: steps.helper_skills.outputs.count != '0'
+        run: npm install -g tessl
+
+      - name: Check .tessl mirror drift (helper skills)
+        if: steps.helper_skills.outputs.count != '0'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          rm -rf .tessl/plugins/pantheon-org
+          tessl install
+          scripts/check-tessl-mirror-drift.sh
 
       # ── Tier 2: LLM-judge eval (advisory only) ──
       # Triggers: workflow_dispatch, or a PR with the 'run-eval' label (and
