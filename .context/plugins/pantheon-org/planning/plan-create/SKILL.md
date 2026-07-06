@@ -69,6 +69,14 @@ Ask the user about the plan. Collect at minimum:
   frontmatter for every plan this skill creates; it flows into
   `.context/index.yaml`, where the "what's next" read protocol sorts by value
   descending, then effort ascending.
+- **Themes** — an ordered list of one or more areas from the controlled
+  vocabulary (`EVAL` / `PR-TOOLING` / `DOCS` / `GOVERNANCE` / `SKILL-QUALITY` /
+  `DISTRIBUTION`), drawn from
+  [`.context/instructions/theme-vocabulary.md`](../../../../instructions/theme-vocabulary.md).
+  The subject axis (what area the plan touches), orthogonal to value/effort.
+  Write it **primary-first** — `themes[0]` answers "what is this mainly about?"
+  and is the tie-breaker below value then effort. Required in frontmatter for
+  every plan this skill creates.
 
 ### 2. Infer local conventions
 
@@ -95,7 +103,8 @@ The template is validated against
 
 The plan always includes:
 - YAML frontmatter with `title`, `type: PLAN`, `status: DRAFT`, `date` (today),
-  `effort` (`S`/`M`/`L`/`TBD`), `value` (`HIGH`/`MEDIUM`/`LOW`)
+  `effort` (`S`/`M`/`L`/`TBD`), `value` (`HIGH`/`MEDIUM`/`LOW`), `themes` (ordered
+  list from the theme vocabulary, primary-first)
 - `## Goal` section — one paragraph describing the desired end state
 - `## Phases` section — numbered phases with tasks and wave annotations
 - `## Open Questions` section — unresolved items for the reviewer
@@ -157,6 +166,9 @@ After creating the plan, run these checks:
    blocking the estimate.
 6. **Value graded** — frontmatter has `value` set to `HIGH`/`MEDIUM`/`LOW`,
    graded against `.context/instructions/value-rubric.md` rather than guessed.
+7. **Themes tagged** — frontmatter has a non-empty `themes` list, ordered
+   primary-first, with every member drawn from
+   `.context/instructions/theme-vocabulary.md` (no invented themes).
 
 ## Mindset
 

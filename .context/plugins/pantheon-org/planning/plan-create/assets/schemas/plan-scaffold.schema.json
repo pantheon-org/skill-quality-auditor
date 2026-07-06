@@ -15,7 +15,7 @@
         "filename": { "type": "string", "minLength": 1 },
         "frontmatter": {
           "type": "object",
-          "required": ["title", "type", "status", "date", "effort", "value"],
+          "required": ["title", "type", "status", "date", "effort", "value", "themes"],
           "additionalProperties": false,
           "properties": {
             "title": { "type": "string", "minLength": 1 },
@@ -31,6 +31,16 @@
               "type": "string",
               "enum": ["HIGH", "MEDIUM", "LOW"],
               "description": "Benefit-of-action grade (UPPER_CASE), distinct from effort (cost) and severity (risk-of-inaction). Graded against .context/instructions/value-rubric.md. Required for a new plan (DRAFT status). The 'what's next' read protocol sorts by value descending, then effort ascending."
+            },
+            "themes": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": ["EVAL", "PR-TOOLING", "DOCS", "GOVERNANCE", "SKILL-QUALITY", "DISTRIBUTION"]
+              },
+              "description": "Subject axis (UPPER_CASE): what area(s) of the system the plan is about, drawn from .context/instructions/theme-vocabulary.md. A multi-valued ORDERED list written primary-first — themes[0] is the primary theme and the only member that participates in the read-protocol tie-break (below value then effort). Required for a new plan (DRAFT status)."
             },
             "related": {
               "type": "array",

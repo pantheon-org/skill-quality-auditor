@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 effort: M
 value: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../findings/context-taxonomy-gap-2026-07-06.md
   - ../instructions/value-rubric.md

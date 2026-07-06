@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../index.yaml
   - ../instructions/value-rubric.md
