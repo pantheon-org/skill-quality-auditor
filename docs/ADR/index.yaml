@@ -401,3 +401,13 @@ entries:
       - path: ".context/findings/context-taxonomy-gap-2026-07-06.md"
       - path: ".context/instructions/theme-vocabulary.md"
       - path: "docs/ADR/adr-049-context-value-frontmatter-field.md"
+  - path: "ADR/adr-052-governance-known-issue-triage.md"
+    adr: "ADR-052"
+    title: "ADR-052: governance known-issue debt is triaged by value, not batch-fixed"
+    status: accepted
+    date: 2026-07-06
+    context:
+      - path: ".context/plans/governance-tooling-hardening-2026-07-06.md"
+      - path: ".context/plans/governance-enum-and-schema-hardening-2026-07-06.md"
+      - path: ".context/known-issues/known-issues-lack-enforcement-2026-07-06.md"
+      - path: "docs/ADR/adr-046-known-issues-context-type.md"
