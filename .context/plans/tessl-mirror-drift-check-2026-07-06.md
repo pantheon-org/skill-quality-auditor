@@ -1,7 +1,7 @@
 ---
 title: "Plan: CI check for .tessl/plugins/pantheon-org mirror drift"
 type: plan
-status: active
+status: done
 date: 2026-07-06
 effort: S
 related:
