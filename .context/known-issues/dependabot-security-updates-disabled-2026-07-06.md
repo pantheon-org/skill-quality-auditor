@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: Dependabot security updates disabled — cooldown can delay critical fixes"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: DONE
 date: 2026-07-06
 severity: HIGH
 value: HIGH
@@ -16,6 +16,17 @@ related:
 > The 7-day dependency cooldown (ADR-055) relies on advisory-driven security updates
 > bypassing it, but Dependabot alerts and security updates are both OFF on this repo, so
 > a critical CVE currently gets no fast PR and is subject to the full 7-day delay.
+
+## Resolution (2026-07-06)
+
+Both settings were enabled via the GitHub API:
+
+- `PUT /repos/pantheon-org/skill-quality-auditor/vulnerability-alerts` → `204`
+- `PUT /repos/pantheon-org/skill-quality-auditor/automated-security-fixes` → `204`
+  (verified: `automated-security-fixes` now reports `{"enabled":true,"paused":false}`)
+
+Advisory-driven security updates now bypass the cooldown, so ADR-055's policy behaves as
+intended: **7-day cooldown on version updates, unless security-critical.** Closed.
 
 ## Why this exists
 
