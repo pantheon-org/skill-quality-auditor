@@ -21,6 +21,8 @@ known-issues:
     date: 2026-07-06
     severity: HIGH
     value: MEDIUM
+    themes:
+      - DOCS
     related:
       - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -31,6 +33,8 @@ known-issues:
     date: 2026-07-06
     severity: HIGH
     value: MEDIUM
+    themes:
+      - GOVERNANCE
     related:
       - ../../docs/ADR/adr-046-known-issues-context-type.md
       - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md
@@ -40,6 +44,8 @@ known-issues:
     date: 2026-07-06
     severity: MEDIUM
     value: MEDIUM
+    themes:
+      - GOVERNANCE
     related:
       - ../../hk.pkl
       - ../plugins/pantheon-org/governance/adr-capture/scripts/regenerate-adr-index.sh
@@ -50,6 +56,8 @@ known-issues:
     date: 2026-07-06
     severity: MEDIUM
     value: MEDIUM
+    themes:
+      - GOVERNANCE
     related:
       - ../plugins/pantheon-org/governance/adr-capture/scripts/check-undocumented-decisions.sh
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -59,6 +67,8 @@ known-issues:
     date: 2026-07-06
     severity: MEDIUM
     value: MEDIUM
+    themes:
+      - SKILL-QUALITY
     related:
       - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
       - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
@@ -69,6 +79,9 @@ known-issues:
     date: 2026-07-06
     severity: MEDIUM
     value: MEDIUM
+    themes:
+      - GOVERNANCE
+      - SKILL-QUALITY
     related:
       - ../../reporter/remediation_plan_generate.go
       - ../plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh
@@ -79,6 +92,8 @@ known-issues:
     date: 2026-07-06
     severity: LOW
     value: LOW
+    themes:
+      - GOVERNANCE
     related:
       - ../../docs/ADR/adr-050-uppercase-frontmatter-enums.md
       - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json
@@ -89,6 +104,8 @@ known-issues:
     date: 2026-07-06
     severity: LOW
     value: LOW
+    themes:
+      - GOVERNANCE
     related:
       - ../plugins/pantheon-org/context-mgmt/context-file/assets/schemas/context-frontmatter.schema.json
       - ../plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh
@@ -108,6 +125,9 @@ plans:
     date: 2026-07-04
     effort: S
     value: MEDIUM
+    themes:
+      - PR-TOOLING
+      - SKILL-QUALITY
     related:
       - ../findings/agent-scan-integration-2026-07-04.md
       - ../../docs/ADR/adr-034-agent-scan-skill-security-scanning.md
@@ -178,6 +198,8 @@ plans:
     date: 2026-07-04
     effort: M
     value: MEDIUM
+    themes:
+      - GOVERNANCE
     related:
       - ../findings/cross-reference-status-drift-2026-07-04.md
       - ../findings/automate-post-merge-status-sync-2026-07-04.md
@@ -247,6 +269,8 @@ plans:
     date: 2026-07-02
     effort: L
     value: MEDIUM
+    themes:
+      - EVAL
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - migrate-off-tessl-eval-2026-06-29.md
@@ -261,6 +285,8 @@ plans:
     date: 2026-06-29
     effort: TBD
     value: HIGH
+    themes:
+      - EVAL
     related:
       - ../findings/eval-gating-byok-2026-06-29.md
   - path: ".context/plans/migrate-to-hk-and-markdownlint-cli2-2026-06-29.md"
@@ -313,6 +339,8 @@ plans:
     date: 2026-07-04
     effort: M
     value: MEDIUM
+    themes:
+      - PR-TOOLING
     related:
       - ../findings/pr-agent-integration-2026-07-04.md
       - ../../.github/workflows/skill-quality.yml
@@ -330,6 +358,8 @@ plans:
     date: 2026-07-06
     effort: M
     value: MEDIUM
+    themes:
+      - PR-TOOLING
     related:
       - ../findings/pr-merge-validation-gap-2026-07-06.md
       - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
@@ -340,6 +370,8 @@ plans:
     date: 2026-07-06
     effort: S
     value: MEDIUM
+    themes:
+      - SKILL-QUALITY
     related:
       - ../findings/rules-scoped-to-scripts-not-procedures-2026-07-06.md
       - ../../.agents/RULES.md
@@ -356,6 +388,8 @@ plans:
     date: 2026-07-06
     effort: S
     value: MEDIUM
+    themes:
+      - SKILL-QUALITY
     related:
       - ../findings/session-reflection-procedural-repetition-blind-spot-2026-07-06.md
       - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
@@ -417,11 +451,16 @@ findings:
     status: ACTIVE
     date: 2026-04-29
     value: LOW
+    themes:
+      - SKILL-QUALITY
   - path: ".context/findings/agent-scan-integration-2026-07-04.md"
     title: "Finding: snyk/agent-scan as a PR security gate for cmd/assets/"
     status: ACTIVE
     date: 2026-07-04
     value: LOW
+    themes:
+      - PR-TOOLING
+      - SKILL-QUALITY
     related:
       - ../plans/agent-scan-integration-2026-07-04.md
       - ../../docs/ADR/index.yaml
@@ -431,6 +470,8 @@ findings:
     status: ACTIVE
     date: 2026-07-03
     value: LOW
+    themes:
+      - EVAL
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - ../findings/arxiv-self-evolution-survey-2026-07-03.md
@@ -440,6 +481,8 @@ findings:
     status: ACTIVE
     date: 2026-07-03
     value: LOW
+    themes:
+      - EVAL
     related:
       - ../findings/evoskill-integration-2026-07-02.md
       - ../plans/evoskill-core-loop-port-2026-07-02.md
@@ -449,6 +492,9 @@ findings:
     status: ACTIVE
     date: 2026-07-04
     value: MEDIUM
+    themes:
+      - GOVERNANCE
+      - PR-TOOLING
     related:
       - ../plans/post-merge-status-sync-2026-07-04.md
       - ../plugins/pantheon-org/governance/adr-capture/scripts/merge-status-sync.sh
@@ -476,6 +522,8 @@ findings:
     status: ACTIVE
     date: 2026-07-04
     value: LOW
+    themes:
+      - GOVERNANCE
     related:
       - ../plans/post-merge-status-sync-2026-07-04.md
       - ../findings/automate-post-merge-status-sync-2026-07-04.md
@@ -488,6 +536,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: MEDIUM
+    themes:
+      - DOCS
     related:
       - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -499,6 +549,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: MEDIUM
+    themes:
+      - DOCS
     related:
       - ../../scripts/check-docs-drift.sh
       - ../../docs/ADR/adr-044-docs-drift-pr-gate.md
@@ -508,6 +560,8 @@ findings:
     status: ACTIVE
     date: 2026-06-29
     value: MEDIUM
+    themes:
+      - EVAL
     related:
       - ../plans/migrate-off-tessl-eval-2026-06-29.md
   - path: ".context/findings/evoskill-integration-2026-07-02.md"
@@ -515,11 +569,15 @@ findings:
     status: ACTIVE
     date: 2026-07-02
     value: LOW
+    themes:
+      - EVAL
   - path: ".context/findings/gh-pages-docs-drift-2026-07-05.md"
     title: "Finding: GH Pages docs-drift investigation — no deploy pipeline bug found"
     status: ACTIVE
     date: 2026-07-05
     value: LOW
+    themes:
+      - DOCS
     related:
       - ../../.github/workflows/docs.yml
       - ../../docmd.config.json
@@ -529,6 +587,9 @@ findings:
     status: ACTIVE
     date: 2026-07-04
     value: MEDIUM
+    themes:
+      - DISTRIBUTION
+      - PR-TOOLING
     related:
       - ../../.github/workflows/release.yml
       - ../../.github/workflows/skill-quality.yml
@@ -543,6 +604,8 @@ findings:
     status: ACTIVE
     date: 2026-07-01
     value: MEDIUM
+    themes:
+      - DISTRIBUTION
     related:
       - ../plans/onboarding-improvements-2026-04-27.md
   - path: ".context/findings/homebrew-tap-prerequisites.md"
@@ -550,6 +613,8 @@ findings:
     status: ACTIVE
     date: 2026-04-28
     value: LOW
+    themes:
+      - DISTRIBUTION
     related:
       - ../plans/onboarding-improvements-2026-04-27.md
   - path: ".context/findings/index-yaml-split-review-2026-07-06.md"
@@ -557,6 +622,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - GOVERNANCE
     related:
       - ../../.agents/RULES.md
       - ../../.context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh
@@ -573,6 +640,8 @@ findings:
     status: ACTIVE
     date: 2026-07-04
     value: MEDIUM
+    themes:
+      - PR-TOOLING
     related:
       - ../../.plumber.yaml
       - ../../.github/workflows/ci.yml
@@ -583,6 +652,8 @@ findings:
     status: ACTIVE
     date: 2026-07-04
     value: LOW
+    themes:
+      - PR-TOOLING
     related:
       - ../../.github/workflows/skill-quality.yml
       - ../../.plumber.yaml
@@ -592,6 +663,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - PR-TOOLING
     related:
       - ../plans/pr-agent-integration-2026-07-04.md
       - ../../.pr_agent.toml
@@ -609,6 +682,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - PR-TOOLING
     related:
       - ../plugins/pantheon-org/workshop/pr-author/SKILL.md
       - ../plugins/pantheon-org/governance/adr-capture/SKILL.md
@@ -628,6 +703,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - SKILL-QUALITY
     related:
       - ../../.agents/RULES.md
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -636,6 +713,8 @@ findings:
     status: ACTIVE
     date: 2026-07-03
     value: MEDIUM
+    themes:
+      - SKILL-QUALITY
     related:
       - ../plans/yaml-content-validation-config-2026-07-03.md
       - ../findings/yaml-content-validation-config-2026-07-03.md
@@ -649,6 +728,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - SKILL-QUALITY
     related:
       - ../plugins/pantheon-org/workshop/session-reflection/SKILL.md
       - ../findings/pr-merge-validation-gap-2026-07-06.md
@@ -657,6 +738,9 @@ findings:
     status: ACTIVE
     date: 2026-07-05
     value: MEDIUM
+    themes:
+      - EVAL
+      - PR-TOOLING
     related:
       - ../../.github/workflows/skill-quality.yml
       - ../../internal/llmclient/client.go
@@ -674,21 +758,30 @@ findings:
     status: ACTIVE
     date: 2026-06-30
     value: LOW
+    themes:
+      - EVAL
   - path: ".context/findings/skilllens-integration-2026-06-30.md"
     title: "Finding: SkillLens Integration Assessment"
     status: ACTIVE
     date: 2026-06-30
     value: LOW
+    themes:
+      - EVAL
   - path: ".context/findings/tessl-eval-criteria-schema-2026-06-30.md"
     title: "Finding: Tessl Eval Criteria JSON Schema — 2026-06-30"
     status: ACTIVE
     date: 2026-06-30
     value: LOW
+    themes:
+      - EVAL
   - path: ".context/findings/tessl-mirror-drift-protection-2026-07-06.md"
     title: "Finding: don't track the .tessl/plugins mirror — use a CI-only ephemeral diff instead"
     status: ACTIVE
     date: 2026-07-06
     value: LOW
+    themes:
+      - GOVERNANCE
+      - PR-TOOLING
     related:
       - index-yaml-split-review-2026-07-06.md
       - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md
@@ -697,6 +790,8 @@ findings:
     status: ACTIVE
     date: 2026-07-06
     value: MEDIUM
+    themes:
+      - GOVERNANCE
     related:
       - ../plans/context-prioritisation-signal-2026-07-06.md
       - ../instructions/value-rubric.md
@@ -706,6 +801,8 @@ findings:
     status: ACTIVE
     date: 2026-07-03
     value: LOW
+    themes:
+      - SKILL-QUALITY
     related:
       - ../plans/yaml-content-validation-config-2026-07-03.md
 

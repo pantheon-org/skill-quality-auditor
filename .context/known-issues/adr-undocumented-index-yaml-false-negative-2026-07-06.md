@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
 severity: MEDIUM
+themes:
+  - GOVERNANCE
 related:
   - ../plugins/pantheon-org/governance/adr-capture/scripts/check-undocumented-decisions.sh
   - ../findings/pr-merge-validation-gap-2026-07-06.md

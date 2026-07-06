@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - GOVERNANCE
 related:
   - ../../.agents/RULES.md
   - ../../.context/plugins/pantheon-org/context-mgmt/context-index/scripts/regenerate-context-index.sh

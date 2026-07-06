@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-03
 value: MEDIUM
+themes:
+  - SKILL-QUALITY
 related:
   - ../plans/yaml-content-validation-config-2026-07-03.md
   - ../findings/yaml-content-validation-config-2026-07-03.md

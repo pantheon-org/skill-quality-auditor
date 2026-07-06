@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: LOW
+themes:
+  - GOVERNANCE
 related:
   - ../plans/post-merge-status-sync-2026-07-04.md
   - ../findings/automate-post-merge-status-sync-2026-07-04.md

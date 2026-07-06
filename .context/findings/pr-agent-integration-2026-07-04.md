@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: LOW
+themes:
+  - PR-TOOLING
 related:
   - ../../.github/workflows/skill-quality.yml
   - ../../.plumber.yaml

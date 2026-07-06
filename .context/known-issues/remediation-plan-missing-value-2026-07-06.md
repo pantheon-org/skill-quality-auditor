@@ -5,6 +5,9 @@ status: ACTIVE
 date: 2026-07-06
 severity: MEDIUM
 value: MEDIUM
+themes:
+  - GOVERNANCE
+  - SKILL-QUALITY
 related:
   - ../../reporter/remediation_plan_generate.go
   - ../plugins/pantheon-org/context-mgmt/context-index/scripts/validate-context-frontmatter.sh

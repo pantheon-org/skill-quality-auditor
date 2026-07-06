@@ -5,6 +5,9 @@ status: DRAFT
 date: 2026-07-04
 value: MEDIUM
 effort: S
+themes:
+  - PR-TOOLING
+  - SKILL-QUALITY
 related:
   - ../findings/agent-scan-integration-2026-07-04.md
   - ../../docs/ADR/adr-034-agent-scan-skill-security-scanning.md

@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
 severity: HIGH
+themes:
+  - DOCS
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-02
 value: LOW
+themes:
+  - EVAL
 ---
 
 # Finding: EvoSkill Integration Opportunities

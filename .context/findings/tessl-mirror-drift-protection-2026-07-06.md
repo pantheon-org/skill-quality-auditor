@@ -4,6 +4,9 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - GOVERNANCE
+  - PR-TOOLING
 related:
   - index-yaml-split-review-2026-07-06.md
   - ../../.context/plugins/pantheon-org/planning/design-debate/SKILL.md

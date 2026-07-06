@@ -4,6 +4,9 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: MEDIUM
+themes:
+  - DISTRIBUTION
+  - PR-TOOLING
 related:
   - ../../.github/workflows/release.yml
   - ../../.github/workflows/skill-quality.yml

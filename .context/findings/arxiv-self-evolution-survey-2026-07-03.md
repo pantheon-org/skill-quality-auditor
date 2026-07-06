@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-03
 value: LOW
+themes:
+  - EVAL
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - ../plans/evoskill-core-loop-port-2026-07-02.md

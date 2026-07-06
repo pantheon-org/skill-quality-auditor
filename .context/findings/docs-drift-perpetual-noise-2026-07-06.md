@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
+themes:
+  - DOCS
 related:
   - ../../scripts/check-docs-drift.sh
   - ../../docs/ADR/adr-044-docs-drift-pr-gate.md

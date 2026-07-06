@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-03
 value: LOW
+themes:
+  - EVAL
 related:
   - ../findings/evoskill-integration-2026-07-02.md
   - ../findings/arxiv-self-evolution-survey-2026-07-03.md

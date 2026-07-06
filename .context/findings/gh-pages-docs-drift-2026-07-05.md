@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-05
 value: LOW
+themes:
+  - DOCS
 related:
   - ../../.github/workflows/docs.yml
   - ../../docmd.config.json

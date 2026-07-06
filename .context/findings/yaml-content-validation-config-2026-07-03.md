@@ -2,6 +2,8 @@
 title: "Finding: YAML Content Validation Config — 2026-07-03"
 type: FINDING
 status: ACTIVE
+themes:
+  - SKILL-QUALITY
 related:
   - ../plans/yaml-content-validation-config-2026-07-03.md
 date: 2026-07-03

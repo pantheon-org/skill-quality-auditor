@@ -4,6 +4,9 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: LOW
+themes:
+  - PR-TOOLING
+  - SKILL-QUALITY
 related:
   - ../plans/agent-scan-integration-2026-07-04.md
   - ../../docs/ADR/index.yaml

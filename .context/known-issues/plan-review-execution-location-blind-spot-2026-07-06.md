@@ -5,6 +5,8 @@ status: ACTIVE
 date: 2026-07-06
 value: MEDIUM
 severity: MEDIUM
+themes:
+  - SKILL-QUALITY
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md

@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-04
 value: MEDIUM
+themes:
+  - PR-TOOLING
 related:
   - ../../.plumber.yaml
   - ../../.github/workflows/ci.yml

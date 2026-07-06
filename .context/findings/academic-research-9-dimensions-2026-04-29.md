@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-04-29
 value: LOW
+themes:
+  - SKILL-QUALITY
 ---
 # Academic Research Findings: 9-Dimension Quality Framework
 

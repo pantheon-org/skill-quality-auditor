@@ -4,6 +4,8 @@ type: FINDING
 status: ACTIVE
 date: 2026-07-06
 value: LOW
+themes:
+  - PR-TOOLING
 related:
   - ../plans/pr-agent-integration-2026-07-04.md
   - ../../.pr_agent.toml
