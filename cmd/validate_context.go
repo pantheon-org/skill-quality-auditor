@@ -30,16 +30,18 @@ const (
 
 var validateContextCmd = &cobra.Command{
 	Use:   "context [paths...]",
-	Short: "Validate .context/**/*.md frontmatter against the JSON schemas (catches typo'd/unknown keys)",
-	Long: `Validate .context frontmatter with a real JSON-schema validator.
+	Short: "Validate context-file frontmatter against the JSON schemas (catches typo'd/unknown keys)",
+	Long: `Validate context-file frontmatter with a real JSON-schema validator.
 
 Enforces the schemas' additionalProperties:false — a typo'd or unknown top-level
 key (e.g. valeu: HIGH) is rejected, which the shell validator cannot catch.
-Generated remediation plans (*-remediation-plan-*.md) validate against the
+Generated remediation plans (identified by a skill_name key) validate against the
 dedicated remediation-plan schema; all other files against context-frontmatter.
 
-With no paths, walks .context/**/*.md (excluding .context/plugins/**). Exit 1 on
-any violation.`,
+Each path may be a Markdown file or a directory (walked recursively for *.md,
+skipping a plugins/ subdirectory). With no path, defaults to '.context' — this
+project's location for context files, not a shared convention; pass a path to
+validate context files wherever they live. Exit 1 on any violation.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		repoRootFlag, _ := cmd.Flags().GetString("repo-root")
 		repoRoot, err := resolveRepoRoot(repoRootFlag)
@@ -51,16 +53,31 @@ any violation.`,
 			return err
 		}
 
-		files := args
-		if len(files) == 0 {
-			files = v.walk()
+		targets := args
+		if len(targets) == 0 {
+			// Default to this repo's context location. Not baked in as the only
+			// mode — any file or directory path can be passed instead.
+			targets = []string{".context"}
 		}
-		for _, f := range files {
-			path := f
+		var files []string
+		for _, t := range targets {
+			path := t
 			if !filepath.IsAbs(path) {
 				path = filepath.Join(repoRoot, path)
 			}
-			v.checkFile(path)
+			info, statErr := os.Stat(path)
+			if statErr != nil {
+				v.errorf("%s: %v", t, statErr)
+				continue
+			}
+			if info.IsDir() {
+				files = append(files, walkMarkdown(path)...)
+			} else {
+				files = append(files, path)
+			}
+		}
+		for _, f := range files {
+			v.checkFile(f)
 		}
 		if v.errors > 0 {
 			return fmt.Errorf("context frontmatter schema validation failed (%d error(s))", v.errors)
@@ -107,16 +124,19 @@ func compileSchema(path string) (*jsonschema.Schema, error) {
 	return c.Compile(url)
 }
 
-// walk returns all .context/**/*.md paths except those under .context/plugins/.
-func (v *contextSchemaValidator) walk() []string {
+// walkMarkdown returns all *.md files under root, skipping a plugins/ subdirectory
+// of root. Plugin skill files (e.g. .context/plugins/) use Tessl frontmatter, not
+// the context-file schema, and are validated by their own tooling — this mirrors
+// the shell validator's `.context/plugins/**` exclusion but keys off the walked
+// root rather than a hardcoded `.context` path.
+func walkMarkdown(root string) []string {
 	var out []string
-	contextDir := filepath.Join(v.repoRoot, ".context")
-	pluginsDir := filepath.Join(contextDir, "plugins")
-	_ = filepath.Walk(contextDir, func(path string, info os.FileInfo, err error) error {
+	pluginsDir := filepath.Join(root, "plugins")
+	_ = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
 			return nil
 		}
-		if strings.HasPrefix(path, pluginsDir) {
+		if path == pluginsDir || strings.HasPrefix(path, pluginsDir+string(os.PathSeparator)) {
 			return nil
 		}
 		if strings.HasSuffix(path, ".md") {
