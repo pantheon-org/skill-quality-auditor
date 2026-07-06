@@ -140,3 +140,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Rationale:** These files are deterministically derived by scanning current frontmatter/content across the repo, not authored by hand. A manually merged set of conflict markers can satisfy git's conflict resolution while still being internally inconsistent with what the generator would actually produce (duplicate entries, stale counts, wrong ordering) — regenerating is strictly correct and no slower than merging by hand.
 
+---
+
+### Rule: Check for unrelated uncommitted work before `git reset --hard`
+
+**Directive:** ALWAYS run `git status` immediately before any `git reset --hard` (or other command that discards uncommitted working-tree changes, e.g. `git checkout -- .`, `git clean -f`). If uncommitted changes exist beyond what you intend to discard, commit or stash them first — `git reset --hard` wipes ALL uncommitted changes to tracked files, not just the target commit's diff.
+
+**Rationale:** Learned live: a regression-test throwaway commit was discarded via `git reset --hard HEAD~1` while real, working, tested implementation changes were still sitting as uncommitted working-tree edits — the hard reset silently destroyed that real work along with the intended throwaway commit. Caught only because the next verification step's output looked wrong, and the diff had to be manually reconstructed from memory rather than recovered. A `git status` check immediately before the reset costs nothing and would have caught this before it happened.
+
