@@ -1,0 +1,1 @@
+external-source-fit: correctly rejects a misleading source as No fit without porting its literals

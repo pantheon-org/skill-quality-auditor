@@ -1,0 +1,8 @@
+{
+  "instructions_coverage": {
+    "coverage_percentage": 100,
+    "covered": 6,
+    "total": 6,
+    "note": "All six authored instructions are exercised by scenario-1 (no-fit), scenario-2 (good-fit), and scenario-3 (partial-fit) criteria."
+  }
+}

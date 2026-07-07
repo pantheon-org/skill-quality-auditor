@@ -1,0 +1,24 @@
+{
+  "checklist": [
+    {
+      "criterion": "Characterises the source mechanically",
+      "description": "States what the source actually does, independent of its name or the asker's framing, identifying it as a project-specific drift guard rather than a scorer.",
+      "max_score": 30
+    },
+    {
+      "criterion": "Checks overlap before judging",
+      "description": "Maps the source against existing capability and notes its generic kernel is already covered, so importing or porting it would be duplication.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Renders a No fit verdict",
+      "description": "Renders exactly one verdict band, No fit, and records the rejection as a finding so the question is not re-opened.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Does not port hardcoded literals",
+      "description": "Never proposes porting the source's hardcoded project-specific literals; extracts at most one generic idea built natively, or states there is none.",
+      "max_score": 20
+    }
+  ]
+}

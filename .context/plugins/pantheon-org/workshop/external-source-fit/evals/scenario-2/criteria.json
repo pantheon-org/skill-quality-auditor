@@ -1,0 +1,24 @@
+{
+  "checklist": [
+    {
+      "criterion": "Characterises the source mechanically",
+      "description": "States what the source actually does, independent of its name, and confirms it is generic rather than hardcoded to its home project.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Checks overlap and finds a real gap",
+      "description": "Maps against existing capability and confirms no dimension, validate, or duplication engine already covers the measured behaviour.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Renders a Good fit verdict",
+      "description": "Renders exactly one verdict band, Good fit, because the source fills a real gap with proportionate effort.",
+      "max_score": 25
+    },
+    {
+      "criterion": "States the adoption vehicle and next step",
+      "description": "Decides whether the idea belongs in the Go CLI or a helper skill and recommends building it natively, grading the finding by leverage not novelty.",
+      "max_score": 25
+    }
+  ]
+}

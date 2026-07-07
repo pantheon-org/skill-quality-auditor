@@ -1,6 +1,6 @@
 ---
 name: external-source-fit
-description: "Assess whether an external GitHub repo, file, or project fits the skill-quality-auditor project: what it actually is (not what its name implies), whether it overlaps existing capability (D1-D9 scorers, validate, duplication, native eval runner, helper skills), whether it belongs as a Go CLI change or a helper skill, what is worth learning even from a rejected source, and whether the project needs it. Ends by writing a house-standard FINDING and flagging any binding decision for ADR capture. Use when someone links an external repo or file and asks whether it fits, whether we can learn from it, or whether we need it. Do NOT use for reviewing internal code (use review-changes), scoring a SKILL.md (use skill-quality-auditor), or web research (use deep-research). Triggers: 'does this repo fit', 'evaluate this project', 'assess this external repo', 'would this fit our project', 'can we learn from', 'is this worth adopting', 'fit assessment', 'should we import', 'should we port this'."
+description: "Assess whether an external GitHub repo, file, project fits the skill-quality-auditor project: what it actually is (not what its name implies); whether it overlaps existing capability (D1-D9 scorers, validate, duplication, eval runner, helper skills); whether it belongs in the Go CLI versus a helper skill; what is worth learning from even a rejected source; whether the project needs it. Ends by writing a house-standard FINDING, flagging any binding decision for ADR capture. Use when someone links an external repo, file, project asking whether it fits, whether we can learn from it, whether we need it. Do NOT use for reviewing internal code (use review-changes), scoring a SKILL.md (use skill-quality-auditor), doing web research (use deep-research). Triggers: 'does this repo fit', 'evaluate this project', 'assess this external repo', 'would this fit our project', 'can we learn from', 'is this worth adopting', 'fit assessment', 'should we import', 'should we port this'."
 ---
 
 # External Source Fit Assessment
@@ -8,6 +8,20 @@ description: "Assess whether an external GitHub repo, file, or project fits the 
 Given a link to an external GitHub repo, file, or project, decide whether it fits this project and write the answer up as a finding. The recurring trap is answering from the name or the asker's framing ("it's a skill-eval tool, so it must be relevant") instead of from what the source actually does. Most sources are a partial or no fit; the value is in naming the one transferable idea precisely and in not re-opening the question later.
 
 This skill is **project-aware**: every verdict is rendered through the skill-quality-auditor lens, not in the abstract.
+
+## Mindset
+
+- ALWAYS characterise what the source does before judging it; the name and the framing MUST NOT stand in for reading the code.
+- PREFER extracting a generic kernel; AVOID porting hardcoded, project-specific literals.
+- By default, most sources are a Partial or No fit. Treat Good fit as the exception you must justify, not the hope you start from.
+- Judge on need, not novelty. A clever technique is RECOMMENDED for adoption only when it closes a real gap this project has.
+- A rejection recorded once is cheaper than the same source re-assessed three times. The finding is the deliverable.
+
+## When to use / When NOT to use
+
+Use this skill when someone links an external repo, file, or project and asks whether it fits, whether there is anything to learn from it, or whether the project needs it.
+
+When NOT to use: reviewing internal changes (use `review-changes`), scoring one of our own SKILL.md files (use `skill-quality-auditor`), or open-ended topic research with no specific source (use `deep-research`).
 
 ## Prerequisites
 
@@ -28,6 +42,8 @@ curl -sL "https://raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>" -o "$SC
 # 2. Read the source, characterise it, map it against this project, render a verdict.
 # 3. Write the finding via the context-file skill, then regenerate the index.
 ```
+
+→ produces a finding file under the findings directory plus a one-line verdict (Good fit, Partial fit, or No fit) reported to the user.
 
 ## Workflow
 
@@ -55,11 +71,11 @@ Then decide the **vehicle if adopted**: a deterministic, generic, offline comput
 
 ### 4. Render the verdict
 
-Use the fit rubric (three bands: **Good fit / Partial fit / No fit**) in [references/fit-rubric.md](references/fit-rubric.md). Keep novelty and need separate: a technique can be genuinely novel and still not needed, and a source can be a poor fit overall yet contain one idea worth keeping.
+You MUST render exactly one band from the fit rubric (**Good fit / Partial fit / No fit**) in [references/fit-rubric.md](references/fit-rubric.md). ALWAYS keep novelty and need separate: a technique can be genuinely novel and still not needed, and a source can be a poor fit overall yet contain one idea worth keeping.
 
 ### 5. Extract the salvageable idea, separately
 
-Even a "no fit" verdict should name what, if anything, is worth learning, and how it would be built **natively** rather than imported. Resist porting hardcoded literals; extract the generic kernel. If there is genuinely nothing transferable, say that explicitly rather than manufacturing a takeaway.
+You MUST name what, if anything, is worth learning, and how it would be built **natively** rather than imported. NEVER port hardcoded literals; ALWAYS extract the generic kernel instead. If there is genuinely nothing transferable, state that explicitly and NEVER manufacture a takeaway.
 
 ### 6. Write it up as a finding
 
@@ -82,7 +98,7 @@ Then report to the user: lead with the one-word verdict and the reason, then the
 | Band | Meaning | Typical action |
 | --- | --- | --- |
 | **Good fit** | Fills a real gap, generic enough to adopt, low overlap with existing capability | Draft a plan to build it (natively) |
-| **Partial fit** | One transferable idea inside an otherwise ill-fitting source | Record the idea; build only the kernel if/when needed |
+| **Partial fit** | One transferable idea inside an otherwise ill-fitting source | Record the idea; build the kernel only when a concrete need appears |
 | **No fit** | Wrong abstraction, project-specific, or already covered | Record the rejection so it is not re-opened |
 
 Full criteria and the finding spine: [references/fit-rubric.md](references/fit-rubric.md).
@@ -118,6 +134,50 @@ Generic shapes each band tends to take (not tied to any one source):
 - **Good fit:** a source that cleanly fills a gap no dimension covers, generic enough to adopt with proportionate effort.
 
 Prior completed assessments are kept as findings in the findings directory. Read the two or three most recent before writing a new one, to match the house tone and depth rather than copying any single example.
+
+## Example run
+
+Acquire only what answers the question:
+
+```bash
+gh repo clone <owner>/<repo> "$SCRATCH/src" -- --depth=1
+```
+
+Ground the overlap check against this project's own capability:
+
+```bash
+# check whether a dimension already measures what the source claims
+grep -rn "trigger\|coverage\|similarity" scorer/
+```
+
+Output: exactly one verdict band per assessment, written as a finding.
+
+The finding's frontmatter should look like this:
+
+```yaml
+title: "Finding: <source> is a <fit band> (<one-line why>)"
+type: FINDING
+status: ACTIVE
+value: LOW
+themes:
+  - SKILL-QUALITY
+```
+
+Verify the write-up before reporting:
+
+```bash
+# verify: the finding is indexed and frontmatter is valid
+bash .claude/skills/tessl__context-index/scripts/regenerate-context-index.sh
+```
+
+Then report to the user:
+
+```text
+Verdict: No fit → project-specific drift guard, kernel already covered by D4 + validate.
+Salvageable: config-driven custom lint rules on `validate` (deferrable). Finding: <path>.
+```
+
+You should see one clear verdict, the salvageable idea (or an explicit "nothing transferable"), and a link to the finding.
 
 ## References
 
