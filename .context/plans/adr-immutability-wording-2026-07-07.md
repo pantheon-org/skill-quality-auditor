@@ -1,7 +1,7 @@
 ---
 title: "Plan: reconcile ADR immutability wording to 'immutable from acceptance'"
 type: PLAN
-status: DRAFT
+status: DONE
 date: 2026-07-07
 effort: S
 value: MEDIUM
@@ -14,6 +14,15 @@ related:
 ---
 
 # Plan: reconcile ADR immutability wording to "immutable from acceptance"
+
+> **Implemented (2026-07-07), branch `chore/adr-immutability-wording`.** Phase 1:
+> ADR-061 created (`proposed`), linking this plan + the finding; ADR index regenerated.
+> Phase 2: the four sites reconciled — `SKILL.md` banner/mindset/anti-pattern and
+> `evals/instructions.json:11`; references/template confirmed no-op; the repo-wide grep
+> surfaced only one historical hit (`plumber-advisory-workflow-2026-07-04.md:133`,
+> status DONE) left as a record. Phase 3: coherence gate clean, `.tessl` mirror
+> re-synced (gitignored), skill re-scored 114/140 B (no regression vs the 85/F
+> pre-remediation baseline), `hk check` + `go test` green.
 
 ## Goal
 
