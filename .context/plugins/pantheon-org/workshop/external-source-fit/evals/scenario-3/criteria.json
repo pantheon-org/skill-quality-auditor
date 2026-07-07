@@ -3,21 +3,26 @@
     {
       "criterion": "Separates the whole from the idea",
       "description": "Characterises the framework mechanically and distinguishes the ill-fitting whole from the single transferable technique.",
-      "max_score": 30
+      "max_score": 25
     },
     {
       "criterion": "Checks overlap for the kernel",
       "description": "Confirms the whole is a poor fit while the one technique is not already covered by an existing dimension or capability.",
-      "max_score": 25
+      "max_score": 20
     },
     {
       "criterion": "Renders a Partial fit verdict",
       "description": "Renders exactly one verdict band, Partial fit, recording the salvageable idea to build natively only when a concrete need appears.",
-      "max_score": 25
+      "max_score": 20
     },
     {
       "criterion": "Never imports the whole framework",
       "description": "Never proposes importing the whole framework or porting its project-specific glue and literals.",
+      "max_score": 15
+    },
+    {
+      "criterion": "Emits a valid structured fit-assessment block",
+      "description": "Embeds the machine-readable fit-assessment YAML block from the template under the marker, with verdict and value matching the prose, passing the schema validator.",
       "max_score": 20
     }
   ]

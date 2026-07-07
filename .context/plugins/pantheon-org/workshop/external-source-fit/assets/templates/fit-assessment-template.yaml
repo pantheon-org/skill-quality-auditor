@@ -1,0 +1,56 @@
+# Fit-assessment structured block — copy this into the finding body, under a
+# "## Fit assessment (structured)" heading, immediately after a line reading:
+#   <!-- fit-assessment -->
+# then a ```yaml fence. Validate with scripts/validate-fit-finding.sh <finding.md>.
+# This block is the machine-readable record; the prose spine still follows it.
+schema_version: 1
+
+source:
+  name: owner/repo # or a short human name
+  url: https://github.com/owner/repo
+  license: MIT # SPDX id or short name
+  language: TypeScript
+
+# One or two sentences: what it mechanically is (input, output, who for),
+# independent of its name or the asker's framing.
+characterisation: >-
+  <what the source actually does: its input, its output, and who it is for>
+
+# Grade every existing capability surface. level: none | partial | full.
+overlap:
+  d1_d9_scorers:
+    level: none
+    note: <why>
+  validate_analyze:
+    level: none
+    note: <why>
+  duplication:
+    level: none
+    note: <why>
+  eval_runner:
+    level: none
+    note: <why>
+  helper_skills:
+    level: none
+    note: <why>
+
+# Exactly one band: Good fit | Partial fit | No fit
+verdict: Partial fit
+
+# Where an adopted idea would live: go-cli | helper-skill | none
+vehicle_if_adopted: none
+
+salvageable:
+  present: true # false = genuinely nothing transferable
+  description: >-
+    <the generic kernel and how it would be built natively; or, if present is
+    false, an explicit statement that there is nothing transferable>
+
+recommendation:
+  # draft-plan | build-natively | record-and-hold | reject
+  action: record-and-hold
+  detail: >-
+    <one or two sentences justifying the action>
+
+# LOW | MEDIUM | HIGH — must match the finding frontmatter value.
+value: LOW
