@@ -18,6 +18,18 @@ from pathlib import Path
 context_dir = Path(sys.argv[1])
 adr_dir = Path(sys.argv[2])
 
+
+def strip_code(text):
+    """Remove fenced code blocks and inline code spans so a decision marker
+    merely *quoted* in prose (e.g. a doc explaining this gate) does not count as
+    a real decision heading. See
+    .context/known-issues/undocumented-decision-detector-false-positive-2026-07-07.md
+    """
+    text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    text = re.sub(r"~~~.*?~~~", "", text, flags=re.DOTALL)
+    text = re.sub(r"`[^`]*`", "", text)
+    return text
+
 # --- Collect all context file paths referenced by ADRs ---
 referenced = set()
 
@@ -44,11 +56,15 @@ for adr_file in adr_dir.glob("adr-*.md"):
 # without decisions"). Matching the soft recommendation headings produced false
 # positives on findings, which the old blanket `index.yaml` skip masked; both are
 # fixed here (G3, .context/plans/governance-tooling-hardening-2026-07-06.md).
+# Heading/bold markers are anchored to line start (with re.MULTILINE) so a marker
+# embedded mid-prose cannot match; "Adopt Option" is decision *phrasing* rather than
+# a heading, so it stays unanchored. Both are additionally protected by strip_code(),
+# which removes code spans/fences before matching.
 DECISION_KEYWORDS = [
-    r"## Decision",  # also matches "## Decisions"
-    r"### Decision:",
-    r"\*\*Decision:\*\*",
-    r"## Proposed Approach",
+    r"^## Decision",  # also matches "## Decisions"
+    r"^### Decision:",
+    r"^\*\*Decision:\*\*",
+    r"^## Proposed Approach",
     r"Adopt Option",
 ]
 
@@ -64,7 +80,7 @@ for md_file in sorted(context_dir.rglob("*.md")):
     if "/plugins/" in str(md_file):
         continue
 
-    content = md_file.read_text()
+    content = strip_code(md_file.read_text())
 
     # look for decision indicators
     found_keywords = []

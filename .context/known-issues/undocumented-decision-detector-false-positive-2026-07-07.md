@@ -1,7 +1,7 @@
 ---
 title: "Known Issue: check-undocumented-decisions.sh false-positives on prose that quotes its own markers"
 type: KNOWN_ISSUE
-status: ACTIVE
+status: DONE
 date: 2026-07-07
 severity: LOW
 value: LOW
@@ -33,9 +33,12 @@ marker strings, or they get a confusing gate failure unrelated to any real decis
 It is a nuisance, not a correctness risk — the workaround (paraphrase the markers) is
 trivial once known, which is why this is LOW severity.
 
-## Suggested fix (not yet applied — this is the tracked issue, not the fix)
+## Resolution (2026-07-07 — DONE)
 
-Make the detector ignore fenced code blocks and inline code spans before matching, or
-require the marker at the start of a line as a real heading (anchor the regex to
-`^#{2,3} ` for the heading forms) rather than matching anywhere in the line. Either
-narrows the match to genuine headings and stops the prose false-positive.
+Fixed in `check-undocumented-decisions.sh`: a `strip_code()` step removes fenced code
+blocks and inline code spans before matching, and the heading-form markers are anchored
+to line start (with `re.MULTILINE`). `Adopt Option` stays unanchored (it is decision
+phrasing, not a heading) but is still protected by code-stripping. Verified with
+fixtures: a backtick-quoted or mid-prose marker no longer trips, while a real
+`## Decisions` heading and `Adopt Option` phrasing still do; the real-repo scan stays
+clean.
