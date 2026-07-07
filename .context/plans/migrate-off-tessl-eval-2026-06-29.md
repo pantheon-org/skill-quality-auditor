@@ -1,7 +1,7 @@
 ---
 title: "Draft Plan: Migrate Skill Evaluation off Tessl"
 type: PLAN
-status: DRAFT
+status: SUPERSEDED
 date: 2026-06-29
 value: HIGH
 effort: TBD
@@ -9,10 +9,23 @@ themes:
   - EVAL
 related:
   - ../findings/eval-gating-byok-2026-06-29.md
+  - ../plans/native-eval-runner-2026-07-01.md
+  - ../plans/tessl-eval-decommission-followup-2026-07-07.md
 ---
 # Draft plan: migrate skill evaluation off Tessl
 
-Status: DRAFT for review
+> **SUPERSEDED (07-07-2026).** The core of this plan is done. Layer 1 (the
+> native eval runner, Option A) shipped via
+> [`native-eval-runner-2026-07-01.md`](native-eval-runner-2026-07-01.md) and
+> ADR-001; CI already runs `skill-auditor eval` on every relevant PR. Option A
+> vs B vs C (decision 2) and Phase-2 scope (decision 6) are therefore settled.
+> The only work left is the proving-period removal of the advisory `tessl
+> review` step plus the `TESSL_TOKEN` secret, and the Layer 3/4
+> distribution-and-wording cleanup. That remaining slice is tracked in
+> [`tessl-eval-decommission-followup-2026-07-07.md`](tessl-eval-decommission-followup-2026-07-07.md).
+> This document is retained for the investigation and options analysis only.
+
+Status: SUPERSEDED — see the follow-up above.
 Date: 29-06-2026
 Branch (proposed): `feat/native-eval-runner`
 Author: investigation by AI agent, decisions pending human owner
