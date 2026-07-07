@@ -69,6 +69,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   while plans decide. Also runs post-merge status sync: after a PR merges,
   `merge-status-sync.sh` detects plans/ADRs left `ACTIVE`/`proposed` when the merge should
   have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
+  ADR immutability begins at **acceptance** (ADR-061): a `proposed`/unmerged ADR may be
+  edited in place; once `accepted`, its body is frozen and only `status`/`superseded_by`
+  change, otherwise supersede.
 - **rules-management**: manage the agent behavioural rules in `.agents/RULES.md`, load
   existing rules, check for duplicates, and append new rules in the standard format with
   directive and rationale.

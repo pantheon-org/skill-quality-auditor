@@ -8,7 +8,7 @@
     {
       "type": "anti-pattern",
       "why_given": "new knowledge",
-      "content": "NEVER edit or delete an ADR after creation — ADRs are immutable records. Only `status` and `superseded_by` may change. Supersede rather than modify."
+      "content": "NEVER edit or delete an accepted ADR — accepted ADRs are immutable records; only `status` and `superseded_by` may change, and superseding (not editing) replaces the decision. A proposed/unmerged ADR is still a draft and may be edited in place; immutability begins at acceptance."
     },
     {
       "type": "procedure",
