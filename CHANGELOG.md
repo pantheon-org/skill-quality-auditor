@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.25.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.24.0...v0.25.0) (2026-07-07)
+
+
+### Features
+
+* **external-source-fit:** structured fit-assessment output + 6 source assessments ([#235](https://github.com/pantheon-org/skill-quality-auditor/issues/235)) ([7ad57c2](https://github.com/pantheon-org/skill-quality-auditor/commit/7ad57c22b8042293bd8c75c3d19fa92c521e7c3d))
+* **governance:** add DEFERRED lifecycle status (ADR-060) ([#238](https://github.com/pantheon-org/skill-quality-auditor/issues/238)) ([4b2d145](https://github.com/pantheon-org/skill-quality-auditor/commit/4b2d14504ec21f1e2a77d76c4c0e7910fca26dca))
+* **governance:** Markdown-by-category layout, minimal root (ADR-059) ([#237](https://github.com/pantheon-org/skill-quality-auditor/issues/237)) ([4c847ee](https://github.com/pantheon-org/skill-quality-auditor/commit/4c847ee50b0ace109ef1f2135d4ea308014c72ff))
+* **plan-review:** add execution-location lens to reviewer prompts ([#236](https://github.com/pantheon-org/skill-quality-auditor/issues/236)) ([d8762ac](https://github.com/pantheon-org/skill-quality-auditor/commit/d8762ac78151bd998fe1902603dc0682bde1d374))
+* **release:** scheduled auto-merge of release-please PRs via GitHub App token (ADR-056) ([#228](https://github.com/pantheon-org/skill-quality-auditor/issues/228)) ([abc3808](https://github.com/pantheon-org/skill-quality-auditor/commit/abc380834afeb4dce88392cea751e13fcfdb519e))
+* **skills:** add external-source-fit helper skill (grade A) ([#234](https://github.com/pantheon-org/skill-quality-auditor/issues/234)) ([5ebe503](https://github.com/pantheon-org/skill-quality-auditor/commit/5ebe50309c0981ebbbb0c2ae881edb98bb943ceb))
+* **version:** show release date in version output (no-breakage CalVer alternative) ([#230](https://github.com/pantheon-org/skill-quality-auditor/issues/230)) ([262ebf0](https://github.com/pantheon-org/skill-quality-auditor/commit/262ebf0cef5302d04c8949f34f608a61cc3165da))
+
+
+### Bug Fixes
+
+* **governance:** stop undocumented-decision detector false-positiving on quoted markers ([#242](https://github.com/pantheon-org/skill-quality-auditor/issues/242)) ([07bc91b](https://github.com/pantheon-org/skill-quality-auditor/commit/07bc91b0c0382eb05e5e475bc63678008d11ffa3))
+
 ## [0.24.0](https://github.com/pantheon-org/skill-quality-auditor/compare/v0.23.0...v0.24.0) (2026-07-06)
 
 
