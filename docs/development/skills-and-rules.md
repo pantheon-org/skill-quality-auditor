@@ -82,7 +82,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **plan-review** — review a plan using three independent subagent reviewers (Technical,
   Strategic, Risk), consolidate their feedback, then resolve it: editorial fixes land
   directly, genuine tradeoffs go through a one-question-at-a-time interview and are
-  recorded in the plan's `## Decisions` section.
+  recorded in the plan's `## Decisions` section. The Risk and Strategic lenses also
+  assess execution-location/coverage: whether a stated invocation path (a hook, a CI
+  job, a trigger) actually reaches far enough to meet the plan's goal (ADR-058).
 
 ### workshop
 
