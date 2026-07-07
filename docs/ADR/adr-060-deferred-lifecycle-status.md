@@ -40,9 +40,13 @@ yet** because it is date-gated or externally blocked, distinct from `ACTIVE`
   regardless of its `value`. Reactivate to `ACTIVE` when the blocker clears.
 - **Optional `deferred_until` reactivation date.** A date-gated item may carry a
   `deferred_until: YYYY-MM-DD` field (only valid with `status: DEFERRED`, enforced by
-  the validator). The read protocol treats a `DEFERRED` item whose `deferred_until`
-  has passed as reactivation-eligible and surfaces it, so date-gated work does not
-  silently rot in tier 2. Externally-blocked items with no known ripen date omit it.
+  the validator; the context index carries it so the protocol can filter without
+  opening files). The read protocol does **not list** an item whose `deferred_until`
+  is still in the future — it is hidden from the pick until that date passes, then
+  surfaces as reactivation-eligible. The date takes precedence over the
+  blocked-but-visible default: an item can be both externally blocked and date-gated,
+  and when it is, the date governs visibility. Externally-blocked items with no known
+  ripen date omit `deferred_until` and stay visible in tier 2 (below all DRAFT/ACTIVE).
 - **`value`, `themes`, and `effort` remain required on `DEFERRED`** (same as
   `DRAFT`/`ACTIVE`), enforced by `validate-context-frontmatter.sh`, so a parked item
   re-ranks cleanly on reactivation. Only `DONE`/`SUPERSEDED` are exempt.
