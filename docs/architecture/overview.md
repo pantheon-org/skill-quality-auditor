@@ -112,7 +112,9 @@ cobra.Command
     │
     ├── update    ──► GitHub API → download tarball → verify checksum → replace binary
     │
-    └── prune     ──► read audit dirs → keep N newest per skill → remove rest
+    ├── prune     ──► read audit dirs → keep N newest per skill → remove rest
+    │
+    └── version   ──► print version + release date (buildDate ldflag / vcs.time)
 ```
 
 ## Output layout

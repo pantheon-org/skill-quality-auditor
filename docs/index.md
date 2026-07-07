@@ -61,6 +61,7 @@ Warnings:
 | `init` | Install the skill into agent harness directories |
 | `update` | Self-update the binary from GitHub releases |
 | `prune` | Remove old audit directories, keep N per skill |
+| `version` | Print the CLI version and, for release builds, the release date |
 
 ## Architecture documentation
 
