@@ -45,10 +45,13 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **context-index**: regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
   frontmatter block. `validate-context-frontmatter.sh` requires `value` and a non-empty
-  `themes` list on `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE`
-  (`DONE`/`SUPERSEDED` exempt); the index emits `effort`, `severity`, `value`, and `themes`
-  so the "what's next" read protocol (sort by `value` descending, then `effort` ascending,
-  then `themes[0]` to break ties) works from the index alone. A companion Go check,
+  `themes` list on `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE`/`DEFERRED`
+  (`DONE`/`SUPERSEDED` exempt); the index emits `effort`, `severity`, `value`, `themes`, and
+  `deferred_until` so the "what's next" read protocol works from the index alone: `DRAFT`/`ACTIVE`
+  form tier 1 and `DEFERRED` (real but not actionable yet — date-gated or externally blocked) a
+  strict tier 2 below it, and within a tier it sorts by `value` descending, then `effort`
+  ascending, then `themes[0]` to break ties. A `DEFERRED` item whose `deferred_until` date is
+  still in the future is not listed until that date passes. A companion Go check,
   `skill-auditor validate context`, compiles the JSON schemas and enforces
   `additionalProperties:false` (catching typo'd/unknown keys the shell script cannot),
   running alongside it; generated remediation plans validate against a dedicated
