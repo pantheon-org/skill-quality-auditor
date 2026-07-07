@@ -24,6 +24,7 @@ Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-au
 | 14 | No man left behind — triage every warning surfaced during work | NEVER leave a warning, issue, or error unaddressed just because it's unrelated to the current task; ALWAYS fix it or explicitly defer it with a documented reason |
 | 15 | Regenerate, don't hand-merge, conflicts on auto-generated files | NEVER hand-resolve merge/rebase conflicts on generator-produced files (e.g. `.context/index.yaml`); ALWAYS take either side then re-run the generator script |
 | 16 | Check for unrelated uncommitted work before `git reset --hard` | ALWAYS run `git status` immediately before discarding uncommitted changes; commit or stash anything unrelated first |
+| 17 | Place Markdown by category, authored docs under docs/, minimal root | ALWAYS place Markdown by what it is: authored docs to `docs/`, generated artifacts where the generator writes them, entry files at their resolver path (README/AGENTS/CLAUDE at root, community-health files under `.github/`); NEVER add other Markdown to the repo root (see ADR-059) |
 
 To add a new rule, load the [`rules-management`](#rules-management) skill — it will load existing rules, check for duplicates, and append with the correct format.
 
