@@ -27,6 +27,7 @@ When NOT to use: reviewing internal changes (use `review-changes`), scoring one 
 
 - Read access to the source. Public repos: `gh repo clone` (shallow) or fetch raw files with WebFetch / `curl` into the scratchpad. Private repos: use `gh` with the caller's auth. Never paste secrets from the source into the conversation.
 - The `context-file` skill, to write the finding with valid frontmatter (`value` + `themes` are required for FINDING type while DRAFT/ACTIVE).
+- The structured-output kit shipped with this skill: [assets/templates/fit-assessment-template.yaml](assets/templates/fit-assessment-template.yaml) (the block to fill), [assets/schemas/fit-assessment.schema.json](assets/schemas/fit-assessment.schema.json) (its contract), and [scripts/validate-fit-finding.sh](scripts/validate-fit-finding.sh) (the validator). Pure bash + awk/sed — no extra runtime needed.
 - The `adr-capture` skill, only if the assessment produces a binding decision (e.g. "we will not adopt approach X").
 - Optional grounding: `./dist/skill-auditor` and the dimension references under `cmd/assets/references/` to check overlap against D1-D9 precisely.
 - Read this project's `CLAUDE.md` first if unfamiliar: the repo has a Go CLI (`scorer/`, `cmd/`, `duplication/`, `reporter/`) and separate helper skills under `.context/plugins/`.
@@ -81,14 +82,17 @@ You MUST name what, if anything, is worth learning, and how it would be built **
 
 Use the `context-file` skill to create a FINDING under `.context/findings/` following the reusable spine in the rubric reference: *What was investigated → What it actually is → Verdict → The salvageable idea → Recommendation*. Grade `value` against `.context/instructions/value-rubric.md` and `themes` against `.context/instructions/theme-vocabulary.md` (a pure investigation-and-reject is usually `LOW`; a "we should build this" is `MEDIUM`+). Regenerate the context index afterwards.
 
+You MUST also embed the **structured fit-assessment block** so every finding carries the same machine-readable record. Copy [assets/templates/fit-assessment-template.yaml](assets/templates/fit-assessment-template.yaml) into a `## Fit assessment (structured record)` section, under a line reading `<!-- fit-assessment -->` then a ```yaml fence, and fill every field. The prose spine stays; the block is the canonical structured summary. Keep the block's `verdict` and `value` identical to the prose and the frontmatter.
+
 If the finding contains a binding decision, invoke `adr-capture`. Otherwise avoid heading text that starts with `## Decision`, which the `adr-undocumented` pre-commit hook reads as an undocumented decision.
 
 ### 7. Verify and report
 
 Before reporting, verify the write-up holds together:
 
+- Run `scripts/validate-fit-finding.sh <finding.md>` and confirm the structured block passes the schema (exit 0). This is the consistency gate — a finding without a valid block is not done.
 - Run `check-context-frontmatter.sh` on the new finding and confirm the context index regenerates with no stderr warnings (the finding must appear in `index.yaml`).
-- Confirm the verdict is exactly one of the three bands, and that the finding either names a concrete salvageable idea or states explicitly that there is none.
+- Confirm the verdict is exactly one of the three bands, matches the block's `verdict`, and that the finding either names a concrete salvageable idea or states explicitly that there is none (`salvageable.present: false`).
 - Confirm no heading begins with `## Decision` unless an ADR was captured (otherwise the pre-commit hook fails).
 
 Then report to the user: lead with the one-word verdict and the reason, then the salvageable idea and recommendation. Link the finding file. Do not bury the answer under a file tour.
@@ -166,6 +170,9 @@ themes:
 Verify the write-up before reporting:
 
 ```bash
+# verify: the structured block passes the schema (pure bash, no runtime needed)
+bash scripts/validate-fit-finding.sh .context/findings/<finding>.md
+
 # verify: the finding is indexed and frontmatter is valid
 bash .claude/skills/tessl__context-index/scripts/regenerate-context-index.sh
 ```
@@ -186,3 +193,6 @@ You should see one clear verdict, the salvageable idea (or an explicit "nothing 
 | Verdict bands, decision criteria, and the finding write-up spine | [references/fit-rubric.md](references/fit-rubric.md) | Rendering the verdict and structuring the finding |
 | This project's capability surfaces (scorers, commands, engines) | Repo root `CLAUDE.md` | Step 3, mapping overlap |
 | Value grading and theme tagging for the finding | `.context/instructions/value-rubric.md`, `.context/instructions/theme-vocabulary.md` | Step 6, grading the finding |
+| Structured block to fill | [assets/templates/fit-assessment-template.yaml](assets/templates/fit-assessment-template.yaml) | Step 6, embedding the machine-readable record |
+| The block's contract | [assets/schemas/fit-assessment.schema.json](assets/schemas/fit-assessment.schema.json) | Understanding required fields and enums |
+| Consistency gate | [scripts/validate-fit-finding.sh](scripts/validate-fit-finding.sh) | Step 7, validating the block (pure bash) |

@@ -91,7 +91,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 - **external-source-fit**: assess whether an external GitHub repo, file, or project fits
   this project, mapping overlap against existing capability (D1-D9, validate, duplication,
   eval runner, helper skills), rendering a Good/Partial/No-fit verdict, and writing the
-  result up as a house-standard finding.
+  result up as a house-standard finding. Each finding embeds a machine-readable
+  fit-assessment block (`assets/templates/` + `assets/schemas/`) checked by a pure-bash
+  validator (`scripts/validate-fit-finding.sh`) so verdicts stay consistent.
 - **guided-interview** — conduct a structured, one-question-at-a-time interview with
   concrete mutually-exclusive options plus a free-text path, adapting later questions to
   prior answers, ending in a user-confirmed recap.

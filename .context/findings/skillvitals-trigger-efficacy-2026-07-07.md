@@ -142,3 +142,53 @@ duplication engine and pre-push gate. Treat **Idea 2 (counterfactual efficacy)**
 scope with the cultivar finding, not a separate build. skillvitals and this project are
 complementary: this project is a deep static rubric auditor, skillvitals is a shallow
 behavioural validator; the value is in importing the behavioural axis, not the tool.
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: ContextJet-ai/skillvitals
+  url: https://github.com/ContextJet-ai/skillvitals
+  license: MIT
+  language: Python
+characterisation: >-
+  A small CLI + GitHub Action that measures two "vital signs" of a SKILL.md
+  cheaply: triggering (does it activate on the right prompts, judged from name +
+  description alone, with false-fire as a first-class metric) and efficacy (does
+  the body help, via a with/without counterfactual judged 0-10). Input:
+  cases.yaml + tasks.yaml. Output: recall/false-fire/F1 and win-rate/avg-delta.
+  For: skill authors gating in CI.
+overlap:
+  d1_d9_scorers:
+    level: none
+    note: No dimension measures whether a skill fires or empirically helps.
+  validate_analyze:
+    level: partial
+    note: Its deterministic description lint overlaps loosely with validate/D4 description checks.
+  duplication:
+    level: none
+    note: Complementary; negative trigger cases could be drawn from duplication neighbours.
+  eval_runner:
+    level: partial
+    note: Ours runs the with-skill arm only; no trigger or counterfactual measurement.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: Partial fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    A trigger-reliability scorer/mode (description-only routing, false-fire rate,
+    F1) that plugs into the duplication engine for behavioural trigger
+    collisions, plus a deterministic zero-cost description lint. Counterfactual
+    efficacy is shared scope with the cultivar finding. Port the technique in Go.
+recommendation:
+  action: build-natively
+  detail: >-
+    Adopt trigger reliability and the deterministic description lint as the first
+    slice; treat counterfactual efficacy as shared scope with cultivar.
+value: MEDIUM
+```

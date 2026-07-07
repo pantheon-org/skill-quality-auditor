@@ -23,6 +23,10 @@
     {
       "instruction": "Name the salvageable idea explicitly, or state that there is none, rather than manufacturing a takeaway.",
       "why_given": "preference"
+    },
+    {
+      "instruction": "Embed the structured fit-assessment block from the template under the marker, keep its verdict and value aligned with the prose, and validate it against the schema.",
+      "why_given": "new knowledge"
     }
   ]
 }

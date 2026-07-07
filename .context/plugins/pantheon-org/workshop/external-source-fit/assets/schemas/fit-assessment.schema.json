@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pantheon-org/skill-quality-auditor/external-source-fit/fit-assessment.schema.json",
+  "title": "External Source Fit Assessment",
+  "description": "Machine-readable record of one external-source fit assessment, embedded as a fenced YAML block in the finding body after the <!-- fit-assessment --> marker.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source",
+    "characterisation",
+    "overlap",
+    "verdict",
+    "vehicle_if_adopted",
+    "salvageable",
+    "recommendation",
+    "value"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "description": "Schema version. Bump when the shape changes."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "owner/repo or a short human name for the source."
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "description": "Canonical URL of the source."
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX id or short licence name (e.g. MIT, Apache-2.0)."
+        },
+        "language": {
+          "type": "string",
+          "description": "Primary language of the source."
+        }
+      }
+    },
+    "characterisation": {
+      "type": "string",
+      "minLength": 20,
+      "description": "One or two sentences: what it mechanically is (input, output, who for), independent of its name."
+    },
+    "overlap": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Map against existing capability. Every surface must be graded.",
+      "required": [
+        "d1_d9_scorers",
+        "validate_analyze",
+        "duplication",
+        "eval_runner",
+        "helper_skills"
+      ],
+      "properties": {
+        "d1_d9_scorers": { "$ref": "#/definitions/overlapCell" },
+        "validate_analyze": { "$ref": "#/definitions/overlapCell" },
+        "duplication": { "$ref": "#/definitions/overlapCell" },
+        "eval_runner": { "$ref": "#/definitions/overlapCell" },
+        "helper_skills": { "$ref": "#/definitions/overlapCell" }
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["Good fit", "Partial fit", "No fit"],
+      "description": "Exactly one band from the fit rubric."
+    },
+    "vehicle_if_adopted": {
+      "type": "string",
+      "enum": ["go-cli", "helper-skill", "none"],
+      "description": "Where an adopted idea would live. 'none' when nothing would be adopted."
+    },
+    "salvageable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["present", "description"],
+      "properties": {
+        "present": {
+          "type": "boolean",
+          "description": "true if there is a concrete transferable kernel, false if there is genuinely nothing."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The generic kernel and how it would be built natively; or an explicit statement that there is nothing transferable."
+        }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "detail"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["draft-plan", "build-natively", "record-and-hold", "reject"],
+          "description": "The single recommended next action."
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One or two sentences justifying the action."
+        }
+      }
+    },
+    "value": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH"],
+      "description": "Finding value, matching the frontmatter value and graded against the value rubric."
+    }
+  },
+  "definitions": {
+    "overlapCell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["none", "partial", "full"],
+          "description": "How much this existing capability already covers what the source does."
+        },
+        "note": {
+          "type": "string",
+          "description": "Short justification for the level."
+        }
+      }
+    }
+  }
+}
