@@ -52,7 +52,7 @@ for f in files:
         if not fm.get(field):
             errors.append(f"{f}: missing required field '{field}'")
 
-    if fm.get("type") == "PLAN" and fm.get("status") in ("DRAFT", "ACTIVE") and not fm.get("effort"):
+    if fm.get("type") == "PLAN" and fm.get("status") in ("DRAFT", "ACTIVE", "DEFERRED") and not fm.get("effort"):
         errors.append(
             f"{f}: type: PLAN with status: {fm.get('status')} must set 'effort' "
             f"(S/M/L, or TBD if genuinely blocked on an Open Question)"
@@ -65,7 +65,7 @@ for f in files:
 
     if (
         fm.get("type") in ("PLAN", "FINDING", "KNOWN_ISSUE")
-        and fm.get("status") in ("DRAFT", "ACTIVE")
+        and fm.get("status") in ("DRAFT", "ACTIVE", "DEFERRED")
         and not fm.get("value")
     ):
         errors.append(
@@ -98,7 +98,7 @@ for f in files:
             )
         if (
             fm.get("type") in ("PLAN", "FINDING", "KNOWN_ISSUE")
-            and fm.get("status") in ("DRAFT", "ACTIVE")
+            and fm.get("status") in ("DRAFT", "ACTIVE", "DEFERRED")
             and not members
         ):
             errors.append(

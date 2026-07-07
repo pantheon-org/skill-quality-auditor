@@ -466,3 +466,10 @@ entries:
     date: 2026-07-07
     context:
       - path: ".agents/RULES.md"
+  - path: "ADR/adr-060-deferred-lifecycle-status.md"
+    adr: "ADR-060"
+    title: "ADR-060: DEFERRED lifecycle status for parked context items"
+    status: proposed
+    date: 2026-07-07
+    context:
+      - path: ".context/plans/deferred-status-2026-07-07.md"

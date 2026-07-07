@@ -19,8 +19,8 @@
     },
     "status": {
       "type": "string",
-      "enum": ["DRAFT", "ACTIVE", "DONE", "SUPERSEDED"],
-      "description": "Lifecycle status (UPPER_CASE). Use DRAFT until reviewed, ACTIVE for in-progress, DONE when complete, SUPERSEDED when replaced."
+      "enum": ["DRAFT", "ACTIVE", "DEFERRED", "DONE", "SUPERSEDED"],
+      "description": "Lifecycle status (UPPER_CASE). Use DRAFT until reviewed, ACTIVE for in-progress work you would pick up next, DEFERRED for a real not-done item intentionally parked (date-gated, externally blocked, or deprioritised), DONE when complete, SUPERSEDED when replaced. The 'what's next' read protocol ranks DEFERRED strictly below DRAFT/ACTIVE."
     },
     "date": {
       "type": "string",

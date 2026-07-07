@@ -35,7 +35,7 @@ Every `.context/` file MUST start with this exact block:
 ---
 title: "Human-readable title"
 type: PLAN | FINDING | ANALYSIS | INSTRUCTION | AUDIT | KNOWN_ISSUE
-status: DRAFT | ACTIVE | DONE | SUPERSEDED
+status: DRAFT | ACTIVE | DEFERRED | DONE | SUPERSEDED
 date: YYYY-MM-DD
 related:
   - relative/path/to/related.md
@@ -45,12 +45,12 @@ related:
 Enum values are UPPER_CASE. Field rules:
 - `title` — prose title matching the H1 heading; wrap in quotes
 - `type` — matches the subdirectory (`plans/` → `PLAN`, `findings/` → `FINDING`, `analysis/` → `ANALYSIS`, `known-issues/` → `KNOWN_ISSUE`; note the underscore vs the hyphenated directory)
-- `status` — `DRAFT` until reviewed, `ACTIVE` for in-progress work, `DONE` when complete, `SUPERSEDED` when replaced (for `KNOWN_ISSUE`: `ACTIVE` = still open, `DONE` = fixed)
+- `status` — `DRAFT` until reviewed, `ACTIVE` for in-progress work you would pick up next, `DEFERRED` for a real not-done item intentionally parked (date-gated, externally blocked, or deprioritised), `DONE` when complete, `SUPERSEDED` when replaced (for `KNOWN_ISSUE`: `ACTIVE`/`DEFERRED` = still open, `DONE` = fixed). The read protocol ranks `DEFERRED` strictly below `DRAFT`/`ACTIVE`; reactivate to `ACTIVE` when the blocker clears.
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
 - `severity` — required for `type: KNOWN_ISSUE` only: `CRITICAL | HIGH | MEDIUM | LOW`. Not applicable to other types.
-- `value` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`: `HIGH | MEDIUM | LOW`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
-- `themes` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT` or `ACTIVE`: a multi-valued **ordered** list from `EVAL | PR-TOOLING | DOCS | GOVERNANCE | SKILL-QUALITY | DISTRIBUTION`. The subject axis (what area the item is about), orthogonal to the magnitude axes. Write it **primary-first** — `themes[0]` is the primary theme and the only member used in the read-protocol tie-break. Draw members from [`.context/instructions/theme-vocabulary.md`](../../../../instructions/theme-vocabulary.md); do not invent themes. Block YAML style like `related`. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
+- `value` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT`, `ACTIVE`, or `DEFERRED`: `HIGH | MEDIUM | LOW`. The benefit-of-action grade, distinct from `severity` (risk-of-inaction) and `effort` (cost-of-action). Grade against [`.context/instructions/value-rubric.md`](../../../../instructions/value-rubric.md); do not guess. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
+- `themes` — required for `type: PLAN`, `FINDING`, and `KNOWN_ISSUE` while `status` is `DRAFT`, `ACTIVE`, or `DEFERRED`: a multi-valued **ordered** list from `EVAL | PR-TOOLING | DOCS | GOVERNANCE | SKILL-QUALITY | DISTRIBUTION`. The subject axis (what area the item is about), orthogonal to the magnitude axes. Write it **primary-first** — `themes[0]` is the primary theme and the only member used in the read-protocol tie-break. Draw members from [`.context/instructions/theme-vocabulary.md`](../../../../instructions/theme-vocabulary.md); do not invent themes. Block YAML style like `related`. Not applicable to `ANALYSIS` / `INSTRUCTION` / `AUDIT`. Exempt on `DONE` / `SUPERSEDED`.
 
 ## Workflow
 
@@ -139,7 +139,7 @@ related:
 ## Mindset
 
 - Write for the next agent or human who reads this cold — assume no prior context
-- `status: DRAFT` is the safe default; promote to `ACTIVE` only when reviewed
+- `status: DRAFT` is the safe default; promote to `ACTIVE` only when reviewed; use `DEFERRED` for a reviewed item that is real but intentionally parked (date-gated or blocked)
 - Date is creation date, not last-modified — do not update it on subsequent edits
 - After creating or updating a `.context/` file, consider regenerating the index to keep it current
 - Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern
