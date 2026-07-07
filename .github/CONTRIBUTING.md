@@ -31,10 +31,10 @@ Run a quick smoke test against the fixture skills:
 ### Skill evals (`cmd/assets/`)
 
 ```bash
-# Structural gate — deterministic, no key, runs every PR + pre-push.
+# Structural gate, deterministic, no key, runs every PR + pre-push.
 ./dist/skill-auditor eval ./cmd/assets --fail-below 0
 
-# LLM-judge advisory — bring your own key (BYOK). See .env.example for variables.
+# LLM-judge advisory, bring your own key (BYOK). See .env.example for variables.
 ANTHROPIC_API_KEY=... ./dist/skill-auditor eval ./cmd/assets --json --samples 3 --cost-log > eval-results.json
 ```
 
@@ -62,8 +62,8 @@ hk install
 
 Once installed, hooks trigger automatically:
 
-- **pre-commit** — Go fmt/vet/lint, markdownlint, shellcheck, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
-- **pre-push** — full test suite, binary build, artifact validation, duplication detection, and batch audit (fails below B grade).
+- **pre-commit**: Go fmt/vet/lint, markdownlint, shellcheck, context frontmatter validation, ADR index freshness, and undocumented-decision checks.
+- **pre-push**: full test suite, binary build, artifact validation, duplication detection, and batch audit (fails below B grade).
 
 Useful hook commands:
 
@@ -84,7 +84,7 @@ For alternative hook managers (pre-commit, lefthook), see `cmd/assets/references
 
 The `init` command auto-detects agents by checking whether the harness root directory
 (first path component of `ProjectPath` / `GlobalPath`, e.g. `.claude/`) exists in the
-install target. No changes to `cmd/init.go` are needed when adding a new agent — the
+install target. No changes to `cmd/init.go` are needed when adding a new agent, the
 registry drives everything.
 
 ## Adding a new dimension scorer

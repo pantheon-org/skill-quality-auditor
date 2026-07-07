@@ -450,3 +450,10 @@ entries:
       - path: "docs/ADR/adr-020-multi-method-distribution.md"
       - path: "docs/ADR/adr-023-version-sync-policy.md"
       - path: "docs/ADR/adr-008-homebrew-distribution.md"
+  - path: "ADR/adr-059-docs-root-layout.md"
+    adr: "ADR-059"
+    title: "ADR-059: Markdown placement by category, authored docs under docs/, minimal root"
+    status: proposed
+    date: 2026-07-07
+    context:
+      - path: ".agents/RULES.md"
