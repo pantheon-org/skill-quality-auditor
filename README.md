@@ -74,6 +74,7 @@ Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to 
 | `init` | Install the auditor skill into your agent environment |
 | `update` | Self-update the binary (install.sh installs only) |
 | `prune` | Remove old audit snapshots, keeping N per skill |
+| `version` | Print the version and, for release builds, the release date |
 
 ### Common flags
 

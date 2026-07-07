@@ -1,0 +1,78 @@
+name: Release Auto-merge
+
+# Scheduled auto-merge of the open release-please PR ("chore(main): release X.Y.Z").
+# This removes the manual merge step: changes accumulate in the release PR during the
+# week, and this job merges whatever release PR is open on the schedule below.
+#
+# WHY A GITHUB APP TOKEN (not GITHUB_TOKEN):
+# A merge performed with the default GITHUB_TOKEN does NOT trigger new workflow runs
+# (GitHub's anti-recursion rule). The Release workflow runs on push to main and is what
+# builds + publishes the release via goreleaser. If this job merged with GITHUB_TOKEN,
+# the release PR would land but goreleaser would never run, producing a tag with no
+# binaries (the exact failure fixed in PR #219). A GitHub App installation token makes
+# the merge push a real event, so the Release workflow fires and the build happens.
+#
+# CREDENTIALS: this reuses the org-wide GitHub App (org var GH_APP_ID + org secret
+# GH_APP_PRIVATE_KEY), the same pair pantheon-org/claude-code-personalities uses for its
+# release automation. No per-repo App creation is needed as long as those org
+# variable/secret grant access to this repository. See ADR-056
+# (docs/ADR/adr-056-scheduled-release-automerge.md) for the full rationale and, if the
+# code-owner-review rule ever blocks the merge, how to add the App as a ruleset bypass actor.
+
+on:
+  schedule:
+    # Mondays at 09:00 UTC. Adjust to taste. Cron is UTC; there is no DST handling.
+    - cron: "0 9 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-automerge
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mint GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - name: Merge open release-please PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Select by the release-please branch (stable) and confirm the title, rather than
+          # a title search — GitHub search mis-parses the parens/colon in "chore(main):".
+          pr=$(gh pr list --repo "$REPO" \
+            --state open \
+            --head 'release-please--branches--main' \
+            --json number,title,mergeStateStatus \
+            --jq '[.[] | select(.title | startswith("chore(main): release"))][0]')
+
+          if [ -z "$pr" ] || [ "$pr" = "null" ]; then
+            echo "No open release PR found. Nothing to merge."
+            exit 0
+          fi
+
+          number=$(echo "$pr" | jq -r '.number')
+          state=$(echo "$pr" | jq -r '.mergeStateStatus')
+          echo "Found release PR #$number (mergeStateStatus=$state)"
+
+          # BLOCKED/DIRTY/BEHIND mean the PR cannot merge cleanly; skip rather than force.
+          case "$state" in
+            DIRTY|BLOCKED|BEHIND)
+              echo "PR #$number is not in a mergeable state ($state); skipping."
+              exit 0
+              ;;
+          esac
+
+          gh pr merge "$number" --repo "$REPO" --squash --delete-branch
+          echo "Merged release PR #$number. The Release workflow will now build and publish."
