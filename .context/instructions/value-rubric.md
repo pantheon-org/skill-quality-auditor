@@ -79,19 +79,36 @@ These grade real `.context/` items against the criteria above.
 `value` is an **authoritative sort key**, not an advisory label. To answer "which
 item is highest value to do next?", read `.context/index.yaml` and:
 
-1. Filter to `status` in {`DRAFT`, `ACTIVE`} of type `PLAN`, `FINDING`, or
-   `KNOWN_ISSUE`. (`DONE`/`SUPERSEDED` grades exist as a learning corpus and never
-   enter this sort.)
-2. Sort by `value` descending (`HIGH` > `MEDIUM` > `LOW`).
-3. Break ties by `effort` ascending (`S` < `M` < `L` < `TBD`) where present.
+1. Filter to `status` in {`DRAFT`, `ACTIVE`, `DEFERRED`} of type `PLAN`,
+   `FINDING`, or `KNOWN_ISSUE`. (`DONE`/`SUPERSEDED` grades exist as a learning
+   corpus and never enter this sort.)
+2. **Drop any `DEFERRED` item whose `deferred_until` is a future date** (strictly
+   after today): it is not listed at all until that date arrives. `deferred_until`
+   governs visibility even when the item is also externally blocked — the date takes
+   precedence over the "blocked but visible" default (an item can be both; the date
+   wins). Items with no `deferred_until`, or whose `deferred_until` has passed,
+   remain candidates.
+3. Split the survivors into two tiers and always exhaust tier 1 before tier 2:
+   **tier 1** = `DRAFT`/`ACTIVE` (work you would pick up next); **tier 2** =
+   `DEFERRED` (real but not actionable yet — date-gated or externally blocked;
+   *not* merely low-priority, which is `value: LOW` on an `ACTIVE` item). A
+   `DEFERRED` item never outranks a `DRAFT`/`ACTIVE` one, regardless of its `value`.
+   A `DEFERRED` item whose `deferred_until` has passed (so it survived step 2) is
+   reactivation-eligible — surface it for promotion to `ACTIVE` rather than leaving
+   it parked.
+4. Within each tier, sort by `value` descending (`HIGH` > `MEDIUM` > `LOW`).
+5. Break ties by `effort` ascending (`S` < `M` < `L` < `TBD`) where present.
    Findings and known-issues have no `effort`, so within a bucket they sort by
    `value` alone.
-4. Break any remaining tie by `themes[0]` (the primary theme): prefer the item
+6. Break any remaining tie by `themes[0]` (the primary theme): prefer the item
    whose primary theme matches the area already in focus. Theme expresses
    preference-of-area, not priority, so it sits below both magnitude axes. See
    [`theme-vocabulary.md`](theme-vocabulary.md).
-5. Act on the top item **without re-forming an independent judgement**. Relocating
-   the judgement to read-time would reopen the gap this field closes.
+7. Act on the top item **without re-forming an independent judgement**. Relocating
+   the judgement to read-time would reopen the gap this field closes. Before
+   picking a `DEFERRED` item, confirm its blocker has cleared and reactivate it to
+   `ACTIVE`; if the whole tier-1 set is empty and every `DEFERRED` item is still
+   blocked, there is genuinely nothing to pick up.
 
 This protocol only holds if the grades are trustworthy. That is why grading against
 this rubric (not ad hoc), the calibration pass on backfill, and re-grading on status

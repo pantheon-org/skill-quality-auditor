@@ -6,11 +6,17 @@
 #
 # Enum values are UPPER_CASE.
 # type values   : PLAN | FINDING | ANALYSIS | INSTRUCTION | AUDIT | KNOWN_ISSUE
-# status values : DRAFT | ACTIVE | DONE | SUPERSEDED
+# status values : DRAFT | ACTIVE | DEFERRED | DONE | SUPERSEDED
+#                 DEFERRED = real but not actionable yet (date-gated or externally
+#                 blocked) — NOT low-priority (use value: LOW for that). The read
+#                 protocol ranks it below DRAFT/ACTIVE.
+# deferred_until: optional YYYY-MM-DD reactivation date; only valid with
+#                 status: DEFERRED (for date-gated items). The read protocol
+#                 hides the item until this date passes (date beats blocked).
 # date format   : YYYY-MM-DD (creation date; do not update on edits)
 # value values  : HIGH | MEDIUM | LOW — benefit-of-action, on PLAN/FINDING/KNOWN_ISSUE
 #                 only. Graded against .context/instructions/value-rubric.md.
-#                 Required while status is DRAFT/ACTIVE on those types. Omit on
+#                 Required while status is DRAFT/ACTIVE/DEFERRED on those types. Omit on
 #                 ANALYSIS/INSTRUCTION/AUDIT.
 # themes values : EVAL | PR-TOOLING | DOCS | GOVERNANCE | SKILL-QUALITY | DISTRIBUTION
 #                 — subject axis, on PLAN/FINDING/KNOWN_ISSUE only. A multi-valued

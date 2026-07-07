@@ -64,6 +64,8 @@ for md in sorted(context_dir.rglob("*.md")):
         entry["severity"] = fm["severity"]
     if fm.get("value"):
         entry["value"] = fm["value"]
+    if fm.get("deferred_until"):
+        entry["deferred_until"] = fm["deferred_until"]
     themes_match = re.search(r"themes:\n((?:  - .+\n?)+)", fm["_raw"])
     if themes_match:
         entry["themes"] = [
@@ -141,6 +143,8 @@ for t in type_order:
             lines.append(f"    severity: {e['severity']}")
         if e.get("value"):
             lines.append(f"    value: {e['value']}")
+        if e.get("deferred_until"):
+            lines.append(f"    deferred_until: {e['deferred_until']}")
         if e.get("themes"):
             lines.append("    themes:")
             for tm in e["themes"]:

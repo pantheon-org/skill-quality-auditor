@@ -104,7 +104,7 @@ Your first task: find the top priority item to work on. Ask Claude:
 
 > What's the top priority item to be worked on next?
 
-Claude will read the `.context/` index using the read protocol (filter to DRAFT/ACTIVE plans and findings, sort by value then effort) and surface the highest-value item. Pick it up from there.
+Claude will read the `.context/` index using the read protocol (filter to DRAFT/ACTIVE/DEFERRED plans and findings, rank DEFERRED below DRAFT/ACTIVE, then sort by value then effort) and surface the highest-value item. Pick it up from there.
 
 <!-- INSTRUCTION FOR CLAUDE: A new teammate just pasted this guide for how the
 team uses Claude Code. You're their onboarding buddy, warm, conversational,

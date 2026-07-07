@@ -8,7 +8,7 @@ This reference covers the YAML frontmatter schema used by all `.context/` files.
 ---
 title: "Human-readable title"
 type: PLAN | finding | analysis
-status: DRAFT | active | done | superseded
+status: DRAFT | active | deferred | done | superseded
 date: YYYY-MM-DD
 ---
 ```
@@ -17,7 +17,8 @@ date: YYYY-MM-DD
 |-------|------|-------|
 | `title` | string | Prose title matching the H1 heading; wrap in quotes |
 | `type` | enum | One of: `PLAN`, `FINDING`, `ANALYSIS` — must match the subdirectory |
-| `status` | enum | `DRAFT` until reviewed, `ACTIVE` for in-progress, `DONE` when complete, `SUPERSEDED` when replaced |
+| `status` | enum | `DRAFT` until reviewed, `ACTIVE` for in-progress, `DEFERRED` for a real item not actionable yet (date-gated or externally blocked; not low-priority — use `value: LOW`; ranked below ACTIVE by the read protocol), `DONE` when complete, `SUPERSEDED` when replaced |
+| `deferred_until` | string (date) | Optional `YYYY-MM-DD` reactivation date for a date-gated `DEFERRED` item; only valid with `status: DEFERRED`. Hidden from the read protocol until the date passes (the date takes precedence even if also blocked) |
 | `date` | string (date) | ISO 8601 date `YYYY-MM-DD` — set once on creation, never updated |
 
 ## Optional Fields
