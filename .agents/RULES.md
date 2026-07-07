@@ -10,9 +10,9 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 ```markdown
 ### Rule: <short imperative title>
 
-**Directive:** <clear actionable instruction — prefer ALWAYS/NEVER phrasing>
+**Directive:** <clear actionable instruction, prefer ALWAYS/NEVER phrasing>
 
-**Rationale:** <why this rule exists — one or two sentences>
+**Rationale:** <why this rule exists, one or two sentences>
 ```
 
 ---
@@ -43,7 +43,7 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 ### Rule: Formalise ad hoc scripts after repeated use
 
-**Directive:** ALWAYS use `.tmp/` for one-off or experimental scripts. When a script has been used more than twice from `.tmp/`, ALWAYS formalise it — move it to an appropriate permanent location (`scripts/`, `tools/`, or the relevant package), add documentation, and update references so agents can discover it. NEVER let `.tmp/` scripts become de facto permanent tools.
+**Directive:** ALWAYS use `.tmp/` for one-off or experimental scripts. When a script has been used more than twice from `.tmp/`, ALWAYS formalise it, move it to an appropriate permanent location (`scripts/`, `tools/`, or the relevant package), add documentation, and update references so agents can discover it. NEVER let `.tmp/` scripts become de facto permanent tools.
 
 **Rationale:** Scripts that are run repeatedly from `.tmp/` become invisible to other agents and accumulate silently. Formalising after the second use ensures discoverability, maintainability, and prevents `.tmp/` from becoming a dumping ground.
 
@@ -61,7 +61,7 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 **Directive:** ALWAYS use this sequence when creating a draft plan from a `.context/findings/` file: (1) read the findings file thoroughly, (2) check related plans and source code referenced in the findings, (3) create the plan in `.context/plans/` following the `context-file` skill template with `status: draft`, (4) regenerate `.context/index.yaml`, (5) branch off `main` using `feat/` prefix, (6) stage plan + related findings + index.yaml, (7) commit with a conventional message (`feat(scope): ...`). If the finding contains a `## Recommendation` or other decision indicator, assess whether an ADR is needed.
 
-**Rationale:** This sequence ensures the plan is grounded in existing research, properly indexed, and committed on a clean branch — avoiding stale context, broken index entries, and undocumented decisions.
+**Rationale:** This sequence ensures the plan is grounded in existing research, properly indexed, and committed on a clean branch, avoiding stale context, broken index entries, and undocumented decisions.
 
 ---
 
@@ -69,16 +69,16 @@ Use the `rules-management` skill to add new rules. Each rule MUST follow this sc
 
 **Directive:** BEFORE concluding any session, ALWAYS initiate a two-question reflection. Say something like "Before we wrap up, let me reflect on what I'm unsure about and what I might be missing." Then:
 
-1. **Confidence audit** — "What am I least confident about right now?" List 3–7 specific items that were under-investigated, assumed, or skipped. For each, state why confidence is low (e.g., shallow search, unverified assumption, skipped edge case).
-2. **Blind-spot check** (Sam Altman) — "What's the biggest thing I'm missing about this situation? What don't I realize?" Identify potential assumptions, unexamined alternatives, or overlooked evidence from the user's perspective.
+1. **Confidence audit**: "What am I least confident about right now?" List 3–7 specific items that were under-investigated, assumed, or skipped. For each, state why confidence is low (e.g., shallow search, unverified assumption, skipped edge case).
+2. **Blind-spot check** (Sam Altman): "What's the biggest thing I'm missing about this situation? What don't I realize?" Identify potential assumptions, unexamined alternatives, or overlooked evidence from the user's perspective.
 
-After both questions, offer to investigate any item the user flags. If they accept, do deep root-cause investigation — search for contradicting evidence, trace assumptions, update conclusions — before concluding.
+After both questions, offer to investigate any item the user flags. If they accept, do deep root-cause investigation, search for contradicting evidence, trace assumptions, update conclusions, before concluding.
 
 **Rationale:** ~1 in 4 sessions surfaces a critical gap that would silently invalidate delivered work. Catching it before sign-off is the lowest-cost intervention point. The `session-reflection` skill has detailed guidance.
 
 ---
 
-### Rule: Never use /tmp or /temp — use .tmp
+### Rule: Never use /tmp or /temp, use .tmp
 
 **Directive:** NEVER write temporary files to `/tmp/` or `/temp/`. ALWAYS use `.tmp/` (the repo-local `.tmp` directory) for all temporary, experimental, or one-off artifacts.
 
@@ -88,7 +88,7 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 ### Rule: Never leak sensitive information
 
-**Directive:** NEVER include, expose, or reference sensitive information about any company, individual, or internal process — including proprietary code, internal URLs, unreleased features, employee details, organisational structure, internal tooling, process documentation, or any non-public business logic. When in doubt, treat information as sensitive.
+**Directive:** NEVER include, expose, or reference sensitive information about any company, individual, or internal process, including proprietary code, internal URLs, unreleased features, employee details, organisational structure, internal tooling, process documentation, or any non-public business logic. When in doubt, treat information as sensitive.
 
 **Rationale:** Leaked sensitive information creates legal, security, and reputational risk for the company and individuals involved. The agent must default to nondisclosure and sanitise any output that could expose non-public data.
 
@@ -98,11 +98,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Directive:** When creating or revising a SKILL.md, ALWAYS assess whether any phase of the workflow benefits from subagent delegation. If the skill requires self-reflection, meta-cognitive auditing, or adversarial review, PREFER spawning an independent subagent rather than having the main agent perform the introspection itself. Document the subagent recommendation as a note in the relevant workflow section or as an "Advanced" subsection.
 
-**Rationale:** LLMs are poor judges of their own outputs — self-reflection by the main agent suffers from the same blind spots it is trying to catch. An independent subagent brings a fresh perspective, catches normalised errors, and can be routed to a cheaper model. Skills like `session-reflection` already demonstrate this pattern with measurable quality improvements.
+**Rationale:** LLMs are poor judges of their own outputs, self-reflection by the main agent suffers from the same blind spots it is trying to catch. An independent subagent brings a fresh perspective, catches normalised errors, and can be routed to a cheaper model. Skills like `session-reflection` already demonstrate this pattern with measurable quality improvements.
 
 ---
 
-### Rule: Never embed templates in markdown — use YAML template files
+### Rule: Never embed templates in markdown, use YAML template files
 
 **Directive:** NEVER embed artifact templates (YAML frontmatter, file structures, code scaffolds) directly in skill markdown files. ALWAYS create a separate YAML file under the skill's `assets/templates/` directory that describes the structure of the artifact. Each template MUST have a corresponding JSON Schema under `assets/schemas/` and a validation script under `scripts/` that validates artifacts against the schema.
 
@@ -126,11 +126,11 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 ---
 
-### Rule: No man left behind — triage every warning surfaced during work
+### Rule: No man left behind, triage every warning surfaced during work
 
-**Directive:** NEVER leave a warning, issue, or error unaddressed just because it is unrelated to the current task, including ones surfaced incidentally by a script, linter, build, or tool run. ALWAYS triage it in the same session: either fix it, or explicitly defer it with a documented reason (e.g. a `.context/findings/` entry or a note to the user) — never let it pass by silently.
+**Directive:** NEVER leave a warning, issue, or error unaddressed just because it is unrelated to the current task, including ones surfaced incidentally by a script, linter, build, or tool run. ALWAYS triage it in the same session: either fix it, or explicitly defer it with a documented reason (e.g. a `.context/findings/` entry or a note to the user), never let it pass by silently.
 
-**Rationale:** Incidental warnings are often the cheapest signal of latent problems available — ignoring them because they're "out of scope" lets known issues accumulate invisibly until they resurface as harder-to-diagnose failures. Triage-or-document costs little and keeps the repository's issue surface honest.
+**Rationale:** Incidental warnings are often the cheapest signal of latent problems available, ignoring them because they're "out of scope" lets known issues accumulate invisibly until they resurface as harder-to-diagnose failures. Triage-or-document costs little and keeps the repository's issue surface honest.
 
 ---
 
@@ -138,13 +138,21 @@ After both questions, offer to investigate any item the user flags. If they acce
 
 **Directive:** NEVER hand-resolve merge/rebase conflict markers on a file that's produced by a generator script (e.g. `.context/index.yaml`, `docs/ADR/index.yaml`). ALWAYS take either side (`git checkout --ours` or `--theirs`) to clear the conflict, then re-run that file's generator script (e.g. `regenerate-context-index.sh`, `regenerate-adr-index.sh`) so the committed content is freshly derived from the current source-of-truth files, then stage and continue.
 
-**Rationale:** These files are deterministically derived by scanning current frontmatter/content across the repo, not authored by hand. A manually merged set of conflict markers can satisfy git's conflict resolution while still being internally inconsistent with what the generator would actually produce (duplicate entries, stale counts, wrong ordering) — regenerating is strictly correct and no slower than merging by hand.
+**Rationale:** These files are deterministically derived by scanning current frontmatter/content across the repo, not authored by hand. A manually merged set of conflict markers can satisfy git's conflict resolution while still being internally inconsistent with what the generator would actually produce (duplicate entries, stale counts, wrong ordering), regenerating is strictly correct and no slower than merging by hand.
 
 ---
 
 ### Rule: Check for unrelated uncommitted work before `git reset --hard`
 
-**Directive:** ALWAYS run `git status` immediately before any `git reset --hard` (or other command that discards uncommitted working-tree changes, e.g. `git checkout -- .`, `git clean -f`). If uncommitted changes exist beyond what you intend to discard, commit or stash them first — `git reset --hard` wipes ALL uncommitted changes to tracked files, not just the target commit's diff.
+**Directive:** ALWAYS run `git status` immediately before any `git reset --hard` (or other command that discards uncommitted working-tree changes, e.g. `git checkout -- .`, `git clean -f`). If uncommitted changes exist beyond what you intend to discard, commit or stash them first, `git reset --hard` wipes ALL uncommitted changes to tracked files, not just the target commit's diff.
 
-**Rationale:** Learned live: a regression-test throwaway commit was discarded via `git reset --hard HEAD~1` while real, working, tested implementation changes were still sitting as uncommitted working-tree edits — the hard reset silently destroyed that real work along with the intended throwaway commit. Caught only because the next verification step's output looked wrong, and the diff had to be manually reconstructed from memory rather than recovered. A `git status` check immediately before the reset costs nothing and would have caught this before it happened.
+**Rationale:** Learned live: a regression-test throwaway commit was discarded via `git reset --hard HEAD~1` while real, working, tested implementation changes were still sitting as uncommitted working-tree edits, the hard reset silently destroyed that real work along with the intended throwaway commit. Caught only because the next verification step's output looked wrong, and the diff had to be manually reconstructed from memory rather than recovered. A `git status` check immediately before the reset costs nothing and would have caught this before it happened.
+
+---
+
+### Rule: Place Markdown by category, authored docs under docs/, minimal root
+
+**Directive:** Place every Markdown file by what it IS, not by convention. (1) Authored human documentation ALWAYS goes under `docs/`. (2) Generated artifacts (e.g. `CHANGELOG.md`) stay wherever their generator writes them, never `docs/`. (3) Entry files a platform or agent resolves from a fixed path stay there: `README.md`, `AGENTS.md`, `CLAUDE.md` at the root; GitHub community-health files (`CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`) under `.github/`. NEVER add any other Markdown to the repository root. This rule covers Markdown only. Non-Markdown tool and build config (`go.mod`, `.goreleaser.yaml`, `mise.toml`, `hk.pkl`, `docmd.config.json`, and similar) stays wherever its tool resolves it. Because `docs/` publishes to the GitHub Pages site, decide public-versus-internal before placing a doc there: internal-only documents belong outside `docs/` (e.g. `.context/`).
+
+**Rationale:** The root drifts into a dumping ground for stray docs when there is no home rule, obscuring the small set of entry-point files a reader expects there. Deriving each file's home from its category (authored, generated, entry point) makes placement a lookup rather than a debate and makes a stray root Markdown file a mechanically checkable violation. See ADR-059.
 

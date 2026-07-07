@@ -7,7 +7,7 @@
 
 ![skill-quality-auditor](docs/assets/logo.png)
 
-AI agent skills promise expert guidance — but how do you know they're any good? `skill-auditor` scores SKILL.md files against a 9-dimension quality framework and produces concrete diagnostics to make them better. Think of it as a linter with opinions: it catches structural issues, gaps in guidance, missing evals, and anti-patterns before your users do.
+AI agent skills promise expert guidance, but how do you know they're any good? `skill-auditor` scores SKILL.md files against a 9-dimension quality framework and produces concrete diagnostics to make them better. Think of it as a linter with opinions: it catches structural issues, gaps in guidance, missing evals, and anti-patterns before your users do.
 
 ## Quick Start
 
@@ -37,7 +37,7 @@ Dimensions:
 Warnings:
   [D2]  no precondition signals detected
   [D2]  no postcondition signals detected
-  [D7]  no negative anchors in description — skill may over-trigger
+  [D7]  no negative anchors in description, skill may over-trigger
 ```
 
 Each warning links to a dimension doc with scoring criteria and targeted remediation advice.
@@ -85,8 +85,8 @@ Once installed, run `skill-auditor update` (or `mise upgrade skill-auditor`) to 
 | `-s / --store` | evaluate, analyze, batch, duplication, trend |
 | `-r / --repo-root` | most commands |
 | `-n / --dry-run` | aggregate, remediate, prune, init |
-| `-c / --config <path>` | global — overrides the D1/D6/analysis-quality scoring pattern lists |
-| `--no-user-config` | global — ignore any config file and score with the embedded/built-in patterns only |
+| `-c / --config <path>` | global, overrides the D1/D6/analysis-quality scoring pattern lists |
+| `--no-user-config` | global, ignore any config file and score with the embedded/built-in patterns only |
 
 `--json` and `--markdown` are mutually exclusive. Default format: JSON for evaluate/analyze/batch/remediate/aggregate, Markdown for duplication/trend. Run any command with `--help` for the full flag reference.
 
@@ -103,15 +103,15 @@ skill-auditor duplication --store                  # persist for trend
 
 | ID | Dimension | Max | What a low score signals |
 | -- | --------- | --- | ------------------------ |
-| D1 | Knowledge Delta | 20 | Content restates what the model already knows — no expert uplift |
+| D1 | Knowledge Delta | 20 | Content restates what the model already knows, no expert uplift |
 | D2 | Mindset & Procedures | 15 | Missing mental models or step-by-step guidance the agent needs |
-| D3 | Anti-Pattern Coverage | 15 | Common failure modes not called out — agent will repeat them |
+| D3 | Anti-Pattern Coverage | 15 | Common failure modes not called out, agent will repeat them |
 | D4 | Specification Compliance | 15 | Frontmatter, structure, or naming deviates from the tile spec |
 | D5 | Progressive Disclosure | 15 | Detail is front-loaded; references not used for depth |
 | D6 | Freedom Calibration | 15 | Skill is either too prescriptive or too vague for the task |
-| D7 | Pattern Recognition | 10 | No trigger conditions — agent won't know when to activate |
+| D7 | Pattern Recognition | 10 | No trigger conditions, agent won't know when to activate |
 | D8 | Practical Usability | 15 | Examples absent or unrealistic; hard to apply in practice |
-| D9 | Eval Validation | 20 | No evals — quality claims are unverifiable |
+| D9 | Eval Validation | 20 | No evals, quality claims are unverifiable |
 
 **Total: 140 pts.** Grade bands: A+ ≥133, A ≥126, B+ ≥119, B ≥112, C+ ≥105, C ≥98, D ≥91, F <91.
 
@@ -131,7 +131,7 @@ See `cmd/assets/references/quality-thresholds-scoring.md` for the full rubric. E
 `--fail-below` accepts any grade (A+ through F) for `batch`, or a percentage score for `eval`.
 `duplication` exits with code 2 (not 1) on Critical (>35%) pairs so it can be distinguished from
 a command error in pipeline logic. `eval` runs in structural-only mode (schema consistency, no
-semantic grading) unless an LLM provider key is set in the environment — see
+semantic grading) unless an LLM provider key is set in the environment, see
 [docs/architecture/eval-runner.md](docs/architecture/eval-runner.md).
 
 Full workflow example, mirroring this repo's own [`skill-quality.yml`](.github/workflows/skill-quality.yml):
@@ -160,7 +160,7 @@ jobs:
 .
 ├── main.go               CLI entrypoint
 ├── cmd/                  Cobra command implementations
-├── cmd/assets/           Skill source — SKILL.md, tile.json, evals, schemas
+├── cmd/assets/           Skill source, SKILL.md, tile.json, evals, schemas
 ├── agents/               Agent registry (supported init targets)
 ├── scorer/               D1–D9 dimension scorers
 ├── analysis/             TF-IDF extraction + pattern detectors
@@ -174,8 +174,8 @@ jobs:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, commit conventions, and pre-commit hook setup. All tests must pass (`go test ./...`) before pushing.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the development workflow, commit conventions, and pre-commit hook setup. All tests must pass (`go test ./...`) before pushing.
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for the full text.
+MIT, see [LICENSE](LICENSE) for the full text.
