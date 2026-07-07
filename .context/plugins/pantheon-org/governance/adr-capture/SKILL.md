@@ -7,7 +7,7 @@ description: "Capture Architecture Decision Records (ADRs) from .context/ plans,
 
 Capture Architecture Decision Records from `.context/` analysis, findings, plans, and reviews. Automatically extract decisions, create numbered ADRs, and maintain the index.
 
-> **Immutability rule:** Once created, an ADR is never edited or deleted. Its title, body, and context fields are frozen. Only `status` and `superseded_by` may change. To replace a decision, supersede it — create a new ADR and mark the old one as superseded.
+> **Immutability rule:** Immutability begins at **acceptance**, not creation. A `proposed`, unmerged ADR is a draft and may be edited freely in place. Once **accepted**, an ADR's title, body, and context fields are frozen and only `status` and `superseded_by` may change; to replace an accepted decision, supersede it — create a new ADR and mark the old one as superseded. See ADR-061.
 
 ## Prerequisites
 
@@ -110,7 +110,7 @@ scripts/merge-status-sync.sh               # Detect and (optionally) apply post-
 - Not every finding needs an ADR — only decisions that shape future work
 - The `context:` frontmatter field links decisions to their evidence; always populate it
 - `status: proposed` is the safe default; promote after implementation review
-- ADRs are immutable — only `status` and `superseded_by` may be updated; superseding is the only way to replace a decision
+- ADRs are immutable **once accepted** — a `proposed`/unmerged ADR may still be edited in place; after acceptance only `status` and `superseded_by` may be updated, and superseding is the only way to replace the decision
 - Consider marking `status: superseded` rather than deleting old ADRs; the historical record preserves context even for reversed decisions
 - Use production-grade terminology: pitfall, gotcha, ALWAYS, NEVER, anti-pattern
 
@@ -130,9 +130,9 @@ Decision not found in ADR index         | Check the ADR has context: and valid f
 **BAD:** Creating an ADR with no `context:` references for a decision from a review.
 **GOOD:** Always include `context:` with the relative path to the `.context/` file.
 
-**NEVER** edit or delete an ADR after creation.
-**WHY:** ADRs are immutable records. Editing distorts history; deleting erases the rationale trail.
-**BAD:** Rewording the body of an ADR to reflect new understanding.
+**NEVER** edit or delete an **accepted** ADR (a `proposed`/unmerged one may still be refined in place).
+**WHY:** Accepted ADRs are immutable records. Editing an accepted ADR distorts history; deleting erases the rationale trail.
+**BAD:** Rewording the body of an accepted ADR to reflect new understanding.
 **GOOD:** Set `status: superseded` and `superseded_by`; create a new ADR.
 
 **NEVER** reuse ADR numbers.

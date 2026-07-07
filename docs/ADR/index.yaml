@@ -476,3 +476,11 @@ entries:
       - path: ".context/findings/deferred-status-critical-review-2026-07-07.md"
       - path: ".context/known-issues/deferred-no-forcing-function-2026-07-07.md"
       - path: ".context/known-issues/deferred-no-reactivation-sweep-2026-07-07.md"
+  - path: "ADR/adr-061-adr-immutability-from-acceptance.md"
+    adr: "ADR-061"
+    title: "ADR-061: ADR immutability begins at acceptance, not creation"
+    status: proposed
+    date: 2026-07-07
+    context:
+      - path: ".context/plans/adr-immutability-wording-2026-07-07.md"
+      - path: ".context/findings/adr-immutability-wording-discrepancy-2026-07-07.md"
