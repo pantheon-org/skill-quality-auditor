@@ -199,3 +199,54 @@ The SkillStore's progressive-disclosure pattern can improve `cmd/remediate.go`:
 3. **Future (high effort)**: Port the full parallel extraction pipeline as `cmd/skillmine` once an LLM Go client is established and benchmark infra is available.
 
 4. **Monitor**: Watch SkillLens repo for maturation — star count, releases, expanded benchmarks. Reassess when it reaches ≥500 stars or a tagged release.
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: microsoft/SkillLens
+  url: https://github.com/microsoft/SkillLens
+  license: MIT
+  language: Python
+characterisation: >-
+  A research framework studying the lifecycle of model-generated agent skills
+  (experience generation, extraction, consumption): it runs models on five
+  benchmarks, extracts behaviour "modes" from trajectories, and re-injects them
+  to measure benchmark deltas. Input: agent trajectories. Output: extracted
+  skills plus efficacy/evolvability metrics. For: researchers studying skill
+  transfer.
+overlap:
+  d1_d9_scorers:
+    level: partial
+    note: Its empirically-grounded failure-mode taxonomy could feed D3; scoring axis otherwise differs.
+  validate_analyze:
+    level: none
+    note: Different axis.
+  duplication:
+    level: none
+    note: No similarity detection.
+  eval_runner:
+    level: partial
+    note: Ours judges with-skill scenarios; SkillLens does empirical with/without benchmark deltas we lack.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: Partial fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    Port the Mode/ModeSet data structures and the failure-mode taxonomy into D3
+    (low effort), and the empirical with/without benchmark delta as a possible
+    D10 validator (the same skill-lift idea). Port the technique, not the Python
+    framework.
+recommendation:
+  action: build-natively
+  detail: >-
+    Low-effort ports (Mode types, D3 categories, meta-skill rubric notes) are
+    worth doing; the D10 empirical validator and skillmine pipeline are larger
+    and deferred. Monitor repo maturity.
+value: LOW
+```

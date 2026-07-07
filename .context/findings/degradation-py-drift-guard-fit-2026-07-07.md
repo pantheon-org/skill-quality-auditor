@@ -88,3 +88,52 @@ graded LOW.
 This finding is analytical input for a maintainer's design decision. It does not itself change
 any scorer, gate, or published artifact; any follow-on feature should be planned and reviewed
 before implementation.
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: ChronoAIProject/consensus-rnd (degradation.py)
+  url: https://github.com/ChronoAIProject/consensus-rnd/blob/dev/skills/consensus-loop/scripts/codex_refactor_loop/checks/degradation.py
+  license: unstated
+  language: Python
+characterisation: >-
+  Not a skill quality scorer. A bespoke architecture-conformance gate hardwired
+  to one skill (consensus-loop) in its own repo: ~12 static checks asserting the
+  source still conforms to a prior decision (required/forbidden files and
+  hardcoded marker strings). Input: its home repo tree. Output: pass/fail
+  Findings. For: that repo's CI as a regression guard.
+overlap:
+  d1_d9_scorers:
+    level: full
+    note: The thin marker-presence kernel is already covered generically by D4.
+  validate_analyze:
+    level: full
+    note: validate already checks artifact conventions.
+  duplication:
+    level: none
+    note: No similarity detection.
+  eval_runner:
+    level: none
+    note: Scores nothing; not eval machinery.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: No fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    The per-skill custom regression guard concept: a config-driven
+    required_markers / forbidden_markers rule file consumed by the validate
+    command, designed generically. Deferrable and speculative until a concrete
+    skill needs it; never port the hardcoded literals.
+recommendation:
+  action: record-and-hold
+  detail: >-
+    No code change now; record that it was evaluated and rejected. If a need
+    arises, draft a small plan for a generic custom-lint surface on validate.
+value: LOW
+```

@@ -132,3 +132,52 @@ eval scenario format), or any Python-specific plumbing.
 
 Integration Point 2 (scorer as fitness function) becomes part of the evolve mode natively —
 no bridge needed since it's all Go.
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: sentient-agi/EvoSkill
+  url: https://github.com/sentient-agi/EvoSkill
+  license: unstated
+  language: Python
+characterisation: >-
+  A framework that automatically discovers and refines agent skills through an
+  evolutionary loop: run tasks, collect failures, propose skill/prompt changes,
+  materialise them, score candidates on held-out data, and keep Pareto
+  improvements. Input: a benchmark + seed skills. Output: evolved skill folders.
+  For: teams auto-improving skills against a benchmark.
+overlap:
+  d1_d9_scorers:
+    level: none
+    note: Complementary; our scorer could serve as its quality fitness signal.
+  validate_analyze:
+    level: none
+    note: Different axis.
+  duplication:
+    level: none
+    note: No similarity detection.
+  eval_runner:
+    level: partial
+    note: Our eval runner is the natural fitness callback; the evolutionary loop itself is new capability.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: Good fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    The proposer to generator to evaluate loop, ported to Go as an --evolve flag
+    on cmd/remediate.go (the key IP is the LLM-driven proposer templates). Our
+    existing eval runner and D1-D9 scorer supply the evaluator and fitness. Do
+    not port harness runners, dataset loaders, or Python plumbing.
+recommendation:
+  action: build-natively
+  detail: >-
+    Port the core loop as remediate --evolve; a port plan already exists
+    (evoskill-core-loop-port). Prerequisite: a stable native eval runner.
+value: LOW
+```

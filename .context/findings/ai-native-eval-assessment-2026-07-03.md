@@ -102,3 +102,52 @@ file evaluation.
 Adopt deduction rubrics with budgets (highest ROI — adds structural integrity to our
 scoring without rewriting the Go architecture) and ESLint-style policy rules (replaces
 brittle hardcoded gates with configurable per-dimension thresholds).
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: aiaccelerationism/ai-native-eval
+  url: https://github.com/aiaccelerationism/ai-native-eval
+  license: unstated
+  language: TypeScript
+characterisation: >-
+  An evidence-driven evaluation and repair system for AI-native repository
+  maturity: a recursive tree of evaluator-plugin skills whose leaves emit
+  checklist deductions from 10/10 against a rubric, aggregated by a deterministic
+  tool with zero AI calls in the tool path. Input: a repo + rubric plugins.
+  Output: scored, evidence-cited reports. For: repo-maturity assessment.
+overlap:
+  d1_d9_scorers:
+    level: partial
+    note: Same scoring purpose, different model (deduction-from-10 vs point-accumulation); could restructure our scorers.
+  validate_analyze:
+    level: partial
+    note: Its run-folder validation loop overlaps evaluate --store output validation.
+  duplication:
+    level: none
+    note: No similarity detection.
+  eval_runner:
+    level: none
+    note: Deterministic tool path, no LLM-judge runner.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: Partial fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    Deduction rubrics with per-group budgets (auditable, consistent,
+    remediation-linked), an ESLint-style policy-rules engine replacing hardcoded
+    --fail-below gates, and separating confidence from score. Adopt the model in
+    Go references/scorers; do not import the TypeScript.
+recommendation:
+  action: build-natively
+  detail: >-
+    Adopt deduction rubrics with budgets (highest ROI) and ESLint-style policy
+    rules; both fit the Go architecture without a rewrite.
+value: LOW
+```

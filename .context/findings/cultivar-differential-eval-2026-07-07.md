@@ -183,3 +183,52 @@ examples, evidence-provenance guards)** as cheap hardening of the D9 judge we al
 only empirical test of D1 Knowledge Delta. cultivar and this project are complementary: this
 project is a deep static rubric auditor, cultivar is a differential behavioural framework; the
 value is importing the differential framing into the native eval runner, not adopting the tool.
+
+## Fit assessment (structured record)
+
+<!-- fit-assessment -->
+```yaml
+schema_version: 1
+source:
+  name: pinecone-io/cultivar
+  url: https://github.com/pinecone-io/cultivar
+  license: MIT
+  language: Python
+characterisation: >-
+  A differential eval framework that runs a coding agent against each task with
+  and without the skill (and optionally with raw docs), LLM-grades each run
+  against prose criteria, and reads the delta to decide if the skill helps.
+  Input: natural-language task specs. Output: per-variant pass rate, cost,
+  tokens, and deltas. For: skill authors proving behavioural lift.
+overlap:
+  d1_d9_scorers:
+    level: partial
+    note: Its with-docs control empirically tests D1 Knowledge Delta, which D1 only judges from text.
+  validate_analyze:
+    level: none
+    note: Different axis.
+  duplication:
+    level: none
+    note: No similarity detection.
+  eval_runner:
+    level: partial
+    note: Ours runs the with-skill arm only; no without-skill or with-docs baseline.
+  helper_skills:
+    level: none
+    note: No agent-workflow equivalent.
+verdict: Partial fit
+vehicle_if_adopted: go-cli
+salvageable:
+  present: true
+  description: >-
+    Differential efficacy (with/without arms, pass_rate/quality delta) as the
+    anchor, plus the with-docs distillation-value control (only empirical test of
+    D1), and cheap D9 judge hardening (calibration examples, evidence-provenance
+    guard, autofail, JSON salvage). Port the technique into cmd/eval.go.
+recommendation:
+  action: build-natively
+  detail: >-
+    Build differential efficacy as the anchor and layer the judge-hardening
+    guards; the with-docs control is the highest-signal follow-on.
+value: MEDIUM
+```
