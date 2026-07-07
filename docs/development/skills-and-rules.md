@@ -66,7 +66,9 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   not just a missing one. `check-undocumented-decisions.sh` scans for binding-decision
   headings (`## Decision`, `**Decision:**`, `Adopt Option`) not covered by an ADR, it
   deliberately does not match finding-recommendation headings, since findings recommend
-  while plans decide. Also runs post-merge status sync: after a PR merges,
+  while plans decide. Heading markers are anchored to line start and code spans/fences are
+  stripped before matching, so a doc that merely *quotes* a marker in prose does not
+  false-positive. Also runs post-merge status sync: after a PR merges,
   `merge-status-sync.sh` detects plans/ADRs left `ACTIVE`/`proposed` when the merge should
   have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
   ADR immutability begins at **acceptance** (ADR-061): a `proposed`/unmerged ADR may be
