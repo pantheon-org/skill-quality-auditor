@@ -473,3 +473,6 @@ entries:
     date: 2026-07-07
     context:
       - path: ".context/plans/deferred-status-2026-07-07.md"
+      - path: ".context/findings/deferred-status-critical-review-2026-07-07.md"
+      - path: ".context/known-issues/deferred-no-forcing-function-2026-07-07.md"
+      - path: ".context/known-issues/deferred-no-reactivation-sweep-2026-07-07.md"

@@ -26,11 +26,13 @@ surfaced as top candidates it could not, in fact, be picked up.
 
 ## Decision
 
-Add `DEFERRED` as a fifth status: a real item intentionally parked (date-gated,
-externally blocked, or deprioritised), distinct from `ACTIVE` (pick-up-next) and
+Add `DEFERRED` as a fifth status: a real item that **cannot be actioned yet**
+(date-gated or externally blocked), distinct from `ACTIVE` (pick-up-next) and
 `DRAFT` (not yet reviewed).
 
-Two design choices were confirmed with the maintainer:
+Design choices (the first two confirmed with the maintainer; the rest added after
+a critical review of ADR-060 — see
+[`deferred-status-critical-review-2026-07-07`](../findings/deferred-status-critical-review-2026-07-07.md)):
 
 1. **Read-protocol placement — strict second tier (not exclusion).** The protocol
    splits candidates into tier 1 (`DRAFT`/`ACTIVE`) and tier 2 (`DEFERRED`), always
@@ -42,13 +44,27 @@ Two design choices were confirmed with the maintainer:
 2. **`value`/`themes`/`effort` stay REQUIRED on `DEFERRED`** (same as `DRAFT`/`ACTIVE`),
    so a parked item re-ranks cleanly the moment it is reactivated. Only
    `DONE`/`SUPERSEDED` remain exempt.
+3. **Semantics narrowed to "cannot", not "won't".** `DEFERRED` excludes merely
+   low-priority work, which stays `ACTIVE` with `value: LOW`. This removes an overlap
+   with the value axis flagged in the critical review.
+4. **Optional `deferred_until: YYYY-MM-DD` field** for date-gated items — only valid
+   with `status: DEFERRED` (validator-enforced). The read protocol surfaces an item
+   whose `deferred_until` has passed as reactivation-eligible, so date-gated work
+   does not rot in tier 2.
 
 ## Changes
 
 - Schemas: `context-frontmatter.schema.json`, `remediation-plan.schema.json` — enum
-  gains `DEFERRED`; the frontmatter schema description documents the tier semantics.
+  gains `DEFERRED`; the frontmatter schema description documents the tier semantics
+  and adds the optional `deferred_until` property (date-patterned).
 - Validator: `validate-context-frontmatter.sh` — the three requiredness branches
-  (effort, value, themes) now gate on `("DRAFT", "ACTIVE", "DEFERRED")`.
+  (effort, value, themes) now gate on `("DRAFT", "ACTIVE", "DEFERRED")`; a new guard
+  rejects `deferred_until` on any status other than `DEFERRED` (its date format is
+  auto-validated from the schema pattern).
+- Migration: the plan-review execution-location lens is re-statused `ACTIVE → DEFERRED`
+  (externally blocked, no `deferred_until`). The tessl-eval-decommission Bucket A
+  (date-gated to 2026-07-15) is re-statused on its own branch to avoid a cross-branch
+  status conflict.
 - Read protocol: `AGENTS.md` (and its `CLAUDE.md` symlink), `value-rubric.md`
   (canonical two-tier steps), `ways-of-working.md` (protocol + re-grade rule extended
   to `ACTIVE ↔ DEFERRED` transitions), `team-onboarding.md`.

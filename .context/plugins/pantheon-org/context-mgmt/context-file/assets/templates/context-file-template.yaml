@@ -7,8 +7,11 @@
 # Enum values are UPPER_CASE.
 # type values   : PLAN | FINDING | ANALYSIS | INSTRUCTION | AUDIT | KNOWN_ISSUE
 # status values : DRAFT | ACTIVE | DEFERRED | DONE | SUPERSEDED
-#                 DEFERRED = real but intentionally parked (date-gated/blocked);
-#                 the read protocol ranks it below DRAFT/ACTIVE.
+#                 DEFERRED = real but not actionable yet (date-gated or externally
+#                 blocked) — NOT low-priority (use value: LOW for that). The read
+#                 protocol ranks it below DRAFT/ACTIVE.
+# deferred_until: optional YYYY-MM-DD reactivation date; only valid with
+#                 status: DEFERRED (for date-gated items).
 # date format   : YYYY-MM-DD (creation date; do not update on edits)
 # value values  : HIGH | MEDIUM | LOW — benefit-of-action, on PLAN/FINDING/KNOWN_ISSUE
 #                 only. Graded against .context/instructions/value-rubric.md.

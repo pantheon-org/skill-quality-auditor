@@ -1,7 +1,7 @@
 ---
 title: "Plan: add an execution-location / coverage lens to plan-review reviewer prompts"
 type: PLAN
-status: ACTIVE
+status: DEFERRED
 date: 2026-07-07
 effort: S
 value: MEDIUM
@@ -16,7 +16,7 @@ related:
 
 # Plan: add an execution-location / coverage lens to plan-review
 
-Status: ACTIVE — Phases 0-2.2 done; Phase 2.3-2.4 (eval) blocked; Phase 3 not started
+Status: DEFERRED — Phases 0-2.2 done and merged (PR #236); Phase 2.3-2.4 (eval) blocked on an eval-harness limitation, Phase 3 not started. Externally blocked with no known ripen date, so no `deferred_until`; reactivate to ACTIVE when the harness can validate the spawn-3-reviewers workflow.
 Date: 07-07-2026
 Branch: `feat/plan-review-execution-location-lens`
 

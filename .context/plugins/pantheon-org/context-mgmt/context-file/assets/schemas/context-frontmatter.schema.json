@@ -20,12 +20,17 @@
     "status": {
       "type": "string",
       "enum": ["DRAFT", "ACTIVE", "DEFERRED", "DONE", "SUPERSEDED"],
-      "description": "Lifecycle status (UPPER_CASE). Use DRAFT until reviewed, ACTIVE for in-progress work you would pick up next, DEFERRED for a real not-done item intentionally parked (date-gated, externally blocked, or deprioritised), DONE when complete, SUPERSEDED when replaced. The 'what's next' read protocol ranks DEFERRED strictly below DRAFT/ACTIVE."
+      "description": "Lifecycle status (UPPER_CASE). Use DRAFT until reviewed, ACTIVE for in-progress work you would pick up next, DEFERRED for a real not-done item that cannot be actioned yet because it is date-gated or externally blocked (NOT for merely low-priority work — that is expressed by value: LOW on an ACTIVE item), DONE when complete, SUPERSEDED when replaced. The 'what's next' read protocol ranks DEFERRED strictly below DRAFT/ACTIVE."
     },
     "date": {
       "type": "string",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
       "description": "Creation date in ISO 8601 format (YYYY-MM-DD). Do not update on subsequent edits."
+    },
+    "deferred_until": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Optional reactivation date (YYYY-MM-DD) for a date-gated DEFERRED item — the date on or after which it should be reconsidered for reactivation to ACTIVE. Only meaningful with status: DEFERRED (validate-context-frontmatter.sh rejects it on any other status). Omit for externally-blocked items with no known ripen date. The read protocol surfaces a DEFERRED item whose deferred_until has passed as reactivation-eligible."
     },
     "related": {
       "type": "array",

@@ -58,6 +58,12 @@ for f in files:
             f"(S/M/L, or TBD if genuinely blocked on an Open Question)"
         )
 
+    if fm.get("deferred_until") and fm.get("status") != "DEFERRED":
+        errors.append(
+            f"{f}: 'deferred_until' is only valid with status: DEFERRED "
+            f"(got status: {fm.get('status')})"
+        )
+
     if fm.get("type") == "KNOWN_ISSUE" and not fm.get("severity"):
         errors.append(
             f"{f}: type: KNOWN_ISSUE must set 'severity' (CRITICAL/HIGH/MEDIUM/LOW)"

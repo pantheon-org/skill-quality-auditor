@@ -17,7 +17,8 @@ date: YYYY-MM-DD
 |-------|------|-------|
 | `title` | string | Prose title matching the H1 heading; wrap in quotes |
 | `type` | enum | One of: `PLAN`, `FINDING`, `ANALYSIS` — must match the subdirectory |
-| `status` | enum | `DRAFT` until reviewed, `ACTIVE` for in-progress, `DEFERRED` for a real item intentionally parked (date-gated or blocked; ranked below ACTIVE by the read protocol), `DONE` when complete, `SUPERSEDED` when replaced |
+| `status` | enum | `DRAFT` until reviewed, `ACTIVE` for in-progress, `DEFERRED` for a real item not actionable yet (date-gated or externally blocked; not low-priority — use `value: LOW`; ranked below ACTIVE by the read protocol), `DONE` when complete, `SUPERSEDED` when replaced |
+| `deferred_until` | string (date) | Optional `YYYY-MM-DD` reactivation date for a date-gated `DEFERRED` item; only valid with `status: DEFERRED` |
 | `date` | string (date) | ISO 8601 date `YYYY-MM-DD` — set once on creation, never updated |
 
 ## Optional Fields

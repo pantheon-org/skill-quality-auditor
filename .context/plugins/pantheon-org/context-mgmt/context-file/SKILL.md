@@ -45,7 +45,8 @@ related:
 Enum values are UPPER_CASE. Field rules:
 - `title` — prose title matching the H1 heading; wrap in quotes
 - `type` — matches the subdirectory (`plans/` → `PLAN`, `findings/` → `FINDING`, `analysis/` → `ANALYSIS`, `known-issues/` → `KNOWN_ISSUE`; note the underscore vs the hyphenated directory)
-- `status` — `DRAFT` until reviewed, `ACTIVE` for in-progress work you would pick up next, `DEFERRED` for a real not-done item intentionally parked (date-gated, externally blocked, or deprioritised), `DONE` when complete, `SUPERSEDED` when replaced (for `KNOWN_ISSUE`: `ACTIVE`/`DEFERRED` = still open, `DONE` = fixed). The read protocol ranks `DEFERRED` strictly below `DRAFT`/`ACTIVE`; reactivate to `ACTIVE` when the blocker clears.
+- `status` — `DRAFT` until reviewed, `ACTIVE` for in-progress work you would pick up next, `DEFERRED` for a real not-done item that **cannot be actioned yet** because it is date-gated or externally blocked, `DONE` when complete, `SUPERSEDED` when replaced (for `KNOWN_ISSUE`: `ACTIVE`/`DEFERRED` = still open, `DONE` = fixed). `DEFERRED` is not for merely low-priority work — express that with `value: LOW` on an `ACTIVE` item. The read protocol ranks `DEFERRED` strictly below `DRAFT`/`ACTIVE`; reactivate to `ACTIVE` when the blocker clears.
+- `deferred_until` — optional reactivation date (`YYYY-MM-DD`) for a **date-gated** `DEFERRED` item: the date on or after which it should be reconsidered. Only valid with `status: DEFERRED`. Omit for externally-blocked items with no known ripen date. The read protocol surfaces a `DEFERRED` item whose `deferred_until` has passed as reactivation-eligible.
 - `date` — creation date in ISO format; do not update on edits
 - `related` — relative paths from the file's location; omit the key entirely if there are no related files
 - `severity` — required for `type: KNOWN_ISSUE` only: `CRITICAL | HIGH | MEDIUM | LOW`. Not applicable to other types.

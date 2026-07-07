@@ -84,9 +84,12 @@ item is highest value to do next?", read `.context/index.yaml` and:
    corpus and never enter this sort.)
 2. Split into two tiers and always exhaust tier 1 before tier 2:
    **tier 1** = `DRAFT`/`ACTIVE` (work you would pick up next); **tier 2** =
-   `DEFERRED` (real but intentionally parked — date-gated, externally blocked, or
-   deprioritised). A `DEFERRED` item never outranks a `DRAFT`/`ACTIVE` one,
-   regardless of its `value`.
+   `DEFERRED` (real but not actionable yet — date-gated or externally blocked;
+   *not* merely low-priority, which is `value: LOW` on an `ACTIVE` item). A
+   `DEFERRED` item never outranks a `DRAFT`/`ACTIVE` one, regardless of its
+   `value`. When scanning tier 2, treat any `DEFERRED` item whose `deferred_until`
+   date has passed as reactivation-eligible — surface it for promotion to `ACTIVE`
+   rather than leaving it parked.
 3. Within each tier, sort by `value` descending (`HIGH` > `MEDIUM` > `LOW`).
 4. Break ties by `effort` ascending (`S` < `M` < `L` < `TBD`) where present.
    Findings and known-issues have no `effort`, so within a bucket they sort by
