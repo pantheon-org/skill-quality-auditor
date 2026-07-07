@@ -1,7 +1,7 @@
 ---
 title: "Plan: add an execution-location / coverage lens to plan-review reviewer prompts"
 type: PLAN
-status: DRAFT
+status: ACTIVE
 date: 2026-07-07
 effort: S
 value: MEDIUM
@@ -16,9 +16,21 @@ related:
 
 # Plan: add an execution-location / coverage lens to plan-review
 
-Status: DRAFT for review
+Status: ACTIVE — Phases 0-2.2 done; Phase 2.3-2.4 (eval) blocked; Phase 3 not started
 Date: 07-07-2026
 Branch: `feat/plan-review-execution-location-lens`
+
+> **Progress (2026-07-07):** the prompt edits (Phase 1) and scenario-04 (Phase 2.2)
+> are applied and deterministically verified; the `.tessl` copy is synced. The eval
+> validation (Phase 2.3-2.4) did not pass and could not: eval run
+> `019f3b8b-e960-708b-aad1-c909520cc1ca` scored scenarios 02/03 at 100% but the
+> full-review scenarios 01/04 at 0%, because the sandbox agent
+> (`claude:deepseek-v4-flash`; model selection is paywalled) shortcuts the
+> spawn-3-reviewers workflow. This is a harness limitation, not a regression — see
+> the Update section of
+> [`plan-review-execution-location-blind-spot-2026-07-06`](../known-issues/plan-review-execution-location-blind-spot-2026-07-06.md).
+> Phase 3 (known-issue → DONE) is therefore intentionally not executed; the
+> known-issue stays ACTIVE until the change can be eval-validated.
 
 > Decision-support material. The lens-ownership choice in the Decisions section
 > is proposed, not final; a human maintainer confirms it before implementation.
