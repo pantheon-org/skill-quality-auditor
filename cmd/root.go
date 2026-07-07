@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -66,6 +68,59 @@ var version = func() string {
 	return tile.Version
 }()
 
+// buildDate is injected by GoReleaser via ldflags at release time as an
+// RFC3339 timestamp (the release commit's date). It is empty for local
+// `go build`/`go install` builds, where releaseDate falls back to the Go
+// toolchain's VCS stamp instead.
+var buildDate string
+
+// buildInfoReader is a seam over debug.ReadBuildInfo so tests can control the
+// VCS-stamp fallback without depending on how the test binary was built.
+var buildInfoReader = debug.ReadBuildInfo
+
+// versionString renders the version line, appending the release date in the
+// organisation locale (DD-MM-YYYY) when a build date is known.
+func versionString() string {
+	line := "skill-auditor v" + version
+	if d := releaseDate(); d != "" {
+		line += " (released " + d + ")"
+	}
+	return line
+}
+
+// releaseDate returns the build date formatted DD-MM-YYYY, or "" when no date
+// is available or it cannot be parsed. It prefers the GoReleaser-injected
+// buildDate and falls back to the toolchain's vcs.time stamp for source builds.
+func releaseDate() string {
+	raw := buildDate
+	if raw == "" {
+		raw = vcsTime()
+	}
+	if raw == "" {
+		return ""
+	}
+	t, err := time.Parse(time.RFC3339, raw)
+	if err != nil {
+		return ""
+	}
+	return t.Format("02-01-2006")
+}
+
+// vcsTime returns the commit timestamp the Go toolchain embeds for VCS builds,
+// or "" if it is unavailable (e.g. module-cache installs).
+func vcsTime() string {
+	info, ok := buildInfoReader()
+	if !ok {
+		return ""
+	}
+	for _, s := range info.Settings {
+		if s.Key == "vcs.time" {
+			return s.Value
+		}
+	}
+	return ""
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "skill-auditor",
 	Short: "Audit skill quality using the 9-dimension framework",
@@ -95,7 +150,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(cmd.OutOrStdout(), "skill-auditor v%s\n", version)
+		fmt.Fprintln(cmd.OutOrStdout(), versionString())
 	},
 }
 

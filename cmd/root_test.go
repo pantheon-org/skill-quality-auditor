@@ -3,12 +3,71 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 	"testing"
 )
 
 func TestVersionCmd_run(t *testing.T) {
 	// Exercises the versionCmd.Run closure (fmt.Printf path).
 	versionCmd.Run(versionCmd, []string{})
+}
+
+func TestReleaseDate(t *testing.T) {
+	origDate, origReader := buildDate, buildInfoReader
+	t.Cleanup(func() { buildDate, buildInfoReader = origDate, origReader })
+
+	// Disable the VCS fallback so each case exercises buildDate alone.
+	buildInfoReader = func() (*debug.BuildInfo, bool) { return nil, false }
+
+	cases := []struct {
+		name      string
+		buildDate string
+		want      string
+	}{
+		{"rfc3339 renders DD-MM-YYYY", "2026-07-06T09:00:00Z", "06-07-2026"},
+		{"empty date yields empty", "", ""},
+		{"malformed date yields empty", "not-a-date", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			buildDate = tc.buildDate
+			if got := releaseDate(); got != tc.want {
+				t.Errorf("releaseDate() = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestReleaseDate_vcsFallback(t *testing.T) {
+	origDate, origReader := buildDate, buildInfoReader
+	t.Cleanup(func() { buildDate, buildInfoReader = origDate, origReader })
+
+	// No injected buildDate: releaseDate must fall back to the vcs.time stamp.
+	buildDate = ""
+	buildInfoReader = func() (*debug.BuildInfo, bool) {
+		return &debug.BuildInfo{Settings: []debug.BuildSetting{
+			{Key: "vcs.time", Value: "2026-01-02T03:04:05Z"},
+		}}, true
+	}
+	if got, want := releaseDate(), "02-01-2026"; got != want {
+		t.Errorf("releaseDate() vcs fallback = %q, want %q", got, want)
+	}
+}
+
+func TestVersionString(t *testing.T) {
+	origDate, origReader := buildDate, buildInfoReader
+	t.Cleanup(func() { buildDate, buildInfoReader = origDate, origReader })
+	buildInfoReader = func() (*debug.BuildInfo, bool) { return nil, false }
+
+	buildDate = "2026-07-06T09:00:00Z"
+	if got, want := versionString(), "skill-auditor v"+version+" (released 06-07-2026)"; got != want {
+		t.Errorf("versionString() with date = %q, want %q", got, want)
+	}
+
+	buildDate = ""
+	if got, want := versionString(), "skill-auditor v"+version; got != want {
+		t.Errorf("versionString() without date = %q, want %q", got, want)
+	}
 }
 
 func TestExitCodeFor_default(t *testing.T) {
