@@ -450,6 +450,15 @@ entries:
       - path: "docs/ADR/adr-020-multi-method-distribution.md"
       - path: "docs/ADR/adr-023-version-sync-policy.md"
       - path: "docs/ADR/adr-008-homebrew-distribution.md"
+  - path: "ADR/adr-058-plan-review-execution-location-lens.md"
+    adr: "ADR-058"
+    title: "ADR-058: plan-review gains an execution-location lens, owned by Risk + Strategic"
+    status: proposed
+    date: 2026-07-07
+    context:
+      - path: ".context/plans/plan-review-execution-location-lens-2026-07-07.md"
+      - path: ".context/known-issues/plan-review-execution-location-blind-spot-2026-07-06.md"
+      - path: ".context/findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md"
   - path: "ADR/adr-059-docs-root-layout.md"
     adr: "ADR-059"
     title: "ADR-059: Markdown placement by category, authored docs under docs/, minimal root"

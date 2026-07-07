@@ -1,0 +1,11 @@
+{
+  "type": "weighted_checklist",
+  "context": "Evaluates whether the agent, reviewing a plan whose mechanism runs only from the pre-push hook, produces a review that traces that execution path to its coverage and flags the stated goal as unmet. This exercises the execution-location lens added to the Risk (BLIND SPOTS) and Strategic (COMPLETENESS) reviewer prompts.",
+  "checklist": [
+    {"name": "Standard workflow", "description": "Agent composes a brief, handles model selection, spawns 3 reviewers in parallel, and produces a consolidated report", "max_score": 20},
+    {"name": "Identifies the execution path", "description": "The report explicitly notes the link checker's only trigger is the pre-push hook", "max_score": 20},
+    {"name": "Reasons about bypass", "description": "The report identifies who or what bypasses that trigger (local --no-verify, CI / web merges) rather than only internal mechanics", "max_score": 25},
+    {"name": "Concludes goal is unmet", "description": "The report concludes the 'nothing broken ever ships' goal is not met by a pre-push-only mechanism", "max_score": 25},
+    {"name": "Recommends broader reach", "description": "The report recommends a path that also runs where code ships (e.g. a CI job), not just the pre-push hook", "max_score": 10}
+  ]
+}

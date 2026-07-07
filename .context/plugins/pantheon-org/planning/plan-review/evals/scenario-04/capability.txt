@@ -1,0 +1,1 @@
+Trace a plan's stated execution path to its coverage and flag when the stated goal is unmet because the mechanism never runs where code actually ships.

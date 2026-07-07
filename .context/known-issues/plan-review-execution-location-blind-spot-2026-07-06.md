@@ -10,6 +10,8 @@ themes:
 related:
   - ../findings/docs-drift-cumulative-mode-ci-gap-2026-07-06.md
   - ../plans/docs-drift-reviewed-baseline-2026-07-06.md
+  - ../plans/plan-review-execution-location-lens-2026-07-07.md
+  - ../../docs/ADR/adr-058-plan-review-execution-location-lens.md
   - ../../.context/plugins/pantheon-org/planning/plan-review/SKILL.md
 ---
 # Known Issue: plan-review's reviewer prompts never ask where a mechanism actually executes
@@ -27,3 +29,25 @@ The same class of miss can recur on any future plan-reviewed change: a plan can 
 ## Suggested fix (not yet applied — this is the tracked issue, not the fix)
 
 Add an explicit instruction to one or more of `plan-review`'s reviewer prompts (Strategic and/or Risk are the natural fits) directing the reviewer to trace any stated invocation/trigger fact in the plan to its coverage implications — e.g. "if the plan states where or how this mechanism executes, explicitly assess who bypasses that path and whether the stated goal is actually met given that reach." Not applied here because it requires deciding which lens(es) should own this and how to phrase it without diluting the existing lens focus — a small design question, not a large one, but a real decision rather than a one-line fix.
+
+## Update (2026-07-07): fix applied, but eval validation is blocked — stays ACTIVE
+
+The fix above has now been **applied** (plan `plan-review-execution-location-lens-2026-07-07`, lens-ownership decision recorded in ADR-058):
+
+- Risk reviewer prompt (BLIND SPOTS) extended with the execution-reach clause.
+- Strategic reviewer prompt (COMPLETENESS) gained a one-clause aside.
+- Both edits verified deterministically: all three prompt JSON blocks parse, and the source and `.tessl` copies of `SKILL.md` are byte-identical.
+- A new eval scenario `scenario-04` (link checker wired only into `pre-push`) was added to exercise the check.
+
+**Why this remains ACTIVE rather than DONE:** the eval run intended to validate the change did not pass, and could not, for a harness reason unrelated to the fix. Run `019f3b8b-e960-708b-aad1-c909520cc1ca` (default `claude:deepseek-v4-flash`, model selection blocked by "requires a paid plan") scored:
+
+| Scenario | Score |
+| --- | --- |
+| 02 pre-configured model routing | 100% |
+| 03 structural issues | 100% |
+| 01 basic plan review (pre-existing) | 0% |
+| 04 narrow execution path (new) | 0% |
+
+The pattern is diagnostic: scenarios grading **procedural setup** (02, 03) pass, while scenarios requiring a **completed spawn-3-reviewers consolidated report** (01, 04) score 0 — the sandbox agent shortcuts the multi-reviewer workflow (scenario-04 emitted only ~4.9k output tokens over 19 turns). The pre-existing scenario-01 scoring 0 confirms this is a harness/agent-behaviour limitation, **not a regression from the prompt edit** (which touches only reviewer-prompt text).
+
+**What would let this move to DONE:** an eval run under an agent that actually executes the 3-reviewer workflow (blocked here by the paid-plan model-selection gate), or a redesign of scenario-04 that does not depend on completed subagent output. Until the behaviour is validated by eval, the fix ships unverified and the issue stays open.
