@@ -16,7 +16,9 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/pantheon-org/skill-quality-auditor/cmd.buildVersion={{.Version}}
+      - -s -w
+      - -X github.com/pantheon-org/skill-quality-auditor/cmd.buildVersion={{.Version}}
+      - -X github.com/pantheon-org/skill-quality-auditor/cmd.buildDate={{ .CommitDate }}
 
 archives:
   - formats: [tar.gz]
