@@ -1,0 +1,1 @@
+external-source-fit: correctly identifies a genuine capability gap as Good fit and names the adoption vehicle

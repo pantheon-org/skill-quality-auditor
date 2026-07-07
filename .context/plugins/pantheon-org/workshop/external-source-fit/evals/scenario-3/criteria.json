@@ -1,0 +1,24 @@
+{
+  "checklist": [
+    {
+      "criterion": "Separates the whole from the idea",
+      "description": "Characterises the framework mechanically and distinguishes the ill-fitting whole from the single transferable technique.",
+      "max_score": 30
+    },
+    {
+      "criterion": "Checks overlap for the kernel",
+      "description": "Confirms the whole is a poor fit while the one technique is not already covered by an existing dimension or capability.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Renders a Partial fit verdict",
+      "description": "Renders exactly one verdict band, Partial fit, recording the salvageable idea to build natively only when a concrete need appears.",
+      "max_score": 25
+    },
+    {
+      "criterion": "Never imports the whole framework",
+      "description": "Never proposes importing the whole framework or porting its project-specific glue and literals.",
+      "max_score": 20
+    }
+  ]
+}

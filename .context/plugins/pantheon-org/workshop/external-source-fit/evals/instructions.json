@@ -1,0 +1,28 @@
+{
+  "instructions": [
+    {
+      "instruction": "Characterise what the source actually does mechanically, independent of its name or the asker's framing, before judging fit.",
+      "why_given": "new knowledge"
+    },
+    {
+      "instruction": "Check overlap against existing capability (D1-D9 scorers, validate, duplication, eval runner, helper skills) before proposing to import or port anything.",
+      "why_given": "new knowledge"
+    },
+    {
+      "instruction": "Never port a source's hardcoded, project-specific literals; extract only the generic kernel and build it natively.",
+      "why_given": "new knowledge"
+    },
+    {
+      "instruction": "Keep novelty and need separate: a technique can be novel and still not needed by this project.",
+      "why_given": "new knowledge"
+    },
+    {
+      "instruction": "Render exactly one verdict band (Good fit, Partial fit, or No fit) and record it as a house-standard finding.",
+      "why_given": "new knowledge"
+    },
+    {
+      "instruction": "Name the salvageable idea explicitly, or state that there is none, rather than manufacturing a takeaway.",
+      "why_given": "preference"
+    }
+  ]
+}
