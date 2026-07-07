@@ -4,7 +4,7 @@ This repository maintains agent behavioural rules and local skills that guide AI
 
 ## Agent rules
 
-Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.agents/RULES.md) — the single source of truth for agent behavioural directives.
+Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.agents/RULES.md), the single source of truth for agent behavioural directives.
 
 | # | Rule | Directive |
 |---|------|-----------|
@@ -15,17 +15,18 @@ Located in [`.agents/RULES.md`](https://github.com/pantheon-org/skill-quality-au
 | 5 | Never write temporary scripts outside `.tmp` | NEVER write ad hoc scripts outside `.tmp/` |
 | 6 | Follow the finding-to-plan workflow | ALWAYS follow the 7-step read → plan → index → branch → commit sequence when drafting a plan from a `.context/findings/` entry |
 | 7 | Always conduct session-end reflection | ALWAYS run a confidence audit and blind-spot check before concluding a session |
-| 8 | Never use `/tmp` or `/temp` — use `.tmp` | NEVER write temporary files to `/tmp/` or `/temp/`; ALWAYS use the repo-local `.tmp/` |
+| 8 | Never use `/tmp` or `/temp`: use `.tmp` | NEVER write temporary files to `/tmp/` or `/temp/`; ALWAYS use the repo-local `.tmp/` |
 | 9 | Never leak sensitive information | NEVER expose proprietary code, internal URLs, or other non-public data |
 | 10 | Always consider subagent delegation when authoring skills | PREFER an independent subagent for self-reflective, meta-cognitive, or adversarial review steps |
-| 11 | Never embed templates in markdown — use YAML template files | ALWAYS pair a template with a JSON Schema and a validation script under the skill's `assets/`/`scripts/` |
+| 11 | Never embed templates in markdown: use YAML template files | ALWAYS pair a template with a JSON Schema and a validation script under the skill's `assets/`/`scripts/` |
 | 12 | Always check skill overlap before creating new skills | ALWAYS scan existing skills' triggers/descriptions for overlap before proposing a new one |
 | 13 | Avoid Python/Node.js scripts in skills | PREFER bash/awk/sed over Python/Node.js for skill `scripts/` logic |
-| 14 | No man left behind — triage every warning surfaced during work | NEVER leave a warning, issue, or error unaddressed just because it's unrelated to the current task; ALWAYS fix it or explicitly defer it with a documented reason |
+| 14 | No man left behind: triage every warning surfaced during work | NEVER leave a warning, issue, or error unaddressed just because it's unrelated to the current task; ALWAYS fix it or explicitly defer it with a documented reason |
 | 15 | Regenerate, don't hand-merge, conflicts on auto-generated files | NEVER hand-resolve merge/rebase conflicts on generator-produced files (e.g. `.context/index.yaml`); ALWAYS take either side then re-run the generator script |
 | 16 | Check for unrelated uncommitted work before `git reset --hard` | ALWAYS run `git status` immediately before discarding uncommitted changes; commit or stash anything unrelated first |
+| 17 | Place Markdown by category, authored docs under docs/, minimal root | ALWAYS place Markdown by what it is: authored docs to `docs/`, generated artifacts where the generator writes them, entry files at their resolver path (README/AGENTS/CLAUDE at root, community-health files under `.github/`); NEVER add other Markdown to the repo root (see ADR-059) |
 
-To add a new rule, load the [`rules-management`](#rules-management) skill — it will load existing rules, check for duplicates, and append with the correct format.
+To add a new rule, load the [`rules-management`](#rules-management) skill, it will load existing rules, check for duplicates, and append with the correct format.
 
 ## Local skills
 
@@ -34,14 +35,14 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 ### context-mgmt
 
-- **context-file** — create `.context/` files (plans, findings, analysis, known-issues) with
+- **context-file**: create `.context/` files (plans, findings, analysis, known-issues) with
   standard YAML frontmatter, appropriate sections, and correct placement in `plans/`,
   `findings/`, `analysis/`, or `known-issues/`. Prompts for the `value` benefit-of-action
   grade (`HIGH`/`MEDIUM`/`LOW`) on `PLAN`/`FINDING`/`KNOWN_ISSUE`, graded against
   [`value-rubric.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/value-rubric.md),
   and the `themes` subject-area list (ordered, primary-first) drawn from
   [`theme-vocabulary.md`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/instructions/theme-vocabulary.md).
-- **context-index** — regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
+- **context-index**: regenerate [`.context/index.yaml`](https://github.com/pantheon-org/skill-quality-auditor/blob/main/.context/index.yaml)
   from all `.context/**/*.md` frontmatter and validate that all files carry the required
   frontmatter block. `validate-context-frontmatter.sh` requires `value` and a non-empty
   `themes` list on `PLAN`/`FINDING`/`KNOWN_ISSUE` while `status` is `DRAFT`/`ACTIVE`
@@ -55,31 +56,31 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 ### governance
 
-- **adr-capture** — capture Architecture Decision Records (ADRs) from `.context/` plans,
+- **adr-capture**: capture Architecture Decision Records (ADRs) from `.context/` plans,
   findings, and analyses. Extracts binding decisions into `docs/ADR/` and maintains the
   machine-readable index. `regenerate-adr-index.sh` has a `--check` mode (regenerate in
   memory and diff the committed `docs/ADR/index.yaml`) so a **stale** ADR index fails CI,
   not just a missing one. `check-undocumented-decisions.sh` scans for binding-decision
-  headings (`## Decision`, `**Decision:**`, `Adopt Option`) not covered by an ADR — it
+  headings (`## Decision`, `**Decision:**`, `Adopt Option`) not covered by an ADR, it
   deliberately does not match finding-recommendation headings, since findings recommend
   while plans decide. Also runs post-merge status sync: after a PR merges,
   `merge-status-sync.sh` detects plans/ADRs left `ACTIVE`/`proposed` when the merge should
   have closed them out, auto-flipping single-phase plans and flagging the rest for a human.
-- **rules-management** — manage the agent behavioural rules in `.agents/RULES.md` — load
+- **rules-management**: manage the agent behavioural rules in `.agents/RULES.md`, load
   existing rules, check for duplicates, and append new rules in the standard format with
   directive and rationale.
 
 ### planning
 
-- **plan-create** — create `.context/plans/*.md` files with standard frontmatter and
+- **plan-create**: create `.context/plans/*.md` files with standard frontmatter and
   phases/tasks/waves decomposition, inferring section conventions from existing plans.
   Requires `effort` (cost), `value` (benefit), and a `themes` subject-area list
   (ordered, primary-first) in frontmatter.
-- **design-debate** — stress-test an unwritten idea by spawning independent subagents in
+- **design-debate**: stress-test an unwritten idea by spawning independent subagents in
   genuinely opposing roles (advocate, skeptic, migration/risk), grounded in real repo
-  investigation, concluding in a synthesized verdict — used *before* a plan exists. The
+  investigation, concluding in a synthesized verdict, used *before* a plan exists. The
   verdict decides how it's recorded: a finding if proceeding, a known-issue if not.
-- **plan-review** — review a plan using three independent subagent reviewers (Technical,
+- **plan-review**: review a plan using three independent subagent reviewers (Technical,
   Strategic, Risk), consolidate their feedback, then resolve it: editorial fixes land
   directly, genuine tradeoffs go through a one-question-at-a-time interview and are
   recorded in the plan's `## Decisions` section. The Risk and Strategic lenses also
@@ -88,7 +89,7 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 
 ### workshop
 
-- **docs-check** — validate the GitHub Pages documentation site built by docmd — orphan
+- **docs-check**: validate the GitHub Pages documentation site built by docmd, orphan
   detection, ADR index freshness, build verification, and LLM output audit.
 - **external-source-fit**: assess whether an external GitHub repo, file, or project fits
   this project, mapping overlap against existing capability (D1-D9, validate, duplication,
@@ -96,15 +97,15 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
   result up as a house-standard finding. Each finding embeds a machine-readable
   fit-assessment block (`assets/templates/` + `assets/schemas/`) checked by a pure-bash
   validator (`scripts/validate-fit-finding.sh`) so verdicts stay consistent.
-- **guided-interview** — conduct a structured, one-question-at-a-time interview with
+- **guided-interview**: conduct a structured, one-question-at-a-time interview with
   concrete mutually-exclusive options plus a free-text path, adapting later questions to
   prior answers, ending in a user-confirmed recap.
-- **pr-author** — create and maintain GitHub PRs with live descriptions — template
+- **pr-author**: create and maintain GitHub PRs with live descriptions, template
   discovery, intelligent filling, and lifecycle updates.
-- **session-reflection** — conduct a two-question session-end reflection to catch blind
+- **session-reflection**: conduct a two-question session-end reflection to catch blind
   spots and under-investigated areas before concluding. Verified-but-deferred gaps become
   `.context/known-issues/` entries rather than evaporating in chat.
-- **socratic-method** — refine vague, complex, or high-stakes prompts through Socratic
+- **socratic-method**: refine vague, complex, or high-stakes prompts through Socratic
   dialogue before committing to an implementation.
 
 ## Registry plugins
@@ -112,17 +113,17 @@ Local helper skills live under `.context/plugins/pantheon-org/<domain>/<skill>/`
 Skills installed from the Tessl registry (not authored in this repo) live under
 `.tessl/plugins/<org>/<skill>/`:
 
-- **pantheon-ai/markdown-authoring** — author high-quality Markdown with deterministic
+- **pantheon-ai/markdown-authoring**: author high-quality Markdown with deterministic
   structure, lint compliance, and CI integration.
-- **pantheon-ai/skill-quality-auditor** — the registry-distributed copy of this repo's own
+- **pantheon-ai/skill-quality-auditor**: the registry-distributed copy of this repo's own
   tile (evaluate, score, and remediate skill collections against the 9-dimension framework).
-- **pantheon-ai/software-design-principles** — apply SOLID principles, detect design
+- **pantheon-ai/software-design-principles**: apply SOLID principles, detect design
   anti-patterns, and evaluate architectural trade-offs.
-- **pantheon-ai/research/google-scholar-search** — search Google Scholar for academic
+- **pantheon-ai/research/google-scholar-search**: search Google Scholar for academic
   papers and author profiles.
-- **tessl-labs/eval-setup** — generate eval scenarios from repo commits, configure
+- **tessl-labs/eval-setup**: generate eval scenarios from repo commits, configure
   multi-agent runs, execute baseline and with-context evals, and compare results.
-- **tessl-labs/eval-improve** — analyse eval results, diagnose failures, apply targeted
+- **tessl-labs/eval-improve**: analyse eval results, diagnose failures, apply targeted
   fixes, and re-run to verify improvements.
 
 ## How skills are installed
