@@ -469,7 +469,7 @@ entries:
   - path: "ADR/adr-060-deferred-lifecycle-status.md"
     adr: "ADR-060"
     title: "ADR-060: DEFERRED lifecycle status for parked context items"
-    status: proposed
+    status: accepted
     date: 2026-07-07
     context:
       - path: ".context/plans/deferred-status-2026-07-07.md"
@@ -479,7 +479,7 @@ entries:
   - path: "ADR/adr-061-adr-immutability-from-acceptance.md"
     adr: "ADR-061"
     title: "ADR-061: ADR immutability begins at acceptance, not creation"
-    status: proposed
+    status: accepted
     date: 2026-07-07
     context:
       - path: ".context/plans/adr-immutability-wording-2026-07-07.md"

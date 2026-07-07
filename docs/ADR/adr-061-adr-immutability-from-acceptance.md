@@ -1,13 +1,13 @@
 ---
 title: "ADR-061: ADR immutability begins at acceptance, not creation"
-status: proposed
+status: accepted
 date: 2026-07-07
 context:
   - path: .context/plans/adr-immutability-wording-2026-07-07.md
   - path: .context/findings/adr-immutability-wording-discrepancy-2026-07-07.md
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-07
 
 ## Context

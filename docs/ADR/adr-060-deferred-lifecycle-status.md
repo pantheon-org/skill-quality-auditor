@@ -1,6 +1,6 @@
 ---
 title: "ADR-060: DEFERRED lifecycle status for parked context items"
-status: proposed
+status: accepted
 date: 2026-07-07
 context:
   - path: .context/plans/deferred-status-2026-07-07.md
@@ -9,7 +9,7 @@ context:
   - path: .context/known-issues/deferred-no-reactivation-sweep-2026-07-07.md
 ---
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-07
 
 ## Context
