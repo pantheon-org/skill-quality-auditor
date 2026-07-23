@@ -33,7 +33,7 @@ jobs:
       # therefore only ever means Plumber itself failed to run (bad config,
       # install/attestation failure), which should fail the job.
       - name: Run Plumber
-        uses: getplumber/plumber@f6aba1ef2a972aef44192a3d1375bbe57205398e # v0.3.88
+        uses: getplumber/plumber@feaea981266b40eea7985b7cb880d47a3426a570 # v0.4.2
         with:
           score-push: false
           threshold: '0'
