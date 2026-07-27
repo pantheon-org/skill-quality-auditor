@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # `getplumber/plumber` pinned by commit SHA of the latest tagged release
       # (v0.3.86), not a floating tag — consistent with the pinning hygiene
@@ -33,7 +33,7 @@ jobs:
       # therefore only ever means Plumber itself failed to run (bad config,
       # install/attestation failure), which should fail the job.
       - name: Run Plumber
-        uses: getplumber/plumber@feaea981266b40eea7985b7cb880d47a3426a570 # v0.4.2
+        uses: getplumber/plumber@ef9864df81f444647d95889d98695434f6fa9732 # v0.4.12
         with:
           score-push: false
           threshold: '0'
